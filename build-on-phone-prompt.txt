@@ -1,0 +1,18 @@
+Continue building my personal time-tracker web app. It's a self-contained
+Claude artifact at:
+https://claude.ai/code/artifact/98a84d40-cd2d-436d-8ea5-831db36dccbb
+
+How it works (read before editing):
+- ONE self-contained HTML page that saves its own data via the `artifact`
+  capability: on each change it rebuilds the whole document with state
+  embedded in <script id="app-state" type="application/json"> and
+  republishes itself. Declared capabilities: artifact + downloads.
+- To change it WITHOUT wiping my data: (1) read the live artifact at that
+  URL to get its full current HTML; (2) save it to a local file; (3) make
+  the code change; (4) keep the existing <script id="app-state"> JSON
+  exactly as-is -- that's my real logged data; (5) republish to the SAME
+  url (pass it as `url`) so the link stays the same. NEVER publish an
+  empty or older app-state -- that deletes my log.
+- Don't change the declared capabilities unless I ask.
+
+What I want to change: <describe it here>
