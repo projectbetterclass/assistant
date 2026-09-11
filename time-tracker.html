@@ -119,12 +119,27 @@ h1,h2,h3{margin:0;font-family:var(--font-display);font-weight:600;text-wrap:bala
 .hint{margin:12px 2px 0;color:var(--muted);font-size:13.5px;line-height:1.5}
 .recents{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-top:16px}
 .recents-lbl{font-size:11px;color:var(--faint);font-weight:600;text-transform:uppercase;letter-spacing:.07em;margin-right:1px}
-.rchip{display:inline-flex;align-items:center;gap:7px;border:1px solid var(--line-strong);background:var(--surface-2);
-  color:var(--ink);font-family:inherit;font-size:13.5px;font-weight:500;padding:0 13px;min-height:40px;border-radius:999px;
-  line-height:1;max-width:100%;transition:border-color .15s,background .15s,color .15s}
-.rchip:hover{border-color:var(--accent);background:var(--accent-soft);color:var(--accent)}
-.rchip .cdot{width:8px;height:8px;border-radius:50%;flex:none}
-.rchip .rchip-nm{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.rchip{display:inline-flex;align-items:stretch;max-width:100%;border:1px solid var(--line-strong);background:var(--surface-2);
+  border-radius:999px;transition:border-color .15s,background .15s}
+.rchip:hover{border-color:var(--accent)}
+.rchip.is-pinned{border-color:var(--accent);background:var(--accent-soft)}
+.rchip-go{display:inline-flex;align-items:center;gap:7px;min-width:0;border:none;background:transparent;color:var(--ink);
+  font-family:inherit;font-size:13.5px;font-weight:500;line-height:1;padding:0 3px 0 13px;min-height:40px;border-radius:999px 0 0 999px}
+.rchip.is-pinned .rchip-go{color:var(--accent)}
+.rchip-go .cdot{width:8px;height:8px;border-radius:50%;flex:none}
+.rchip-nm{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.rchip-pin{display:inline-flex;align-items:center;border:none;background:transparent;color:var(--faint);font-size:14px;line-height:1;
+  padding:0 11px 0 5px;min-height:40px;border-radius:0 999px 999px 0}
+.rchip-pin:hover{color:var(--accent)}
+.rchip.is-pinned .rchip-pin{color:var(--accent)}
+.now-pin{margin-left:auto;flex:none;border:1px solid var(--line-strong);background:transparent;color:var(--faint);
+  font-family:inherit;font-size:12px;font-weight:600;line-height:1;padding:6px 11px;border-radius:999px}
+.now-pin:hover{color:var(--accent);border-color:var(--accent)}
+.now-pin.is-on{color:var(--accent);border-color:transparent;background:var(--accent-soft)}
+.now-swipe-hint{margin-top:12px;text-align:center;font-size:12px;color:var(--faint)}
+.now-active{touch-action:pan-y;transition:transform .22s cubic-bezier(.2,.7,.3,1)}
+.now-active.swiping{transition:none}
+.now-active.swipe-armed{border-color:var(--bad)}
 
 .now-active{position:relative;overflow:hidden;border-color:var(--accent);background:
   linear-gradient(180deg,var(--accent-soft),transparent 62%),var(--surface)}
@@ -351,6 +366,7 @@ h1,h2,h3{margin:0;font-family:var(--font-display);font-weight:600;text-wrap:bala
   var artNS; // undefined=unknown, null=unavailable, object=ready
   var syncMode="check"; // check|sync|local|error|readonly
   var ui={addOpen:false, goalOpen:false, actionOpen:{}, noteOpen:{}, cueOpen:{}, idOpen:{}, repOpen:{}, date:dayKey(Date.now())};
+  var isTouch=("ontouchstart" in window)||(navigator.maxTouchPoints>0);
 
   ensureViewport();
   applyTheme();
@@ -360,6 +376,39 @@ h1,h2,h3{margin:0;font-family:var(--font-display);font-weight:600;text-wrap:bala
 
   root.addEventListener("click",onClick);
   root.addEventListener("submit",onSubmit);
+  initSwipeToStop();
+
+  /* ---------- swipe the running card sideways to stop ---------- */
+  function initSwipeToStop(){
+    var sw=null, THRESH=110, MAX=170;
+    root.addEventListener("touchstart",function(e){
+      if(e.touches.length!==1)return;
+      var card=e.target.closest(".now-active"); if(!card)return;
+      sw={card:card,x:e.touches[0].clientX,y:e.touches[0].clientY,dx:0,active:false};
+    },{passive:true});
+    root.addEventListener("touchmove",function(e){
+      if(!sw)return;
+      var dx=e.touches[0].clientX-sw.x, dy=e.touches[0].clientY-sw.y;
+      if(!sw.active){
+        if(Math.abs(dx)<10)return;
+        if(Math.abs(dy)>Math.abs(dx)){sw=null;return;}   // vertical scroll — let it be
+        sw.active=true; sw.card.classList.add("swiping");
+      }
+      sw.dx=dx; e.preventDefault();
+      var mag=Math.min(Math.abs(dx),MAX)*(dx<0?-1:1);
+      sw.card.style.transform="translateX("+mag+"px)";
+      sw.card.classList.toggle("swipe-armed",Math.abs(dx)>=THRESH);
+    },{passive:false});
+    function end(){
+      if(!sw)return;
+      var card=sw.card, fire=sw.active&&Math.abs(sw.dx)>=THRESH; sw=null;
+      card.classList.remove("swiping"); card.style.transform="";
+      card.classList.remove("swipe-armed");
+      if(fire)stopTask();
+    }
+    root.addEventListener("touchend",end);
+    root.addEventListener("touchcancel",end);
+  }
 
   /* ---------- persistence ---------- */
   function loadState(){
@@ -457,6 +506,7 @@ h1,h2,h3{margin:0;font-family:var(--font-display);font-weight:600;text-wrap:bala
   function saveNote(gid,text){ui.noteOpen[gid]=false;commit(function(){var g=(state.goals||[]).filter(function(x){return x.id===gid;})[0];if(g)g.notes=(text||"").replace(/[ \t\r\n]+$/,"");});}
   function cycleDepth(id){commit(function(){var t=findTask(id);if(!t)return;t.depth=t.depth==="deep"?"shallow":(t.depth==="shallow"?null:"deep");});}
   function setDepth(id,d){commit(function(){var t=findTask(id);if(!t)return;t.depth=(t.depth===d?null:d);});}
+  function togglePin(id){commit(function(){var t=findTask(id);if(t)t.pinned=!t.pinned;});}
   function setCue(id,text){ui.cueOpen[id]=false;commit(function(){var t=findTask(id);if(t)t.cue=(text||"").trim();});}
   function setIdentity(gid,text){ui.idOpen[gid]=false;commit(function(){var g=(state.goals||[]).filter(function(x){return x.id===gid;})[0];if(g)g.identity=(text||"").trim();});}
   function findGoal(id){return (state.goals||[]).filter(function(x){return x.id===id;})[0];}
@@ -500,6 +550,7 @@ h1,h2,h3{margin:0;font-family:var(--font-display);font-weight:600;text-wrap:bala
     else if(a==="save-note")saveNote(id,val("note-"+id));
     else if(a==="cycle-depth")cycleDepth(id);
     else if(a==="set-depth")setDepth(id,b.getAttribute("data-val"));
+    else if(a==="toggle-pin")togglePin(id);
     else if(a==="cue-edit"){ui.cueOpen[id]=true;render();}
     else if(a==="cue-cancel"){ui.cueOpen[id]=false;render();}
     else if(a==="cue-save")setCue(id,val("cue-"+id));
@@ -580,11 +631,11 @@ h1,h2,h3{margin:0;font-family:var(--font-display);font-weight:600;text-wrap:bala
 
   function lastUsed(t){var m=t.createdAt||0;(t.sessions||[]).forEach(function(se){if(se.start>m)m=se.start;});return m;}
   function recentQuick(){
-    var seen={},out=[];
-    state.tasks.filter(function(t){return !t.planned&&!t.daily&&!t.later&&(t.sessions||[]).length;})
+    var seen={},pins=[],rest=[];
+    state.tasks.filter(function(t){return !t.planned&&!t.daily&&!t.later&&((t.sessions||[]).length||t.pinned);})
       .sort(function(a,b){return lastUsed(b)-lastUsed(a);})
-      .forEach(function(t){var k=(t.name||"").toLowerCase();if(!k||seen[k])return;seen[k]=1;out.push(t);});
-    return out.slice(0,6);
+      .forEach(function(t){var k=(t.name||"").toLowerCase();if(!k||seen[k])return;seen[k]=1;(t.pinned?pins:rest).push(t);});
+    return pins.concat(rest).slice(0,8);
   }
 
   function renderNow(){
@@ -594,7 +645,9 @@ h1,h2,h3{margin:0;font-family:var(--font-display);font-weight:600;text-wrap:bala
       var estLine="";
       if(est){var diff=taskSec(t)-est*60;estLine='<div class="now-est">Estimate <b>'+esc(fmtDur(est*60))+'</b> · <span id="live-diff" class="diff '+(diff>0?"is-over":"is-under")+'">'+(diff>=0?"over by "+esc(fmtDur(diff)):esc(fmtDur(-diff))+" left")+'</span></div>';}
       return '<div class="card now now-active">'+
-        '<div class="now-head"><span class="live-pill"><span class="bl"></span>Running</span>'+chip(t.category)+(t.goalId?'<span class="chip chip-goal">'+esc(goalName(t.goalId))+'</span>':"")+'</div>'+
+        '<div class="now-head"><span class="live-pill"><span class="bl"></span>Running</span>'+chip(t.category)+(t.goalId?'<span class="chip chip-goal">'+esc(goalName(t.goalId))+'</span>':"")+
+          '<button class="now-pin'+(t.pinned?" is-on":"")+'" type="button" data-action="toggle-pin" data-id="'+t.id+'" aria-pressed="'+(t.pinned?"true":"false")+'" title="'+(t.pinned?"Pinned to quick-start — tap to unpin":"Pin to quick-start")+'">'+(t.pinned?"★ Pinned":"☆ Pin")+'</button>'+
+        '</div>'+
         '<div class="now-name">'+esc(t.name)+'</div>'+
         '<div class="now-clock" data-run-start="'+runningStart(t)+'" data-run-base="'+closedSec(t)+'" data-run-fmt="clock">'+fmtClock(taskSec(t))+'</div>'+
         estLine+
@@ -602,12 +655,19 @@ h1,h2,h3{margin:0;font-family:var(--font-display);font-weight:600;text-wrap:bala
           '<button class="dbtn'+(t.depth==="deep"?" on":"")+'" data-action="set-depth" data-id="'+t.id+'" data-val="deep" type="button">Deep</button>'+
           '<button class="dbtn'+(t.depth==="shallow"?" on-sh":"")+'" data-action="set-depth" data-id="'+t.id+'" data-val="shallow" type="button">Shallow</button></div>'+
         '<div class="now-btns"><button class="btn btn-stop btn-lg" data-action="stop">'+stopSvg()+'Stop &amp; log time</button></div>'+
+        (isTouch?'<div class="now-swipe-hint">Swipe the card sideways to stop</div>':"")+
       '</div>';
     }
     var opts=usedCats().map(function(c){return '<option value="'+esc(c)+'">';}).join("");
     var rec=recentQuick();
     var recentsHtml=rec.length?('<div class="recents"><span class="recents-lbl">Again</span>'+rec.map(function(t){
-      return '<button class="rchip" type="button" data-action="start" data-id="'+t.id+'" title="Start ‘'+esc(t.name)+'’ again">'+(t.category?'<span class="cdot" style="background:'+catColor(t.category)+'"></span>':'')+'<span class="rchip-nm">'+esc(t.name)+'</span></button>';
+      var pinned=!!t.pinned;
+      return '<span class="rchip'+(pinned?' is-pinned':'')+'">'+
+        '<button class="rchip-go" type="button" data-action="start" data-id="'+t.id+'" title="Start ‘'+esc(t.name)+'’ again">'+
+          (t.category?'<span class="cdot" style="background:'+catColor(t.category)+'"></span>':'')+
+          '<span class="rchip-nm">'+esc(t.name)+'</span></button>'+
+        '<button class="rchip-pin" type="button" data-action="toggle-pin" data-id="'+t.id+'" aria-pressed="'+(pinned?'true':'false')+'" aria-label="'+(pinned?'Unpin ':'Pin ')+esc(t.name)+'" title="'+(pinned?'Pinned — tap to unpin':'Pin so it always shows here')+'">'+(pinned?'★':'☆')+'</button>'+
+      '</span>';
     }).join("")+'</div>'):'';
     return '<div class="card now now-idle">'+
       '<div class="now-idle-label">What are you working on?</div>'+
