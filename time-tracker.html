@@ -136,6 +136,7 @@ h1,h2,h3{margin:0;font-family:var(--font-display);font-weight:600;text-wrap:bala
   font-family:inherit;font-size:12px;font-weight:600;line-height:1;padding:6px 11px;border-radius:999px}
 .now-pin:hover{color:var(--accent);border-color:var(--accent)}
 .now-pin.is-on{color:var(--accent);border-color:transparent;background:var(--accent-soft)}
+.icon-btn.pin.is-on{color:var(--accent);border-color:var(--accent)}
 .now-swipe-hint{margin-top:12px;text-align:center;font-size:12px;color:var(--faint)}
 .now-active{touch-action:pan-y;transition:transform .22s cubic-bezier(.2,.7,.3,1)}
 .now-active.swiping{transition:none}
@@ -608,6 +609,7 @@ h1,h2,h3{margin:0;font-family:var(--font-display);font-weight:600;text-wrap:bala
   }
   function usedCats(){var m={};DEFAULT_CATS.forEach(function(c){m[c]=1;});state.tasks.forEach(function(t){if(t.category)m[t.category]=1;});return Object.keys(m);}
   function chip(cat){if(!cat)return "";return '<span class="chip"><span class="cdot" style="background:'+catColor(cat)+'"></span>'+esc(cat)+'</span>';}
+  function pinBtn(t){return '<button class="icon-btn pin'+(t.pinned?" is-on":"")+'" type="button" data-action="toggle-pin" data-id="'+t.id+'" aria-pressed="'+(t.pinned?"true":"false")+'" title="'+(t.pinned?"Pinned to quick-start — tap to unpin":"Pin to quick-start")+'" aria-label="'+(t.pinned?"Unpin from quick-start":"Pin to quick-start")+'">'+(t.pinned?"★":"☆")+'</button>';}
 
   function render(){
     var c=chipData();
@@ -632,7 +634,11 @@ h1,h2,h3{margin:0;font-family:var(--font-display);font-weight:600;text-wrap:bala
   function lastUsed(t){var m=t.createdAt||0;(t.sessions||[]).forEach(function(se){if(se.start>m)m=se.start;});return m;}
   function recentQuick(){
     var seen={},pins=[],rest=[];
-    state.tasks.filter(function(t){return !t.planned&&!t.daily&&!t.later&&((t.sessions||[]).length||t.pinned);})
+    state.tasks.filter(function(t){
+      if(t.done||t.daily)return false;                    // goal actions live in Goals; skip finished
+      if(t.pinned)return true;                             // anything pinned surfaces here
+      return !t.planned&&!t.later&&(t.sessions||[]).length; // otherwise only recent ad-hoc
+    })
       .sort(function(a,b){return lastUsed(b)-lastUsed(a);})
       .forEach(function(t){var k=(t.name||"").toLowerCase();if(!k||seen[k])return;seen[k]=1;(t.pinned?pins:rest).push(t);});
     return pins.concat(rest).slice(0,8);
@@ -839,7 +845,7 @@ h1,h2,h3{margin:0;font-family:var(--font-display);font-weight:600;text-wrap:bala
         '<div class="tr-name">'+esc(t.name)+(running?'<span class="mini-run">running</span>':"")+'</div>'+
         '<div class="tr-sub">'+esc(sub)+'</div>'+
       '</div>'+
-      '<div class="tr-actions">'+btn+
+      '<div class="tr-actions">'+btn+pinBtn(t)+
         '<button class="icon-btn" data-action="done" data-id="'+t.id+'" title="Mark done" aria-label="Mark done">&#10003;</button>'+
         '<button class="icon-btn danger" data-action="delete" data-id="'+t.id+'" title="Delete" aria-label="Delete">&#215;</button>'+
       '</div>'+
@@ -882,7 +888,7 @@ h1,h2,h3{margin:0;font-family:var(--font-display);font-weight:600;text-wrap:bala
         '<div class="tr-name">'+esc(t.name)+chip(t.category)+(running?'<span class="mini-run">running</span>':"")+'</div>'+
         '<div class="tr-sub">'+esc(sub)+'</div>'+bar+
       '</div>'+
-      '<div class="tr-actions">'+btn+
+      '<div class="tr-actions">'+btn+pinBtn(t)+
         '<button class="icon-btn" data-action="done" data-id="'+t.id+'" title="'+(t.done?"Reopen":"Mark done")+'" aria-label="Mark done">'+(t.done?"&#8635;":"&#10003;")+'</button>'+
         '<button class="icon-btn danger" data-action="delete" data-id="'+t.id+'" title="Delete" aria-label="Delete">&#215;</button>'+
       '</div>'+
