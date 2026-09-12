@@ -247,6 +247,20 @@ h1,h2,h3{margin:0;font-family:var(--font-display);font-weight:600;text-wrap:bala
 .pc-form .field{flex:1}
 .pc-form .btn{flex:none}
 @media (max-width:460px){.pc-form{flex-wrap:wrap}.pc-form .btn{flex:1 1 100%}}
+.proj-gh{margin-top:13px;padding:12px 13px;background:var(--surface-2);border:1px solid var(--line);border-radius:12px}
+.gh-line{display:flex;align-items:center;gap:8px;font-size:12px;margin-top:2px}
+.gh-k{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--faint);font-weight:600}
+.gh-v{font-family:var(--font-mono);font-weight:600;color:var(--ink)}
+.gh-list{display:flex;flex-direction:column;gap:0;margin:6px 0 0}
+.gh-item{display:flex;align-items:center;gap:8px;padding:6px 0;border-top:1px solid var(--line);text-decoration:none;color:var(--ink);font-size:13px;min-width:0}
+.gh-item:first-child{border-top:0}
+.gh-badge{flex:none;font-family:var(--font-mono);font-size:11px;color:var(--accent);background:var(--accent-soft);padding:2px 6px;border-radius:6px}
+.gh-badge.draft{color:var(--muted);background:var(--surface);border:1px solid var(--line)}
+.gh-badge.mono{color:var(--muted);background:var(--surface);border:1px solid var(--line)}
+.gh-nm{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.gh-item:hover .gh-nm{text-decoration:underline}
+.gh-date{flex:none;font-family:var(--font-mono);font-size:11px;color:var(--faint)}
+.gh-err{font-size:13px;color:var(--bad);line-height:1.5;margin:2px 0}
 .goal-form{display:flex;flex-wrap:wrap;gap:8px;padding:14px;margin-bottom:12px;background:var(--surface-2);
   border:1px dashed var(--line-strong);border-radius:13px}
 .goal-form .field{flex:1 1 100%;background:var(--surface)}
@@ -409,9 +423,11 @@ h1,h2,h3{margin:0;font-family:var(--font-display);font-weight:600;text-wrap:bala
   var state=loadState();
   var artNS; // undefined=unknown, null=unavailable, object=ready
   var syncMode="check"; // check|sync|local|error|readonly
-  var ui={addOpen:false, goalOpen:false, actionOpen:{}, noteOpen:{}, cueOpen:{}, idOpen:{}, repOpen:{}, stepAddOpen:{}, proposal:{}, loading:{}, projectOpen:false, projEdit:{}, projLoading:{}, date:dayKey(Date.now())};
+  var ui={addOpen:false, goalOpen:false, actionOpen:{}, noteOpen:{}, cueOpen:{}, idOpen:{}, repOpen:{}, stepAddOpen:{}, proposal:{}, loading:{}, projectOpen:false, projEdit:{}, projLoading:{}, ghLoading:{}, ghErr:{}, date:dayKey(Date.now())};
   var isTouch=("ontouchstart" in window)||(navigator.maxTouchPoints>0);
   var sampleNS; // undefined=unknown, null=unavailable, function=ready
+  var GH_SERVER="GitHub Integration";
+  var mcpNS, ghServers=null; // mcpNS: undefined=unknown/null=unavailable/obj=ready; ghServers: null=unprobed, array=connector names
 
   ensureViewport();
   applyTheme();
@@ -419,6 +435,7 @@ h1,h2,h3{margin:0;font-family:var(--font-display);font-weight:600;text-wrap:bala
   setInterval(tick,1000);
   initSync();
   initSample();
+  initMcp();
 
   root.addEventListener("click",onClick);
   root.addEventListener("submit",onSubmit);
@@ -481,6 +498,14 @@ h1,h2,h3{margin:0;font-family:var(--font-display);font-weight:600;text-wrap:bala
   function initSample(){
     if(!(window.claude&&typeof window.claude.use==="function")){sampleNS=null;return;}
     Promise.resolve(window.claude.use("sample")).then(function(ns){sampleNS=ns;render();},function(){sampleNS=null;render();});
+  }
+  function initMcp(){
+    if(!(window.claude&&typeof window.claude.use==="function")){mcpNS=null;return;}
+    Promise.resolve(window.claude.use("mcp")).then(function(ns){
+      mcpNS=ns;
+      if(ns&&ns.listTools)ns.listTools().then(function(res){ghServers=((res&&res.servers)||[]).map(function(s){return s.server;});render();},function(){ghServers=[];render();});
+      else render();
+    },function(){mcpNS=null;render();});
   }
   function commit(fn){
     if(syncMode==="readonly") return;
@@ -629,6 +654,7 @@ h1,h2,h3{margin:0;font-family:var(--font-display);font-weight:600;text-wrap:bala
     else if(a==="set-health")setHealth(id,b.getAttribute("data-val"));
     else if(a==="edit-project"){ui.projEdit[id]=true;render();}
     else if(a==="cancel-project"){ui.projEdit[id]=false;render();}
+    else if(a==="gh-sync")syncProject(id);
     else if(a==="retry"){syncMode="check";renderChip();persist();}
   }
 
@@ -1063,6 +1089,68 @@ h1,h2,h3{margin:0;font-family:var(--font-display);font-weight:600;text-wrap:bala
   }
   function repoUrl(r){r=(r||"").trim();return /^https?:\/\//.test(r)?r:"https://github.com/"+r;}
   function ago(ts){var s=Math.floor((Date.now()-ts)/1000);if(s<60)return "just now";var m=Math.floor(s/60);if(m<60)return m+"m ago";var h=Math.floor(m/60);if(h<24)return h+"h ago";return Math.floor(h/24)+"d ago";}
+  function relDate(iso){var t=Date.parse(iso);return isNaN(t)?"":ago(t);}
+  /* ---------- live GitHub status ---------- */
+  function ghMaybe(){return !!(window.claude&&window.claude.use);}
+  function ghNotConnected(){return !!(ghServers&&ghServers.indexOf(GH_SERVER)<0);}
+  function parseRepo(r){r=(r||"").trim().replace(/^https?:\/\/github\.com\//i,"").replace(/\.git$/,"").replace(/\/+$/,"");var m=r.split("/").filter(Boolean);return (m.length>=2)?{owner:m[0],repo:m[1]}:null;}
+  function asArray(payload){if(Array.isArray(payload))return payload;if(payload&&Array.isArray(payload.items))return payload.items;if(typeof payload==="string"){try{var j=JSON.parse(payload);if(Array.isArray(j))return j;}catch(e){}}return [];}
+  function firstLine(s){return String(s||"").split("\n")[0].slice(0,120);}
+  function normPR(x){return {n:x&&x.number,title:(x&&x.title)||"(untitled)",draft:!!(x&&x.draft),url:(x&&x.html_url)||"",user:(x&&x.user&&x.user.login)||"",ref:(x&&x.head&&x.head.ref)||""};}
+  function normCommit(x){return {sha:((x&&x.sha)||"").slice(0,7),msg:firstLine(x&&x.commit&&x.commit.message),date:(x&&x.commit&&x.commit.author&&x.commit.author.date)||"",url:(x&&x.html_url)||""};}
+  function ghErrMsg(code){
+    if(code==="needs_reauth")return "GitHub needs reconnecting — claude.ai Settings → Connectors.";
+    if(code==="server_not_connected"||code==="unavailable")return "Connect ‘GitHub Integration’ in claude.ai Settings → Connectors, then sync.";
+    if(code==="selection_required")return "Pick a GitHub connector when Claude asks, then sync again.";
+    if(code==="server_unavailable"||code==="rate_limited")return "GitHub is unreachable right now — tap sync to retry.";
+    if(code==="tool_error")return "GitHub rejected that — check the repo is ‘owner/name’ and you can access it.";
+    if(code==="not_in_manifest"||code==="blocked_by_policy"||code==="approval_required")return "This GitHub data isn’t permitted here.";
+    return "Couldn’t reach GitHub — tap sync to retry.";
+  }
+  function syncProject(pid){
+    var p=findProject(pid);if(!p)return;var pr=parseRepo(p.repo);
+    if(!pr){toast("Add a repo like owner/name first");return;}
+    if(!mcpNS){ui.ghErr[pid]="unavailable";render();return;}
+    ui.ghLoading[pid]=true;ui.ghErr[pid]=null;render();
+    var flds=["number","title","state","draft","html_url","user","updated_at","head"];
+    Promise.all([
+      mcpNS.callTool(GH_SERVER,"list_pull_requests",{owner:pr.owner,repo:pr.repo,state:"open",perPage:10,fields:flds}),
+      mcpNS.callTool(GH_SERVER,"list_commits",{owner:pr.owner,repo:pr.repo,perPage:5,fields:["sha","commit","html_url","author"]})
+    ]).then(function(res){
+      var prs=asArray(res[0]&&res[0].payload).slice(0,10).map(normPR);
+      var commits=asArray(res[1]&&res[1].payload).slice(0,5).map(normCommit);
+      ui.ghLoading[pid]=false;
+      commit(function(){var pp=findProject(pid);if(!pp)return;pp.gh={prs:prs,commits:commits,syncedAt:Date.now()};});
+    },function(err){
+      ui.ghLoading[pid]=false;ui.ghErr[pid]=(err&&err.code)||"upstream_error";render();
+    });
+  }
+  function ghData(p){
+    var g=p.gh,h="";
+    h+='<div class="gh-line"><span class="gh-k">Open PRs</span><span class="gh-v">'+g.prs.length+'</span></div>';
+    if(g.prs.length)h+='<div class="gh-list">'+g.prs.map(function(pr){
+      return '<a class="gh-item" href="'+esc(pr.url)+'" target="_blank" rel="noopener"><span class="gh-badge'+(pr.draft?" draft":"")+'">#'+esc(String(pr.n))+'</span><span class="gh-nm">'+esc(pr.title)+(pr.draft?" · draft":"")+'</span></a>';
+    }).join("")+'</div>';
+    h+='<div class="gh-line" style="margin-top:9px"><span class="gh-k">Recent commits</span></div>';
+    h+='<div class="gh-list">'+g.commits.map(function(c){
+      return '<a class="gh-item" href="'+esc(c.url)+'" target="_blank" rel="noopener"><span class="gh-badge mono">'+esc(c.sha)+'</span><span class="gh-nm">'+esc(c.msg)+'</span><span class="gh-date">'+esc(relDate(c.date))+'</span></a>';
+    }).join("")+'</div>';
+    h+='<div class="proj-upd">Synced '+esc(ago(g.syncedAt))+'</div>';
+    return h;
+  }
+  function projGh(p){
+    if(!p.repo||!ghMaybe())return "";
+    var pr=parseRepo(p.repo);if(!pr)return "";
+    var inner;
+    if(ui.ghLoading[p.id])inner='<div class="ai-loading">'+ghSvg()+'Syncing…</div>';
+    else if(ui.ghErr[p.id])inner='<div class="gh-err">'+esc(ghErrMsg(ui.ghErr[p.id]))+'</div>'+(p.gh?ghData(p):"");
+    else if(p.gh)inner=ghData(p);
+    else if(ghNotConnected())inner='<div class="gh-err">'+esc(ghErrMsg("server_not_connected"))+'</div>';
+    else inner='<div class="action-empty">Not synced yet.</div>';
+    var showBtn=!ui.ghLoading[p.id]&&!ghNotConnected();
+    var btn=showBtn?'<button class="btn btn-ghost btn-sm" data-action="gh-sync" data-id="'+p.id+'" type="button" style="margin-top:10px">'+ghSvg()+(p.gh?"Refresh from GitHub":"Sync from GitHub")+'</button>':"";
+    return '<div class="proj-gh"><div class="proj-chat-h" style="margin-top:2px">'+ghSvg()+'GitHub · '+esc(pr.owner+"/"+pr.repo)+'</div>'+inner+btn+'</div>';
+  }
 
   function renderProjects(){
     var projs=state.projects||[];
@@ -1117,7 +1205,7 @@ h1,h2,h3{margin:0;font-family:var(--font-display);font-weight:600;text-wrap:bala
     return '<div class="card goal-card">'+
       '<div class="goal-top"><div style="min-width:0"><div class="goal-name">'+esc(p.name)+'</div>'+repoLine+'</div>'+
         '<button class="icon-btn danger" data-action="del-project" data-id="'+p.id+'" title="Delete project" aria-label="Delete project">&#215;</button></div>'+
-      health+bodyBlock+meta+chat+
+      health+bodyBlock+meta+projGh(p)+chat+
     '</div>';
   }
 
@@ -1293,6 +1381,7 @@ h1,h2,h3{margin:0;font-family:var(--font-display);font-weight:600;text-wrap:bala
   function clockSvg(){return '<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3.5 2"></path></svg>';}
   function playSvg(){return '<svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M7 5.5v13a1 1 0 0 0 1.53.85l10-6.5a1 1 0 0 0 0-1.7l-10-6.5A1 1 0 0 0 7 5.5Z"></path></svg>';}
   function sparkSvg(){return '<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2l1.7 5.6L19 9l-5.3 1.4L12 16l-1.7-5.6L5 9l5.3-1.4L12 2z"></path></svg>';}
+  function ghSvg(){return '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="6" cy="6" r="2.4"></circle><circle cx="6" cy="18" r="2.4"></circle><circle cx="18" cy="8" r="2.4"></circle><path d="M6 8.4v7.2M18 10.4c0 3-3 3.6-6 3.6"></path></svg>';}
   function stopSvg(){return '<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="6" width="12" height="12" rx="2"></rect></svg>';}
 })();
 </script>
