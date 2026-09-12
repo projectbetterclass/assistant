@@ -261,6 +261,11 @@ h1,h2,h3{margin:0;font-family:var(--font-display);font-weight:600;text-wrap:bala
 .gh-item:hover .gh-nm{text-decoration:underline}
 .gh-date{flex:none;font-family:var(--font-mono);font-size:11px;color:var(--faint)}
 .gh-err{font-size:13px;color:var(--bad);line-height:1.5;margin:2px 0}
+.gh-ci{flex:none;font-size:10px;font-weight:700;width:16px;height:16px;display:inline-grid;place-items:center;border-radius:50%;line-height:1}
+.gh-ci-success{color:#fff;background:var(--good)}
+.gh-ci-failure{color:#fff;background:var(--bad)}
+.gh-ci-pending{color:#fff;background:var(--warn)}
+.gh-ci-none{color:var(--faint);background:var(--surface);border:1px solid var(--line)}
 .goal-form{display:flex;flex-wrap:wrap;gap:8px;padding:14px;margin-bottom:12px;background:var(--surface-2);
   border:1px dashed var(--line-strong);border-radius:13px}
 .goal-form .field{flex:1 1 100%;background:var(--surface)}
@@ -1107,21 +1112,32 @@ h1,h2,h3{margin:0;font-family:var(--font-display);font-weight:600;text-wrap:bala
     if(code==="not_in_manifest"||code==="blocked_by_policy"||code==="approval_required")return "This GitHub data isn’t permitted here.";
     return "Couldn’t reach GitHub — tap sync to retry.";
   }
+  function getCheckRuns(payload){if(payload&&Array.isArray(payload.check_runs))return payload.check_runs;if(Array.isArray(payload))return payload;if(typeof payload==="string"){try{return getCheckRuns(JSON.parse(payload));}catch(e){}}return [];}
+  function aggregateCi(runs){if(!runs||!runs.length)return "none";var pending=false,failed=false;runs.forEach(function(r){if(r&&r.status&&r.status!=="completed"){pending=true;return;}var c=r&&r.conclusion;if(c==="failure"||c==="cancelled"||c==="timed_out"||c==="action_required")failed=true;});return failed?"failure":(pending?"pending":"success");}
+  function ciGlyph(ci){return ci==="success"?"✓":(ci==="failure"?"✕":(ci==="pending"?"•":"–"));}
+  function ciLabel(ci){return ci==="success"?"CI passing":(ci==="failure"?"CI failing":(ci==="pending"?"CI running":"No CI checks"));}
   function syncProject(pid){
-    var p=findProject(pid);if(!p)return;var pr=parseRepo(p.repo);
-    if(!pr){toast("Add a repo like owner/name first");return;}
+    var p=findProject(pid);if(!p)return;var repo=parseRepo(p.repo);
+    if(!repo){toast("Add a repo like owner/name first");return;}
     if(!mcpNS){ui.ghErr[pid]="unavailable";render();return;}
     ui.ghLoading[pid]=true;ui.ghErr[pid]=null;render();
     var flds=["number","title","state","draft","html_url","user","updated_at","head"];
     Promise.all([
-      mcpNS.callTool(GH_SERVER,"list_pull_requests",{owner:pr.owner,repo:pr.repo,state:"open",perPage:10,fields:flds}),
-      mcpNS.callTool(GH_SERVER,"list_commits",{owner:pr.owner,repo:pr.repo,perPage:5,fields:["sha","commit","html_url","author"]})
+      mcpNS.callTool(GH_SERVER,"list_pull_requests",{owner:repo.owner,repo:repo.repo,state:"open",perPage:10,fields:flds}),
+      mcpNS.callTool(GH_SERVER,"list_commits",{owner:repo.owner,repo:repo.repo,perPage:5,fields:["sha","commit","html_url","author"]})
     ]).then(function(res){
       var prs=asArray(res[0]&&res[0].payload).slice(0,10).map(normPR);
       var commits=asArray(res[1]&&res[1].payload).slice(0,5).map(normCommit);
-      ui.ghLoading[pid]=false;
-      commit(function(){var pp=findProject(pid);if(!pp)return;pp.gh={prs:prs,commits:commits,syncedAt:Date.now()};});
-    },function(err){
+      return Promise.all(prs.slice(0,8).map(function(q){
+        return mcpNS.callTool(GH_SERVER,"pull_request_read",{owner:repo.owner,repo:repo.repo,method:"get_check_runs",pullNumber:q.n}).then(
+          function(r){q.ci=aggregateCi(getCheckRuns(r&&r.payload));},
+          function(){q.ci="none";}
+        );
+      })).then(function(){
+        ui.ghLoading[pid]=false;
+        commit(function(){var pp=findProject(pid);if(!pp)return;pp.gh={prs:prs,commits:commits,syncedAt:Date.now()};});
+      });
+    }).catch(function(err){
       ui.ghLoading[pid]=false;ui.ghErr[pid]=(err&&err.code)||"upstream_error";render();
     });
   }
@@ -1129,7 +1145,8 @@ h1,h2,h3{margin:0;font-family:var(--font-display);font-weight:600;text-wrap:bala
     var g=p.gh,h="";
     h+='<div class="gh-line"><span class="gh-k">Open PRs</span><span class="gh-v">'+g.prs.length+'</span></div>';
     if(g.prs.length)h+='<div class="gh-list">'+g.prs.map(function(pr){
-      return '<a class="gh-item" href="'+esc(pr.url)+'" target="_blank" rel="noopener"><span class="gh-badge'+(pr.draft?" draft":"")+'">#'+esc(String(pr.n))+'</span><span class="gh-nm">'+esc(pr.title)+(pr.draft?" · draft":"")+'</span></a>';
+      var ci=pr.ci?'<span class="gh-ci gh-ci-'+pr.ci+'" title="'+esc(ciLabel(pr.ci))+'" aria-label="'+esc(ciLabel(pr.ci))+'">'+ciGlyph(pr.ci)+'</span>':"";
+      return '<a class="gh-item" href="'+esc(pr.url)+'" target="_blank" rel="noopener"><span class="gh-badge'+(pr.draft?" draft":"")+'">#'+esc(String(pr.n))+'</span><span class="gh-nm">'+esc(pr.title)+(pr.draft?" · draft":"")+'</span>'+ci+'</a>';
     }).join("")+'</div>';
     h+='<div class="gh-line" style="margin-top:9px"><span class="gh-k">Recent commits</span></div>';
     h+='<div class="gh-list">'+g.commits.map(function(c){
