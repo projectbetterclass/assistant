@@ -117,6 +117,30 @@ h1,h2,h3{margin:0;font-family:var(--font-display);font-weight:600;text-wrap:bala
 .field-est{flex:1 1 30%}
 .quick .btn-primary{flex:1 1 46%}
 .hint{margin:12px 2px 0;color:var(--muted);font-size:13.5px;line-height:1.5}
+.recents{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-top:16px}
+.recents-lbl{font-size:11px;color:var(--faint);font-weight:600;text-transform:uppercase;letter-spacing:.07em;margin-right:1px}
+.rchip{display:inline-flex;align-items:stretch;max-width:100%;border:1px solid var(--line-strong);background:var(--surface-2);
+  border-radius:999px;transition:border-color .15s,background .15s}
+.rchip:hover{border-color:var(--accent)}
+.rchip.is-pinned{border-color:var(--accent);background:var(--accent-soft)}
+.rchip-go{display:inline-flex;align-items:center;gap:7px;min-width:0;border:none;background:transparent;color:var(--ink);
+  font-family:inherit;font-size:13.5px;font-weight:500;line-height:1;padding:0 3px 0 13px;min-height:40px;border-radius:999px 0 0 999px}
+.rchip.is-pinned .rchip-go{color:var(--accent)}
+.rchip-go .cdot{width:8px;height:8px;border-radius:50%;flex:none}
+.rchip-nm{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.rchip-pin{display:inline-flex;align-items:center;border:none;background:transparent;color:var(--faint);font-size:14px;line-height:1;
+  padding:0 11px 0 5px;min-height:40px;border-radius:0 999px 999px 0}
+.rchip-pin:hover{color:var(--accent)}
+.rchip.is-pinned .rchip-pin{color:var(--accent)}
+.now-pin{margin-left:auto;flex:none;border:1px solid var(--line-strong);background:transparent;color:var(--faint);
+  font-family:inherit;font-size:12px;font-weight:600;line-height:1;padding:6px 11px;border-radius:999px}
+.now-pin:hover{color:var(--accent);border-color:var(--accent)}
+.now-pin.is-on{color:var(--accent);border-color:transparent;background:var(--accent-soft)}
+.icon-btn.pin.is-on{color:var(--accent);border-color:var(--accent)}
+.now-swipe-hint{margin-top:12px;text-align:center;font-size:12px;color:var(--faint)}
+.now-active{touch-action:pan-y;transition:transform .22s cubic-bezier(.2,.7,.3,1)}
+.now-active.swiping{transition:none}
+.now-active.swipe-armed{border-color:var(--bad)}
 
 .now-active{position:relative;overflow:hidden;border-color:var(--accent);background:
   linear-gradient(180deg,var(--accent-soft),transparent 62%),var(--surface)}
@@ -180,6 +204,68 @@ h1,h2,h3{margin:0;font-family:var(--font-display);font-weight:600;text-wrap:bala
 .action-add .field{flex:1 1 140px}
 .action-add .btn{flex:1 1 100%}
 .act-add-btn{margin-top:11px}
+.goal-controls{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.step{margin-top:12px;padding:12px 13px;background:var(--surface-2);border:1px solid var(--line);border-radius:12px}
+.step-head{display:flex;align-items:center;gap:10px}
+.step-check{flex:none;width:24px;height:24px;border-radius:7px;border:1px solid var(--line-strong);background:var(--surface);
+  color:var(--accent-ink);font-size:14px;line-height:1;display:inline-grid;place-items:center;cursor:pointer;transition:background .15s,border-color .15s}
+.step-check.on{background:var(--accent);border-color:var(--accent)}
+.step-name{flex:1;min-width:0;font-family:var(--font-display);font-weight:600;font-size:15px;line-height:1.25}
+.step-name.is-done{color:var(--muted);text-decoration:line-through;text-decoration-thickness:1px}
+.step-actions{margin-top:2px}
+.step .action-row{padding:8px 0}
+.ai-loading{margin-top:10px;display:flex;align-items:center;gap:8px;color:var(--accent);font-size:13.5px;font-weight:600}
+.ai-loading svg{animation:pulse 1.2s ease-in-out infinite}
+.proposal{margin-top:12px;padding:14px;background:var(--surface-2);border:1px solid var(--accent);border-radius:12px}
+.prop-title{display:flex;align-items:center;gap:7px;color:var(--accent);font-size:12.5px;font-weight:600;margin-bottom:11px;line-height:1.4}
+.prop-step{margin-bottom:11px}
+.prop-step-h{display:flex;align-items:flex-start;gap:9px;font-size:14.5px;line-height:1.35}
+.prop-sub{display:flex;align-items:flex-start;gap:9px;font-size:13.5px;color:var(--muted);margin:5px 0 0 22px;line-height:1.35}
+.prop-ladder{margin-top:4px;border-top:1px solid var(--line);padding-top:11px}
+.prop-rung{display:flex;gap:9px;font-size:13px;color:var(--muted);margin:5px 0 0 22px;line-height:1.35}
+.prop-rung-n{color:var(--accent);font-weight:600;font-family:var(--font-mono);flex:none}
+.proposal input[type=checkbox]{width:16px;height:16px;margin:2px 0 0;accent-color:var(--accent);flex:none}
+.prop-btns{display:flex;gap:8px;margin-top:12px}
+.proj-repo{display:inline-block;margin-top:5px;font-family:var(--font-mono);font-size:12.5px;color:var(--accent);text-decoration:none;word-break:break-all}
+.proj-repo:hover{text-decoration:underline}
+.proj-upd{font-size:11.5px;color:var(--faint);margin-top:10px}
+.proj-body{margin:2px 0 10px}
+.proj-row{display:flex;gap:10px;padding:7px 0;border-top:1px solid var(--line)}
+.proj-row:first-child{border-top:0}
+.proj-k{flex:none;width:64px;font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--faint);font-weight:600;padding-top:3px}
+.proj-v{flex:1;min-width:0;font-size:14px;line-height:1.5;white-space:pre-wrap;word-break:break-word}
+.proj-edit{display:flex;flex-direction:column;gap:7px;margin:4px 0 2px}
+.dbtn.on-good{background:var(--good);border-color:var(--good);color:#fff}
+.dbtn.on-bad{background:var(--bad);border-color:var(--bad);color:#fff}
+.proj-chat{margin-top:13px;padding:12px 13px;background:var(--surface-2);border:1px solid var(--line);border-radius:12px}
+.proj-chat-h{display:flex;align-items:center;gap:7px;font-size:11px;text-transform:uppercase;letter-spacing:.07em;color:var(--faint);font-weight:600;margin-bottom:10px}
+.pc-log{display:flex;flex-direction:column;gap:8px;margin-bottom:10px}
+.pc-msg{font-size:13.5px;line-height:1.5;padding:9px 11px;border-radius:11px;white-space:pre-wrap;word-break:break-word}
+.pc-u{background:var(--accent-soft);color:var(--ink);align-self:flex-end;border-bottom-right-radius:3px;max-width:88%}
+.pc-a{background:var(--surface);border:1px solid var(--line);align-self:flex-start;border-bottom-left-radius:3px;max-width:92%}
+.pc-form{display:flex;gap:8px}
+.pc-form .field{flex:1}
+.pc-form .btn{flex:none}
+@media (max-width:460px){.pc-form{flex-wrap:wrap}.pc-form .btn{flex:1 1 100%}}
+.proj-gh{margin-top:13px;padding:12px 13px;background:var(--surface-2);border:1px solid var(--line);border-radius:12px}
+.gh-line{display:flex;align-items:center;gap:8px;font-size:12px;margin-top:2px}
+.gh-k{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--faint);font-weight:600}
+.gh-v{font-family:var(--font-mono);font-weight:600;color:var(--ink)}
+.gh-list{display:flex;flex-direction:column;gap:0;margin:6px 0 0}
+.gh-item{display:flex;align-items:center;gap:8px;padding:6px 0;border-top:1px solid var(--line);text-decoration:none;color:var(--ink);font-size:13px;min-width:0}
+.gh-item:first-child{border-top:0}
+.gh-badge{flex:none;font-family:var(--font-mono);font-size:11px;color:var(--accent);background:var(--accent-soft);padding:2px 6px;border-radius:6px}
+.gh-badge.draft{color:var(--muted);background:var(--surface);border:1px solid var(--line)}
+.gh-badge.mono{color:var(--muted);background:var(--surface);border:1px solid var(--line)}
+.gh-nm{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.gh-item:hover .gh-nm{text-decoration:underline}
+.gh-date{flex:none;font-family:var(--font-mono);font-size:11px;color:var(--faint)}
+.gh-err{font-size:13px;color:var(--bad);line-height:1.5;margin:2px 0}
+.gh-ci{flex:none;font-size:10px;font-weight:700;width:16px;height:16px;display:inline-grid;place-items:center;border-radius:50%;line-height:1}
+.gh-ci-success{color:#fff;background:var(--good)}
+.gh-ci-failure{color:#fff;background:var(--bad)}
+.gh-ci-pending{color:#fff;background:var(--warn)}
+.gh-ci-none{color:var(--faint);background:var(--surface);border:1px solid var(--line)}
 .goal-form{display:flex;flex-wrap:wrap;gap:8px;padding:14px;margin-bottom:12px;background:var(--surface-2);
   border:1px dashed var(--line-strong);border-radius:13px}
 .goal-form .field{flex:1 1 100%;background:var(--surface)}
@@ -342,16 +428,55 @@ h1,h2,h3{margin:0;font-family:var(--font-display);font-weight:600;text-wrap:bala
   var state=loadState();
   var artNS; // undefined=unknown, null=unavailable, object=ready
   var syncMode="check"; // check|sync|local|error|readonly
-  var ui={addOpen:false, goalOpen:false, actionOpen:{}, noteOpen:{}, cueOpen:{}, idOpen:{}, repOpen:{}, date:dayKey(Date.now())};
+  var ui={addOpen:false, goalOpen:false, actionOpen:{}, noteOpen:{}, cueOpen:{}, idOpen:{}, repOpen:{}, stepAddOpen:{}, proposal:{}, loading:{}, projectOpen:false, projEdit:{}, projLoading:{}, ghLoading:{}, ghErr:{}, date:dayKey(Date.now())};
+  var isTouch=("ontouchstart" in window)||(navigator.maxTouchPoints>0);
+  var sampleNS; // undefined=unknown, null=unavailable, function=ready
+  var GH_SERVER="GitHub Integration";
+  var mcpNS, ghServers=null; // mcpNS: undefined=unknown/null=unavailable/obj=ready; ghServers: null=unprobed, array=connector names
 
   ensureViewport();
   applyTheme();
   render();
   setInterval(tick,1000);
   initSync();
+  initSample();
+  initMcp();
 
   root.addEventListener("click",onClick);
   root.addEventListener("submit",onSubmit);
+  initSwipeToStop();
+
+  /* ---------- swipe the running card sideways to stop ---------- */
+  function initSwipeToStop(){
+    var sw=null, THRESH=110, MAX=170;
+    root.addEventListener("touchstart",function(e){
+      if(e.touches.length!==1)return;
+      var card=e.target.closest(".now-active"); if(!card)return;
+      sw={card:card,x:e.touches[0].clientX,y:e.touches[0].clientY,dx:0,active:false};
+    },{passive:true});
+    root.addEventListener("touchmove",function(e){
+      if(!sw)return;
+      var dx=e.touches[0].clientX-sw.x, dy=e.touches[0].clientY-sw.y;
+      if(!sw.active){
+        if(Math.abs(dx)<10)return;
+        if(Math.abs(dy)>Math.abs(dx)){sw=null;return;}   // vertical scroll — let it be
+        sw.active=true; sw.card.classList.add("swiping");
+      }
+      sw.dx=dx; e.preventDefault();
+      var mag=Math.min(Math.abs(dx),MAX)*(dx<0?-1:1);
+      sw.card.style.transform="translateX("+mag+"px)";
+      sw.card.classList.toggle("swipe-armed",Math.abs(dx)>=THRESH);
+    },{passive:false});
+    function end(){
+      if(!sw)return;
+      var card=sw.card, fire=sw.active&&Math.abs(sw.dx)>=THRESH; sw=null;
+      card.classList.remove("swiping"); card.style.transform="";
+      card.classList.remove("swipe-armed");
+      if(fire)stopTask();
+    }
+    root.addEventListener("touchend",end);
+    root.addEventListener("touchcancel",end);
+  }
 
   /* ---------- persistence ---------- */
   function loadState(){
@@ -365,6 +490,7 @@ h1,h2,h3{margin:0;font-family:var(--font-display);font-weight:600;text-wrap:bala
     if(!s||typeof s!=="object"||!Array.isArray(s.tasks)) s={v:1,tasks:[],activeId:null,touched:false};
     if(!("activeId" in s)) s.activeId=null;
     if(!Array.isArray(s.goals)) s.goals=[];
+    if(!Array.isArray(s.projects)) s.projects=[];
     return s;
   }
   function saveLocal(){try{localStorage.setItem(LS_KEY,JSON.stringify(state));}catch(e){}}
@@ -373,6 +499,18 @@ h1,h2,h3{margin:0;font-family:var(--font-display);font-weight:600;text-wrap:bala
     Promise.resolve(window.claude.use("artifact")).then(function(ns){
       artNS=ns; syncMode=ns?"sync":"local"; renderChip();
     },function(){artNS=null;syncMode="local";renderChip();});
+  }
+  function initSample(){
+    if(!(window.claude&&typeof window.claude.use==="function")){sampleNS=null;return;}
+    Promise.resolve(window.claude.use("sample")).then(function(ns){sampleNS=ns;render();},function(){sampleNS=null;render();});
+  }
+  function initMcp(){
+    if(!(window.claude&&typeof window.claude.use==="function")){mcpNS=null;return;}
+    Promise.resolve(window.claude.use("mcp")).then(function(ns){
+      mcpNS=ns;
+      if(ns&&ns.listTools)ns.listTools().then(function(res){ghServers=((res&&res.servers)||[]).map(function(s){return s.server;});render();},function(){ghServers=[];render();});
+      else render();
+    },function(){mcpNS=null;render();});
   }
   function commit(fn){
     if(syncMode==="readonly") return;
@@ -445,10 +583,14 @@ h1,h2,h3{margin:0;font-family:var(--font-display);font-weight:600;text-wrap:bala
   function addLater(name){name=(name||"").trim();if(!name)return;commit(function(){state.tasks.push({id:uid(),name:name,category:"",estimateMin:null,planned:false,later:true,done:false,createdAt:Date.now(),sessions:[]});});}
   function addGoal(name,deadline,identity){name=(name||"").trim();if(!name)return;ui.goalOpen=false;commit(function(){state.goals=state.goals||[];state.goals.push({id:uid(),name:name,deadline:deadline||null,identity:(identity||"").trim(),createdAt:Date.now()});});}
   function deleteGoal(id){commit(function(){state.goals=(state.goals||[]).filter(function(g){return g.id!==id;});state.tasks.forEach(function(t){if(t.goalId===id){t.goalId=null;t.daily=false;}});});}
-  function addAction(gid,text,cue){text=(text||"").trim();if(!text)return;ui.actionOpen[gid]=false;commit(function(){state.tasks.push({id:uid(),name:text,category:"",estimateMin:null,planned:false,daily:true,goalId:gid,depth:null,cue:(cue||"").trim(),done:false,createdAt:Date.now(),sessions:[]});});}
+  function addAction(gid,sid,text,cue){text=(text||"").trim();if(!text)return;ui.actionOpen[sid||gid]=false;commit(function(){state.tasks.push({id:uid(),name:text,category:"",estimateMin:null,planned:false,daily:true,goalId:gid,stepId:sid||null,depth:null,cue:(cue||"").trim(),done:false,createdAt:Date.now(),sessions:[]});});}
+  function addStep(gid,name){name=(name||"").trim();if(!name)return;ui.stepAddOpen[gid]=false;commit(function(){var g=findGoal(gid);if(!g)return;g.steps=g.steps||[];g.steps.push({id:uid(),name:name,done:false,createdAt:Date.now()});});}
+  function deleteStep(gid,sid){commit(function(){var g=findGoal(gid);if(!g)return;g.steps=(g.steps||[]).filter(function(s){return s.id!==sid;});state.tasks.forEach(function(t){if(t.goalId===gid&&t.stepId===sid)t.stepId=null;});});}
+  function toggleStepDone(gid,sid){commit(function(){var g=findGoal(gid);if(!g)return;(g.steps||[]).forEach(function(s){if(s.id===sid)s.done=!s.done;});});}
   function saveNote(gid,text){ui.noteOpen[gid]=false;commit(function(){var g=(state.goals||[]).filter(function(x){return x.id===gid;})[0];if(g)g.notes=(text||"").replace(/[ \t\r\n]+$/,"");});}
   function cycleDepth(id){commit(function(){var t=findTask(id);if(!t)return;t.depth=t.depth==="deep"?"shallow":(t.depth==="shallow"?null:"deep");});}
   function setDepth(id,d){commit(function(){var t=findTask(id);if(!t)return;t.depth=(t.depth===d?null:d);});}
+  function togglePin(id){commit(function(){var t=findTask(id);if(t)t.pinned=!t.pinned;});}
   function setCue(id,text){ui.cueOpen[id]=false;commit(function(){var t=findTask(id);if(t)t.cue=(text||"").trim();});}
   function setIdentity(gid,text){ui.idOpen[gid]=false;commit(function(){var g=(state.goals||[]).filter(function(x){return x.id===gid;})[0];if(g)g.identity=(text||"").trim();});}
   function findGoal(id){return (state.goals||[]).filter(function(x){return x.id===id;})[0];}
@@ -468,8 +610,12 @@ h1,h2,h3{margin:0;font-family:var(--font-display);font-weight:600;text-wrap:bala
     else if(a==="add-planned"){var est=parseInt(val("p-est"),10);addPlanned(val("p-name"),val("p-cat"),isNaN(est)?0:est);}
     else if(a==="add-later")addLater(val("l-name"));
     else if(a==="add-goal")addGoal(val("g-name"),val("g-deadline"),val("g-identity"));
-    else if(a==="add-action"){var gid=f.getAttribute("data-id");addAction(gid,val("act-"+gid),val("act-cue-"+gid));}
+    else if(a==="add-action"){var sid=f.getAttribute("data-id"),agid=f.getAttribute("data-gid");addAction(agid,sid,val("act-"+sid),val("act-cue-"+sid));}
+    else if(a==="add-step"){var sgid=f.getAttribute("data-id");addStep(sgid,val("step-"+sgid));}
     else if(a==="log-rep"){var gidR=f.getAttribute("data-id");logRep(gidR,val("rep-rung-"+gidR),val("rep-grade-"+gidR),val("rep-note-"+gidR));}
+    else if(a==="add-project")addProject(val("pr-name"),val("pr-repo"));
+    else if(a==="save-project"){var pid=f.getAttribute("data-id");saveProject(pid,val("pr-ename-"+pid),val("pr-erepo-"+pid),val("pr-status-"+pid),val("pr-next-"+pid),val("pr-block-"+pid));}
+    else if(a==="ask-project"){var apid=f.getAttribute("data-id");askProject(apid,val("pc-in-"+apid));}
   }
   function onClick(e){
     var b=e.target.closest("[data-action]");if(!b)return;
@@ -492,6 +638,13 @@ h1,h2,h3{margin:0;font-family:var(--font-display);font-weight:600;text-wrap:bala
     else if(a==="save-note")saveNote(id,val("note-"+id));
     else if(a==="cycle-depth")cycleDepth(id);
     else if(a==="set-depth")setDepth(id,b.getAttribute("data-val"));
+    else if(a==="toggle-pin")togglePin(id);
+    else if(a==="toggle-step-add"){ui.stepAddOpen[id]=!ui.stepAddOpen[id];render();}
+    else if(a==="toggle-step")toggleStepDone(b.getAttribute("data-gid"),id);
+    else if(a==="del-step"){if(window.confirm("Remove this step? Its sub-steps stay as ungrouped actions and keep their logged time."))deleteStep(b.getAttribute("data-gid"),id);}
+    else if(a==="ai-breakdown")proposeBreakdown(id);
+    else if(a==="proposal-add")acceptProposal(id);
+    else if(a==="proposal-discard"){ui.proposal[id]=null;render();}
     else if(a==="cue-edit"){ui.cueOpen[id]=true;render();}
     else if(a==="cue-cancel"){ui.cueOpen[id]=false;render();}
     else if(a==="cue-save")setCue(id,val("cue-"+id));
@@ -501,6 +654,12 @@ h1,h2,h3{margin:0;font-family:var(--font-display);font-weight:600;text-wrap:bala
     else if(a==="prog-add")enableProgression(id);
     else if(a==="rep-open"){ui.repOpen[id]=true;render();}
     else if(a==="rep-cancel"){ui.repOpen[id]=false;render();}
+    else if(a==="toggle-project"){ui.projectOpen=!ui.projectOpen;render();}
+    else if(a==="del-project"){if(window.confirm("Delete this project and its notes?"))deleteProject(id);}
+    else if(a==="set-health")setHealth(id,b.getAttribute("data-val"));
+    else if(a==="edit-project"){ui.projEdit[id]=true;render();}
+    else if(a==="cancel-project"){ui.projEdit[id]=false;render();}
+    else if(a==="gh-sync")syncProject(id);
     else if(a==="retry"){syncMode="check";renderChip();persist();}
   }
 
@@ -549,6 +708,7 @@ h1,h2,h3{margin:0;font-family:var(--font-display);font-weight:600;text-wrap:bala
   }
   function usedCats(){var m={};DEFAULT_CATS.forEach(function(c){m[c]=1;});state.tasks.forEach(function(t){if(t.category)m[t.category]=1;});return Object.keys(m);}
   function chip(cat){if(!cat)return "";return '<span class="chip"><span class="cdot" style="background:'+catColor(cat)+'"></span>'+esc(cat)+'</span>';}
+  function pinBtn(t){return '<button class="icon-btn pin'+(t.pinned?" is-on":"")+'" type="button" data-action="toggle-pin" data-id="'+t.id+'" aria-pressed="'+(t.pinned?"true":"false")+'" title="'+(t.pinned?"Pinned to quick-start — tap to unpin":"Pin to quick-start")+'" aria-label="'+(t.pinned?"Unpin from quick-start":"Pin to quick-start")+'">'+(t.pinned?"★":"☆")+'</button>';}
 
   function render(){
     var c=chipData();
@@ -562,12 +722,26 @@ h1,h2,h3{margin:0;font-family:var(--font-display);font-weight:600;text-wrap:bala
 
     html+=renderNow();
     html+=renderGoals();
+    html+=renderProjects();
     html+=renderCapture();
     html+=renderPlanned();
     html+=renderReview();
     html+='<p class="foot-note">Your day is saved to this page and synced to every device where you open it. '+
       'Start something to log real time; add a planned task to compare your estimate against how long it actually takes.</p>';
     root.innerHTML=html;
+  }
+
+  function lastUsed(t){var m=t.createdAt||0;(t.sessions||[]).forEach(function(se){if(se.start>m)m=se.start;});return m;}
+  function recentQuick(){
+    var seen={},pins=[],rest=[];
+    state.tasks.filter(function(t){
+      if(t.done||t.daily)return false;                    // goal actions live in Goals; skip finished
+      if(t.pinned)return true;                             // anything pinned surfaces here
+      return !t.planned&&!t.later&&(t.sessions||[]).length; // otherwise only recent ad-hoc
+    })
+      .sort(function(a,b){return lastUsed(b)-lastUsed(a);})
+      .forEach(function(t){var k=(t.name||"").toLowerCase();if(!k||seen[k])return;seen[k]=1;(t.pinned?pins:rest).push(t);});
+    return pins.concat(rest).slice(0,8);
   }
 
   function renderNow(){
@@ -577,7 +751,9 @@ h1,h2,h3{margin:0;font-family:var(--font-display);font-weight:600;text-wrap:bala
       var estLine="";
       if(est){var diff=taskSec(t)-est*60;estLine='<div class="now-est">Estimate <b>'+esc(fmtDur(est*60))+'</b> · <span id="live-diff" class="diff '+(diff>0?"is-over":"is-under")+'">'+(diff>=0?"over by "+esc(fmtDur(diff)):esc(fmtDur(-diff))+" left")+'</span></div>';}
       return '<div class="card now now-active">'+
-        '<div class="now-head"><span class="live-pill"><span class="bl"></span>Running</span>'+chip(t.category)+(t.goalId?'<span class="chip chip-goal">'+esc(goalName(t.goalId))+'</span>':"")+'</div>'+
+        '<div class="now-head"><span class="live-pill"><span class="bl"></span>Running</span>'+chip(t.category)+(t.goalId?'<span class="chip chip-goal">'+esc(goalName(t.goalId))+'</span>':"")+
+          '<button class="now-pin'+(t.pinned?" is-on":"")+'" type="button" data-action="toggle-pin" data-id="'+t.id+'" aria-pressed="'+(t.pinned?"true":"false")+'" title="'+(t.pinned?"Pinned to quick-start — tap to unpin":"Pin to quick-start")+'">'+(t.pinned?"★ Pinned":"☆ Pin")+'</button>'+
+        '</div>'+
         '<div class="now-name">'+esc(t.name)+'</div>'+
         '<div class="now-clock" data-run-start="'+runningStart(t)+'" data-run-base="'+closedSec(t)+'" data-run-fmt="clock">'+fmtClock(taskSec(t))+'</div>'+
         estLine+
@@ -585,9 +761,20 @@ h1,h2,h3{margin:0;font-family:var(--font-display);font-weight:600;text-wrap:bala
           '<button class="dbtn'+(t.depth==="deep"?" on":"")+'" data-action="set-depth" data-id="'+t.id+'" data-val="deep" type="button">Deep</button>'+
           '<button class="dbtn'+(t.depth==="shallow"?" on-sh":"")+'" data-action="set-depth" data-id="'+t.id+'" data-val="shallow" type="button">Shallow</button></div>'+
         '<div class="now-btns"><button class="btn btn-stop btn-lg" data-action="stop">'+stopSvg()+'Stop &amp; log time</button></div>'+
+        (isTouch?'<div class="now-swipe-hint">Swipe the card sideways to stop</div>':"")+
       '</div>';
     }
     var opts=usedCats().map(function(c){return '<option value="'+esc(c)+'">';}).join("");
+    var rec=recentQuick();
+    var recentsHtml=rec.length?('<div class="recents"><span class="recents-lbl">Again</span>'+rec.map(function(t){
+      var pinned=!!t.pinned;
+      return '<span class="rchip'+(pinned?' is-pinned':'')+'">'+
+        '<button class="rchip-go" type="button" data-action="start" data-id="'+t.id+'" title="Start ‘'+esc(t.name)+'’ again">'+
+          (t.category?'<span class="cdot" style="background:'+catColor(t.category)+'"></span>':'')+
+          '<span class="rchip-nm">'+esc(t.name)+'</span></button>'+
+        '<button class="rchip-pin" type="button" data-action="toggle-pin" data-id="'+t.id+'" aria-pressed="'+(pinned?'true':'false')+'" aria-label="'+(pinned?'Unpin ':'Pin ')+esc(t.name)+'" title="'+(pinned?'Pinned — tap to unpin':'Pin so it always shows here')+'">'+(pinned?'★':'☆')+'</button>'+
+      '</span>';
+    }).join("")+'</div>'):'';
     return '<div class="card now now-idle">'+
       '<div class="now-idle-label">What are you working on?</div>'+
       '<form class="quick" data-action="quick-start" autocomplete="off">'+
@@ -596,6 +783,7 @@ h1,h2,h3{margin:0;font-family:var(--font-display);font-weight:600;text-wrap:bala
         '<button class="btn btn-primary" type="submit">'+playSvg()+'Start</button>'+
         '<datalist id="cats">'+opts+'</datalist>'+
       '</form>'+
+      recentsHtml+
       '<p class="hint">Perfect for the unplanned stuff — hit start, and stop when you’re done to see exactly how long it took.</p>'+
     '</div>';
   }
@@ -671,8 +859,139 @@ h1,h2,h3{margin:0;font-family:var(--font-display);font-weight:600;text-wrap:bala
       addForm+body+
     '</section>';
   }
+  /* ---------- steps + AI breakdown ---------- */
+  function stepActions(gid,sid){return state.tasks.filter(function(t){return t.goalId===gid&&t.daily&&t.stepId===sid;});}
+  function ungroupedActions(gid,steps){var ids={};(steps||[]).forEach(function(s){ids[s.id]=1;});return state.tasks.filter(function(t){return t.goalId===gid&&t.daily&&(!t.stepId||!ids[t.stepId]);});}
+  function aiEnabled(){return sampleNS!==null&&!!(window.claude&&window.claude.use);}
+  function buildBreakdownPrompt(g){
+    var lines=[];
+    lines.push("Break a personal goal into an actionable plan.");
+    lines.push("Goal: "+g.name);
+    if(g.identity)lines.push("Who they want to become: "+g.identity);
+    if(g.deadline)lines.push("Target date: "+g.deadline);
+    if(g.notes)lines.push("Their own notes: "+String(g.notes).replace(/\s+/g," ").slice(0,600));
+    lines.push("Produce 3-5 milestone STEPS in a sensible order. For each step, give 2-4 small, concrete SUB-STEPS the person can actually do on a normal day. Start each sub-step with a verb. Keep every name under about 8 words. No numbering.");
+    lines.push("Also produce a 6-rung SKILL LADDER for this goal — one rung per Bloom's level in this exact order: Remember, Understand, Apply, Analyze, Evaluate, Create. Each rung is a short, concrete capability specific to this goal (not the generic level name), rising in difficulty. Under about 8 words each.");
+    lines.push('Return ONLY JSON of the form {"steps":[{"name":"step name","subs":["sub-step","sub-step"]}],"ladder":["Remember rung","Understand rung","Apply rung","Analyze rung","Evaluate rung","Create rung"]}.');
+    return lines.join("\n");
+  }
+  function normalizeProposal(res){
+    var stepsIn=(res&&res.steps)||[],steps=[];
+    if(Array.isArray(stepsIn))stepsIn.slice(0,6).forEach(function(s){
+      if(!s)return;var name=String(s.name||s.step||"").trim();if(!name)return;
+      var subsIn=s.subs||s.substeps||s.actions||[],subs=[];
+      if(Array.isArray(subsIn))subsIn.slice(0,6).forEach(function(x){var v=String((x&&x.name)||x||"").trim();if(v)subs.push(v.slice(0,120));});
+      steps.push({name:name.slice(0,120),subs:subs});
+    });
+    var ladderIn=(res&&res.ladder)||null,ladder=null;
+    if(Array.isArray(ladderIn)){var l=[];ladderIn.slice(0,6).forEach(function(x){var v=String((x&&x.name)||x||"").trim();if(v)l.push(v.slice(0,80));});if(l.length>=3)ladder=l;}
+    return {steps:steps,ladder:ladder};
+  }
+  function proposeBreakdown(gid){
+    var g=findGoal(gid);if(!g)return;
+    var go=function(ns){
+      if(!ns){ui.loading[gid]=false;sampleNS=null;render();toast("AI isn’t available here");return;}
+      ns.json(buildBreakdownPrompt(g),{modelTier:"default",cache:false}).then(function(res){
+        ui.loading[gid]=false;var norm=normalizeProposal(res);
+        if(!norm.steps.length){render();toast("Couldn’t draft a plan — try again");return;}
+        ui.proposal[gid]={steps:norm.steps,ladder:norm.ladder};render();
+      },function(err){
+        ui.loading[gid]=false;render();var c=err&&err.code;
+        if(c==="not_granted")toast("AI access was declined");
+        else if(c==="rate_limited")toast("Rate limited — try again shortly");
+        else if(c==="cancelled"){}
+        else toast("Couldn’t reach Claude — try again");
+      });
+    };
+    ui.loading[gid]=true;ui.proposal[gid]=null;render();
+    if(sampleNS!==undefined)go(sampleNS);
+    else if(window.claude&&window.claude.use)Promise.resolve(window.claude.use("sample")).then(function(ns){sampleNS=ns;go(ns);},function(){sampleNS=null;go(null);});
+    else go(null);
+  }
+  function acceptProposal(gid){
+    var p=ui.proposal[gid];if(!p)return;
+    commit(function(){
+      var g=findGoal(gid);if(!g)return;g.steps=g.steps||[];
+      p.steps.forEach(function(st,i){
+        var sc=document.getElementById("pstep-"+gid+"-"+i);if(sc&&!sc.checked)return;
+        var sid=uid();g.steps.push({id:sid,name:st.name,done:false,createdAt:Date.now()});
+        (st.subs||[]).forEach(function(sub,j){
+          var bc=document.getElementById("psub-"+gid+"-"+i+"-"+j);if(bc&&!bc.checked)return;
+          state.tasks.push({id:uid(),name:sub,category:"",estimateMin:null,planned:false,daily:true,goalId:gid,stepId:sid,depth:null,cue:"",done:false,createdAt:Date.now(),sessions:[]});
+        });
+      });
+      if(p.ladder&&p.ladder.length){
+        var lc=document.getElementById("pladder-"+gid);
+        if(!lc||lc.checked){
+          if(!g.progression)g.progression={ladder:p.ladder.slice(),reps:[]};
+          else if(!(g.progression.reps&&g.progression.reps.length))g.progression.ladder=p.ladder.slice();
+        }
+      }
+      ui.proposal[gid]=null;
+    });
+  }
+  function proposalPanel(g){
+    var p=ui.proposal[g.id];
+    var body=p.steps.map(function(st,i){
+      var subs=(st.subs||[]).map(function(sub,j){
+        return '<label class="prop-sub"><input type="checkbox" id="psub-'+g.id+'-'+i+'-'+j+'" checked>'+esc(sub)+'</label>';
+      }).join("");
+      return '<div class="prop-step"><label class="prop-step-h"><input type="checkbox" id="pstep-'+g.id+'-'+i+'" checked><b>'+esc(st.name)+'</b></label>'+subs+'</div>';
+    }).join("");
+    var ladder="";
+    if(p.ladder&&p.ladder.length){
+      ladder='<div class="prop-ladder"><label class="prop-step-h"><input type="checkbox" id="pladder-'+g.id+'" checked><b>Skill ladder (Bloom’s)</b></label>'+
+        p.ladder.map(function(r,i){return '<div class="prop-rung"><span class="prop-rung-n">'+(i+1)+'</span>'+esc(r)+'</div>';}).join("")+'</div>';
+    }
+    return '<div class="proposal"><div class="prop-title">'+sparkSvg()+'Suggested plan — untick anything you don’t want, then add.</div>'+body+ladder+
+      '<div class="prop-btns"><button class="btn btn-primary btn-sm" data-action="proposal-add" data-id="'+g.id+'" type="button">Add to goal</button>'+
+      '<button class="btn btn-ghost btn-sm" data-action="proposal-discard" data-id="'+g.id+'" type="button">Discard</button></div></div>';
+  }
+  function stepActionForm(g,st){
+    return '<form class="action-add" data-action="add-action" data-id="'+st.id+'" data-gid="'+g.id+'" autocomplete="off">'+
+      '<input id="act-'+st.id+'" class="field" placeholder="Sub-step — a small action you can do" aria-label="Sub-step">'+
+      '<input id="act-cue-'+st.id+'" class="field field-cat" placeholder="When? (optional)" aria-label="When">'+
+      '<button class="btn btn-primary btn-sm" type="submit">Add</button>'+
+      '<button class="btn btn-ghost btn-sm" data-action="toggle-action" data-id="'+st.id+'" type="button">Cancel</button></form>';
+  }
+  function stepAddForm(g){
+    return '<form class="action-add" data-action="add-step" data-id="'+g.id+'" autocomplete="off">'+
+      '<input id="step-'+g.id+'" class="field" placeholder="Step — a milestone toward the goal" aria-label="Step">'+
+      '<button class="btn btn-primary btn-sm" type="submit">Add step</button>'+
+      '<button class="btn btn-ghost btn-sm" data-action="toggle-step-add" data-id="'+g.id+'" type="button">Cancel</button></form>';
+  }
+  function stepBlock(g,st){
+    var acts=stepActions(g.id,st.id);
+    return '<div class="step">'+
+      '<div class="step-head">'+
+        '<button class="step-check'+(st.done?" on":"")+'" type="button" data-action="toggle-step" data-id="'+st.id+'" data-gid="'+g.id+'" aria-pressed="'+(st.done?"true":"false")+'" title="'+(st.done?"Mark step not done":"Mark step done")+'" aria-label="Toggle step done">'+(st.done?"&#10003;":"")+'</button>'+
+        '<div class="step-name'+(st.done?" is-done":"")+'">'+esc(st.name)+'</div>'+
+        '<button class="icon-btn danger" type="button" data-action="del-step" data-id="'+st.id+'" data-gid="'+g.id+'" title="Remove step" aria-label="Remove step">&#215;</button>'+
+      '</div>'+
+      '<div class="step-actions">'+
+        (acts.length?acts.map(actionRow).join(""):'<div class="action-empty">No sub-steps yet.</div>')+
+        (ui.actionOpen[st.id]?stepActionForm(g,st):'<button class="btn btn-ghost btn-sm act-add-btn" data-action="toggle-action" data-id="'+st.id+'" type="button">+ Add sub-step</button>')+
+      '</div>'+
+    '</div>';
+  }
+  function renderSteps(g){
+    var steps=g.steps||[],ung=ungroupedActions(g.id,steps),busy=ui.loading[g.id]||ui.proposal[g.id];
+    var headLabel=steps.length?"Steps":(ung.length?"Daily actions":"Break it into steps");
+    var html='<div class="actions-head">'+headLabel+'</div>';
+    if(ui.loading[g.id])html+='<div class="ai-loading">'+sparkSvg()+'Claude is drafting a plan…</div>';
+    if(ui.proposal[g.id])html+=proposalPanel(g);
+    if(steps.length)html+=steps.map(function(st){return stepBlock(g,st);}).join("");
+    if(ung.length)html+=(steps.length?'<div class="actions-head" style="margin-top:14px">Other actions</div>':"")+ung.map(actionRow).join("");
+    if(!steps.length&&!ung.length&&!busy)html+='<div class="action-empty">Break this goal into steps'+(aiEnabled()?" with Claude":"")+' — or add one yourself.</div>';
+    html+='<div class="goal-controls">';
+    if(aiEnabled()&&!busy)html+='<button class="btn btn-primary btn-sm" data-action="ai-breakdown" data-id="'+g.id+'" type="button">'+sparkSvg()+(steps.length?"Suggest more":"Break it down with AI")+'</button>';
+    if(!ui.stepAddOpen[g.id]&&!ui.loading[g.id])html+='<button class="btn btn-ghost btn-sm" data-action="toggle-step-add" data-id="'+g.id+'" type="button">+ Add step</button>';
+    html+='</div>';
+    if(ui.stepAddOpen[g.id])html+=stepAddForm(g);
+    return html;
+  }
   function goalCard(g){
-    var st=goalStats(g.id),acts=goalActions(g.id);
+    var st=goalStats(g.id);
     var meta="";
     if(g.deadline){var days=Math.ceil((keyToDate(g.deadline).getTime()-startOfToday())/86400000);
       meta='<div class="goal-meta"><span class="chip">'+(days>=0?days+" day"+(days===1?"":"s")+" left":Math.abs(days)+" day"+(Math.abs(days)===1?"":"s")+" overdue")+'</span></div>';}
@@ -682,12 +1001,6 @@ h1,h2,h3{margin:0;font-family:var(--font-display);font-weight:600;text-wrap:bala
     else if(sk.streak>=1&&!sk.todayDone)streakLine='<span class="streak warn">'+sk.streak+'-day streak · keep it alive today</span>';
     else if(st.total>0&&!sk.todayDone&&!sk.yestDone)streakLine='<span class="streak bad">Missed yesterday — don’t miss twice</span>';
     var stat='<div class="goal-stat"><b>'+fmtDur(st.weekSec)+'</b> in the last 7 days<span class="dots">'+dots+'</span><span>'+st.activeDays+'/7 days</span>'+streakLine+'</div>';
-    var rows=acts.length?acts.map(actionRow).join(""):'<div class="action-empty">No daily actions yet — add the small thing you’ll do most days toward this goal.</div>';
-    var form=ui.actionOpen[g.id]?('<form class="action-add" data-action="add-action" data-id="'+g.id+'" autocomplete="off">'+
-      '<input id="act-'+g.id+'" class="field" placeholder="Daily action — e.g. Value one company end-to-end" aria-label="Daily action">'+
-      '<input id="act-cue-'+g.id+'" class="field field-cat" placeholder="When? (optional)" aria-label="When">'+
-      '<button class="btn btn-primary btn-sm" type="submit">Add</button></form>')
-      :'<button class="btn btn-ghost btn-sm act-add-btn" data-action="toggle-action" data-id="'+g.id+'" type="button">+ Add action</button>';
     var noteBlock;
     if(ui.noteOpen[g.id]){
       noteBlock='<div class="note-edit"><textarea id="note-'+g.id+'" class="field note-area" placeholder="What are you still figuring out? Open questions, half-ideas, reminders — messy is fine.">'+esc(g.notes||"")+'</textarea>'+
@@ -711,7 +1024,7 @@ h1,h2,h3{margin:0;font-family:var(--font-display);font-weight:600;text-wrap:bala
       '<div class="goal-top"><div style="min-width:0"><div class="goal-name">'+esc(g.name)+'</div>'+meta+'</div>'+
         '<button class="icon-btn danger" data-action="del-goal" data-id="'+g.id+'" title="Delete goal" aria-label="Delete goal">&#215;</button></div>'+
       identityBlock+stat+
-      '<div class="actions-head">Daily actions</div>'+rows+form+renderProgression(g)+noteBlock+
+      renderSteps(g)+renderProgression(g)+noteBlock+
     '</div>';
   }
   function actionRow(t){
@@ -732,6 +1045,200 @@ h1,h2,h3{margin:0;font-family:var(--font-display);font-weight:600;text-wrap:bala
         '<div class="action-sub">'+sub+' '+cueTail+'</div>'+cueEditor+
       '</div>'+
       '<div class="tr-actions">'+btn+'<button class="icon-btn danger" data-action="delete" data-id="'+t.id+'" title="Remove action" aria-label="Remove">&#215;</button></div>'+
+    '</div>';
+  }
+
+  /* ---------- projects ---------- */
+  function findProject(id){return (state.projects||[]).filter(function(x){return x.id===id;})[0];}
+  function addProject(name,repo){name=(name||"").trim();if(!name)return;ui.projectOpen=false;commit(function(){state.projects=state.projects||[];state.projects.push({id:uid(),name:name,repo:(repo||"").trim(),health:null,status:"",next:"",blockers:"",chat:[],createdAt:Date.now(),updatedAt:Date.now()});});}
+  function deleteProject(id){commit(function(){state.projects=(state.projects||[]).filter(function(p){return p.id!==id;});});}
+  function setHealth(id,val){commit(function(){var p=findProject(id);if(!p)return;p.health=(p.health===val?null:val);p.updatedAt=Date.now();});}
+  function saveProject(id,name,repo,status,next,blockers){ui.projEdit[id]=false;commit(function(){var p=findProject(id);if(!p)return;if(name&&name.trim())p.name=name.trim();p.repo=(repo||"").trim();p.status=(status||"").trim();p.next=(next||"").trim();p.blockers=(blockers||"").trim();p.updatedAt=Date.now();});}
+  function resolveSample(cb){
+    if(sampleNS!==undefined){cb(sampleNS);return;}
+    if(window.claude&&window.claude.use)Promise.resolve(window.claude.use("sample")).then(function(ns){sampleNS=ns;cb(ns);},function(){sampleNS=null;cb(null);});
+    else cb(null);
+  }
+  function healthLabel(h){return h==="on_track"?"On track":(h==="blocked"?"Blocked":(h==="shipped"?"Shipped":""));}
+  function buildProjectPrompt(p,q){
+    var L=[];
+    L.push("You are a concise engineering assistant helping the user stay on top of a coding project. Use the project's status and its latest GitHub activity to answer with specific, practical next steps. Be brief — a few sentences or a short list.");
+    L.push("Project: "+p.name);
+    if(p.repo)L.push("Repo: "+p.repo);
+    if(healthLabel(p.health))L.push("Health: "+healthLabel(p.health));
+    if(p.status)L.push("Current status: "+p.status);
+    if(p.next)L.push("Planned next step: "+p.next);
+    if(p.blockers)L.push("Blockers: "+p.blockers);
+    if(p.gh){
+      var g=p.gh;
+      if(g.prs&&g.prs.length){
+        L.push("Open pull requests ("+g.prs.length+"):");
+        g.prs.forEach(function(pr){L.push("  #"+pr.n+" "+pr.title+(pr.draft?" [draft]":"")+" — "+ciLabel(pr.ci||"none"));});
+      } else {
+        L.push("Open pull requests: none");
+      }
+      if(g.commits&&g.commits.length){
+        L.push("Recent commits (newest first):");
+        g.commits.forEach(function(c){L.push("  "+c.sha+" "+c.msg+(c.date?(" ("+relDate(c.date)+")"):""));});
+      }
+      L.push("(GitHub data last synced "+ago(g.syncedAt)+".)");
+    } else {
+      L.push("GitHub not synced yet in the app — base the answer on the status above.");
+    }
+    var hist=(p.chat||[]).slice(-7,-1);
+    if(hist.length){L.push("Recent discussion:");hist.forEach(function(m){L.push((m.r==="u"?"User: ":"You (Claude): ")+m.t);});}
+    L.push("User's question: "+q);
+    return L.join("\n");
+  }
+  function askProject(pid,q){
+    q=(q||"").trim();if(!q)return;
+    var p=findProject(pid);if(!p)return;
+    commit(function(){var pp=findProject(pid);if(!pp)return;pp.chat=pp.chat||[];pp.chat.push({r:"u",t:q,at:Date.now()});if(pp.chat.length>20)pp.chat=pp.chat.slice(-20);});
+    ui.projLoading[pid]=true;render();
+    resolveSample(function(ns){
+      if(!ns){ui.projLoading[pid]=false;sampleNS=null;render();toast("AI isn’t available here");return;}
+      ns(buildProjectPrompt(findProject(pid)||p,q),{modelTier:"default",cache:false}).then(function(res){
+        ui.projLoading[pid]=false;
+        commit(function(){var pp=findProject(pid);if(!pp)return;pp.chat=pp.chat||[];pp.chat.push({r:"a",t:(res&&res.text)||"(no answer)",at:Date.now()});if(pp.chat.length>20)pp.chat=pp.chat.slice(-20);});
+      },function(err){
+        ui.projLoading[pid]=false;render();var c=err&&err.code;
+        if(c==="not_granted")toast("AI access was declined");
+        else if(c==="rate_limited")toast("Rate limited — try again shortly");
+        else if(c!=="cancelled")toast("Couldn’t reach Claude — try again");
+      });
+    });
+  }
+  function repoUrl(r){r=(r||"").trim();return /^https?:\/\//.test(r)?r:"https://github.com/"+r;}
+  function ago(ts){var s=Math.floor((Date.now()-ts)/1000);if(s<60)return "just now";var m=Math.floor(s/60);if(m<60)return m+"m ago";var h=Math.floor(m/60);if(h<24)return h+"h ago";return Math.floor(h/24)+"d ago";}
+  function relDate(iso){var t=Date.parse(iso);return isNaN(t)?"":ago(t);}
+  /* ---------- live GitHub status ---------- */
+  function ghMaybe(){return !!(window.claude&&window.claude.use);}
+  function ghNotConnected(){return !!(ghServers&&ghServers.indexOf(GH_SERVER)<0);}
+  function parseRepo(r){r=(r||"").trim().replace(/^https?:\/\/github\.com\//i,"").replace(/\.git$/,"").replace(/\/+$/,"");var m=r.split("/").filter(Boolean);return (m.length>=2)?{owner:m[0],repo:m[1]}:null;}
+  function asArray(payload){if(Array.isArray(payload))return payload;if(payload&&Array.isArray(payload.items))return payload.items;if(typeof payload==="string"){try{var j=JSON.parse(payload);if(Array.isArray(j))return j;}catch(e){}}return [];}
+  function firstLine(s){return String(s||"").split("\n")[0].slice(0,120);}
+  function normPR(x){return {n:x&&x.number,title:(x&&x.title)||"(untitled)",draft:!!(x&&x.draft),url:(x&&x.html_url)||"",user:(x&&x.user&&x.user.login)||"",ref:(x&&x.head&&x.head.ref)||""};}
+  function normCommit(x){return {sha:((x&&x.sha)||"").slice(0,7),msg:firstLine(x&&x.commit&&x.commit.message),date:(x&&x.commit&&x.commit.author&&x.commit.author.date)||"",url:(x&&x.html_url)||""};}
+  function ghErrMsg(code){
+    if(code==="needs_reauth")return "GitHub needs reconnecting — claude.ai Settings → Connectors.";
+    if(code==="server_not_connected"||code==="unavailable")return "Connect ‘GitHub Integration’ in claude.ai Settings → Connectors, then sync.";
+    if(code==="selection_required")return "Pick a GitHub connector when Claude asks, then sync again.";
+    if(code==="server_unavailable"||code==="rate_limited")return "GitHub is unreachable right now — tap sync to retry.";
+    if(code==="tool_error")return "GitHub rejected that — check the repo is ‘owner/name’ and you can access it.";
+    if(code==="not_in_manifest"||code==="blocked_by_policy"||code==="approval_required")return "This GitHub data isn’t permitted here.";
+    return "Couldn’t reach GitHub — tap sync to retry.";
+  }
+  function getCheckRuns(payload){if(payload&&Array.isArray(payload.check_runs))return payload.check_runs;if(Array.isArray(payload))return payload;if(typeof payload==="string"){try{return getCheckRuns(JSON.parse(payload));}catch(e){}}return [];}
+  function aggregateCi(runs){if(!runs||!runs.length)return "none";var pending=false,failed=false;runs.forEach(function(r){if(r&&r.status&&r.status!=="completed"){pending=true;return;}var c=r&&r.conclusion;if(c==="failure"||c==="cancelled"||c==="timed_out"||c==="action_required")failed=true;});return failed?"failure":(pending?"pending":"success");}
+  function ciGlyph(ci){return ci==="success"?"✓":(ci==="failure"?"✕":(ci==="pending"?"•":"–"));}
+  function ciLabel(ci){return ci==="success"?"CI passing":(ci==="failure"?"CI failing":(ci==="pending"?"CI running":"No CI checks"));}
+  function syncProject(pid){
+    var p=findProject(pid);if(!p)return;var repo=parseRepo(p.repo);
+    if(!repo){toast("Add a repo like owner/name first");return;}
+    if(!mcpNS){ui.ghErr[pid]="unavailable";render();return;}
+    ui.ghLoading[pid]=true;ui.ghErr[pid]=null;render();
+    var flds=["number","title","state","draft","html_url","user","updated_at","head"];
+    Promise.all([
+      mcpNS.callTool(GH_SERVER,"list_pull_requests",{owner:repo.owner,repo:repo.repo,state:"open",perPage:10,fields:flds}),
+      mcpNS.callTool(GH_SERVER,"list_commits",{owner:repo.owner,repo:repo.repo,perPage:5,fields:["sha","commit","html_url","author"]})
+    ]).then(function(res){
+      var prs=asArray(res[0]&&res[0].payload).slice(0,10).map(normPR);
+      var commits=asArray(res[1]&&res[1].payload).slice(0,5).map(normCommit);
+      return Promise.all(prs.slice(0,8).map(function(q){
+        return mcpNS.callTool(GH_SERVER,"pull_request_read",{owner:repo.owner,repo:repo.repo,method:"get_check_runs",pullNumber:q.n}).then(
+          function(r){q.ci=aggregateCi(getCheckRuns(r&&r.payload));},
+          function(){q.ci="none";}
+        );
+      })).then(function(){
+        ui.ghLoading[pid]=false;
+        commit(function(){var pp=findProject(pid);if(!pp)return;pp.gh={prs:prs,commits:commits,syncedAt:Date.now()};});
+      });
+    }).catch(function(err){
+      ui.ghLoading[pid]=false;ui.ghErr[pid]=(err&&err.code)||"upstream_error";render();
+    });
+  }
+  function ghData(p){
+    var g=p.gh,h="";
+    h+='<div class="gh-line"><span class="gh-k">Open PRs</span><span class="gh-v">'+g.prs.length+'</span></div>';
+    if(g.prs.length)h+='<div class="gh-list">'+g.prs.map(function(pr){
+      var ci=pr.ci?'<span class="gh-ci gh-ci-'+pr.ci+'" title="'+esc(ciLabel(pr.ci))+'" aria-label="'+esc(ciLabel(pr.ci))+'">'+ciGlyph(pr.ci)+'</span>':"";
+      return '<a class="gh-item" href="'+esc(pr.url)+'" target="_blank" rel="noopener"><span class="gh-badge'+(pr.draft?" draft":"")+'">#'+esc(String(pr.n))+'</span><span class="gh-nm">'+esc(pr.title)+(pr.draft?" · draft":"")+'</span>'+ci+'</a>';
+    }).join("")+'</div>';
+    h+='<div class="gh-line" style="margin-top:9px"><span class="gh-k">Recent commits</span></div>';
+    h+='<div class="gh-list">'+g.commits.map(function(c){
+      return '<a class="gh-item" href="'+esc(c.url)+'" target="_blank" rel="noopener"><span class="gh-badge mono">'+esc(c.sha)+'</span><span class="gh-nm">'+esc(c.msg)+'</span><span class="gh-date">'+esc(relDate(c.date))+'</span></a>';
+    }).join("")+'</div>';
+    h+='<div class="proj-upd">Synced '+esc(ago(g.syncedAt))+'</div>';
+    return h;
+  }
+  function projGh(p){
+    if(!p.repo||!ghMaybe())return "";
+    var pr=parseRepo(p.repo);if(!pr)return "";
+    var inner;
+    if(ui.ghLoading[p.id])inner='<div class="ai-loading">'+ghSvg()+'Syncing…</div>';
+    else if(ui.ghErr[p.id])inner='<div class="gh-err">'+esc(ghErrMsg(ui.ghErr[p.id]))+'</div>'+(p.gh?ghData(p):"");
+    else if(p.gh)inner=ghData(p);
+    else if(ghNotConnected())inner='<div class="gh-err">'+esc(ghErrMsg("server_not_connected"))+'</div>';
+    else inner='<div class="action-empty">Not synced yet.</div>';
+    var showBtn=!ui.ghLoading[p.id]&&!ghNotConnected();
+    var btn=showBtn?'<button class="btn btn-ghost btn-sm" data-action="gh-sync" data-id="'+p.id+'" type="button" style="margin-top:10px">'+ghSvg()+(p.gh?"Refresh from GitHub":"Sync from GitHub")+'</button>':"";
+    return '<div class="proj-gh"><div class="proj-chat-h" style="margin-top:2px">'+ghSvg()+'GitHub · '+esc(pr.owner+"/"+pr.repo)+'</div>'+inner+btn+'</div>';
+  }
+
+  function renderProjects(){
+    var projs=state.projects||[];
+    var addForm=ui.projectOpen?('<form class="goal-form" data-action="add-project" autocomplete="off">'+
+      '<input id="pr-name" class="field" placeholder="Project name — e.g. Time tracker" aria-label="Project name">'+
+      '<input id="pr-repo" class="field" placeholder="Repo (optional) — owner/name" aria-label="Repo">'+
+      '<button class="btn btn-primary" type="submit">Add project</button></form>'):"";
+    var body=projs.length?('<div class="goal-list">'+projs.map(projectCard).join("")+'</div>')
+      :(ui.projectOpen?"":'<div class="card empty">No projects yet. Add one to see its status at a glance and talk it through.</div>');
+    return '<section class="sec">'+
+      '<div class="sec-head"><h2>Projects</h2><button class="btn btn-ghost btn-sm" data-action="toggle-project" type="button">'+(ui.projectOpen?"Close":"+ New")+'</button></div>'+
+      addForm+body+
+    '</section>';
+  }
+  function healthBtn(p,val,label){var on=p.health===val;var cls=val==="blocked"?"on-bad":(val==="shipped"?"on-good":"on");return '<button class="dbtn'+(on?" "+cls:"")+'" type="button" data-action="set-health" data-id="'+p.id+'" data-val="'+val+'">'+label+'</button>';}
+  function projRow(label,text){if(!text)return "";return '<div class="proj-row"><span class="proj-k">'+label+'</span><span class="proj-v">'+esc(text)+'</span></div>';}
+  function projView(p){
+    var rows=projRow("Status",p.status)+projRow("Next",p.next)+projRow("Blockers",p.blockers);
+    if(!rows)rows='<div class="action-empty">No status yet — tap Edit to note where things stand.</div>';
+    return '<div class="proj-body">'+rows+'</div><button class="btn btn-ghost btn-sm" data-action="edit-project" data-id="'+p.id+'" type="button">Edit status</button>';
+  }
+  function projEditForm(p){
+    return '<form class="proj-edit" data-action="save-project" data-id="'+p.id+'" autocomplete="off">'+
+      '<input id="pr-ename-'+p.id+'" class="field" value="'+esc(p.name||"")+'" placeholder="Project name" aria-label="Project name">'+
+      '<input id="pr-erepo-'+p.id+'" class="field" value="'+esc(p.repo||"")+'" placeholder="Repo (optional) — owner/name" aria-label="Repo">'+
+      '<label class="rep-lbl">Status — where things stand</label>'+
+      '<textarea id="pr-status-'+p.id+'" class="field note-area" placeholder="Where things stand right now…">'+esc(p.status||"")+'</textarea>'+
+      '<label class="rep-lbl">Next step</label>'+
+      '<input id="pr-next-'+p.id+'" class="field" value="'+esc(p.next||"")+'" placeholder="The next concrete thing">'+
+      '<label class="rep-lbl">Blockers</label>'+
+      '<input id="pr-block-'+p.id+'" class="field" value="'+esc(p.blockers||"")+'" placeholder="Anything stuck? (optional)">'+
+      '<div class="note-btns"><button class="btn btn-primary btn-sm" type="submit">Save</button>'+
+      '<button class="btn btn-ghost btn-sm" data-action="cancel-project" data-id="'+p.id+'" type="button">Cancel</button></div></form>';
+  }
+  function projChat(p){
+    var log=(p.chat||[]).map(function(m){return '<div class="pc-msg pc-'+(m.r==="u"?"u":"a")+'">'+esc(m.t)+'</div>';}).join("");
+    var loading=ui.projLoading[p.id]?'<div class="ai-loading">'+sparkSvg()+'Claude is thinking…</div>':"";
+    return '<div class="proj-chat">'+
+      '<div class="proj-chat-h">'+sparkSvg()+'Ask Claude about this project</div>'+
+      (log?'<div class="pc-log">'+log+'</div>':"")+loading+
+      '<form class="pc-form" data-action="ask-project" data-id="'+p.id+'" autocomplete="off">'+
+        '<input id="pc-in-'+p.id+'" class="field" placeholder="e.g. What should I focus on next?" aria-label="Ask about this project">'+
+        '<button class="btn btn-primary btn-sm" type="submit">Ask</button></form>'+
+    '</div>';
+  }
+  function projectCard(p){
+    var repoLine=p.repo?'<a class="proj-repo" href="'+esc(repoUrl(p.repo))+'" target="_blank" rel="noopener">'+esc(p.repo)+'</a>':"";
+    var health='<div class="depth-tog" style="margin:10px 0 12px">'+healthBtn(p,"on_track","On track")+healthBtn(p,"blocked","Blocked")+healthBtn(p,"shipped","Shipped")+'</div>';
+    var bodyBlock=ui.projEdit[p.id]?projEditForm(p):projView(p);
+    var meta=p.updatedAt?'<div class="proj-upd">Updated '+esc(ago(p.updatedAt))+'</div>':"";
+    var chat=aiEnabled()?projChat(p):"";
+    return '<div class="card goal-card">'+
+      '<div class="goal-top"><div style="min-width:0"><div class="goal-name">'+esc(p.name)+'</div>'+repoLine+'</div>'+
+        '<button class="icon-btn danger" data-action="del-project" data-id="'+p.id+'" title="Delete project" aria-label="Delete project">&#215;</button></div>'+
+      health+bodyBlock+meta+projGh(p)+chat+
     '</div>';
   }
 
@@ -757,7 +1264,7 @@ h1,h2,h3{margin:0;font-family:var(--font-display);font-weight:600;text-wrap:bala
         '<div class="tr-name">'+esc(t.name)+(running?'<span class="mini-run">running</span>':"")+'</div>'+
         '<div class="tr-sub">'+esc(sub)+'</div>'+
       '</div>'+
-      '<div class="tr-actions">'+btn+
+      '<div class="tr-actions">'+btn+pinBtn(t)+
         '<button class="icon-btn" data-action="done" data-id="'+t.id+'" title="Mark done" aria-label="Mark done">&#10003;</button>'+
         '<button class="icon-btn danger" data-action="delete" data-id="'+t.id+'" title="Delete" aria-label="Delete">&#215;</button>'+
       '</div>'+
@@ -800,7 +1307,7 @@ h1,h2,h3{margin:0;font-family:var(--font-display);font-weight:600;text-wrap:bala
         '<div class="tr-name">'+esc(t.name)+chip(t.category)+(running?'<span class="mini-run">running</span>':"")+'</div>'+
         '<div class="tr-sub">'+esc(sub)+'</div>'+bar+
       '</div>'+
-      '<div class="tr-actions">'+btn+
+      '<div class="tr-actions">'+btn+pinBtn(t)+
         '<button class="icon-btn" data-action="done" data-id="'+t.id+'" title="'+(t.done?"Reopen":"Mark done")+'" aria-label="Mark done">'+(t.done?"&#8635;":"&#10003;")+'</button>'+
         '<button class="icon-btn danger" data-action="delete" data-id="'+t.id+'" title="Delete" aria-label="Delete">&#215;</button>'+
       '</div>'+
@@ -906,6 +1413,8 @@ h1,h2,h3{margin:0;font-family:var(--font-display);font-weight:600;text-wrap:bala
   /* ---------- inline icons ---------- */
   function clockSvg(){return '<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3.5 2"></path></svg>';}
   function playSvg(){return '<svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M7 5.5v13a1 1 0 0 0 1.53.85l10-6.5a1 1 0 0 0 0-1.7l-10-6.5A1 1 0 0 0 7 5.5Z"></path></svg>';}
+  function sparkSvg(){return '<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2l1.7 5.6L19 9l-5.3 1.4L12 16l-1.7-5.6L5 9l5.3-1.4L12 2z"></path></svg>';}
+  function ghSvg(){return '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="6" cy="6" r="2.4"></circle><circle cx="6" cy="18" r="2.4"></circle><circle cx="18" cy="8" r="2.4"></circle><path d="M6 8.4v7.2M18 10.4c0 3-3 3.6-6 3.6"></path></svg>';}
   function stopSvg(){return '<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="6" width="12" height="12" rx="2"></rect></svg>';}
 })();
 </script>
