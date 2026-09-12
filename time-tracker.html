@@ -221,6 +221,9 @@ h1,h2,h3{margin:0;font-family:var(--font-display);font-weight:600;text-wrap:bala
 .prop-step{margin-bottom:11px}
 .prop-step-h{display:flex;align-items:flex-start;gap:9px;font-size:14.5px;line-height:1.35}
 .prop-sub{display:flex;align-items:flex-start;gap:9px;font-size:13.5px;color:var(--muted);margin:5px 0 0 22px;line-height:1.35}
+.prop-ladder{margin-top:4px;border-top:1px solid var(--line);padding-top:11px}
+.prop-rung{display:flex;gap:9px;font-size:13px;color:var(--muted);margin:5px 0 0 22px;line-height:1.35}
+.prop-rung-n{color:var(--accent);font-weight:600;font-family:var(--font-mono);flex:none}
 .proposal input[type=checkbox]{width:16px;height:16px;margin:2px 0 0;accent-color:var(--accent);flex:none}
 .prop-btns{display:flex;gap:8px;margin-top:12px}
 .goal-form{display:flex;flex-wrap:wrap;gap:8px;padding:14px;margin-bottom:12px;background:var(--surface-2);
@@ -806,28 +809,30 @@ h1,h2,h3{margin:0;font-family:var(--font-display);font-weight:600;text-wrap:bala
     if(g.deadline)lines.push("Target date: "+g.deadline);
     if(g.notes)lines.push("Their own notes: "+String(g.notes).replace(/\s+/g," ").slice(0,600));
     lines.push("Produce 3-5 milestone STEPS in a sensible order. For each step, give 2-4 small, concrete SUB-STEPS the person can actually do on a normal day. Start each sub-step with a verb. Keep every name under about 8 words. No numbering.");
-    lines.push('Return ONLY JSON of the form {"steps":[{"name":"step name","subs":["sub-step","sub-step"]}]}.');
+    lines.push("Also produce a 6-rung SKILL LADDER for this goal — one rung per Bloom's level in this exact order: Remember, Understand, Apply, Analyze, Evaluate, Create. Each rung is a short, concrete capability specific to this goal (not the generic level name), rising in difficulty. Under about 8 words each.");
+    lines.push('Return ONLY JSON of the form {"steps":[{"name":"step name","subs":["sub-step","sub-step"]}],"ladder":["Remember rung","Understand rung","Apply rung","Analyze rung","Evaluate rung","Create rung"]}.');
     return lines.join("\n");
   }
   function normalizeProposal(res){
-    var steps=(res&&res.steps)||[];if(!Array.isArray(steps))return [];
-    var out=[];
-    steps.slice(0,6).forEach(function(s){
+    var stepsIn=(res&&res.steps)||[],steps=[];
+    if(Array.isArray(stepsIn))stepsIn.slice(0,6).forEach(function(s){
       if(!s)return;var name=String(s.name||s.step||"").trim();if(!name)return;
       var subsIn=s.subs||s.substeps||s.actions||[],subs=[];
       if(Array.isArray(subsIn))subsIn.slice(0,6).forEach(function(x){var v=String((x&&x.name)||x||"").trim();if(v)subs.push(v.slice(0,120));});
-      out.push({name:name.slice(0,120),subs:subs});
+      steps.push({name:name.slice(0,120),subs:subs});
     });
-    return out;
+    var ladderIn=(res&&res.ladder)||null,ladder=null;
+    if(Array.isArray(ladderIn)){var l=[];ladderIn.slice(0,6).forEach(function(x){var v=String((x&&x.name)||x||"").trim();if(v)l.push(v.slice(0,80));});if(l.length>=3)ladder=l;}
+    return {steps:steps,ladder:ladder};
   }
   function proposeBreakdown(gid){
     var g=findGoal(gid);if(!g)return;
     var go=function(ns){
       if(!ns){ui.loading[gid]=false;sampleNS=null;render();toast("AI isn’t available here");return;}
       ns.json(buildBreakdownPrompt(g),{modelTier:"default",cache:false}).then(function(res){
-        ui.loading[gid]=false;var steps=normalizeProposal(res);
-        if(!steps.length){render();toast("Couldn’t draft a plan — try again");return;}
-        ui.proposal[gid]={steps:steps};render();
+        ui.loading[gid]=false;var norm=normalizeProposal(res);
+        if(!norm.steps.length){render();toast("Couldn’t draft a plan — try again");return;}
+        ui.proposal[gid]={steps:norm.steps,ladder:norm.ladder};render();
       },function(err){
         ui.loading[gid]=false;render();var c=err&&err.code;
         if(c==="not_granted")toast("AI access was declined");
@@ -853,6 +858,13 @@ h1,h2,h3{margin:0;font-family:var(--font-display);font-weight:600;text-wrap:bala
           state.tasks.push({id:uid(),name:sub,category:"",estimateMin:null,planned:false,daily:true,goalId:gid,stepId:sid,depth:null,cue:"",done:false,createdAt:Date.now(),sessions:[]});
         });
       });
+      if(p.ladder&&p.ladder.length){
+        var lc=document.getElementById("pladder-"+gid);
+        if(!lc||lc.checked){
+          if(!g.progression)g.progression={ladder:p.ladder.slice(),reps:[]};
+          else if(!(g.progression.reps&&g.progression.reps.length))g.progression.ladder=p.ladder.slice();
+        }
+      }
       ui.proposal[gid]=null;
     });
   }
@@ -864,7 +876,12 @@ h1,h2,h3{margin:0;font-family:var(--font-display);font-weight:600;text-wrap:bala
       }).join("");
       return '<div class="prop-step"><label class="prop-step-h"><input type="checkbox" id="pstep-'+g.id+'-'+i+'" checked><b>'+esc(st.name)+'</b></label>'+subs+'</div>';
     }).join("");
-    return '<div class="proposal"><div class="prop-title">'+sparkSvg()+'Suggested plan — untick anything you don’t want, then add.</div>'+body+
+    var ladder="";
+    if(p.ladder&&p.ladder.length){
+      ladder='<div class="prop-ladder"><label class="prop-step-h"><input type="checkbox" id="pladder-'+g.id+'" checked><b>Skill ladder (Bloom’s)</b></label>'+
+        p.ladder.map(function(r,i){return '<div class="prop-rung"><span class="prop-rung-n">'+(i+1)+'</span>'+esc(r)+'</div>';}).join("")+'</div>';
+    }
+    return '<div class="proposal"><div class="prop-title">'+sparkSvg()+'Suggested plan — untick anything you don’t want, then add.</div>'+body+ladder+
       '<div class="prop-btns"><button class="btn btn-primary btn-sm" data-action="proposal-add" data-id="'+g.id+'" type="button">Add to goal</button>'+
       '<button class="btn btn-ghost btn-sm" data-action="proposal-discard" data-id="'+g.id+'" type="button">Discard</button></div></div>';
   }
