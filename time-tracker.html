@@ -1062,13 +1062,29 @@ h1,h2,h3{margin:0;font-family:var(--font-display);font-weight:600;text-wrap:bala
   function healthLabel(h){return h==="on_track"?"On track":(h==="blocked"?"Blocked":(h==="shipped"?"Shipped":""));}
   function buildProjectPrompt(p,q){
     var L=[];
-    L.push("You are a concise engineering assistant helping the user stay on top of a coding project. Answer their question with specific, practical next steps. Be brief — a few sentences or a short list.");
+    L.push("You are a concise engineering assistant helping the user stay on top of a coding project. Use the project's status and its latest GitHub activity to answer with specific, practical next steps. Be brief — a few sentences or a short list.");
     L.push("Project: "+p.name);
     if(p.repo)L.push("Repo: "+p.repo);
     if(healthLabel(p.health))L.push("Health: "+healthLabel(p.health));
     if(p.status)L.push("Current status: "+p.status);
     if(p.next)L.push("Planned next step: "+p.next);
     if(p.blockers)L.push("Blockers: "+p.blockers);
+    if(p.gh){
+      var g=p.gh;
+      if(g.prs&&g.prs.length){
+        L.push("Open pull requests ("+g.prs.length+"):");
+        g.prs.forEach(function(pr){L.push("  #"+pr.n+" "+pr.title+(pr.draft?" [draft]":"")+" — "+ciLabel(pr.ci||"none"));});
+      } else {
+        L.push("Open pull requests: none");
+      }
+      if(g.commits&&g.commits.length){
+        L.push("Recent commits (newest first):");
+        g.commits.forEach(function(c){L.push("  "+c.sha+" "+c.msg+(c.date?(" ("+relDate(c.date)+")"):""));});
+      }
+      L.push("(GitHub data last synced "+ago(g.syncedAt)+".)");
+    } else {
+      L.push("GitHub not synced yet in the app — base the answer on the status above.");
+    }
     var hist=(p.chat||[]).slice(-7,-1);
     if(hist.length){L.push("Recent discussion:");hist.forEach(function(m){L.push((m.r==="u"?"User: ":"You (Claude): ")+m.t);});}
     L.push("User's question: "+q);
