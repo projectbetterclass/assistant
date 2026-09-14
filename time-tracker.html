@@ -340,6 +340,30 @@ h1,h2,h3{margin:0;font-family:var(--font-display);font-weight:600;text-wrap:bala
 .rep-lbl{font-size:12px;color:var(--muted);font-weight:500;margin-bottom:-3px}
 .rep-btns{display:flex;gap:8px;margin-top:3px}
 
+/* valuation curriculum */
+.curr{margin-top:14px;padding:13px 14px;background:var(--surface-2);border:1px solid var(--line);border-radius:12px}
+.curr-head{font-size:11px;text-transform:uppercase;letter-spacing:.07em;color:var(--faint);font-weight:600;margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.curr-count{margin-left:auto;font-family:var(--font-mono);font-size:11.5px;color:var(--faint);letter-spacing:0;text-transform:none;font-variant-numeric:tabular-nums}
+.curr-card{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:12px 13px}
+.curr-meta{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:6px}
+.curr-badge{font-size:11px;font-weight:600;padding:2px 10px;border-radius:20px;background:var(--accent-soft);color:var(--accent)}
+.curr-pos{font-size:12px;color:var(--muted)}
+.curr-time{margin-left:auto;font-family:var(--font-mono);font-size:11.5px;color:var(--faint);font-variant-numeric:tabular-nums}
+.curr-stage{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--faint);font-weight:600}
+.curr-concept{font-family:var(--font-display);font-weight:600;font-size:15.5px;margin:2px 0 5px;line-height:1.3}
+.curr-task{font-size:13.5px;color:var(--ink);line-height:1.55}
+.curr-tags{display:flex;flex-wrap:wrap;gap:5px;margin-top:9px}
+.curr-tag{font-family:var(--font-mono);font-size:11px;color:var(--muted);background:var(--surface-2);border:1px solid var(--line);border-radius:6px;padding:1px 6px}
+.curr-refs-btn{display:block;margin-top:9px;background:none;border:none;color:var(--accent);font-size:12.5px;font-weight:500;cursor:pointer;padding:0}
+.curr-refs{margin-top:8px;padding:9px 11px;background:var(--surface-2);border:1px solid var(--line);border-radius:8px;font-size:12.5px;color:var(--muted);line-height:1.5}
+.curr-refs ul{margin:3px 0 0;padding-left:18px}
+.curr-refs b{color:var(--ink)}
+.curr-ex{margin-top:6px}
+.curr-note{margin-top:7px;font-size:11.5px;color:var(--faint);font-style:italic}
+.curr-btns{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.curr-next{font-size:12px;color:var(--faint);margin-top:9px;padding-left:2px}
+.curr-done-all{font-size:13.5px;color:var(--good);font-weight:500;line-height:1.5}
+
 /* task rows */
 .task-list{display:flex;flex-direction:column;gap:10px}
 .task-row{display:flex;gap:14px;align-items:center;padding:15px 16px}
@@ -423,6 +447,44 @@ h1,h2,h3{margin:0;font-family:var(--font-display);font-weight:600;text-wrap:bala
   var DEFAULT_CATS=["Work","Focus","Meetings","Admin","Breaks","Personal","Errands"];
   var DEEP_TARGET_MIN=120;
   var BLOOM=[{k:"Remember",d:"recall the facts & steps"},{k:"Understand",d:"explain why it works"},{k:"Apply",d:"use it on a real case"},{k:"Analyze",d:"break it down & compare"},{k:"Evaluate",d:"judge it & defend your view"},{k:"Create",d:"build something original"}];
+  var VAL_RUNGS=["Remember","Understand","Apply","Analyze","Evaluate","Create"];
+  /* Damodaran laddered curriculum — content lives in code; only per-lesson done-flags are ever saved into app-state (goal.curr.done). */
+  var VAL_CURRICULUM={goal_id:"goal_invest",title:"Damodaran valuation — laddered curriculum",lessons:[
+    {id:"L01",order:1,rung:"Remember",stage_name:"Routing",concept:"Route by company type before valuing",task:"From memory, name the four routes (mature non-financial, financial, young/high-growth, declining) and one thing each changes about the model. Check against the routing card.",estimateMin:15,doctrine_ref:["D-43","D-44","D-29"],read:["doctrine/stages/stage-00-routing.md"],example:null},
+    {id:"L02",order:2,rung:"Remember",stage_name:"Story",concept:"Narrative before numbers",task:"Write, from memory, his one-sentence rule for what comes before the spreadsheet. Then read D-01 and correct yourself.",estimateMin:15,doctrine_ref:["D-01"],read:["doctrine/D-01-story.md"],example:null},
+    {id:"L03",order:3,rung:"Remember",stage_name:"Currency & riskfree rate",concept:"Currency choice, riskfree rate, non-default-free governments",task:"Recall the rule for each of D-02/03/04. What makes a rate 'riskfree', and what do you do when the government isn't default-free?",estimateMin:20,doctrine_ref:["D-02","D-03","D-04"],read:["doctrine/stages/stage-02-currency-and-riskfree-rate.md"],example:null},
+    {id:"L04",order:4,rung:"Remember",stage_name:"Equity risk premium",concept:"Mature ERP, implied vs historical, country risk, company exposure",task:"Recall each decision. Where does a company's risk exposure come from — where it's incorporated, or where its revenue is?",estimateMin:20,doctrine_ref:["D-05","D-06","D-07","D-08"],read:["doctrine/stages/stage-03-equity-risk-premium.md"],example:null},
+    {id:"L05",order:5,rung:"Remember",stage_name:"Relative risk",concept:"Bottom-up beta, business mix, levering, when regressions are OK",task:"Recall how he builds a bottom-up beta and why he distrusts regression betas. When is a regression beta defensible?",estimateMin:20,doctrine_ref:["D-09","D-10","D-11","D-12"],read:["doctrine/stages/stage-04-relative-risk.md"],example:null},
+    {id:"L06",order:6,rung:"Remember",stage_name:"Cost of debt",concept:"Synthetic rating, country default burden, leases as debt",task:"Recall how he gets a cost of debt without a bond rating, and why leases count as debt.",estimateMin:15,doctrine_ref:["D-13","D-14","D-15"],read:["doctrine/stages/stage-05-cost-of-debt.md"],example:null},
+    {id:"L07",order:7,rung:"Remember",stage_name:"Cost of capital",concept:"Market-value weights, one company-wide number",task:"Recall: book or market weights? One cost of capital per company or per project? Why.",estimateMin:15,doctrine_ref:["D-16","D-17","D-18"],read:["doctrine/stages/stage-06-cost-of-capital.md"],example:null},
+    {id:"L08",order:8,rung:"Remember",stage_name:"Base-year earnings",concept:"Normalizing, R&D as capex, one-off charges, negative earnings",task:"Recall each cleanup he does to reported earnings. Why is R&D reclassified as capital, not an expense?",estimateMin:20,doctrine_ref:["D-19","D-20","D-21","D-22"],read:["doctrine/stages/stage-07-base-year-earnings.md"],example:null},
+    {id:"L09",order:9,rung:"Remember",stage_name:"Tax rate",concept:"Effective vs marginal, convergence, NOLs",task:"Recall: which tax rate now, which at the end, and why they converge. What do NOLs do to near-term taxes?",estimateMin:15,doctrine_ref:["D-23","D-24","D-25"],read:["doctrine/stages/stage-08-tax-rate.md"],example:null},
+    {id:"L10",order:10,rung:"Remember",stage_name:"Reinvestment",concept:"Net capex, working capital, acquisitions, sales-to-capital",task:"Recall the four reinvestment components. When do you switch to sales-to-capital instead of capex/depreciation?",estimateMin:20,doctrine_ref:["D-26","D-27","D-28","D-29"],read:["doctrine/stages/stage-09-reinvestment.md"],example:null},
+    {id:"L11",order:11,rung:"Remember",stage_name:"Growth",concept:"Fundamental growth, analyst forecasts, growth fade",task:"Recall the fundamental-growth equation and why analyst forecasts are not inputs.",estimateMin:15,doctrine_ref:["D-30","D-31","D-32"],read:["doctrine/stages/stage-10-growth.md"],example:null},
+    {id:"L12",order:12,rung:"Remember",stage_name:"Terminal value",concept:"Growth cap, ROIC convergence, terminal share",task:"Recall the two caps on terminal value (growth <= riskfree; ROIC -> cost of capital) and why terminal value dominates.",estimateMin:15,doctrine_ref:["D-33","D-34","D-35"],read:["doctrine/stages/stage-11-terminal-value.md"],example:null},
+    {id:"L13",order:13,rung:"Remember",stage_name:"Loose ends",concept:"Cash, cross-holdings, all debt, options, control",task:"Recall how each of cash, cross-holdings, debt, employee options and control affects value per share.",estimateMin:20,doctrine_ref:["D-36","D-37","D-38","D-39","D-40"],read:["doctrine/stages/stage-12-loose-ends.md"],example:null},
+    {id:"L14",order:14,rung:"Remember",stage_name:"Value per share",concept:"Simulation over point estimate; value vs price",task:"Recall why he prefers a distribution to a single number, and the difference between value and price.",estimateMin:15,doctrine_ref:["D-41","D-42"],read:["doctrine/stages/stage-13-value-per-share.md"],example:null},
+    {id:"L15",order:15,rung:"Understand",stage_name:"Equity risk premium",concept:"Why implied ERP beats historical",task:"Explain in your own words why he uses an implied ERP. What's wrong with a historical average? Say it out loud before checking.",estimateMin:25,doctrine_ref:["D-06"],read:["doctrine/D-06-implied-vs-historical.md"],example:null},
+    {id:"L16",order:16,rung:"Understand",stage_name:"Relative risk",concept:"Why bottom-up beta, not regression",task:"Explain why a bottom-up beta is more reliable than a stock's own regression beta, and the one case where the regression is defensible.",estimateMin:25,doctrine_ref:["D-09","D-12"],read:["doctrine/D-09-bottom-up-beta.md","doctrine/D-12-regression-betas.md"],example:null},
+    {id:"L17",order:17,rung:"Understand",stage_name:"Consistency",concept:"Paired parameters that self-cancel",task:"Explain the pattern: currency, default spread, and riskfree-vs-terminal-growth each appear on both sides so choosing inconsistently is the only real error. Which one does NOT cancel, and why is it surfaced?",estimateMin:30,doctrine_ref:["D-02","D-04","D-07","D-33"],read:["doctrine/README.md (the 'paired parameters that self-cancel' table)"],example:null},
+    {id:"L18",order:18,rung:"Understand",stage_name:"Where valuations fail",concept:"Effort vs failure: shift from discount rates to cash flows",task:"Explain his claim that ~80% of effort goes on discount rates but valuations fail on cash flows/growth. What should that change about where YOU spend time?",estimateMin:25,doctrine_ref:["D-19","D-35"],read:["doctrine/README.md ('where the effort belongs')"],example:null},
+    {id:"L19",order:19,rung:"Understand",stage_name:"Reinvestment",concept:"Sales-to-capital for growth companies",task:"Explain why revenue-driven reinvestment (sales-to-capital) fits young/high-growth firms better than capex-depreciation. Find a real sector figure in his dataset.",estimateMin:30,doctrine_ref:["D-29"],read:["doctrine/D-29-sales-to-capital.md"],example:"a sector dataset in damodaran_source_files (e.g. cfspr21.xlsx) — find his sales-to-capital column"},
+    {id:"L20",order:20,rung:"Understand",stage_name:"Growth",concept:"Growth is earned, not forecast",task:"Explain growth = reinvestment rate x ROIC, and why plugging in an analyst's growth number is circular/unfounded.",estimateMin:25,doctrine_ref:["D-30","D-31"],read:["doctrine/D-30-fundamental-growth.md","doctrine/D-31-analyst-forecasts.md"],example:null},
+    {id:"L21",order:21,rung:"Understand",stage_name:"Terminal value",concept:"Why terminal discipline matters most",task:"Explain why terminal value is usually most of the value, and how the growth cap and ROIC-convergence keep it honest.",estimateMin:30,doctrine_ref:["D-33","D-34","D-35"],read:["doctrine/D-33-terminal-growth-cap.md","doctrine/D-34-terminal-return-on-capital.md","doctrine/D-35-terminal-value-share.md"],example:null},
+    {id:"L22",order:22,rung:"Understand",stage_name:"Value vs price",concept:"Two different games",task:"Explain the difference between valuing (cash flows, risk, growth) and pricing (multiples, mood). When is each the right tool?",estimateMin:25,doctrine_ref:["D-42","D-45"],read:["doctrine/D-42-value-vs-price.md","doctrine/D-45-pricing-is-not-valuing.md"],example:null},
+    {id:"L23",order:23,rung:"Apply",stage_name:"Full run",concept:"Read a whole valuation against its doctrine",task:"Run the agent on a stable company (e.g. KO). For each flagged judgment, open the cited doctrine card and confirm you understand why that value was chosen. Note any you'd choose differently.",estimateMin:60,doctrine_ref:["D-01","D-42"],read:[],example:"lab: py value.py KO --show-judgments"},
+    {id:"L24",order:24,rung:"Apply",stage_name:"Discount rate",concept:"Build a cost of capital end-to-end",task:"For one company, work out riskfree, ERP, bottom-up beta, cost of debt and market-value-weighted WACC by hand. Check each against his sector figure. Each number: computed or chosen (with a reason).",estimateMin:60,doctrine_ref:["D-03","D-05","D-06","D-09","D-13","D-16"],read:["doctrine/stages/stage-02-currency-and-riskfree-rate.md","doctrine/stages/stage-06-cost-of-capital.md"],example:"cross-check against his industry cost-of-capital data (wacc)"},
+    {id:"L25",order:25,rung:"Apply",stage_name:"Cash flows",concept:"Earnings, tax and reinvestment (where valuations fail)",task:"For your company: normalize base-year earnings, pick a tax path, and build reinvestment (net capex, working capital, or sales-to-capital). Compare your structure to how he did it in a real model.",estimateMin:75,doctrine_ref:["D-19","D-20","D-23","D-26","D-27","D-29"],read:["doctrine/stages/stage-07-base-year-earnings.md","doctrine/stages/stage-09-reinvestment.md"],example:"a completed DCF in damodaran_source_files (see INDEX.md), e.g. Paytm2021.xlsx"},
+    {id:"L26",order:26,rung:"Apply",stage_name:"Growth & terminal",concept:"Grow it and close it out",task:"Extend your company's cash flows with fundamental growth and a disciplined terminal value (growth <= riskfree, ROIC -> cost of capital). What share of value is terminal? Is that defensible?",estimateMin:60,doctrine_ref:["D-30","D-32","D-33","D-34","D-35"],read:["doctrine/stages/stage-10-growth.md","doctrine/stages/stage-11-terminal-value.md"],example:null},
+    {id:"L27",order:27,rung:"Apply",stage_name:"Study a model",concept:"Trace a finished DCF to the doctrine",task:"Open one of his real DCF spreadsheets. Trace every major input (story, growth, reinvestment, terminal) back to the doctrine stage it belongs to. Where did he make a JUDGMENT vs a computation?",estimateMin:60,doctrine_ref:["D-01","D-29","D-30","D-33"],read:[],example:"open a company DCF from damodaran_source_files (e.g. Paytm2021.xlsx)"},
+    {id:"L28",order:28,rung:"Analyze",stage_name:"Compare",concept:"How the route changes the model",task:"Put two of his DCFs side by side. List the concrete ways the young-growth model differs from the mature one (sales-to-capital, negative earnings, longer high-growth). Tie each difference to a routing decision.",estimateMin:45,doctrine_ref:["D-29","D-43","D-44"],read:["doctrine/stages/stage-00-routing.md"],example:"two of his models: a mature company vs a young/high-growth one (e.g. Paytm)"},
+    {id:"L29",order:29,rung:"Analyze",stage_name:"Convergence paths",concept:"Disputed constants become paths",task:"In a real model, trace the three convergences: effective->marginal tax, high->terminal growth, excess->competitive returns. Why is 'it's a path, not a constant' the resolution each time?",estimateMin:40,doctrine_ref:["D-24","D-32","D-34"],read:["doctrine/README.md ('disputed constants become paths')"],example:"any of his multi-year DCF models"},
+    {id:"L30",order:30,rung:"Analyze",stage_name:"Sensitivity",concept:"Which inputs actually move value",task:"Flip inputs one at a time (beta, margin, growth, terminal ROC) and record how much value moves. Confirm his claim that cash-flow/growth inputs dominate discount-rate inputs.",estimateMin:45,doctrine_ref:["D-35"],read:["doctrine/D-35-terminal-value-share.md"],example:"lab: re-run value.py flipping one input at a time"},
+    {id:"L31",order:31,rung:"Evaluate",stage_name:"Defend a judgment",concept:"You beat the model when you can defend the choice",task:"Pick one judgment the agent flags high-uncertainty (e.g. terminal ROC, country-risk method). Choose your own value and defend it in writing with a sensitivity — why your number, and what it costs if you're wrong.",estimateMin:30,doctrine_ref:["D-07","D-34","D-42"],read:["agent/README.md (the resolver hierarchy: User beats Heuristic beats Claude)"],example:"lab: py value.py <TICKER> --show-judgments"},
+    {id:"L32",order:32,rung:"Evaluate",stage_name:"Verdict",concept:"Cheap or dear — and can you defend it",task:"For a company you've valued, deliver a value-vs-price verdict. State the 2-3 assumptions the verdict hangs on, and what would have to be true for the market to be right instead of you.",estimateMin:30,doctrine_ref:["D-42","D-45","D-49"],read:["doctrine/D-42-value-vs-price.md"],example:null},
+    {id:"L33",order:33,rung:"Create",stage_name:"Produce",concept:"Your own end-to-end valuation",task:"Pick a company you actually care about. Write its STORY first (D-01), then build the full valuation producing your own inputs at every stage. This is the produce-not-consume milestone.",estimateMin:120,doctrine_ref:["D-01"],read:[],example:"lab: build it yourself, using value.py only as a check"},
+    {id:"L34",order:34,rung:"Create",stage_name:"Write it up",concept:"A defensible valuation memo",task:"Turn your valuation into a short memo: the story, the key judgments (each cited to a doctrine point with its sensitivity), a simulation/range, and the value-vs-price verdict. Then GRINDE-map the method so it sticks.",estimateMin:90,doctrine_ref:["D-01","D-41","D-42"],read:[],example:"GRINDE-map the whole method afterwards"}
+  ]};
 
   var root=document.getElementById("root");
   var state=loadState();
@@ -660,6 +722,10 @@ h1,h2,h3{margin:0;font-family:var(--font-display);font-weight:600;text-wrap:bala
     else if(a==="edit-project"){ui.projEdit[id]=true;render();}
     else if(a==="cancel-project"){ui.projEdit[id]=false;render();}
     else if(a==="gh-sync")syncProject(id);
+    else if(a==="cur-start")startLesson(id);
+    else if(a==="cur-nailed")finishLesson(id,"nailed");
+    else if(a==="cur-shaky")finishLesson(id,"shaky");
+    else if(a==="cur-refs"){ui.currRefs=ui.currRefs||{};ui.currRefs[id]=!ui.currRefs[id];render();}
     else if(a==="retry"){syncMode="check";renderChip();persist();}
   }
 
@@ -845,6 +911,78 @@ h1,h2,h3{margin:0;font-family:var(--font-display);font-weight:600;text-wrap:bala
       '<div class="rep-btns"><button class="btn btn-primary btn-sm" type="submit">Save rep</button><button class="btn btn-ghost btn-sm" data-action="rep-cancel" data-id="'+g.id+'" type="button">Cancel</button></div>'+
     '</form>';
   }
+  /* ---------- valuation curriculum (laddered lessons) ---------- */
+  function valCurrFor(g){return g&&VAL_CURRICULUM.goal_id===g.id?VAL_CURRICULUM:null;}
+  function lessonRungIdx(l){var i=VAL_RUNGS.indexOf(l.rung);return i<0?0:i;}
+  function currDone(g){return (g.curr&&g.curr.done)||{};}
+  function currentLesson(g){
+    var c=valCurrFor(g);if(!c)return null;var done=currDone(g);
+    for(var i=0;i<c.lessons.length;i++){if(!done[c.lessons[i].id])return {lesson:c.lessons[i],idx:i};}
+    return null;
+  }
+  function lessonTaskId(gid){return "lessontask_"+gid;}
+  function startLesson(gid){
+    var g=findGoal(gid),cur=currentLesson(g);if(!g||!cur)return;
+    var l=cur.lesson,tid=lessonTaskId(gid);
+    commit(function(){
+      var t=findTask(tid);
+      if(!t){t={id:tid,name:"",category:"",estimateMin:null,planned:false,daily:false,goalId:gid,stepId:null,depth:null,cue:"",done:false,createdAt:Date.now(),sessions:[]};state.tasks.push(t);}
+      t.name="📘 "+l.concept;t.estimateMin=l.estimateMin||null;t.goalId=gid;t.daily=false;t.done=false;
+      var act=findTask(state.activeId);if(act)closeRunning(act);
+      t.sessions=t.sessions||[];t.sessions.push({start:Date.now(),end:null});state.activeId=tid;
+    });
+  }
+  function finishLesson(gid,grade){
+    var g=findGoal(gid),cur=currentLesson(g);if(!g||!cur)return;
+    var l=cur.lesson,rung=lessonRungIdx(l),tid=lessonTaskId(gid);
+    commit(function(){
+      var gg=findGoal(gid);if(!gg)return;
+      if(state.activeId===tid){var t=findTask(tid);if(t)closeRunning(t);state.activeId=null;}
+      if(gg.progression){gg.progression.reps=gg.progression.reps||[];gg.progression.reps.push({t:Date.now(),rung:rung,grade:grade,note:"L"+l.order+" · "+l.concept});}
+      if(grade==="nailed"){gg.curr=gg.curr||{};gg.curr.done=gg.curr.done||{};gg.curr.done[l.id]=true;}
+    });
+    toast(grade==="nailed"?"Lesson done — clean rep logged ✓":"Logged as shaky — revisit this one");
+  }
+  function renderCurriculum(g){
+    var c=valCurrFor(g);if(!c)return "";
+    var done=currDone(g),total=c.lessons.length,doneCount=0;
+    c.lessons.forEach(function(l){if(done[l.id])doneCount++;});
+    var head='<div class="curr-head">'+esc(c.title)+'<span class="curr-count">'+doneCount+'/'+total+'</span></div>';
+    var cur=currentLesson(g);
+    if(!cur)return '<div class="curr">'+head+'<div class="curr-done-all">All '+total+' lessons complete — now produce and defend. 🏔</div></div>';
+    var l=cur.lesson,tid=lessonTaskId(g.id),running=state.activeId===tid;
+    var tags=(l.doctrine_ref||[]).map(function(d){return '<span class="curr-tag">'+esc(d)+'</span>';}).join("");
+    var refsOpen=ui.currRefs&&ui.currRefs[g.id];
+    var refs="";
+    if(refsOpen){
+      var rd=(l.read||[]).map(function(x){return '<li>'+esc(x)+'</li>';}).join("");
+      var ex=l.example?'<div class="curr-ex"><b>Lab / example:</b> '+esc(l.example)+'</div>':"";
+      refs='<div class="curr-refs">'+(rd?'<div><b>Read:</b><ul>'+rd+'</ul></div>':"")+ex+'<div class="curr-note">These point into your Valuation Agent repo — desk work, not inside the app.</div></div>';
+    }
+    var hasRefs=(l.read&&l.read.length)||l.example;
+    var refsBtn=hasRefs?'<button class="curr-refs-btn" data-action="cur-refs" data-id="'+g.id+'" type="button">'+(refsOpen?"Hide":"Show")+' what to read / run</button>':"";
+    var startBtn=running
+      ?'<button class="btn btn-stop btn-sm" data-action="stop" type="button">Stop timer</button>'
+      :'<button class="btn btn-primary btn-sm" data-action="cur-start" data-id="'+g.id+'" type="button">Start · ~'+(l.estimateMin||15)+' min</button>';
+    var nxt=c.lessons[cur.idx+1];
+    var peek=nxt?'<div class="curr-next">Up next · '+esc(nxt.rung)+' · '+esc(nxt.concept)+' · ~'+(nxt.estimateMin||15)+'m</div>':'<div class="curr-next">This is the final lesson — the capstone.</div>';
+    return '<div class="curr">'+head+
+      '<div class="curr-card">'+
+        '<div class="curr-meta"><span class="curr-badge">'+esc(l.rung)+'</span>'+
+          '<span class="curr-pos">Lesson '+l.order+' / '+total+'</span>'+
+          '<span class="curr-time">~'+(l.estimateMin||15)+' min</span></div>'+
+        '<div class="curr-stage">'+esc(l.stage_name)+'</div>'+
+        '<div class="curr-concept">'+esc(l.concept)+'</div>'+
+        '<div class="curr-task">'+esc(l.task)+'</div>'+
+        (tags?'<div class="curr-tags">'+tags+'</div>':"")+
+        refsBtn+refs+
+        '<div class="curr-btns">'+startBtn+
+          '<button class="btn btn-primary btn-sm" data-action="cur-nailed" data-id="'+g.id+'" type="button">Nailed it ✓</button>'+
+          '<button class="btn btn-ghost btn-sm" data-action="cur-shaky" data-id="'+g.id+'" type="button">Still shaky</button>'+
+        '</div>'+
+      '</div>'+peek+
+    '</div>';
+  }
   function renderGoals(){
     var goals=state.goals||[];
     var addForm=ui.goalOpen?('<form class="goal-form" data-action="add-goal" autocomplete="off">'+
@@ -1024,7 +1162,7 @@ h1,h2,h3{margin:0;font-family:var(--font-display);font-weight:600;text-wrap:bala
       '<div class="goal-top"><div style="min-width:0"><div class="goal-name">'+esc(g.name)+'</div>'+meta+'</div>'+
         '<button class="icon-btn danger" data-action="del-goal" data-id="'+g.id+'" title="Delete goal" aria-label="Delete goal">&#215;</button></div>'+
       identityBlock+stat+
-      renderSteps(g)+renderProgression(g)+noteBlock+
+      renderSteps(g)+renderCurriculum(g)+renderProgression(g)+noteBlock+
     '</div>';
   }
   function actionRow(t){
