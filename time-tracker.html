@@ -238,6 +238,19 @@ h1,h2,h3{margin:0;font-family:var(--font-display);font-weight:600;text-wrap:bala
 .dbtn.on-good{background:var(--good);border-color:var(--good);color:#fff}
 .dbtn.on-bad{background:var(--bad);border-color:var(--bad);color:#fff}
 .proj-chat{margin-top:13px;padding:12px 13px;background:var(--surface-2);border:1px solid var(--line);border-radius:12px}
+.adv-sec{margin-top:11px}
+.adv-lbl{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--faint);font-weight:600;margin-bottom:4px}
+.adv-item{display:flex;align-items:flex-start;gap:9px;padding:5px 0;font-size:13.5px;line-height:1.45}
+.adv-dot{width:7px;height:7px;border-radius:50%;flex:none;margin-top:6px}
+.adv-next{background:var(--accent)}
+.adv-missing{background:var(--warn)}
+.adv-research{background:var(--good)}
+.adv-risks{background:var(--bad)}
+.adv-txt{flex:1;min-width:0}
+.adv-cap{flex:none;align-self:center;border:1px solid var(--line-strong);background:transparent;color:var(--muted);font-family:inherit;font-size:11px;font-weight:600;line-height:1;padding:5px 9px;border-radius:99px;white-space:nowrap;cursor:pointer;transition:color .15s,border-color .15s}
+.adv-cap:hover{color:var(--accent);border-color:var(--accent)}
+.adv-when{font-weight:400;text-transform:none;letter-spacing:0;color:var(--faint)}
+.adv-hint{font-size:11.5px;color:var(--faint);margin-top:9px;font-style:italic}
 .proj-chat-h{display:flex;align-items:center;gap:7px;font-size:11px;text-transform:uppercase;letter-spacing:.07em;color:var(--faint);font-weight:600;margin-bottom:10px}
 .pc-log{display:flex;flex-direction:column;gap:8px;margin-bottom:10px}
 .pc-msg{font-size:13.5px;line-height:1.5;padding:9px 11px;border-radius:11px;white-space:pre-wrap;word-break:break-word}
@@ -490,7 +503,7 @@ h1,h2,h3{margin:0;font-family:var(--font-display);font-weight:600;text-wrap:bala
   var state=loadState();
   var artNS; // undefined=unknown, null=unavailable, object=ready
   var syncMode="check"; // check|sync|local|error|readonly
-  var ui={addOpen:false, goalOpen:false, actionOpen:{}, noteOpen:{}, cueOpen:{}, idOpen:{}, repOpen:{}, stepAddOpen:{}, proposal:{}, loading:{}, projectOpen:false, projEdit:{}, projLoading:{}, ghLoading:{}, ghErr:{}, date:dayKey(Date.now())};
+  var ui={addOpen:false, goalOpen:false, actionOpen:{}, noteOpen:{}, cueOpen:{}, idOpen:{}, repOpen:{}, stepAddOpen:{}, proposal:{}, loading:{}, projectOpen:false, projEdit:{}, projLoading:{}, ghLoading:{}, ghErr:{}, adviseLoading:{}, currRefs:{}, date:dayKey(Date.now())};
   var isTouch=("ontouchstart" in window)||(navigator.maxTouchPoints>0);
   var sampleNS; // undefined=unknown, null=unavailable, function=ready
   var GH_SERVER="GitHub Integration";
@@ -722,6 +735,8 @@ h1,h2,h3{margin:0;font-family:var(--font-display);font-weight:600;text-wrap:bala
     else if(a==="edit-project"){ui.projEdit[id]=true;render();}
     else if(a==="cancel-project"){ui.projEdit[id]=false;render();}
     else if(a==="gh-sync")syncProject(id);
+    else if(a==="advice-think")thinkProject(id);
+    else if(a==="advice-capture")captureAdvice(id,b.getAttribute("data-sec"),parseInt(b.getAttribute("data-idx"),10));
     else if(a==="cur-start")startLesson(id);
     else if(a==="cur-nailed")finishLesson(id,"nailed");
     else if(a==="cur-shaky")finishLesson(id,"shaky");
@@ -1228,6 +1243,81 @@ h1,h2,h3{margin:0;font-family:var(--font-display);font-weight:600;text-wrap:bala
     L.push("User's question: "+q);
     return L.join("\n");
   }
+  /* ---------- project advisor (proactive "right-hand" pass) ---------- */
+  function buildAdvicePrompt(p){
+    var L=[];
+    L.push("You are the user's sharp technical right-hand for this coding project — a second brain that thinks ahead for them. Look at everything known about the project and tell them what to do next, what is missing, what to research, and what to watch out for. Be concrete and specific to THIS project; no filler, no generic advice.");
+    L.push("Project: "+p.name);
+    if(p.repo)L.push("Repo: "+p.repo);
+    if(healthLabel(p.health))L.push("Health: "+healthLabel(p.health));
+    if(p.status)L.push("Current status: "+p.status);
+    if(p.next)L.push("Their planned next step: "+p.next);
+    if(p.blockers)L.push("Known blockers: "+p.blockers);
+    if(p.gh){
+      var g=p.gh;
+      if(g.prs&&g.prs.length){L.push("Open pull requests ("+g.prs.length+"):");g.prs.forEach(function(pr){L.push("  #"+pr.n+" "+pr.title+(pr.draft?" [draft]":"")+" — "+ciLabel(pr.ci||"none"));});}
+      else L.push("Open pull requests: none");
+      if(g.commits&&g.commits.length){L.push("Recent commits (newest first):");g.commits.forEach(function(c){L.push("  "+c.sha+" "+c.msg+(c.date?(" ("+relDate(c.date)+")"):""));});}
+      L.push("(GitHub last synced "+ago(g.syncedAt)+".)");
+    } else {
+      L.push("GitHub is not synced in the app, so there is no live PR/commit/CI data — reason from the status above and flag where syncing would sharpen the advice.");
+    }
+    var hist=(p.chat||[]).slice(-6);
+    if(hist.length){L.push("Recent discussion with them:");hist.forEach(function(m){L.push((m.r==="u"?"Them: ":"You: ")+m.t);});}
+    L.push('Return ONLY JSON of the form {"next":["..."],"missing":["..."],"research":["..."],"risks":["..."]}. 2-4 items per list, each one short concrete sentence. "next" = things they can do now to move it forward. "missing" = gaps in the work (tests, docs, error handling, an undecided design point). "research" = specific things worth looking into, each with a why. "risks" = what could bite them. Omit a list only if you genuinely have nothing real for it.');
+    return L.join("\n");
+  }
+  function normalizeAdvice(res){
+    if(!res||typeof res!=="object")return null;
+    function arr(x){var out=[];if(Array.isArray(x))x.slice(0,5).forEach(function(v){v=String((v&&(v.text||v.item))||v||"").trim();if(v)out.push(v.slice(0,240));});return out;}
+    var a={at:Date.now(),next:arr(res.next||res.do||res.do_next),missing:arr(res.missing||res.gaps),research:arr(res.research),risks:arr(res.risks||res.watch)};
+    if(!(a.next.length||a.missing.length||a.research.length||a.risks.length))return null;
+    return a;
+  }
+  function thinkProject(pid){
+    var p=findProject(pid);if(!p)return;
+    ui.adviseLoading[pid]=true;render();
+    resolveSample(function(ns){
+      if(!ns){ui.adviseLoading[pid]=false;sampleNS=null;render();toast("AI isn’t available here");return;}
+      ns.json(buildAdvicePrompt(findProject(pid)||p),{modelTier:"default",cache:false}).then(function(res){
+        ui.adviseLoading[pid]=false;var adv=normalizeAdvice(res);
+        if(!adv){render();toast("Couldn’t think it through — try again");return;}
+        commit(function(){var pp=findProject(pid);if(!pp)return;pp.advice=adv;});
+      },function(err){
+        ui.adviseLoading[pid]=false;render();var c=err&&err.code;
+        if(c==="not_granted")toast("AI access was declined");
+        else if(c==="rate_limited")toast("Rate limited — try again shortly");
+        else if(c!=="cancelled")toast("Couldn’t reach Claude — try again");
+      });
+    });
+  }
+  function captureAdvice(pid,sec,idx){
+    var p=findProject(pid);if(!p||!p.advice)return;
+    var list=p.advice[sec]||[];var text=list[idx];if(!text)return;
+    addLater(text+" · "+p.name);
+    toast("Added to On my mind");
+  }
+  function adviceSec(p,key,label,capturable){
+    var items=(p.advice&&p.advice[key])||[];
+    if(!items.length)return "";
+    var rows=items.map(function(t,i){
+      var cap=capturable?'<button class="adv-cap" type="button" data-action="advice-capture" data-id="'+p.id+'" data-sec="'+key+'" data-idx="'+i+'" title="Add to On my mind">+ On my mind</button>':"";
+      return '<div class="adv-item"><span class="adv-dot adv-'+key+'"></span><span class="adv-txt">'+esc(t)+'</span>'+cap+'</div>';
+    }).join("");
+    return '<div class="adv-sec"><div class="adv-lbl">'+label+'</div>'+rows+'</div>';
+  }
+  function renderAdvice(p){
+    var loading=ui.adviseLoading[p.id], has=!!p.advice;
+    var when=(has&&p.advice.at)?' <span class="adv-when">· thought '+esc(ago(p.advice.at))+'</span>':'';
+    var head='<div class="proj-chat-h" style="margin-top:2px">'+sparkSvg()+'Advisor · your right-hand'+when+'</div>';
+    var body;
+    if(loading)body='<div class="ai-loading">'+sparkSvg()+'Thinking through the project…</div>';
+    else if(has)body=adviceSec(p,"next","Do next",true)+adviceSec(p,"missing","Missing / gaps",true)+adviceSec(p,"research","Research",true)+adviceSec(p,"risks","Risks to watch",false);
+    else body='<div class="action-empty">No pass yet — let Claude think through where this project stands and what’s next.</div>';
+    var syncHint=(p.repo&&!p.gh&&!loading)?'<div class="adv-hint">Tip: Sync GitHub first for live PR/CI context.</div>':"";
+    var btn=loading?"":'<button class="btn btn-primary btn-sm" data-action="advice-think" data-id="'+p.id+'" type="button" style="margin-top:10px">'+sparkSvg()+(has?"Re-think":"Think it through")+'</button>';
+    return '<div class="proj-gh">'+head+body+syncHint+btn+'</div>';
+  }
   function askProject(pid,q){
     q=(q||"").trim();if(!q)return;
     var p=findProject(pid);if(!p)return;
@@ -1372,11 +1462,12 @@ h1,h2,h3{margin:0;font-family:var(--font-display);font-weight:600;text-wrap:bala
     var health='<div class="depth-tog" style="margin:10px 0 12px">'+healthBtn(p,"on_track","On track")+healthBtn(p,"blocked","Blocked")+healthBtn(p,"shipped","Shipped")+'</div>';
     var bodyBlock=ui.projEdit[p.id]?projEditForm(p):projView(p);
     var meta=p.updatedAt?'<div class="proj-upd">Updated '+esc(ago(p.updatedAt))+'</div>':"";
+    var advice=aiEnabled()?renderAdvice(p):"";
     var chat=aiEnabled()?projChat(p):"";
     return '<div class="card goal-card">'+
       '<div class="goal-top"><div style="min-width:0"><div class="goal-name">'+esc(p.name)+'</div>'+repoLine+'</div>'+
         '<button class="icon-btn danger" data-action="del-project" data-id="'+p.id+'" title="Delete project" aria-label="Delete project">&#215;</button></div>'+
-      health+bodyBlock+meta+projGh(p)+chat+
+      health+bodyBlock+meta+advice+projGh(p)+chat+
     '</div>';
   }
 
