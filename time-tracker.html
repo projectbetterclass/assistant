@@ -1695,6 +1695,22 @@ h1,h2,h3{margin:0;font-family:var(--font-display);font-weight:600;text-wrap:bala
     var entries=[];
     state.tasks.forEach(function(t){(t.sessions||[]).forEach(function(se){if(dayKey(se.start)===key)entries.push({t:t,se:se});});});
     entries.sort(function(a,b){return a.se.start-b.se.start;});
+    var reviewHead='<div class="review-head">'+
+      '<div class="daynav">'+
+        '<button class="icon-btn" data-action="prev-day" aria-label="Previous day">&#8249;</button>'+
+        '<div class="day-label">'+esc(dayLabel(key))+'</div>'+
+        '<button class="icon-btn" data-action="next-day" aria-label="Next day"'+(isToday?" disabled":"")+'>&#8250;</button>'+
+      '</div>'+
+      (isToday?'':'<button class="btn btn-ghost btn-sm" data-action="today" type="button">Jump to today</button>')+
+    '</div>';
+    if(!entries.length){
+      var hasAny=state.tasks.some(function(t){return (t.sessions||[]).some(function(se){return se.end!=null;});});
+      var exp=hasAny?'<div class="review-foot" style="margin-top:14px"><span></span><button class="btn btn-ghost btn-sm" data-action="export" type="button">Export CSV</button></div>':"";
+      return '<section class="sec review">'+reviewHead+
+        '<div class="empty">Nothing tracked '+(isToday?"yet today":"on this day")+'.'+(isToday?' Start a timer on the Now tab to begin.':'')+'</div>'+
+        exp+
+      '</section>';
+    }
     var total=0,plannedSec=0,byCat={},runBase=0,runStart=null;
     entries.forEach(function(e){
       var end=e.se.end==null?now:e.se.end, dur=(end-e.se.start)/1000;
