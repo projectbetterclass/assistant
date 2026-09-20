@@ -274,6 +274,17 @@ h1,h2,h3{margin:0;font-family:var(--font-display);font-weight:600;text-wrap:bala
 .pc-form .btn{flex:none}
 @media (max-width:460px){.pc-form{flex-wrap:wrap}.pc-form .btn{flex:1 1 100%}}
 .proj-gh{margin-top:13px;padding:12px 13px;background:var(--surface-2);border:1px solid var(--line);border-radius:12px}
+.proj-log{margin-top:13px;padding:12px 13px;background:var(--surface-2);border:1px solid var(--line);border-radius:12px}
+.plog-list{margin-top:2px}
+.plog-row{display:flex;align-items:flex-start;gap:10px;padding:7px 0;border-top:1px solid var(--line);font-size:13.5px;line-height:1.45}
+.plog-list .plog-row:first-child{border-top:0}
+.plog-date{flex:none;font-family:var(--font-mono);font-size:11.5px;color:var(--faint);padding-top:2px;white-space:nowrap;font-variant-numeric:tabular-nums}
+.plog-txt{flex:1;min-width:0;word-break:break-word}
+.icon-btn.plog-del{width:26px;height:26px;flex:none;font-size:13px}
+.plog-form{display:flex;gap:8px;margin-top:11px}
+.plog-form .field{flex:1}
+.plog-form .btn{flex:none}
+@media (max-width:460px){.plog-form{flex-wrap:wrap}.plog-form .btn{flex:1 1 100%}}
 .gh-line{display:flex;align-items:center;gap:8px;font-size:12px;margin-top:2px}
 .gh-k{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--faint);font-weight:600}
 .gh-v{font-family:var(--font-mono);font-weight:600;color:var(--ink)}
@@ -797,6 +808,7 @@ h1,h2,h3{margin:0;font-family:var(--font-display);font-weight:600;text-wrap:bala
     else if(a==="add-project")addProject(val("pr-name"),val("pr-repo"));
     else if(a==="save-project"){var pid=f.getAttribute("data-id");saveProject(pid,val("pr-ename-"+pid),val("pr-erepo-"+pid),val("pr-status-"+pid),val("pr-next-"+pid),val("pr-block-"+pid));}
     else if(a==="ask-project"){var apid=f.getAttribute("data-id");askProject(apid,val("pc-in-"+apid));}
+    else if(a==="add-project-log"){var lpid=f.getAttribute("data-id");addProjectLog(lpid,val("plog-"+lpid));}
   }
   function onClick(e){
     var b=e.target.closest("[data-action]");if(!b)return;
@@ -851,6 +863,7 @@ h1,h2,h3{margin:0;font-family:var(--font-display);font-weight:600;text-wrap:bala
     else if(a==="advice-capture")captureAdvice(id,b.getAttribute("data-sec"),parseInt(b.getAttribute("data-idx"),10));
     else if(a==="advice-handoff")handoffAdvice(id,b.getAttribute("data-sec"),parseInt(b.getAttribute("data-idx"),10));
     else if(a==="ho-grade")gradeHandoff(id,b.getAttribute("data-hid"));
+    else if(a==="del-project-log")deleteProjectLog(id,+b.getAttribute("data-at"));
     else if(a==="ho-del"){var hid=b.getAttribute("data-hid");if(window.confirm("Remove this handoff and its feedback?"))commit(function(){var pp=findProject(id);if(pp)pp.handoffs=(pp.handoffs||[]).filter(function(x){return x.id!==hid;});});}
     else if(a==="cur-start")startLesson(id);
     else if(a==="cur-nailed")finishLesson(id,"nailed");
@@ -1494,6 +1507,8 @@ h1,h2,h3{margin:0;font-family:var(--font-display);font-weight:600;text-wrap:bala
   function deleteProject(id){commit(function(){state.projects=(state.projects||[]).filter(function(p){return p.id!==id;});});}
   function setHealth(id,val){commit(function(){var p=findProject(id);if(!p)return;p.health=(p.health===val?null:val);p.updatedAt=Date.now();});}
   function saveProject(id,name,repo,status,next,blockers){ui.projEdit[id]=false;commit(function(){var p=findProject(id);if(!p)return;if(name&&name.trim())p.name=name.trim();p.repo=(repo||"").trim();p.status=(status||"").trim();p.next=(next||"").trim();p.blockers=(blockers||"").trim();p.updatedAt=Date.now();});}
+  function addProjectLog(id,text){text=(text||"").trim();if(!text)return;commit(function(){var p=findProject(id);if(!p)return;p.log=p.log||[];p.log.push({at:Date.now(),t:text.slice(0,240)});p.updatedAt=Date.now();});}
+  function deleteProjectLog(id,at){commit(function(){var p=findProject(id);if(!p||!p.log)return;p.log=p.log.filter(function(e){return e.at!==at;});p.updatedAt=Date.now();});}
   function resolveSample(cb){
     if(sampleNS!==undefined){cb(sampleNS);return;}
     if(window.claude&&window.claude.use)Promise.resolve(window.claude.use("sample")).then(function(ns){sampleNS=ns;cb(ns);},function(){sampleNS=null;cb(null);});
@@ -1868,12 +1883,26 @@ h1,h2,h3{margin:0;font-family:var(--font-display);font-weight:600;text-wrap:bala
     var health='<div class="depth-tog" style="margin:10px 0 12px">'+healthBtn(p,"on_track","On track")+healthBtn(p,"blocked","Blocked")+healthBtn(p,"shipped","Shipped")+'</div>';
     var bodyBlock=ui.projEdit[p.id]?projEditForm(p):projView(p);
     var meta=p.updatedAt?'<div class="proj-upd">Updated '+esc(ago(p.updatedAt))+'</div>':"";
-    var advice=aiEnabled()?renderAdvice(p):"";
-    var chat=aiEnabled()?projChat(p):"";
     return '<div class="card goal-card">'+
       '<div class="goal-top"><div style="min-width:0"><div class="goal-name proj-open-name" data-action="toggle-project-card" data-id="'+p.id+'" role="button" tabindex="0" title="Collapse ‘'+esc(p.name)+'’"><span class="proj-mini-chev open">'+chevronSvg()+'</span>'+esc(p.name)+'</div>'+repoLine+'</div>'+
         '<button class="icon-btn danger" data-action="del-project" data-id="'+p.id+'" title="Delete project" aria-label="Delete project">&#215;</button></div>'+
-      health+bodyBlock+meta+advice+projGh(p)+renderHandoffs(p)+chat+
+      health+bodyBlock+meta+renderProjectLog(p)+
+    '</div>';
+  }
+  /* per-project log — a plain dated record of what got done (no AI, no sync) */
+  function renderProjectLog(p){
+    var entries=(p.log||[]).slice().sort(function(a,b){return b.at-a.at;});
+    var rows=entries.length?('<div class="plog-list">'+entries.map(function(e){
+      return '<div class="plog-row"><span class="plog-date">'+esc(shortDate(e.at))+'</span><span class="plog-txt">'+esc(e.t)+'</span>'+
+        '<button class="icon-btn danger plog-del" data-action="del-project-log" data-id="'+p.id+'" data-at="'+e.at+'" title="Remove entry" aria-label="Remove entry">&#215;</button></div>';
+    }).join("")+'</div>'):'<div class="action-empty">No log yet — jot what got done.</div>';
+    return '<div class="proj-log">'+
+      '<div class="proj-chat-h" style="margin-top:2px">'+logSvg()+'Log · what got done</div>'+
+      rows+
+      '<form class="plog-form" data-action="add-project-log" data-id="'+p.id+'" autocomplete="off">'+
+        '<input id="plog-'+p.id+'" class="field" placeholder="What got done? e.g. merged PR #35" aria-label="Log entry">'+
+        '<button class="btn btn-primary btn-sm" type="submit">Add</button>'+
+      '</form>'+
     '</div>';
   }
 
@@ -2071,6 +2100,7 @@ h1,h2,h3{margin:0;font-family:var(--font-display);font-weight:600;text-wrap:bala
   function playSvg(){return '<svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M7 5.5v13a1 1 0 0 0 1.53.85l10-6.5a1 1 0 0 0 0-1.7l-10-6.5A1 1 0 0 0 7 5.5Z"></path></svg>';}
   function sparkSvg(){return '<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2l1.7 5.6L19 9l-5.3 1.4L12 16l-1.7-5.6L5 9l5.3-1.4L12 2z"></path></svg>';}
   function ghSvg(){return '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="6" cy="6" r="2.4"></circle><circle cx="6" cy="18" r="2.4"></circle><circle cx="18" cy="8" r="2.4"></circle><path d="M6 8.4v7.2M18 10.4c0 3-3 3.6-6 3.6"></path></svg>';}
+  function logSvg(){return '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h10"></path></svg>';}
   function stopSvg(){return '<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="6" width="12" height="12" rx="2"></rect></svg>';}
 })();
 </script>
