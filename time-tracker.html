@@ -519,6 +519,30 @@ h1,h2,h3{margin:0;font-family:var(--font-display);font-weight:600;text-wrap:bala
 .shape-woop b{font-weight:600}
 .shape-woop-note{font-size:11px;color:var(--faint);margin-top:5px}
 .shape-panel .rep-lbl{flex:1 1 100%}
+/* handoff feedback loop */
+.adv-ho{color:var(--accent);border-color:var(--accent-soft)}
+.adv-ho:hover{border-color:var(--accent)}
+.ho-item{border-top:1px solid var(--line);padding:11px 0}
+.ho-item:first-of-type{border-top:0}
+.ho-find{font-size:13px;line-height:1.5;color:var(--ink);font-style:italic;margin-bottom:9px}
+.ho-form{display:flex;flex-direction:column;gap:8px}
+.ho-form .field{background:var(--surface)}
+.ho-btns{display:flex;gap:8px;flex-wrap:wrap}
+.ho-verdict{margin-bottom:10px;padding:11px 12px;background:var(--surface);border:1px solid var(--line);border-radius:11px}
+.ho-badge{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.02em;text-transform:uppercase;padding:3px 10px;border-radius:99px;margin-bottom:8px}
+.ho-badge.ho-good{background:var(--good-soft);color:var(--good)}
+.ho-badge.ho-warn{background:var(--warn-soft);color:var(--warn)}
+.ho-badge.ho-bad{background:var(--bad-soft);color:var(--bad)}
+.ho-summary{font-size:13.5px;line-height:1.5;color:var(--ink);margin-bottom:8px}
+.ho-sec{margin-top:9px}
+.ho-sec-h{font-size:10.5px;text-transform:uppercase;letter-spacing:.06em;color:var(--faint);font-weight:600;margin-bottom:4px}
+.ho-line{display:flex;align-items:flex-start;gap:8px;padding:3px 0;font-size:13px;line-height:1.45;color:var(--ink)}
+.ho-dot{width:7px;height:7px;border-radius:50%;flex:none;margin-top:6px}
+.ho-dot.ho-good{background:var(--good)}
+.ho-dot.ho-warn{background:var(--warn)}
+.ho-dot.ho-bad{background:var(--bad)}
+.ho-dot.ho-accent{background:var(--accent)}
+.ho-when{font-size:11px;color:var(--faint);margin-top:10px;font-style:italic;line-height:1.4}
 </style>
 
 <div id="root"></div>
@@ -579,7 +603,7 @@ h1,h2,h3{margin:0;font-family:var(--font-display);font-weight:600;text-wrap:bala
   var syncMode="check"; // check|sync|local|error|readonly
   var VIEW_KEY="wmtw_view";
   function loadView(){try{var v=localStorage.getItem(VIEW_KEY);return (v==="goals"||v==="projects"||v==="review")?v:"now";}catch(e){return "now";}}
-  var ui={addOpen:false, goalOpen:false, actionOpen:{}, noteOpen:{}, cueOpen:{}, idOpen:{}, repOpen:{}, stepAddOpen:{}, proposal:{}, loading:{}, projectOpen:false, projEdit:{}, projLoading:{}, ghLoading:{}, ghErr:{}, adviseLoading:{}, currRefs:{}, projCardOpen:{}, goalSecOpen:{}, goalMode:"have", shapeLevel:"new", shapeTopic:"", shapeLoading:false, shapeProposal:null, view:loadView(), date:dayKey(Date.now())};
+  var ui={addOpen:false, goalOpen:false, actionOpen:{}, noteOpen:{}, cueOpen:{}, idOpen:{}, repOpen:{}, stepAddOpen:{}, proposal:{}, loading:{}, projectOpen:false, projEdit:{}, projLoading:{}, ghLoading:{}, ghErr:{}, adviseLoading:{}, currRefs:{}, projCardOpen:{}, goalSecOpen:{}, goalMode:"have", shapeLevel:"new", shapeTopic:"", shapeLoading:false, shapeProposal:null, hoLoading:{}, view:loadView(), date:dayKey(Date.now())};
   var isTouch=("ontouchstart" in window)||(navigator.maxTouchPoints>0);
   var sampleNS; // undefined=unknown, null=unavailable, function=ready
   var GH_SERVER="GitHub Integration";
@@ -820,6 +844,9 @@ h1,h2,h3{margin:0;font-family:var(--font-display);font-weight:600;text-wrap:bala
     else if(a==="gh-sync")syncProject(id);
     else if(a==="advice-think")thinkProject(id);
     else if(a==="advice-capture")captureAdvice(id,b.getAttribute("data-sec"),parseInt(b.getAttribute("data-idx"),10));
+    else if(a==="advice-handoff")handoffAdvice(id,b.getAttribute("data-sec"),parseInt(b.getAttribute("data-idx"),10));
+    else if(a==="ho-grade")gradeHandoff(id,b.getAttribute("data-hid"));
+    else if(a==="ho-del"){var hid=b.getAttribute("data-hid");if(window.confirm("Remove this handoff and its feedback?"))commit(function(){var pp=findProject(id);if(pp)pp.handoffs=(pp.handoffs||[]).filter(function(x){return x.id!==hid;});});}
     else if(a==="cur-start")startLesson(id);
     else if(a==="cur-nailed")finishLesson(id,"nailed");
     else if(a==="cur-shaky")finishLesson(id,"shaky");
@@ -1552,12 +1579,97 @@ h1,h2,h3{margin:0;font-family:var(--font-display);font-weight:600;text-wrap:bala
     addLater(text+" · "+p.name);
     toast("Added to On my mind");
   }
-  function adviceSec(p,key,label,capturable){
+  /* ---------- handoff feedback loop: track a finding you gave the project, grade the change that came back ---------- */
+  function handoffAdvice(pid,sec,idx){
+    var p=findProject(pid);if(!p||!p.advice)return;
+    var list=p.advice[sec]||[];var text=list[idx];if(!text)return;
+    commit(function(){var pp=findProject(pid);if(!pp)return;pp.handoffs=pp.handoffs||[];pp.handoffs.unshift({id:uid(),finding:text,status:"open",ref:"",diff:"",source:null,verdict:null,createdAt:Date.now(),updatedAt:Date.now()});});
+    toast("Handed off — attach the change when it lands to get it graded");
+  }
+  function renderHandoffs(p){
+    var hs=p.handoffs||[];if(!hs.length)return "";
+    return '<div class="proj-gh"><div class="proj-chat-h" style="margin-top:2px">'+handoffSvg()+'Handed off · feedback</div>'+
+      hs.map(function(h){return handoffRow(p,h);}).join("")+'</div>';
+  }
+  function handoffRow(p,h){
+    var loading=ui.hoLoading[h.id];
+    var form=loading?'<div class="ai-loading">'+sparkSvg()+'Reviewing the change against the finding…</div>'
+      :'<div class="ho-form">'+
+        '<input id="ho-ref-'+h.id+'" class="field" value="'+esc(h.ref||"")+'" placeholder="PR # or link (optional — lets me fetch the diff)" aria-label="PR or commit reference">'+
+        '<textarea id="ho-diff-'+h.id+'" class="field note-area" style="min-height:66px" placeholder="…or paste the diff / a short summary of the change. Grounds the review — without it I won’t guess.">'+esc(h.diff||"")+'</textarea>'+
+        '<div class="ho-btns"><button class="btn btn-primary btn-sm" data-action="ho-grade" data-id="'+p.id+'" data-hid="'+h.id+'" type="button">'+sparkSvg()+(h.verdict?"Re-grade":"Grade the change")+'</button>'+
+        '<button class="btn btn-ghost btn-sm" data-action="ho-del" data-id="'+p.id+'" data-hid="'+h.id+'" type="button">Remove</button></div>'+
+      '</div>';
+    return '<div class="ho-item"><div class="ho-find">“'+esc(h.finding)+'”</div>'+(h.verdict?renderVerdict(h):"")+form+'</div>';
+  }
+  function renderVerdict(h){
+    var v=h.verdict,a=v.addresses;
+    var cls=a==="yes"?"good":(a==="no"?"bad":"warn"),lbl=a==="yes"?"Addresses it":(a==="no"?"Doesn’t address it":"Partly addresses it");
+    function sec(title,arr,dot){if(!arr||!arr.length)return "";return '<div class="ho-sec"><div class="ho-sec-h">'+title+'</div>'+arr.map(function(x){return '<div class="ho-line"><span class="ho-dot ho-'+dot+'"></span><span>'+esc(x)+'</span></div>';}).join("")+'</div>';}
+    return '<div class="ho-verdict">'+
+      '<div class="ho-badge ho-'+cls+'">'+lbl+'</div>'+
+      (v.summary?'<div class="ho-summary">'+esc(v.summary)+'</div>':"")+
+      sec("Covers",v.covers,"good")+sec("Doesn’t cover / left open",v.gaps,"warn")+sec("Risks it adds",v.risks,"bad")+
+      sec("Confirm yourself — you run these",v.confirm,"accent")+
+      '<div class="ho-when">Graded '+esc(ago(h.updatedAt))+' · grounded on the '+(h.source==="github"?"fetched diff":"change you gave it")+', not verified by running it.</div>'+
+    '</div>';
+  }
+  function parsePRNum(ref){ref=String(ref||"");var m=ref.match(/\/pull\/(\d+)/)||ref.match(/#(\d+)/)||ref.match(/\b(\d{1,7})\b/);return m?parseInt(m[1],10):null;}
+  function gatherDiff(p,ref,pasted,cb){
+    if(pasted&&pasted.trim().length>=20){cb(pasted,"pasted");return;}
+    var num=parsePRNum(ref),repo=parseRepo(p.repo);
+    if(num&&repo&&mcpNS&&mcpNS.callTool){
+      mcpNS.callTool(GH_SERVER,"pull_request_read",{owner:repo.owner,repo:repo.repo,method:"get_files",pullNumber:num}).then(function(r){
+        var files=asArray(r&&r.payload);
+        var diff=files.map(function(f){return "--- "+(f.filename||"?")+" ("+(f.status||"")+") ---\n"+(f.patch||"(no patch shown)");}).join("\n\n").slice(0,12000);
+        cb(diff&&diff.length>20?diff:"",diff&&diff.length>20?"github":null);
+      },function(){cb("",null);});
+    } else { cb("",null); }
+  }
+  function gradeHandoff(pid,hid){
+    var p=findProject(pid);if(!p)return;var h=(p.handoffs||[]).filter(function(x){return x.id===hid;})[0];if(!h)return;
+    var ref=val("ho-ref-"+hid)||h.ref||"",pasted=val("ho-diff-"+hid)||h.diff||"";
+    commit(function(){var pp=findProject(pid);if(!pp)return;var hh=(pp.handoffs||[]).filter(function(x){return x.id===hid;})[0];if(hh){hh.ref=ref;hh.updatedAt=Date.now();}});
+    ui.hoLoading[hid]=true;render();
+    gatherDiff(p,ref,pasted,function(diffText,source){
+      if(!diffText||diffText.trim().length<20){ui.hoLoading[hid]=false;render();toast("Paste the diff or a summary — I won’t grade on the title alone");return;}
+      resolveSample(function(ns){
+        if(!ns){ui.hoLoading[hid]=false;sampleNS=null;render();toast("AI isn’t available here");return;}
+        ns.json(buildGradePrompt(h.finding,diffText,ref,source),{modelTier:"default",cache:false}).then(function(res){
+          ui.hoLoading[hid]=false;var vd=normalizeVerdict(res);
+          if(!vd){render();toast("Couldn’t grade it — try again");return;}
+          commit(function(){var pp=findProject(pid);if(!pp)return;var hh=(pp.handoffs||[]).filter(function(x){return x.id===hid;})[0];if(hh){hh.verdict=vd;hh.status="graded";hh.source=source;hh.diff=diffText.slice(0,4000);hh.updatedAt=Date.now();}});
+        },function(err){ui.hoLoading[hid]=false;render();var c=err&&err.code;if(c==="not_granted")toast("AI access was declined");else if(c==="rate_limited")toast("Rate limited — try again shortly");else if(c!=="cancelled")toast("Couldn’t reach Claude — try again");});
+      });
+    });
+  }
+  function buildGradePrompt(finding,diff,ref,source){
+    var L=[];
+    L.push("You are a skeptical senior engineer checking whether a code change actually resolves ONE specific finding. Be adversarial and specific: your job is to catch what is missing or wrong, not to praise. Ground every point in the diff below — if the diff does not show something, say you cannot tell rather than assuming it. Judge the CHANGE against the FINDING, never who wrote it. Do not be agreeable.");
+    L.push("THE FINDING (what was supposed to be addressed):");
+    L.push(finding);
+    L.push("THE CHANGE"+(ref?(" ("+ref+")"):"")+(source==="github"?" [fetched from GitHub]":" [pasted by the user]")+":");
+    L.push(diff);
+    L.push("You cannot run anything, so never claim tests pass or that it works — instead give the concrete checks the USER should run to confirm (specific commands or behaviours). Prefer 'partial' or 'no' unless the diff clearly shows the finding resolved.");
+    L.push('Return ONLY JSON: {"addresses":"yes|partial|no","covers":["what it genuinely does, grounded in the diff"],"gaps":["what it does NOT cover or leaves open"],"risks":["anything it might break or introduce"],"confirm":["a specific check the user runs to verify"],"summary":"one honest sentence"}. Omit a list only if truly empty.');
+    return L.join("\n");
+  }
+  function normalizeVerdict(res){
+    if(!res||typeof res!=="object")return null;
+    function arr(x){var o=[];if(Array.isArray(x))x.slice(0,6).forEach(function(v){v=String((v&&(v.text||v.item))||v||"").trim();if(v)o.push(v.slice(0,240));});return o;}
+    var a=String(res.addresses||res.verdict||"").toLowerCase();
+    a=(a.indexOf("partial")>=0||a.indexOf("part")>=0)?"partial":(a.indexOf("yes")>=0?"yes":(a.indexOf("no")>=0?"no":"partial"));
+    var v={addresses:a,covers:arr(res.covers||res.covered),gaps:arr(res.gaps||res.missing||res.open||res.not_covered),risks:arr(res.risks||res.watch),confirm:arr(res.confirm||res.checks||res.verify),summary:String(res.summary||"").trim().slice(0,240)};
+    if(!(v.covers.length||v.gaps.length||v.risks.length||v.confirm.length||v.summary))return null;
+    return v;
+  }
+  function adviceSec(p,key,label,capturable,handoffable){
     var items=(p.advice&&p.advice[key])||[];
     if(!items.length)return "";
     var rows=items.map(function(t,i){
       var cap=capturable?'<button class="adv-cap" type="button" data-action="advice-capture" data-id="'+p.id+'" data-sec="'+key+'" data-idx="'+i+'" title="Add to On my mind">+ On my mind</button>':"";
-      return '<div class="adv-item"><span class="adv-dot adv-'+key+'"></span><span class="adv-txt">'+esc(t)+'</span>'+cap+'</div>';
+      var ho=handoffable?'<button class="adv-cap adv-ho" type="button" data-action="advice-handoff" data-id="'+p.id+'" data-sec="'+key+'" data-idx="'+i+'" title="Hand off to this project and track the result">Hand off →</button>':"";
+      return '<div class="adv-item"><span class="adv-dot adv-'+key+'"></span><span class="adv-txt">'+esc(t)+'</span>'+ho+cap+'</div>';
     }).join("");
     return '<div class="adv-sec"><div class="adv-lbl">'+label+'</div>'+rows+'</div>';
   }
@@ -1567,7 +1679,7 @@ h1,h2,h3{margin:0;font-family:var(--font-display);font-weight:600;text-wrap:bala
     var head='<div class="proj-chat-h" style="margin-top:2px">'+sparkSvg()+'Advisor · your right-hand'+when+'</div>';
     var body;
     if(loading)body='<div class="ai-loading">'+sparkSvg()+'Thinking through the project…</div>';
-    else if(has)body=adviceSec(p,"next","Do next",true)+adviceSec(p,"missing","Missing / gaps",true)+adviceSec(p,"research","Research",true)+adviceSec(p,"risks","Risks to watch",false);
+    else if(has)body=adviceSec(p,"next","Do next",true,true)+adviceSec(p,"missing","Missing / gaps",true,true)+adviceSec(p,"research","Research",true,false)+adviceSec(p,"risks","Risks to watch",false,false);
     else body='<div class="action-empty">No pass yet — let Claude think through where this project stands and what’s next.</div>';
     var syncHint=(p.repo&&!p.gh&&!loading)?'<div class="adv-hint">Tip: Sync GitHub first for live PR/CI context.</div>':"";
     var btn=loading?"":'<button class="btn btn-primary btn-sm" data-action="advice-think" data-id="'+p.id+'" type="button" style="margin-top:10px">'+sparkSvg()+(has?"Re-think":"Think it through")+'</button>';
@@ -1734,7 +1846,7 @@ h1,h2,h3{margin:0;font-family:var(--font-display);font-weight:600;text-wrap:bala
     return '<div class="card goal-card">'+
       '<div class="goal-top"><div style="min-width:0"><div class="goal-name proj-open-name" data-action="toggle-project-card" data-id="'+p.id+'" role="button" tabindex="0" title="Collapse ‘'+esc(p.name)+'’"><span class="proj-mini-chev open">'+chevronSvg()+'</span>'+esc(p.name)+'</div>'+repoLine+'</div>'+
         '<button class="icon-btn danger" data-action="del-project" data-id="'+p.id+'" title="Delete project" aria-label="Delete project">&#215;</button></div>'+
-      health+bodyBlock+meta+advice+projGh(p)+chat+
+      health+bodyBlock+meta+advice+projGh(p)+renderHandoffs(p)+chat+
     '</div>';
   }
 
@@ -1927,6 +2039,7 @@ h1,h2,h3{margin:0;font-family:var(--font-display);font-weight:600;text-wrap:bala
   function goalIcon(){return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8.5"></circle><circle cx="12" cy="12" r="3.4"></circle></svg>';}
   function projIcon(){return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="4.5" width="7" height="7" rx="1.6"></rect><rect x="13.5" y="4.5" width="7" height="7" rx="1.6"></rect><rect x="3.5" y="14.5" width="7" height="5" rx="1.6"></rect><rect x="13.5" y="14.5" width="7" height="5" rx="1.6"></rect></svg>';}
   function reviewIcon(){return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 19h16"></path><path d="M7 19v-6"></path><path d="M12 19V6"></path><path d="M17 19v-9"></path></svg>';}
+  function handoffSvg(){return '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h13"></path><path d="M13 6l6 6-6 6"></path></svg>';}
   function clockSvg(){return '<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3.5 2"></path></svg>';}
   function playSvg(){return '<svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M7 5.5v13a1 1 0 0 0 1.53.85l10-6.5a1 1 0 0 0 0-1.7l-10-6.5A1 1 0 0 0 7 5.5Z"></path></svg>';}
   function sparkSvg(){return '<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2l1.7 5.6L19 9l-5.3 1.4L12 16l-1.7-5.6L5 9l5.3-1.4L12 2z"></path></svg>';}
