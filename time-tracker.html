@@ -500,6 +500,25 @@ h1,h2,h3{margin:0;font-family:var(--font-display);font-weight:600;text-wrap:bala
 .gsec-body .curr,.gsec-body .prog{margin-top:0;border:none;background:transparent;padding:0}
 .gsec-body .note-edit,.gsec-body .goal-note{margin-top:0}
 .gsec-body .goal-note{border:none;background:transparent;padding:0;border-left:0}
+/* guided goal shaper */
+.gm-tabs{display:flex;gap:6px;margin-bottom:10px}
+.gm-tab{flex:1;border:1px solid var(--line-strong);background:var(--surface);color:var(--muted);font-family:inherit;font-size:12.5px;font-weight:600;padding:10px 10px;border-radius:11px;line-height:1.2;cursor:pointer;transition:background .15s,border-color .15s,color .15s}
+.gm-tab:hover{color:var(--ink);border-color:var(--faint)}
+.gm-tab.on{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.shaper-lead{font-size:13px;color:var(--muted);line-height:1.5;flex:1 1 100%}
+.lvl-row{display:flex;flex-wrap:wrap;align-items:center;gap:7px;flex:1 1 100%}
+.lvl-lbl{font-size:12px;color:var(--muted);width:100%}
+.lvl{border:1px solid var(--line-strong);background:var(--surface);color:var(--muted);font-family:inherit;font-size:12px;font-weight:600;padding:7px 13px;border-radius:99px;line-height:1;cursor:pointer;transition:background .15s,border-color .15s,color .15s}
+.lvl:hover{color:var(--ink);border-color:var(--faint)}
+.lvl.on{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.shape-panel .prop-title{flex:1 1 100%;margin-bottom:2px}
+.shape-badge{font-size:10px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;padding:2px 8px;border-radius:99px;background:var(--accent-soft);color:var(--accent);margin-left:8px}
+.shape-badge.out{background:var(--good-soft);color:var(--good)}
+.shape-why{font-size:12.5px;color:var(--muted);font-style:italic;line-height:1.5;flex:1 1 100%;margin-bottom:2px}
+.shape-woop{flex:1 1 100%;margin-top:4px;padding:10px 12px;background:var(--surface);border:1px solid var(--line);border-radius:10px;font-size:13px;color:var(--ink);line-height:1.5}
+.shape-woop b{font-weight:600}
+.shape-woop-note{font-size:11px;color:var(--faint);margin-top:5px}
+.shape-panel .rep-lbl{flex:1 1 100%}
 </style>
 
 <div id="root"></div>
@@ -560,7 +579,7 @@ h1,h2,h3{margin:0;font-family:var(--font-display);font-weight:600;text-wrap:bala
   var syncMode="check"; // check|sync|local|error|readonly
   var VIEW_KEY="wmtw_view";
   function loadView(){try{var v=localStorage.getItem(VIEW_KEY);return (v==="goals"||v==="projects"||v==="review")?v:"now";}catch(e){return "now";}}
-  var ui={addOpen:false, goalOpen:false, actionOpen:{}, noteOpen:{}, cueOpen:{}, idOpen:{}, repOpen:{}, stepAddOpen:{}, proposal:{}, loading:{}, projectOpen:false, projEdit:{}, projLoading:{}, ghLoading:{}, ghErr:{}, adviseLoading:{}, currRefs:{}, projCardOpen:{}, goalSecOpen:{}, view:loadView(), date:dayKey(Date.now())};
+  var ui={addOpen:false, goalOpen:false, actionOpen:{}, noteOpen:{}, cueOpen:{}, idOpen:{}, repOpen:{}, stepAddOpen:{}, proposal:{}, loading:{}, projectOpen:false, projEdit:{}, projLoading:{}, ghLoading:{}, ghErr:{}, adviseLoading:{}, currRefs:{}, projCardOpen:{}, goalSecOpen:{}, goalMode:"have", shapeLevel:"new", shapeTopic:"", shapeLoading:false, shapeProposal:null, view:loadView(), date:dayKey(Date.now())};
   var isTouch=("ontouchstart" in window)||(navigator.maxTouchPoints>0);
   var sampleNS; // undefined=unknown, null=unavailable, function=ready
   var GH_SERVER="GitHub Integration";
@@ -742,6 +761,7 @@ h1,h2,h3{margin:0;font-family:var(--font-display);font-weight:600;text-wrap:bala
     else if(a==="add-planned"){var est=parseInt(val("p-est"),10);addPlanned(val("p-name"),val("p-cat"),isNaN(est)?0:est);}
     else if(a==="add-later")addLater(val("l-name"));
     else if(a==="add-goal")addGoal(val("g-name"),val("g-deadline"),val("g-identity"));
+    else if(a==="shape-topic")shapeTopic(val("shape-topic"),ui.shapeLevel);
     else if(a==="add-action"){var sid=f.getAttribute("data-id"),agid=f.getAttribute("data-gid");addAction(agid,sid,val("act-"+sid),val("act-cue-"+sid));}
     else if(a==="add-step"){var sgid=f.getAttribute("data-id");addStep(sgid,val("step-"+sgid));}
     else if(a==="log-rep"){var gidR=f.getAttribute("data-id");logRep(gidR,val("rep-rung-"+gidR),val("rep-grade-"+gidR),val("rep-note-"+gidR));}
@@ -762,7 +782,12 @@ h1,h2,h3{margin:0;font-family:var(--font-display);font-weight:600;text-wrap:bala
     else if(a==="prev-day"){ui.date=shiftDay(ui.date,-1);render();}
     else if(a==="next-day"){if(ui.date!==dayKey(Date.now())){ui.date=shiftDay(ui.date,1);render();}}
     else if(a==="today"){ui.date=dayKey(Date.now());render();}
-    else if(a==="toggle-goal"){ui.goalOpen=!ui.goalOpen;render();}
+    else if(a==="toggle-goal"){ui.goalOpen=!ui.goalOpen;if(!ui.goalOpen){ui.shapeProposal=null;ui.shapeTopic="";ui.goalMode="have";}render();}
+    else if(a==="goal-mode"){ui.goalMode=b.getAttribute("data-mode")==="topic"?"topic":"have";render();}
+    else if(a==="shape-level"){ui.shapeTopic=val("shape-topic")||ui.shapeTopic;ui.shapeLevel=b.getAttribute("data-lvl")||"new";render();}
+    else if(a==="shape-accept")acceptShape(val("shape-goal"),val("shape-identity"),val("shape-action"));
+    else if(a==="shape-reshape")shapeTopic(ui.shapeTopic,ui.shapeLevel);
+    else if(a==="shape-cancel"){ui.shapeProposal=null;ui.shapeTopic="";render();}
     else if(a==="toggle-action"){ui.actionOpen[id]=!ui.actionOpen[id];render();}
     else if(a==="del-goal"){if(window.confirm("Delete this goal? Its actions become normal tasks and keep the time you logged."))deleteGoal(id);}
     else if(a==="edit-note"){ui.noteOpen[id]=true;render();}
@@ -1133,17 +1158,112 @@ h1,h2,h3{margin:0;font-family:var(--font-display);font-weight:600;text-wrap:bala
   }
   function renderGoals(){
     var goals=state.goals||[];
-    var addForm=ui.goalOpen?('<form class="goal-form" data-action="add-goal" autocomplete="off">'+
-      '<input id="g-name" class="field" placeholder="Goal — e.g. Become a skilled long-term investor" aria-label="Goal">'+
-      '<input id="g-deadline" class="field field-est" type="date" aria-label="Target date (optional)">'+
-      '<input id="g-identity" class="field" placeholder="Identity (optional) — I’m becoming someone who…" aria-label="Identity">'+
-      '<button class="btn btn-primary" type="submit">Add goal</button></form>'):"";
+    var addForm="";
+    if(ui.goalOpen){
+      if(aiEnabled()){
+        var mode=ui.goalMode==="topic"?"topic":"have";
+        addForm='<div class="gm-tabs">'+
+          '<button class="gm-tab'+(mode==="have"?" on":"")+'" data-action="goal-mode" data-mode="have" type="button">I have a goal</button>'+
+          '<button class="gm-tab'+(mode==="topic"?" on":"")+'" data-action="goal-mode" data-mode="topic" type="button">Not sure yet</button>'+
+        '</div>'+(mode==="topic"?shaperForm():standardGoalForm());
+      } else {
+        addForm=standardGoalForm();
+      }
+    }
     var body=goals.length?('<div class="goal-list">'+goals.map(goalCard).join("")+'</div>')
       :(ui.goalOpen?"":'<div class="card empty">No goals yet. Add one, break it into small daily actions, and your tracked time will show whether you’re actually on track.</div>');
     return '<section class="sec">'+
       '<div class="sec-head"><h2>Goals</h2><button class="btn btn-ghost btn-sm" data-action="toggle-goal" type="button">'+(ui.goalOpen?"Close":"+ New")+'</button></div>'+
       addForm+body+
     '</section>';
+  }
+  /* ---------- guided goal shaper (topic -> starter goal) ---------- */
+  function standardGoalForm(){
+    return '<form class="goal-form" data-action="add-goal" autocomplete="off">'+
+      '<input id="g-name" class="field" placeholder="Goal — e.g. Become a skilled long-term investor" aria-label="Goal">'+
+      '<input id="g-deadline" class="field field-est" type="date" aria-label="Target date (optional)">'+
+      '<input id="g-identity" class="field" placeholder="Identity (optional) — I’m becoming someone who…" aria-label="Identity">'+
+      '<button class="btn btn-primary" type="submit">Add goal</button></form>';
+  }
+  function shaperForm(){
+    if(ui.shapeLoading) return '<div class="goal-form"><div class="ai-loading">'+sparkSvg()+'Shaping a starting point…</div></div>';
+    if(ui.shapeProposal) return shapePanel(ui.shapeProposal);
+    var level=ui.shapeLevel||"new";
+    var pill=function(v,l){return '<button type="button" class="lvl'+(level===v?" on":"")+'" data-action="shape-level" data-lvl="'+v+'">'+l+'</button>';};
+    return '<form class="goal-form shaper" data-action="shape-topic" autocomplete="off">'+
+      '<div class="shaper-lead">Just a topic is fine. I’ll turn it into a starter goal and a first small step — no need to know the whole plan yet.</div>'+
+      '<input id="shape-topic" class="field" value="'+esc(ui.shapeTopic||"")+'" placeholder="A topic — e.g. investing, getting stronger, writing" aria-label="Topic">'+
+      '<div class="lvl-row"><span class="lvl-lbl">Where are you with it?</span>'+pill("new","New to it")+pill("some","Know a bit")+pill("known","Know it well")+'</div>'+
+      '<button class="btn btn-primary" type="submit">'+sparkSvg()+'Shape it</button>'+
+    '</form>';
+  }
+  function shapePanel(p){
+    var badge=p.framing==="outcome"?'<span class="shape-badge out">Outcome goal</span>':'<span class="shape-badge">Learning goal</span>';
+    var woop=(p.obstacle||p.plan)?'<div class="shape-woop"><b>If it stalls:</b> '+esc(p.obstacle||"")+(p.plan?' → '+esc(p.plan):"")+'<div class="shape-woop-note">Saved to the goal’s notes.</div></div>':"";
+    return '<div class="goal-form shape-panel">'+
+      '<div class="prop-title">'+sparkSvg()+'A starting point'+badge+'</div>'+
+      (p.why?'<div class="shape-why">'+esc(p.why)+'</div>':"")+
+      '<label class="rep-lbl">Goal</label>'+
+      '<input id="shape-goal" class="field" value="'+esc(p.goal)+'" aria-label="Goal">'+
+      '<label class="rep-lbl">You’re becoming…</label>'+
+      '<input id="shape-identity" class="field" value="'+esc(p.identity)+'" placeholder="I’m becoming someone who…" aria-label="Identity">'+
+      '<label class="rep-lbl">First 15 minutes — today</label>'+
+      '<input id="shape-action" class="field" value="'+esc(p.first_action)+'" aria-label="First action">'+
+      woop+
+      '<div class="note-btns"><button class="btn btn-primary btn-sm" data-action="shape-accept" type="button">Create goal</button>'+
+      '<button class="btn btn-ghost btn-sm" data-action="shape-reshape" type="button">Reshape</button>'+
+      '<button class="btn btn-ghost btn-sm" data-action="shape-cancel" type="button">Start over</button></div>'+
+    '</div>';
+  }
+  function buildShapePrompt(topic,level){
+    var fam=level==="known"?"They already know this area well.":(level==="some"?"They know a little about this area but are not expert.":"They are new to this area.");
+    var L=[];
+    L.push("A person wants to make progress on a topic but has not formed a goal yet. Turn the topic into a good STARTER goal plus a first tiny step. Speak to them in second person, warm and concrete.");
+    L.push("Topic: "+topic);
+    L.push("Familiarity: "+fam);
+    L.push("Rule: If they are new or know only a little, frame the goal as a LEARNING / exploration goal — getting oriented, understanding the core ideas, finding the main approaches — NOT an outcome or performance target. You cannot set a good outcome in a domain you don't yet understand, and a performance goal here just breeds anxiety. Only if they already know the area well should the goal be an outcome.");
+    L.push("Give ONE first action that takes about 15 minutes and can be done today (bias to action, small and unintimidating), the most likely INNER obstacle (doubt, overwhelm, avoidance — not logistics), and a short if-then PLAN that pre-decides what to do when that obstacle hits.");
+    L.push("Keep every field short (one line), plain-spoken, no jargon.");
+    L.push('Return ONLY JSON: {"framing":"learning|outcome","goal":"short goal title","identity":"I’m becoming someone who…","first_action":"a ~15-min action for today","obstacle":"the likely inner obstacle","plan":"If … then …","why":"one short sentence on why this framing fits where they are"}.');
+    return L.join("\n");
+  }
+  function normalizeShape(res){
+    if(!res||typeof res!=="object")return null;
+    function s(x,n){x=String(x==null?"":x).trim();return x?x.slice(0,n):"";}
+    var p={framing:(res.framing==="outcome"?"outcome":"learning"),goal:s(res.goal||res.title,120),identity:s(res.identity,120),first_action:s(res.first_action||res.action||res.firstAction,140),obstacle:s(res.obstacle,180),plan:s(res.plan,180),why:s(res.why,200)};
+    if(!p.goal)return null;
+    return p;
+  }
+  function shapeTopic(topic,level){
+    topic=(topic||"").trim();if(!topic){toast("Type a topic first");return;}
+    ui.shapeTopic=topic;ui.shapeLevel=level||"new";ui.shapeProposal=null;ui.shapeLoading=true;render();
+    resolveSample(function(ns){
+      if(!ns){ui.shapeLoading=false;sampleNS=null;render();toast("AI isn’t available here");return;}
+      ns.json(buildShapePrompt(topic,ui.shapeLevel),{modelTier:"default",cache:false}).then(function(res){
+        ui.shapeLoading=false;var pr=normalizeShape(res);
+        if(!pr){render();toast("Couldn’t shape that — try again");return;}
+        ui.shapeProposal=pr;render();
+      },function(err){
+        ui.shapeLoading=false;render();var c=err&&err.code;
+        if(c==="not_granted")toast("AI access was declined");
+        else if(c==="rate_limited")toast("Rate limited — try again shortly");
+        else if(c!=="cancelled")toast("Couldn’t reach Claude — try again");
+      });
+    });
+  }
+  function acceptShape(name,identity,action){
+    name=(name||"").trim();if(!name){toast("Give the goal a name");return;}
+    var p=ui.shapeProposal||{};
+    var notes=(p.obstacle||p.plan)?("Likely obstacle: "+(p.obstacle||"—")+"\nIf-then plan: "+(p.plan||"—")):"";
+    ui.shapeProposal=null;ui.shapeTopic="";ui.shapeLevel="new";ui.goalMode="have";ui.goalOpen=false;
+    commit(function(){
+      state.goals=state.goals||[];
+      var gid=uid();
+      state.goals.push({id:gid,name:name.slice(0,120),deadline:null,identity:(identity||"").trim().slice(0,120),createdAt:Date.now(),notes:notes});
+      var act=(action||"").trim();
+      if(act)state.tasks.push({id:uid(),name:act.slice(0,140),category:"",estimateMin:null,planned:false,daily:true,goalId:gid,stepId:null,depth:null,cue:"",done:false,createdAt:Date.now(),sessions:[]});
+    });
+    toast("Goal created — your first step is on the list");
   }
   /* ---------- steps + AI breakdown ---------- */
   function stepActions(gid,sid){return state.tasks.filter(function(t){return t.goalId===gid&&t.daily&&t.stepId===sid;});}
