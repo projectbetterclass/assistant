@@ -458,6 +458,48 @@ h1,h2,h3{margin:0;font-family:var(--font-display);font-weight:600;text-wrap:bala
   .tl-time{width:70px}
   .field-cat,.quick .btn-primary{flex:1 1 100%}
 }
+
+/* ---- one-screen home + bottom tab nav ---- */
+.view{animation:viewin .18s ease}
+@keyframes viewin{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+.home{display:flex;flex-direction:column;gap:16px}
+.home-next{background:var(--surface);border:1px solid var(--line);border-left:3px solid var(--accent);border-radius:var(--radius);padding:15px 16px;box-shadow:var(--shadow)}
+.home-next-eye{font-size:11px;text-transform:uppercase;letter-spacing:.07em;color:var(--accent);font-weight:600;margin-bottom:9px}
+.home-next-row{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.home-next-label{flex:1 1 auto;min-width:0;font-family:var(--font-display);font-size:16.5px;font-weight:600;line-height:1.25}
+.home-next-row .btn{flex:none}
+.home-next-more{margin-top:11px;border:none;background:transparent;color:var(--muted);font-family:inherit;font-size:12.5px;font-weight:600;padding:0;cursor:pointer}
+.home-next-more:hover{color:var(--accent)}
+.home-glance{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;
+  border:1px solid var(--line);background:var(--surface-2);border-radius:12px;padding:13px 15px;
+  font-size:13.5px;color:var(--muted);font-family:inherit;cursor:pointer;text-align:left;transition:border-color .15s}
+.home-glance:hover{border-color:var(--line-strong)}
+.home-glance b{color:var(--ink);font-family:var(--font-mono);font-weight:600}
+.home-glance-go{flex:none;color:var(--accent);font-weight:600;font-size:12.5px}
+.tabbar{position:fixed;left:0;right:0;bottom:0;z-index:40;display:flex;justify-content:center;gap:2px;
+  background:var(--surface);border-top:1px solid var(--line);
+  padding:7px 10px calc(7px + env(safe-area-inset-bottom,0px));box-shadow:0 -2px 14px -10px rgba(0,0,0,.35)}
+.tab{position:relative;flex:1 1 0;max-width:190px;display:flex;flex-direction:column;align-items:center;gap:4px;
+  border:none;background:transparent;color:var(--faint);font-family:var(--font-sans);font-size:11px;font-weight:600;
+  padding:6px 4px;border-radius:11px;line-height:1;transition:color .15s,background .15s}
+.tab svg{width:22px;height:22px}
+.tab:hover{color:var(--ink)}
+.tab.active{color:var(--accent);background:var(--accent-soft)}
+.tab-live{position:absolute;top:5px;right:calc(50% - 17px);width:7px;height:7px;border-radius:50%;background:var(--accent);animation:pulse 1.5s ease-in-out infinite}
+/* collapsible goal sub-sections */
+.gsec{margin-top:12px;border:1px solid var(--line);border-radius:12px;background:var(--surface-2);overflow:hidden}
+.gsec-head{display:flex;align-items:center;gap:9px;width:100%;border:none;background:transparent;
+  font-family:inherit;text-align:left;padding:12px 13px;cursor:pointer;color:var(--ink);min-width:0}
+.gsec-head:hover{background:var(--surface)}
+.gsec-chev{flex:none;color:var(--faint);display:inline-flex;align-items:center}
+.gsec-chev svg{transition:transform .15s}
+.gsec-chev.open svg{transform:rotate(90deg)}
+.gsec-title{font-size:11px;text-transform:uppercase;letter-spacing:.07em;color:var(--faint);font-weight:600;flex:none}
+.gsec-sum{flex:1;min-width:0;font-size:12.5px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:right}
+.gsec-body{padding:0 13px 13px}
+.gsec-body .curr,.gsec-body .prog{margin-top:0;border:none;background:transparent;padding:0}
+.gsec-body .note-edit,.gsec-body .goal-note{margin-top:0}
+.gsec-body .goal-note{border:none;background:transparent;padding:0;border-left:0}
 </style>
 
 <div id="root"></div>
@@ -516,7 +558,9 @@ h1,h2,h3{margin:0;font-family:var(--font-display);font-weight:600;text-wrap:bala
   var state=loadState();
   var artNS; // undefined=unknown, null=unavailable, object=ready
   var syncMode="check"; // check|sync|local|error|readonly
-  var ui={addOpen:false, goalOpen:false, actionOpen:{}, noteOpen:{}, cueOpen:{}, idOpen:{}, repOpen:{}, stepAddOpen:{}, proposal:{}, loading:{}, projectOpen:false, projEdit:{}, projLoading:{}, ghLoading:{}, ghErr:{}, adviseLoading:{}, currRefs:{}, projCardOpen:{}, date:dayKey(Date.now())};
+  var VIEW_KEY="wmtw_view";
+  function loadView(){try{var v=localStorage.getItem(VIEW_KEY);return (v==="goals"||v==="projects"||v==="review")?v:"now";}catch(e){return "now";}}
+  var ui={addOpen:false, goalOpen:false, actionOpen:{}, noteOpen:{}, cueOpen:{}, idOpen:{}, repOpen:{}, stepAddOpen:{}, proposal:{}, loading:{}, projectOpen:false, projEdit:{}, projLoading:{}, ghLoading:{}, ghErr:{}, adviseLoading:{}, currRefs:{}, projCardOpen:{}, goalSecOpen:{}, view:loadView(), date:dayKey(Date.now())};
   var isTouch=("ontouchstart" in window)||(navigator.maxTouchPoints>0);
   var sampleNS; // undefined=unknown, null=unavailable, function=ready
   var GH_SERVER="GitHub Integration";
@@ -756,6 +800,8 @@ h1,h2,h3{margin:0;font-family:var(--font-display);font-weight:600;text-wrap:bala
     else if(a==="cur-shaky")finishLesson(id,"shaky");
     else if(a==="cur-refs"){ui.currRefs=ui.currRefs||{};ui.currRefs[id]=!ui.currRefs[id];render();}
     else if(a==="retry"){syncMode="check";renderChip();persist();}
+    else if(a==="set-view"){var v=b.getAttribute("data-view");if(v&&v!==ui.view){ui.view=v;try{localStorage.setItem(VIEW_KEY,v);}catch(e){}render();window.scrollTo(0,0);}}
+    else if(a==="toggle-gsec"){var gk=id+':'+b.getAttribute("data-key");ui.goalSecOpen[gk]=!ui.goalSecOpen[gk];render();}
   }
 
   /* ---------- theme ---------- */
@@ -805,27 +851,100 @@ h1,h2,h3{margin:0;font-family:var(--font-display);font-weight:600;text-wrap:bala
   function chip(cat){if(!cat)return "";return '<span class="chip"><span class="cdot" style="background:'+catColor(cat)+'"></span>'+esc(cat)+'</span>';}
   function pinBtn(t){return '<button class="icon-btn pin'+(t.pinned?" is-on":"")+'" type="button" data-action="toggle-pin" data-id="'+t.id+'" aria-pressed="'+(t.pinned?"true":"false")+'" title="'+(t.pinned?"Pinned to quick-start — tap to unpin":"Pin to quick-start")+'" aria-label="'+(t.pinned?"Unpin from quick-start":"Pin to quick-start")+'">'+(t.pinned?"★":"☆")+'</button>';}
 
-  function render(){
+  function topBar(){
     var c=chipData();
-    var html='';
-    html+='<div class="top">'+
+    return '<div class="top">'+
       '<div class="brand">'+clockSvg()+'<h1>Where My Time Went</h1></div>'+
       '<div class="top-actions">'+
         '<button class="chip-sync '+c.cls+'" data-action="retry" title="'+esc(c.title)+'"><span class="dot"></span>'+esc(c.label)+'</button>'+
         '<button class="icon-btn" data-action="theme" aria-label="Toggle light or dark theme">'+(effectiveTheme()==="dark"?"&#9788;":"&#9789;")+'</button>'+
       '</div></div>';
-
-    html+=renderNow();
-    html+=renderGoals();
-    html+=renderProjects();
-    html+=renderCapture();
-    html+=renderPlanned();
-    html+=renderReview();
-    html+='<p class="foot-note">Your day is saved to this page and synced to every device where you open it. '+
-      'Start something to log real time; add a planned task to compare your estimate against how long it actually takes.</p>';
+  }
+  function tabBar(){
+    var tabs=[["now","Now",clockSvg()],["goals","Goals",goalIcon()],["projects","Projects",projIcon()],["review","Review",reviewIcon()]];
+    return '<nav class="tabbar" role="tablist" aria-label="Sections">'+tabs.map(function(t){
+      var on=ui.view===t[0];
+      var live=(t[0]==="now"&&state.activeId)?'<span class="tab-live" aria-hidden="true"></span>':"";
+      return '<button class="tab'+(on?' active':'')+'" role="tab" aria-selected="'+(on?'true':'false')+'" data-action="set-view" data-view="'+t[0]+'" type="button">'+live+t[2]+'<span class="tab-lbl">'+t[1]+'</span></button>';
+    }).join("")+'</nav>';
+  }
+  function renderHome(){
+    return '<div class="view home">'+renderNow()+homeNext()+homeGlance()+renderCaptureHome()+'</div>';
+  }
+  function render(){
+    var html=topBar();
+    if(ui.view==="goals")        html+='<div class="view">'+renderGoals()+'</div>';
+    else if(ui.view==="projects")html+='<div class="view">'+renderProjects()+'</div>';
+    else if(ui.view==="review")  html+='<div class="view">'+renderReview()+renderPlanned()+'</div>';
+    else                         html+=renderHome();
+    html+=tabBar();
     root.innerHTML=html;
   }
 
+  /* ---------- home: the single "what now?" screen ---------- */
+  function homeNext(){
+    var pick=null,goals=state.goals||[],i,j,k;
+    for(i=0;i<goals.length&&!pick;i++){
+      var g=goals[i],c=valCurrFor(g);
+      if(c){var cur=currentLesson(g);if(cur)pick={type:"lesson",gid:g.id,goal:g.name,label:cur.lesson.concept,rung:cur.lesson.rung,min:cur.lesson.estimateMin||15,tid:lessonTaskId(g.id)};}
+    }
+    if(!pick){
+      var today=dayKey(Date.now());
+      for(j=0;j<goals.length&&!pick;j++){
+        var acts=goalActions(goals[j].id);
+        for(k=0;k<acts.length;k++){
+          var t=acts[k];if(t.done)continue;
+          var doneToday=(t.sessions||[]).some(function(se){return dayKey(se.start)===today;});
+          if(!doneToday){pick={type:"action",gid:goals[j].id,goal:goals[j].name,label:t.name,tid:t.id};break;}
+        }
+      }
+    }
+    if(!pick)return "";
+    if(state.activeId===pick.tid)return "";               // it's the running hero already
+    var start=pick.type==="lesson"
+      ?'<button class="btn btn-primary btn-sm" data-action="cur-start" data-id="'+pick.gid+'" type="button">Start · ~'+pick.min+'m</button>'
+      :'<button class="btn btn-primary btn-sm" data-action="start" data-id="'+pick.tid+'" type="button">Start</button>';
+    var eye=pick.type==="lesson"?esc(pick.rung)+' · '+esc(pick.goal):esc(pick.goal);
+    return '<div class="home-next">'+
+      '<div class="home-next-eye">Next up · '+eye+'</div>'+
+      '<div class="home-next-row"><div class="home-next-label">'+esc(pick.label)+'</div>'+start+'</div>'+
+      '<button class="home-next-more" data-action="set-view" data-view="goals" type="button">Open Goals →</button>'+
+    '</div>';
+  }
+  function homeGlance(){
+    var now=Date.now(),key=dayKey(now),total=0,deep=0,sessions=0;
+    state.tasks.forEach(function(t){(t.sessions||[]).forEach(function(se){
+      if(dayKey(se.start)!==key)return;
+      var end=se.end==null?now:se.end,dur=(end-se.start)/1000;
+      total+=dur;sessions++;if(t.depth==="deep")deep+=dur;
+    });});
+    var body=total<1?'<span>Nothing tracked yet today</span>'
+      :'<span><b>'+fmtDur(total)+'</b> tracked today'+(deep>=60?' · <b>'+fmtDur(deep)+'</b> deep':'')+' · '+sessions+' session'+(sessions===1?'':'s')+'</span>';
+    return '<button class="home-glance" data-action="set-view" data-view="review" type="button">'+body+'<span class="home-glance-go">Review →</span></button>';
+  }
+  function renderCaptureHome(){
+    var items=state.tasks.filter(function(t){return t.later&&!t.done;});
+    items.sort(function(a,b){return b.createdAt-a.createdAt;});
+    var list=items.length?('<div class="task-list" style="margin-top:12px">'+items.map(captureRow).join("")+'</div>'):"";
+    return '<div class="home-capture">'+
+      '<form class="card capture-form" data-action="add-later" autocomplete="off">'+
+        '<input id="l-name" class="field" placeholder="On your mind? Jot it for later…" aria-label="Something to do later">'+
+        '<button class="btn btn-primary" type="submit">Add</button>'+
+      '</form>'+list+
+    '</div>';
+  }
+  /* collapsible sub-section inside a goal card (calm by default, depth on tap) */
+  function goalSec(g,key,title,summary,bodyFn){
+    var open=ui.goalSecOpen[g.id+':'+key];
+    return '<div class="gsec'+(open?' open':'')+'">'+
+      '<button class="gsec-head" data-action="toggle-gsec" data-id="'+g.id+'" data-key="'+key+'" type="button" aria-expanded="'+(open?'true':'false')+'">'+
+        '<span class="gsec-chev'+(open?' open':'')+'">'+chevronSvg()+'</span>'+
+        '<span class="gsec-title">'+esc(title)+'</span>'+
+        (summary?'<span class="gsec-sum">'+summary+'</span>':'')+
+      '</button>'+
+      (open?'<div class="gsec-body">'+bodyFn()+'</div>':'')+
+    '</div>';
+  }
   function lastUsed(t){var m=t.createdAt||0;(t.sessions||[]).forEach(function(se){if(se.start>m)m=se.start;});return m;}
   function recentQuick(){
     var seen={},pins=[],rest=[];
@@ -907,27 +1026,28 @@ h1,h2,h3{margin:0;font-family:var(--font-display);font-weight:600;text-wrap:bala
   function renderProgression(g){
     var p=g.progression;
     if(!p) return '<button class="btn btn-ghost btn-sm prog-add" data-action="prog-add" data-id="'+g.id+'" type="button">+ Add a skill ladder (Bloom’s)</button>';
-    var len=p.ladder.length, pl=progLevel(p.reps||[],len), wk=startOfToday()-6*86400000;
-    var lvlBefore=progLevel((p.reps||[]).filter(function(r){return r.t<wk;}),len).level;
-    var leveledThisWeek=pl.level>lvlBefore, repsThisWeek=(p.reps||[]).filter(function(r){return r.t>=wk;}).length, atTop=pl.level>=len-1;
-    var segs="";for(var i=0;i<len;i++){segs+='<div class="rung '+(i<pl.level?"done":(i===pl.level?"cur":""))+'"></div>';}
-    var desc=BLOOM[pl.level]?BLOOM[pl.level].d:"";
-    var line;
-    if(leveledThisWeek)line='<span class="prog-up">Leveled up this week ↑</span>';
-    else if(atTop)line='<span class="prog-up">Top rung reached — now master it</span>';
-    else if(repsThisWeek>=2)line=pl.clean+'/2 clean reps to level up · <span class="prog-held">grinding — no new rung this week (noted)</span>';
-    else line=pl.clean+'/2 clean reps to level up';
-    var log=(p.reps||[]).slice().sort(function(a,b){return b.t-a.t;}).slice(0,5).map(function(r){
-      return '<div class="rep-row"><span class="rep-dot '+esc(r.grade)+'"></span><span>'+esc(p.ladder[r.rung]||"?")+'</span><span class="rep-grade">'+esc(r.grade)+'</span><span class="rep-date">'+esc(shortDate(r.t))+'</span></div>';
-    }).join("");
-    var repForm=ui.repOpen[g.id]?logRepForm(g,pl):'<button class="btn btn-ghost btn-sm" data-action="rep-open" data-id="'+g.id+'" type="button">+ Log a rep</button>';
-    return '<div class="prog">'+
-      '<div class="prog-head">Skill ladder · Bloom’s</div>'+
-      '<div class="rungs">'+segs+'</div>'+
-      '<div class="prog-now">Now training: <b>'+esc(p.ladder[pl.level])+'</b> — '+esc(desc)+'</div>'+
-      '<div class="prog-sub">'+line+' · best: '+esc(p.ladder[pl.best]||p.ladder[0])+'</div>'+
-      (log?'<div class="rep-log">'+log+'</div>':"")+repForm+
-    '</div>';
+    var len=p.ladder.length, pl=progLevel(p.reps||[],len);
+    var sum=esc(p.ladder[pl.level]||p.ladder[0]);
+    return goalSec(g,'ladder','Skill ladder',sum,function(){
+      var wk=startOfToday()-6*86400000;
+      var lvlBefore=progLevel((p.reps||[]).filter(function(r){return r.t<wk;}),len).level;
+      var leveledThisWeek=pl.level>lvlBefore, repsThisWeek=(p.reps||[]).filter(function(r){return r.t>=wk;}).length, atTop=pl.level>=len-1;
+      var segs="";for(var i=0;i<len;i++){segs+='<div class="rung '+(i<pl.level?"done":(i===pl.level?"cur":""))+'"></div>';}
+      var desc=BLOOM[pl.level]?BLOOM[pl.level].d:"";
+      var line;
+      if(leveledThisWeek)line='<span class="prog-up">Leveled up this week ↑</span>';
+      else if(atTop)line='<span class="prog-up">Top rung reached — now master it</span>';
+      else if(repsThisWeek>=2)line=pl.clean+'/2 clean reps to level up · <span class="prog-held">grinding — no new rung this week (noted)</span>';
+      else line=pl.clean+'/2 clean reps to level up';
+      var log=(p.reps||[]).slice().sort(function(a,b){return b.t-a.t;}).slice(0,5).map(function(r){
+        return '<div class="rep-row"><span class="rep-dot '+esc(r.grade)+'"></span><span>'+esc(p.ladder[r.rung]||"?")+'</span><span class="rep-grade">'+esc(r.grade)+'</span><span class="rep-date">'+esc(shortDate(r.t))+'</span></div>';
+      }).join("");
+      var repForm=ui.repOpen[g.id]?logRepForm(g,pl):'<button class="btn btn-ghost btn-sm" data-action="rep-open" data-id="'+g.id+'" type="button">+ Log a rep</button>';
+      return '<div class="rungs">'+segs+'</div>'+
+        '<div class="prog-now">Now training: <b>'+esc(p.ladder[pl.level])+'</b> — '+esc(desc)+'</div>'+
+        '<div class="prog-sub">'+line+' · best: '+esc(p.ladder[pl.best]||p.ladder[0])+'</div>'+
+        (log?'<div class="rep-log">'+log+'</div>':"")+repForm;
+    });
   }
   function logRepForm(g,pl){
     var opts="";for(var i=0;i<g.progression.ladder.length;i++){opts+='<option value="'+i+'"'+(i===pl.level?" selected":"")+'>'+(i+1)+' · '+esc(g.progression.ladder[i])+'</option>';}
@@ -976,9 +1096,9 @@ h1,h2,h3{margin:0;font-family:var(--font-display);font-weight:600;text-wrap:bala
     var c=valCurrFor(g);if(!c)return "";
     var done=currDone(g),total=c.lessons.length,doneCount=0;
     c.lessons.forEach(function(l){if(done[l.id])doneCount++;});
-    var head='<div class="curr-head">'+esc(c.title)+'<span class="curr-count">'+doneCount+'/'+total+'</span></div>';
     var cur=currentLesson(g);
-    if(!cur)return '<div class="curr">'+head+'<div class="curr-done-all">All '+total+' lessons complete — now produce and defend. 🏔</div></div>';
+    var sum=doneCount+'/'+total+(cur?' · '+esc(cur.lesson.rung):' · complete');
+    if(!cur)return goalSec(g,'curr','Curriculum',sum,function(){return '<div class="curr-done-all">All '+total+' lessons complete — now produce and defend. 🏔</div>';});
     var l=cur.lesson,tid=lessonTaskId(g.id),running=state.activeId===tid;
     var tags=(l.doctrine_ref||[]).map(function(d){return '<span class="curr-tag">'+esc(d)+'</span>';}).join("");
     var refsOpen=ui.currRefs&&ui.currRefs[g.id];
@@ -995,7 +1115,7 @@ h1,h2,h3{margin:0;font-family:var(--font-display);font-weight:600;text-wrap:bala
       :'<button class="btn btn-primary btn-sm" data-action="cur-start" data-id="'+g.id+'" type="button">Start · ~'+(l.estimateMin||15)+' min</button>';
     var nxt=c.lessons[cur.idx+1];
     var peek=nxt?'<div class="curr-next">Up next · '+esc(nxt.rung)+' · '+esc(nxt.concept)+' · ~'+(nxt.estimateMin||15)+'m</div>':'<div class="curr-next">This is the final lesson — the capstone.</div>';
-    return '<div class="curr">'+head+
+    return goalSec(g,'curr','Curriculum',sum,function(){return ''+
       '<div class="curr-card">'+
         '<div class="curr-meta"><span class="curr-badge">'+esc(l.rung)+'</span>'+
           '<span class="curr-pos">Lesson '+l.order+' / '+total+'</span>'+
@@ -1009,8 +1129,7 @@ h1,h2,h3{margin:0;font-family:var(--font-display);font-weight:600;text-wrap:bala
           '<button class="btn btn-primary btn-sm" data-action="cur-nailed" data-id="'+g.id+'" type="button">Nailed it ✓</button>'+
           '<button class="btn btn-ghost btn-sm" data-action="cur-shaky" data-id="'+g.id+'" type="button">Still shaky</button>'+
         '</div>'+
-      '</div>'+peek+
-    '</div>';
+      '</div>'+peek;});
   }
   function renderGoals(){
     var goals=state.goals||[];
@@ -1174,8 +1293,10 @@ h1,h2,h3{margin:0;font-family:var(--font-display);font-weight:600;text-wrap:bala
         '<div class="note-btns"><button class="btn btn-primary btn-sm" data-action="save-note" data-id="'+g.id+'" type="button">Save note</button>'+
         '<button class="btn btn-ghost btn-sm" data-action="cancel-note" data-id="'+g.id+'" type="button">Cancel</button></div></div>';
     } else if(g.notes){
-      noteBlock='<div class="goal-note"><span class="note-label">Notes &amp; open questions</span><div class="note-body">'+esc(g.notes)+'</div>'+
-        '<div style="margin-top:9px"><button class="btn btn-ghost btn-sm" data-action="edit-note" data-id="'+g.id+'" type="button">Edit</button></div></div>';
+      noteBlock=goalSec(g,'notes','Notes & open questions',esc(firstLine(g.notes)),function(){
+        return '<div class="goal-note" style="border:none;background:transparent;padding:0;border-left:0"><div class="note-body">'+esc(g.notes)+'</div>'+
+          '<div style="margin-top:9px"><button class="btn btn-ghost btn-sm" data-action="edit-note" data-id="'+g.id+'" type="button">Edit</button></div></div>';
+      });
     } else {
       noteBlock='<button class="btn btn-ghost btn-sm note-add-btn" data-action="edit-note" data-id="'+g.id+'" type="button">+ Notes &amp; open questions</button>';
     }
@@ -1667,6 +1788,9 @@ h1,h2,h3{margin:0;font-family:var(--font-display);font-weight:600;text-wrap:bala
 
   /* ---------- inline icons ---------- */
   function chevronSvg(){return '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"></path></svg>';}
+  function goalIcon(){return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8.5"></circle><circle cx="12" cy="12" r="3.4"></circle></svg>';}
+  function projIcon(){return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="4.5" width="7" height="7" rx="1.6"></rect><rect x="13.5" y="4.5" width="7" height="7" rx="1.6"></rect><rect x="3.5" y="14.5" width="7" height="5" rx="1.6"></rect><rect x="13.5" y="14.5" width="7" height="5" rx="1.6"></rect></svg>';}
+  function reviewIcon(){return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 19h16"></path><path d="M7 19v-6"></path><path d="M12 19V6"></path><path d="M17 19v-9"></path></svg>';}
   function clockSvg(){return '<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3.5 2"></path></svg>';}
   function playSvg(){return '<svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M7 5.5v13a1 1 0 0 0 1.53.85l10-6.5a1 1 0 0 0 0-1.7l-10-6.5A1 1 0 0 0 7 5.5Z"></path></svg>';}
   function sparkSvg(){return '<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2l1.7 5.6L19 9l-5.3 1.4L12 16l-1.7-5.6L5 9l5.3-1.4L12 2z"></path></svg>';}
