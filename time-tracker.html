@@ -543,6 +543,11 @@ h1,h2,h3{margin:0;font-family:var(--font-display);font-weight:600;text-wrap:bala
 .ho-dot.ho-bad{background:var(--bad)}
 .ho-dot.ho-accent{background:var(--accent)}
 .ho-when{font-size:11px;color:var(--faint);margin-top:10px;font-style:italic;line-height:1.4}
+/* advisor basis tags ("why I think this") */
+.adv-basis{display:inline-block;font-size:9px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:1px 6px;border-radius:99px;margin-left:7px;vertical-align:middle;white-space:nowrap}
+.adv-basis.is-grounded{background:var(--good-soft);color:var(--good)}
+.adv-basis.is-guess{background:var(--warn-soft);color:var(--warn)}
+.adv-why{font-size:11.5px;color:var(--faint);line-height:1.4;margin-top:3px}
 </style>
 
 <div id="root"></div>
@@ -1546,12 +1551,24 @@ h1,h2,h3{margin:0;font-family:var(--font-display);font-weight:600;text-wrap:bala
     }
     var hist=(p.chat||[]).slice(-6);
     if(hist.length){L.push("Recent discussion with them:");hist.forEach(function(m){L.push((m.r==="u"?"Them: ":"You: ")+m.t);});}
-    L.push('Return ONLY JSON of the form {"next":["..."],"missing":["..."],"research":["..."],"risks":["..."]}. 2-4 items per list, each one short concrete sentence. "next" = things they can do now to move it forward. "missing" = gaps in the work (tests, docs, error handling, an undecided design point). "research" = specific things worth looking into, each with a why. "risks" = what could bite them. Omit a list only if you genuinely have nothing real for it.');
+    L.push("Be honest about what you actually know: you have NOT seen the code — only the text above. Do not state inferences as if they were facts.");
+    L.push('Return ONLY JSON of the form {"next":[{"t":"...","b":"grounded","w":"..."}],"missing":[...],"research":[...],"risks":[...]}. 2-4 items per list. For every item: "t" = one short, concrete sentence ("next" = do now to move it forward; "missing" = a gap such as tests, docs, error handling, an undecided design point; "research" = something specific to look into; "risks" = what could bite them). "b" = "grounded" ONLY if the item is based on specific evidence above (the status text, a named PR/commit, or the discussion); otherwise "guess" — a common pattern for this kind of project that you are inferring without specific evidence. "w" = a few words naming what it is based on (e.g. "from your status", "PR #2 failing CI", "common gap for engines like this"). If you were given no GitHub data and only a thin status, most items should honestly be "guess". Omit a list only if you genuinely have nothing real for it.');
     return L.join("\n");
   }
   function normalizeAdvice(res){
     if(!res||typeof res!=="object")return null;
-    function arr(x){var out=[];if(Array.isArray(x))x.slice(0,5).forEach(function(v){v=String((v&&(v.text||v.item))||v||"").trim();if(v)out.push(v.slice(0,240));});return out;}
+    function arr(x){
+      var out=[];
+      if(Array.isArray(x))x.slice(0,5).forEach(function(v){
+        var t,b,w;
+        if(v&&typeof v==="object"){t=String(v.t||v.text||v.item||"").trim();b=v.b||v.basis;w=String(v.w||v.why||"").trim();}
+        else {t=String(v||"").trim();}
+        if(!t)return;
+        b=(String(b||"").toLowerCase().indexOf("ground")>=0)?"grounded":"guess"; // default honest: unmarked = guess
+        out.push({t:t.slice(0,240),b:b,w:w?w.slice(0,90):""});
+      });
+      return out;
+    }
     var a={at:Date.now(),next:arr(res.next||res.do||res.do_next),missing:arr(res.missing||res.gaps),research:arr(res.research),risks:arr(res.risks||res.watch)};
     if(!(a.next.length||a.missing.length||a.research.length||a.risks.length))return null;
     return a;
@@ -1575,14 +1592,14 @@ h1,h2,h3{margin:0;font-family:var(--font-display);font-weight:600;text-wrap:bala
   }
   function captureAdvice(pid,sec,idx){
     var p=findProject(pid);if(!p||!p.advice)return;
-    var list=p.advice[sec]||[];var text=list[idx];if(!text)return;
+    var list=p.advice[sec]||[];var text=advItemText(list[idx]);if(!text)return;
     addLater(text+" · "+p.name);
     toast("Added to On my mind");
   }
   /* ---------- handoff feedback loop: track a finding you gave the project, grade the change that came back ---------- */
   function handoffAdvice(pid,sec,idx){
     var p=findProject(pid);if(!p||!p.advice)return;
-    var list=p.advice[sec]||[];var text=list[idx];if(!text)return;
+    var list=p.advice[sec]||[];var text=advItemText(list[idx]);if(!text)return;
     commit(function(){var pp=findProject(pid);if(!pp)return;pp.handoffs=pp.handoffs||[];pp.handoffs.unshift({id:uid(),finding:text,status:"open",ref:"",diff:"",source:null,verdict:null,createdAt:Date.now(),updatedAt:Date.now()});});
     toast("Handed off — attach the change when it lands to get it graded");
   }
@@ -1663,13 +1680,17 @@ h1,h2,h3{margin:0;font-family:var(--font-display);font-weight:600;text-wrap:bala
     if(!(v.covers.length||v.gaps.length||v.risks.length||v.confirm.length||v.summary))return null;
     return v;
   }
+  function advItemText(it){return (it&&typeof it==="object")?String(it.t||it.text||it.item||""):String(it||"");}
   function adviceSec(p,key,label,capturable,handoffable){
     var items=(p.advice&&p.advice[key])||[];
     if(!items.length)return "";
-    var rows=items.map(function(t,i){
+    var rows=items.map(function(it,i){
+      var t=advItemText(it), grounded=(it&&it.b==="grounded"), why=(it&&it.w)||"";
+      var basis='<span class="adv-basis '+(grounded?"is-grounded":"is-guess")+'" title="'+esc(grounded?"based on real signal you gave it":"an inference, not from specific evidence — verify it")+'">'+(grounded?"grounded":"guess")+'</span>';
+      var whyLine=why?'<div class="adv-why">'+esc(why)+'</div>':"";
       var cap=capturable?'<button class="adv-cap" type="button" data-action="advice-capture" data-id="'+p.id+'" data-sec="'+key+'" data-idx="'+i+'" title="Add to On my mind">+ On my mind</button>':"";
       var ho=handoffable?'<button class="adv-cap adv-ho" type="button" data-action="advice-handoff" data-id="'+p.id+'" data-sec="'+key+'" data-idx="'+i+'" title="Hand off to this project and track the result">Hand off →</button>':"";
-      return '<div class="adv-item"><span class="adv-dot adv-'+key+'"></span><span class="adv-txt">'+esc(t)+'</span>'+ho+cap+'</div>';
+      return '<div class="adv-item"><span class="adv-dot adv-'+key+'"></span><div class="adv-txt">'+esc(t)+basis+whyLine+'</div>'+ho+cap+'</div>';
     }).join("");
     return '<div class="adv-sec"><div class="adv-lbl">'+label+'</div>'+rows+'</div>';
   }
@@ -1681,7 +1702,13 @@ h1,h2,h3{margin:0;font-family:var(--font-display);font-weight:600;text-wrap:bala
     if(loading)body='<div class="ai-loading">'+sparkSvg()+'Thinking through the project…</div>';
     else if(has)body=adviceSec(p,"next","Do next",true,true)+adviceSec(p,"missing","Missing / gaps",true,true)+adviceSec(p,"research","Research",true,false)+adviceSec(p,"risks","Risks to watch",false,false);
     else body='<div class="action-empty">No pass yet — let Claude think through where this project stands and what’s next.</div>';
-    var syncHint=(p.repo&&!p.gh&&!loading)?'<div class="adv-hint">Tip: Sync GitHub first for live PR/CI context.</div>':"";
+    var needSync=p.repo&&!p.gh&&!loading;
+    var syncHint="";
+    if(needSync){
+      var hintTxt=has?'No GitHub synced, so these lean on inference (see the tags). Sync, then Re-think, to ground them in real PRs &amp; CI.'
+        :'Without GitHub synced, the Advisor can only guess from your status. Sync first for grounded advice.';
+      syncHint='<div class="adv-hint">'+hintTxt+'</div><button class="btn btn-ghost btn-sm" data-action="gh-sync" data-id="'+p.id+'" type="button" style="margin-top:8px">'+ghSvg()+'Sync GitHub</button>';
+    }
     var btn=loading?"":'<button class="btn btn-primary btn-sm" data-action="advice-think" data-id="'+p.id+'" type="button" style="margin-top:10px">'+sparkSvg()+(has?"Re-think":"Think it through")+'</button>';
     return '<div class="proj-gh">'+head+body+syncHint+btn+'</div>';
   }
