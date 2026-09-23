@@ -530,6 +530,58 @@ h1,h2,h3{margin:0;font-family:var(--font-display);font-weight:600;text-wrap:bala
 .shape-woop b{font-weight:600}
 .shape-woop-note{font-size:11px;color:var(--faint);margin-top:5px}
 .shape-panel .rep-lbl{flex:1 1 100%}
+/* Aswath's method — prominent and open by default on the investing goal */
+.asw{margin-top:14px;border:1px solid var(--line);border-left:3px solid var(--accent);border-radius:12px;background:linear-gradient(180deg,var(--accent-soft),transparent 150px),var(--surface-2);overflow:hidden}
+.asw-head{display:flex;align-items:baseline;gap:9px;width:100%;border:none;background:transparent;font-family:inherit;text-align:left;padding:13px 14px 11px;cursor:pointer;color:var(--ink);min-width:0}
+.asw-title{flex:none;font-family:var(--font-display);font-weight:600;font-size:16px;color:var(--accent)}
+.asw-sub{flex:1;min-width:0;font-size:12px;color:var(--muted)}
+.asw-chev{flex:none;align-self:center;color:var(--faint);display:inline-flex}
+.asw-chev svg{transition:transform .15s}
+.asw-chev.open svg{transform:rotate(90deg)}
+.asw-chev.sm svg{width:12px;height:12px}
+.asw-body{padding:0 14px 14px}
+.asw-quote{margin:0 0 6px;font-family:var(--font-display);font-size:19px;line-height:1.3;color:var(--ink)}
+.asw-quote cite{display:block;margin-top:4px;font-family:var(--font-sans);font-style:normal;font-size:11.5px;color:var(--faint)}
+.asw-lead{margin:0;font-size:13.5px;line-height:1.5;color:var(--muted)}
+.asw-h{font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;color:var(--faint);font-weight:600;margin:14px 0 7px}
+.asw-steps{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:7px}
+.asw-step{display:grid;grid-template-columns:18px 50px 1fr auto;gap:0 8px;align-items:baseline;font-size:13px;line-height:1.45}
+.asw-n{font-family:var(--font-mono);font-size:11px;color:var(--accent);font-weight:600}
+.asw-sk{font-weight:600;color:var(--ink)}
+.asw-sq{color:var(--muted)}
+.asw-ref{font-family:var(--font-mono);font-size:10px;color:var(--faint);white-space:nowrap}
+.asw-calls{border:1px solid var(--line);border-radius:10px;background:var(--surface);overflow:hidden}
+.asw-c+.asw-c{border-top:1px solid var(--line)}
+.asw-call{display:flex;align-items:center;gap:10px;width:100%;border:none;background:transparent;font-family:inherit;text-align:left;padding:9px 11px;cursor:pointer;color:var(--ink)}
+.asw-call:hover{background:var(--surface-2)}
+.asw-id{flex:none;width:56px;display:flex;flex-direction:column;gap:1px}
+.asw-tk{font-family:var(--font-mono);font-weight:600;font-size:12.5px}
+.asw-main{flex:1;min-width:0;display:flex;flex-direction:column;gap:3px}
+.asw-l1{display:flex;flex-wrap:wrap;align-items:center;gap:3px 7px}
+.asw-v{font-size:11px;font-weight:700;letter-spacing:.02em;padding:2px 8px;border-radius:99px;white-space:nowrap}
+.asw-v.asw-good{background:var(--good-soft);color:var(--good)}
+.asw-v.asw-bad{background:var(--bad-soft);color:var(--bad)}
+.asw-v.asw-mid{background:var(--accent-soft);color:var(--accent)}
+.asw-did{font-size:12.5px;font-weight:600;color:var(--ink)}
+.asw-did::before{content:"\2192\00a0";color:var(--faint);font-weight:400}
+.asw-l2{font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}
+.asw-ps{font-size:9.5px;font-weight:700;color:var(--warn);text-transform:uppercase;letter-spacing:.04em;margin-left:6px}
+.asw-when{font-family:var(--font-mono);font-size:10.5px;color:var(--faint);white-space:nowrap}
+.asw-det{padding:0 12px 13px 77px;font-size:13px;line-height:1.55;color:var(--ink)}
+.asw-dh{font-size:10.5px;text-transform:uppercase;letter-spacing:.06em;color:var(--faint);font-weight:600;margin:9px 0 3px}
+.asw-drv{display:grid;grid-template-columns:auto 1fr;gap:3px 12px;margin-top:9px;font-size:12px}
+.asw-dk{color:var(--muted)}
+.asw-dv{font-family:var(--font-mono);color:var(--ink)}
+.asw-dn{margin-top:10px;padding:8px 10px;background:var(--warn-soft);border-radius:8px;font-size:12px;line-height:1.5;color:var(--ink)}
+.asw-vid{display:inline-block;margin-top:10px;font-size:12.5px;font-weight:500;color:var(--accent);text-decoration:none}
+.asw-vid:hover{text-decoration:underline}
+.asw-more{display:block;margin:8px 0 0;border:none;background:transparent;color:var(--accent);font-family:inherit;font-size:12.5px;font-weight:600;padding:2px 0;cursor:pointer}
+.asw-note{margin-top:11px;font-size:11.5px;line-height:1.45;color:var(--faint);font-style:italic}
+.asw-learn{display:block;width:100%;margin-top:12px;border:1px solid var(--accent);background:transparent;color:var(--accent);font-family:inherit;font-size:13px;font-weight:600;padding:10px 12px;border-radius:10px;cursor:pointer;text-align:left}
+.asw-learn:hover{background:var(--accent-soft)}
+.asw-learn-t{display:block}
+.asw-learn-s{display:block;margin-top:2px;font-size:11.5px;font-weight:500;color:var(--muted)}
+@media (max-width:460px){.asw-step{grid-template-columns:16px 44px 1fr}.asw-ref{display:none}.asw-det{padding-left:12px}}
 /* handoff feedback loop */
 .adv-ho{color:var(--accent);border-color:var(--accent-soft)}
 .adv-ho:hover{border-color:var(--accent)}
@@ -613,13 +665,19 @@ h1,h2,h3{margin:0;font-family:var(--font-display);font-weight:600;text-wrap:bala
     {id:"L34",order:34,rung:"Create",stage_name:"Write it up",concept:"A defensible valuation memo",task:"Turn your valuation into a short memo: the story, the key judgments (each cited to a doctrine point with its sensitivity), a simulation/range, and the value-vs-price verdict. Then GRINDE-map the method so it sticks.",estimateMin:90,doctrine_ref:["D-01","D-41","D-42"],read:[],example:"GRINDE-map the whole method afterwards"}
   ]};
 
+  /* Aswath's own calls — curated from valuation-agent data/aswath_takes.json (his videos, via youtube-digest).
+     Frozen at their dates, older per-share numbers pre-date splits: a worked example of method, never a signal. */
+  var ASWATH_TAKES=[{"tk":"INTC","when":"2024","v":"Undervalued","vc":"good","did":"bought","preSplit":false,"hook":null,"title":"Dealing with Decline: Intel, Walgreens and Starbucks put to the test!","url":"https://www.youtube.com/watch?v=g3VT_cclr4U","date":"2024","value":"~$23.70","price":"$18.89","story":"Intel as a company <b>in decline</b> (his D-44 route) &mdash; but decline is a <em>process</em>, not a death sentence. The bar to clear the price is low: even at just 3% revenue growth and a 25% margin (below what Intel earned last decade), he gets ~$23.70/share, above the ~$18.89 price. &ldquo;I&rsquo;m not asking for much.&rdquo;","action":"He <b>bought Intel at $18.89</b>: &ldquo;the odds are in my favour.&rdquo; A fallen tech superstar, but the core business is still healthy even as NVIDIA takes share.","note":"2024. A worked example of valuing <em>decline</em> honestly &mdash; a low, defensible bar that the price still failed to clear.","drivers":[["Revenue growth","~3%"],["Operating margin","~25% (below its own history)"]]},{"tk":"NVDA","when":"Jun 2023","v":"Overvalued","vc":"bad","did":"sold half","preSplit":true,"hook":null,"title":"AI Winners, Losers and Wannabes: Valuing AI's Boost to NVIDIA's Value!","url":"https://www.youtube.com/watch?v=2N0IDShsTyc","date":"June 2023","value":"~$240","price":"$410","story":"An <em>opportunistic growth company</em> that keeps getting ahead of the crowd into profitable niches &mdash; gaming, then crypto, now AI chips and automotive. His story had revenues rising roughly tenfold over the decade (~$26bn &rarr; ~$266bn), led by AI chips (its ~75% share fading toward 60% as rivals arrive) and auto chips (~3% &rarr; ~15%); premium operating margins edging up toward a 40% target; and its heavy up-front reinvestment finally paying off as efficiency climbs toward the industry norm.","action":"As a value investor he judged the stock overvalued (his simulation put only a ~5% chance it was worth the price) &mdash; so he <b>sold half</b> his position to bank the profit, and held the other half not as a value bet but as an <em>option</em> on NVIDIA&rsquo;s proven knack for surprising to the upside. &ldquo;I split the difference.&rdquo;","note":"Dated June 2023 and <b>before NVIDIA&rsquo;s 10-for-1 split</b> (June 2024) &mdash; so his $240 is about <b>$24 split-adjusted</b>, and the $410 price he faced is ~$41 today. Read this as a worked example of his <em>method and story</em> &mdash; not his raw per-share number.","drivers":[["Revenue in 10 yrs","~$266bn (10&times;)"],["Target op. margin","40% (R&amp;D-adj.)"],["Sales-to-capital","&rarr; 1.15"],["Cost of capital","12.2%"]]},{"tk":"META","when":"Feb 2022","v":"Undervalued","vc":"good","did":"held","preSplit":false,"hook":null,"title":"Facebook/Meta, Lesson 3: Tell me a story","url":"https://www.youtube.com/watch?v=tDqTHFBKwsY","date":"February 2022","value":"~$346","price":"$220","story":"The market feared Facebook&rsquo;s golden age was over; his story was milder &mdash; growth slows and operating margins <em>drift</em> down from ~44% to ~40% (not collapse). At those inputs the value came out ~$346 against a $220 price.","action":"He had <b>already bought Facebook</b> after the Cambridge-Analytica sell-off, and this valuation reinforced the call &mdash; the market was pricing in a margin collapse he didn&rsquo;t believe.","note":"February 2022. A clean example of a <em>numbers-vs-fear</em> story: modest, defensible margin erosion &mdash; not the collapse the price implied.","drivers":[["Operating margin","44% &rarr; 40%"],["Growth","slowing, not stalling"]]},{"tk":"TSLA","when":"Feb 2020","v":"Overvalued","vc":"bad","did":"sold","preSplit":true,"hook":null,"title":"A Do-it-Yourself (DIY) Valuation of Tesla: Of Investment Regret and Disagreement!","url":"https://www.youtube.com/watch?v=BVc6CfAjAbM","date":"February 2020","value":"~$430","price":"$640","story":"It comes down to <em>which company you think Tesla is.</em> Value it as a very good <b>auto</b> company (top-quartile auto margins, an auto cost of capital) and it&rsquo;s worth only ~$106&ndash;330; to justify $700+ you must give a revolutionary <em>manufacturer</em> software-company margins, which gets you ~$2,105. His own story: an auto company reaching ~$125bn of revenue by 2030 (5&times; today), with a 10% chance of failure.","action":"He&rsquo;d bought Tesla in June 2019 as undervalued and <b>sold it here</b> as overvalued &mdash; and didn&rsquo;t regret it even as it ran on to $900: &ldquo;I bought Tesla because I thought it was undervalued; I sold because I thought it was overvalued. I have to play the game I came to play.&rdquo;","note":"February 2020, and <b>before Tesla&rsquo;s two splits</b> (5-for-1 Aug 2020 and 3-for-1 Aug 2022 = 15&times; in total) &mdash; so his $430 is about <b>$29 split-adjusted</b>. A worked example of his &lsquo;which company is it?&rsquo; method; weigh the reasoning, not the raw per-share number.","drivers":[["Revenue by 2030","~$125bn (5&times;)"],["Margins","top-quartile auto"],["Chance of failure","10%"],["Cost of capital","auto-company"]]},{"tk":"AAPL","when":"Aug 2018","v":"Overvalued","vc":"bad","did":"sold","preSplit":false,"hook":"a cash machine he trades around its value","title":"Apple and Amazon at a Trillion: A Follow up on Uncertainty and Catalysts","url":"https://www.youtube.com/watch?v=efE_MJdOzSI","date":"August 2018","value":null,"price":null,"story":"Apple is a <b>cash machine</b> &mdash; a mature, hugely profitable business he feels <em>certain</em> about (unlike Amazon, his &lsquo;disruption machine&rsquo; whose future he can&rsquo;t pin down). Certainty cuts both ways: a known business has less hidden upside, so when the price runs ahead of that steady cash generation, he steps aside and waits for the next dip.","action":"He <b>sold his stake</b> here, finding it overvalued &mdash; part of a deliberate pattern: &ldquo;I&rsquo;ve bought Apple four times in the last seven years, and sold out four times.&rdquo; Not permanent: &ldquo;I&rsquo;ll be back.&rdquo;","note":"August 2018. A worked example of trading a great company <em>around</em> value &mdash; buy the dips, sell the runs &mdash; rather than holding blindly.","drivers":null},{"tk":"AMZN","when":"Apr 2018","v":"Optionality bet","vc":"mid","did":null,"preSplit":true,"hook":"his ‘Field of Dreams’ company — the value is in what it builds next","title":"Amazon: Glimpses of Shoeless Joe","url":"https://www.youtube.com/watch?v=EdRsFU_ptyI","date":"April 2018","value":null,"price":null,"story":"His signature <b>&lsquo;Field of Dreams&rsquo;</b> company: <em>if you build it, the revenues and profits will come.</em> He values Amazon in pieces &mdash; retail, AWS, Prime &mdash; with healthy revenue growth and retail operating margins improving from ~9% to ~12% (after capitalising technology and content spend), giving Amazon Retail alone ~$289bn. The price is a bet that Amazon keeps finding new fields to enter.","action":null,"note":"April 2018, and <b>before Amazon&rsquo;s 20-for-1 split</b> (June 2022). The value is in the <em>optionality</em> &mdash; the disruption machine looking for its next business &mdash; which is exactly the part hardest to pin to a number.","drivers":[["Retail margin","9% &rarr; 12%"],["Amazon Retail value","~$289bn"]]},{"tk":"GOOG","when":"2018","v":"Overvalued ~65%","vc":"bad","did":null,"preSplit":true,"hook":null,"title":"Alphabet Soup: All Alpha (Google), No Bets!","url":"https://www.youtube.com/watch?v=17UjaSk0x7c","date":"2018","value":"~$957","price":null,"story":"&ldquo;All alpha, no bets&rdquo;: nearly all of Alphabet&rsquo;s value is the advertising machine (Google), with the moon-shot &lsquo;Other Bets&rsquo; adding little. His story had ad growth <em>leveling off</em> from its double-digit past as digital advertising matures &mdash; giving a median value of ~$957, still modestly above which the price sat (a ~65% chance it was overvalued, ~35% under).","action":null,"note":"2018, and <b>before Alphabet&rsquo;s 20-for-1 split</b> (July 2022) &mdash; so his ~$957 is about <b>$48 split-adjusted</b>. Weigh the story (a maturing ad business, moon-shots worth little), not the raw number.","drivers":null}];
+
   var root=document.getElementById("root");
   var state=loadState();
   var artNS; // undefined=unknown, null=unavailable, object=ready
   var syncMode="check"; // check|sync|local|error|readonly
   var VIEW_KEY="wmtw_view";
   function loadView(){try{var v=localStorage.getItem(VIEW_KEY);return (v==="goals"||v==="projects"||v==="review")?v:"now";}catch(e){return "now";}}
-  var ui={addOpen:false, goalOpen:false, actionOpen:{}, noteOpen:{}, cueOpen:{}, idOpen:{}, repOpen:{}, stepAddOpen:{}, proposal:{}, loading:{}, projectOpen:false, projEdit:{}, projLoading:{}, ghLoading:{}, ghErr:{}, adviseLoading:{}, currRefs:{}, projCardOpen:{}, goalSecOpen:{}, goalMode:"have", shapeLevel:"new", shapeTopic:"", shapeLoading:false, shapeProposal:null, hoLoading:{}, view:loadView(), date:dayKey(Date.now())};
+  var ASW_KEY="wmtw_asw_closed";
+  function loadAsw(){try{return localStorage.getItem(ASW_KEY)==="1";}catch(e){return false;}}
+  var ui={addOpen:false, goalOpen:false, actionOpen:{}, noteOpen:{}, cueOpen:{}, idOpen:{}, repOpen:{}, stepAddOpen:{}, proposal:{}, loading:{}, projectOpen:false, projEdit:{}, projLoading:{}, ghLoading:{}, ghErr:{}, adviseLoading:{}, currRefs:{}, projCardOpen:{}, goalSecOpen:{}, aswClosed:loadAsw(), aswAll:false, aswOpen:{}, goalMode:"have", shapeLevel:"new", shapeTopic:"", shapeLoading:false, shapeProposal:null, hoLoading:{}, view:loadView(), date:dayKey(Date.now())};
   var isTouch=("ontouchstart" in window)||(navigator.maxTouchPoints>0);
   var sampleNS; // undefined=unknown, null=unavailable, function=ready
   var GH_SERVER="GitHub Integration";
@@ -872,6 +930,10 @@ h1,h2,h3{margin:0;font-family:var(--font-display);font-weight:600;text-wrap:bala
     else if(a==="retry"){syncMode="check";renderChip();persist();}
     else if(a==="set-view"){var v=b.getAttribute("data-view");if(v&&v!==ui.view){ui.view=v;try{localStorage.setItem(VIEW_KEY,v);}catch(e){}render();window.scrollTo(0,0);}}
     else if(a==="toggle-gsec"){var gk=id+':'+b.getAttribute("data-key");ui.goalSecOpen[gk]=!ui.goalSecOpen[gk];render();}
+    else if(a==="asw-toggle"){ui.aswClosed=!ui.aswClosed;try{localStorage.setItem(ASW_KEY,ui.aswClosed?"1":"0");}catch(e){}render();}
+    else if(a==="asw-all"){ui.aswAll=!ui.aswAll;render();}
+    else if(a==="asw-call"){ui.aswOpen[id]=!ui.aswOpen[id];render();}
+    else if(a==="asw-learn"){ui.goalSecOpen[id+':curr']=true;render();var ce=document.querySelector('.gsec-head[data-key="curr"][data-id="'+id+'"]');if(ce&&ce.scrollIntoView)ce.scrollIntoView({behavior:"smooth",block:"start"});}
   }
 
   /* ---------- theme ---------- */
@@ -1201,6 +1263,53 @@ h1,h2,h3{margin:0;font-family:var(--font-display);font-weight:600;text-wrap:bala
         '</div>'+
       '</div>'+peek;});
   }
+  /* ---------- Aswath's method: his rule + his real calls, right where you decide ---------- */
+  function renderAswath(g){
+    if(!valCurrFor(g))return "";
+    var open=!ui.aswClosed;
+    var head='<button class="asw-head" data-action="asw-toggle" type="button" aria-expanded="'+(open?'true':'false')+'">'+
+      '<span class="asw-title">Aswath’s method</span><span class="asw-sub">value first, then act</span>'+
+      '<span class="asw-chev'+(open?' open':'')+'">'+chevronSvg()+'</span></button>';
+    if(!open)return '<div class="asw">'+head+'</div>';
+    var steps=[
+      ["Story","What does the business do — and is its story possible, plausible, probable?","D-01"],
+      ["Value","What is it worth from its cash flows and risk — before you look at the price?","D-45"],
+      ["Gap","How far is the price from your value?","D-42"],
+      ["Doubt","What would have to be true for the market to be right instead of you?","D-42"]
+    ].map(function(s,i){return '<li class="asw-step"><span class="asw-n">'+(i+1)+'</span><span class="asw-sk">'+s[0]+'</span><span class="asw-sq">'+esc(s[1])+'</span><span class="asw-ref">'+s[2]+'</span></li>';}).join("");
+    var list=ui.aswAll?ASWATH_TAKES:ASWATH_TAKES.slice(0,3);
+    var more=ASWATH_TAKES.length>3?'<button class="asw-more" data-action="asw-all" type="button">'+(ui.aswAll?'Show fewer':'Show all '+ASWATH_TAKES.length+' of his calls')+'</button>':'';
+    var c=valCurrFor(g),done=currDone(g),dc=0;c.lessons.forEach(function(l){if(done[l.id])dc++;});
+    var cur=currentLesson(g);
+    var learn='<button class="asw-learn" data-action="asw-learn" data-id="'+g.id+'" type="button"><span class="asw-learn-t">Learn his method, step by step →</span><span class="asw-learn-s">Curriculum '+dc+'/'+c.lessons.length+(cur?' · next: '+esc(cur.lesson.stage_name)+' · ~'+(cur.lesson.estimateMin||15)+' min':' · complete')+'</span></button>';
+    return '<div class="asw open">'+head+'<div class="asw-body">'+
+      '<blockquote class="asw-quote">“The odds are in my favour.”<cite>— Aswath Damodaran, buying Intel in 2024</cite></blockquote>'+
+      '<p class="asw-lead">He never claims certainty. He values first, then acts only when the price puts the odds on his side — that’s the line between investing and a gamble.</p>'+
+      '<div class="asw-h">Before any decision</div><ol class="asw-steps">'+steps+'</ol>'+
+      '<div class="asw-h">How he did it — his real calls</div><div class="asw-calls">'+list.map(aswCall).join("")+'</div>'+more+
+      '<div class="asw-note">Frozen at their dates; older per-share numbers pre-date stock splits. Study the reasoning, not the numbers — his method, never a tip.</div>'+
+      learn+
+    '</div></div>';
+  }
+  /* one of his calls; story/action/note/drivers are curated <b>/<em>-only HTML (validated when embedded) */
+  function aswCall(t){
+    var open=!!ui.aswOpen[t.tk];
+    var l2=(t.value&&t.price)?('value '+esc(t.value)+' vs price '+esc(t.price)):(t.value?('value '+esc(t.value)):esc(t.hook||""));
+    if(t.preSplit&&t.value)l2+='<span class="asw-ps">pre-split</span>';
+    var row='<button class="asw-call" data-action="asw-call" data-id="'+t.tk+'" type="button" aria-expanded="'+(open?'true':'false')+'">'+
+      '<span class="asw-id"><span class="asw-tk">'+t.tk+'</span><span class="asw-when">'+esc(t.when)+'</span></span>'+
+      '<span class="asw-main"><span class="asw-l1"><span class="asw-v asw-'+t.vc+'">'+esc(t.v)+'</span>'+(t.did?'<span class="asw-did">'+esc(t.did)+'</span>':'')+'</span>'+
+        '<span class="asw-l2">'+l2+'</span></span>'+
+      '<span class="asw-chev sm'+(open?' open':'')+'">'+chevronSvg()+'</span></button>';
+    if(!open)return '<div class="asw-c">'+row+'</div>';
+    var drv=(t.drivers&&t.drivers.length)?('<div class="asw-drv">'+t.drivers.map(function(d){return '<span class="asw-dk">'+d[0]+'</span><span class="asw-dv">'+d[1]+'</span>';}).join("")+'</div>'):"";
+    return '<div class="asw-c open">'+row+'<div class="asw-det">'+
+      '<div class="asw-dh">His story</div><div>'+t.story+'</div>'+drv+
+      (t.action?'<div class="asw-dh">What he did</div><div>'+t.action+'</div>':'')+
+      '<div class="asw-dn">'+t.note+'</div>'+
+      '<a class="asw-vid" href="'+esc(t.url)+'" target="_blank" rel="noopener">Watch his video: '+esc(t.title)+' · '+esc(t.date)+' ↗</a>'+
+    '</div></div>';
+  }
   function renderGoals(){
     var goals=state.goals||[];
     var addForm="";
@@ -1477,7 +1586,7 @@ h1,h2,h3{margin:0;font-family:var(--font-display);font-weight:600;text-wrap:bala
       '<div class="goal-top"><div style="min-width:0"><div class="goal-name">'+esc(g.name)+'</div>'+meta+'</div>'+
         '<button class="icon-btn danger" data-action="del-goal" data-id="'+g.id+'" title="Delete goal" aria-label="Delete goal">&#215;</button></div>'+
       identityBlock+stat+
-      renderSteps(g)+renderCurriculum(g)+renderProgression(g)+noteBlock+
+      renderAswath(g)+renderSteps(g)+renderCurriculum(g)+renderProgression(g)+noteBlock+
     '</div>';
   }
   function actionRow(t){
