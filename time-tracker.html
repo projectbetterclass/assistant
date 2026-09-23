@@ -631,6 +631,45 @@ h1,h2,h3{margin:0;font-family:var(--font-display);font-weight:600;text-wrap:bala
 .cv-rp{margin-left:auto;font-family:var(--font-mono);font-size:11px;color:var(--faint);white-space:nowrap}
 .cv-list{border:1px solid var(--line);border-radius:12px;background:var(--surface);overflow:hidden}
 .cv-list .ls+.ls{border-top:1px solid var(--line)}
+/* your calls — the decision log, his 4 steps */
+.dec{margin-top:14px;padding:13px 14px 12px;background:var(--surface-2);border:1px solid var(--line);border-radius:12px}
+.dec-head{display:flex;align-items:baseline;flex-wrap:wrap;gap:4px 9px;margin-bottom:10px}
+.dec-title{font-family:var(--font-display);font-weight:600;font-size:15.5px;color:var(--ink)}
+.dec-sub{font-size:12px;color:var(--muted)}
+.dec-new{width:100%}
+.dec-stat{font-size:12px;color:var(--muted);margin:11px 0 8px}
+.dec-bad{color:var(--bad)!important}
+.dec-muted{color:var(--muted)}
+.dec-txt{white-space:pre-wrap;word-break:break-word}
+.dec-foot{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:10px;font-size:11.5px;color:var(--faint)}
+.dec-del{border:none;background:transparent;color:var(--faint);font-family:inherit;font-size:12px;font-weight:600;cursor:pointer;padding:0}
+.dec-del:hover{color:var(--bad)}
+.dec-wiz{display:flex;flex-direction:column;gap:9px;padding:12px;background:var(--surface);border:1px solid var(--accent);border-radius:11px}
+.dec-steps{display:flex;align-items:center;gap:5px;flex-wrap:wrap}
+.dec-dot{font-size:11px;font-weight:600;padding:3px 9px;border-radius:99px;background:var(--surface-2);color:var(--faint);border:1px solid var(--line);white-space:nowrap}
+.dec-dot.on{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.dec-dot.done{background:var(--accent-soft);color:var(--accent);border-color:transparent}
+.dec-x{margin-left:auto;border:none;background:transparent;color:var(--faint);font-family:inherit;font-size:19px;line-height:1;cursor:pointer;padding:0 2px}
+.dec-x:hover{color:var(--bad)}
+.dec-lead{font-size:13.5px;line-height:1.5;color:var(--ink)}
+.dec-ref{font-family:var(--font-mono);font-size:10px;color:var(--faint);margin-left:6px}
+.dec-wiz .field{background:var(--surface-2)}
+.dec-area{min-height:108px}
+.dec-q{font-size:12px;color:var(--muted);font-weight:500}
+.dec-pills{display:flex;flex-wrap:wrap;gap:6px}
+.dec-pill{display:inline-flex;flex-direction:column;align-items:flex-start;gap:1px;border:1px solid var(--line-strong);background:transparent;color:var(--ink);font-family:inherit;font-size:13px;font-weight:600;padding:7px 12px;border-radius:10px;cursor:pointer;text-align:left}
+.dec-pill span{font-size:11px;font-weight:500;color:var(--muted)}
+.dec-pill:hover{border-color:var(--accent)}
+.dec-pill.on{background:var(--accent-soft);border-color:var(--accent);color:var(--accent)}
+.dec-pill.on span{color:var(--accent)}
+.dec-gap{font-size:13px;line-height:1.6;color:var(--ink)}
+.dec-gap b{font-family:var(--font-mono);font-weight:600}
+.dec-gap-sum{padding:9px 11px;background:var(--surface-2);border-radius:9px}
+.dec-tkb{margin-right:4px}
+.dec-warn{margin-top:6px;padding:8px 10px;background:var(--warn-soft);border-radius:8px;font-size:12.5px;line-height:1.5;color:var(--ink)}
+.dec-quote{margin:0;font-family:var(--font-display);font-style:italic;font-size:14px;line-height:1.45;color:var(--muted)}
+.dec-quote cite{display:block;margin-top:3px;font-family:var(--font-mono);font-style:normal;font-size:10px;color:var(--faint)}
+.dec-nav{display:flex;justify-content:space-between;gap:8px;margin-top:3px}
 /* handoff feedback loop */
 .adv-ho{color:var(--accent);border-color:var(--accent-soft)}
 .adv-ho:hover{border-color:var(--accent)}
@@ -675,6 +714,10 @@ h1,h2,h3{margin:0;font-family:var(--font-display);font-weight:600;text-wrap:bala
   var DEFAULT_CATS=["Work","Focus","Meetings","Admin","Breaks","Personal","Errands"];
   var DEEP_TARGET_MIN=120;
   var DAILY_MIN=30;   // your ~30 min a day of curriculum (declared up here: the first render runs before later code)
+  var EDGE=0.10;      // your value within ±10% of the price = "about fair", no clear edge
+  var DEC_3P=[["possible","Possible","it can happen"],["plausible","Plausible","a mechanism, and it’s happened before"],["probable","Probable","it’s already worked somewhere"]];   // his 3P test, D-01
+  var DEC_BASIS=[["guess","Rough guess"],["quick","Quick model"],["full","Full valuation"]];
+  var DEC_ACTS=[["buy","Buy"],["hold","Hold"],["sell","Sell"],["watch","Watch"],["pass","Pass"]];
   var BLOOM=[{k:"Remember",d:"recall the facts & steps"},{k:"Understand",d:"explain why it works"},{k:"Apply",d:"use it on a real case"},{k:"Analyze",d:"break it down & compare"},{k:"Evaluate",d:"judge it & defend your view"},{k:"Create",d:"build something original"}];
   var VAL_RUNGS=["Remember","Understand","Apply","Analyze","Evaluate","Create"];
   /* Damodaran laddered curriculum — content lives in code; only per-lesson done-flags are ever saved into app-state (goal.curr.done). */
@@ -727,7 +770,9 @@ h1,h2,h3{margin:0;font-family:var(--font-display);font-weight:600;text-wrap:bala
   function loadView(){try{var v=localStorage.getItem(VIEW_KEY);return (v==="goals"||v==="projects"||v==="review"||v==="curriculum")?v:"now";}catch(e){return "now";}}
   var ASW_KEY="wmtw_asw_closed";
   function loadAsw(){try{return localStorage.getItem(ASW_KEY)==="1";}catch(e){return false;}}
-  var ui={addOpen:false, goalOpen:false, actionOpen:{}, noteOpen:{}, cueOpen:{}, idOpen:{}, repOpen:{}, stepAddOpen:{}, proposal:{}, loading:{}, projectOpen:false, projEdit:{}, projLoading:{}, ghLoading:{}, ghErr:{}, adviseLoading:{}, currRefs:{}, projCardOpen:{}, goalSecOpen:{}, aswClosed:loadAsw(), aswAll:false, aswOpen:{}, lessonOpen:{}, goalMode:"have", shapeLevel:"new", shapeTopic:"", shapeLoading:false, shapeProposal:null, hoLoading:{}, view:loadView(), date:dayKey(Date.now())};
+  var DEC_KEY="wmtw_dec_draft";   // an unfinished call survives a reload — e.g. you switched apps to look up the price
+  function loadDecDraft(){try{var s=JSON.parse(localStorage.getItem(DEC_KEY)||"null");if(s&&s.d&&s.gid&&Date.now()-(s.t0||0)<3*86400000)return s;}catch(e){}return null;}
+  var ui={addOpen:false, goalOpen:false, actionOpen:{}, noteOpen:{}, cueOpen:{}, idOpen:{}, repOpen:{}, stepAddOpen:{}, proposal:{}, loading:{}, projectOpen:false, projEdit:{}, projLoading:{}, ghLoading:{}, ghErr:{}, adviseLoading:{}, currRefs:{}, projCardOpen:{}, goalSecOpen:{}, aswClosed:loadAsw(), aswAll:false, aswOpen:{}, lessonOpen:{}, dec:loadDecDraft(), decRows:{}, decAll:false, goalMode:"have", shapeLevel:"new", shapeTopic:"", shapeLoading:false, shapeProposal:null, hoLoading:{}, view:loadView(), date:dayKey(Date.now())};
   var isTouch=("ontouchstart" in window)||(navigator.maxTouchPoints>0);
   var sampleNS; // undefined=unknown, null=unavailable, function=ready
   var GH_SERVER="GitHub Integration";
@@ -743,6 +788,7 @@ h1,h2,h3{margin:0;font-family:var(--font-display);font-weight:600;text-wrap:bala
 
   root.addEventListener("click",onClick);
   root.addEventListener("submit",onSubmit);
+  root.addEventListener("input",onInput);
   initSwipeToStop();
 
   /* ---------- swipe the running card sideways to stop ---------- */
@@ -979,6 +1025,15 @@ h1,h2,h3{margin:0;font-family:var(--font-display);font-weight:600;text-wrap:bala
     else if(a==="cur-open"){ui.lessonOpen[id]=!ui.lessonOpen[id];render();}
     else if(a==="cur-today")toggleToday(id,b.getAttribute("data-lid"));
     else if(a==="cur-suggest"){var sg=findGoal(id);if(sg)saveToday(id,suggestPlan(sg,[]));}
+    else if(a==="dec-open")openDecision(id);
+    else if(a==="dec-cancel"){ui.dec=null;saveDecDraft();render();}
+    else if(a==="dec-pick"){decCapture();if(ui.dec){ui.dec.d[b.getAttribute("data-k")]=b.getAttribute("data-v");saveDecDraft();render();}}
+    else if(a==="dec-next")decNext();
+    else if(a==="dec-back")decBack();
+    else if(a==="dec-save")decSave();
+    else if(a==="dec-row"){ui.decRows[id]=!ui.decRows[id];render();}
+    else if(a==="dec-all"){ui.decAll=!ui.decAll;render();}
+    else if(a==="dec-del"){if(window.confirm("Delete this call?"))deleteDecision(id,b.getAttribute("data-did"));}
     else if(a==="retry"){syncMode="check";renderChip();persist();}
     else if(a==="set-view"){var v=b.getAttribute("data-view");if(v&&v!==ui.view){ui.view=v;try{localStorage.setItem(VIEW_KEY,v);}catch(e){}render();window.scrollTo(0,0);}}
     else if(a==="toggle-gsec"){var gk=id+':'+b.getAttribute("data-key");ui.goalSecOpen[gk]=!ui.goalSecOpen[gk];render();}
@@ -1087,7 +1142,8 @@ h1,h2,h3{margin:0;font-family:var(--font-display);font-weight:600;text-wrap:bala
     if(state.activeId===pick.tid)return "";               // it's the running hero already
     var start=pick.type==="lesson"
       ?'<button class="btn btn-primary btn-sm" data-action="cur-start" data-id="'+pick.gid+'" data-lid="'+pick.lid+'" type="button">'+(pick.cont?'Continue':'Start')+' · ~'+pick.min+'m</button>'
-      :'<button class="btn btn-primary btn-sm" data-action="start" data-id="'+pick.tid+'" type="button">Start</button>';
+      :(pick.tid==="act_journal"?'<button class="btn btn-primary btn-sm" data-action="dec-open" data-id="'+pick.gid+'" type="button">Log a decision</button>'
+        :'<button class="btn btn-primary btn-sm" data-action="start" data-id="'+pick.tid+'" type="button">Start</button>');
     var eye=pick.type==="lesson"?'Today’s '+DAILY_MIN+' min · '+esc(pick.rung):esc(pick.goal);
     return '<div class="home-next">'+
       '<div class="home-next-eye">Next up · '+eye+'</div>'+
@@ -1301,9 +1357,11 @@ h1,h2,h3{margin:0;font-family:var(--font-display);font-weight:600;text-wrap:bala
   function finishLesson(gid,lid,grade){
     var g=findGoal(gid);if(!g)return;
     var l=lid?lessonById(lid):(currentLesson(g)||{}).lesson;if(!l)return;
-    var rung=lessonRungIdx(l),tid=lessonTid(gid,l.id);
+    var rung=lessonRungIdx(l),tid=lessonTid(gid,l.id),plan=todayPlan(g);
+    if(plan.indexOf(l.id)<0)plan.push(l.id);            // grading counts as today's work — and pins today's pick, so it can't refill
     commit(function(){
       var gg=findGoal(gid);if(!gg)return;
+      gg.curr=gg.curr||{};gg.curr.today={day:dayKey(Date.now()),ids:plan};
       var t=findTask(tid);
       if(state.activeId===tid){if(t)closeRunning(t);state.activeId=null;}
       if(gg.progression){gg.progression.reps=gg.progression.reps||[];gg.progression.reps.push({t:Date.now(),rung:rung,grade:grade,note:"L"+l.order+" · "+l.concept});}
@@ -1425,6 +1483,123 @@ h1,h2,h3{margin:0;font-family:var(--font-display);font-weight:600;text-wrap:bala
       (t.action?'<div class="asw-dh">What he did</div><div>'+t.action+'</div>':'')+
       '<div class="asw-dn">'+t.note+'</div>'+
       '<a class="asw-vid" href="'+esc(t.url)+'" target="_blank" rel="noopener">Watch his video: '+esc(t.title)+' · '+esc(t.date)+' ↗</a>'+
+    '</div></div>';
+  }
+  /* ---------- your calls: a decision log that walks his 4 steps — story, value (before the price), gap, doubt ---------- */
+  function decNum(v){   // "150", "$150", "23,70", "1.234,56", "1,234.56", "3,068" (thousands) — a comma + 1–2 digits is a decimal
+    var s=String(v==null?"":v).replace(/[^0-9.,]/g,""),lc=s.lastIndexOf(","),ld=s.lastIndexOf(".");
+    if(lc>=0&&ld>=0)s=lc>ld?s.replace(/\./g,"").replace(",","."):s.replace(/,/g,"");
+    else if(lc>=0)s=/^\d*,\d{1,2}$/.test(s)?s.replace(",","."):s.replace(/,/g,"");
+    var n=parseFloat(s);return isFinite(n)?n:NaN;
+  }
+  function fmtNum(n){return (+n).toLocaleString(undefined,{maximumFractionDigits:2});}
+  function decGapOf(v,p){return (v>0&&p>0)?(v-p)/p:null;}
+  function decVerdict(g){if(g==null)return null;return g>=EDGE?{k:"good",t:"Undervalued"}:(g<=-EDGE?{k:"bad",t:"Overvalued"}:{k:"mid",t:"About fair"});}
+  function fmtGap(g){var p=Math.round(g*100);return (p>0?"+":(p<0?"−":""))+Math.abs(p)+"%";}
+  function decAgainst(d){var g=decGapOf(+d.value,+d.price);return g!=null&&((d.act==="buy"&&g<=-EDGE)||(d.act==="sell"&&g>=EDGE));}
+  function isDecisionTask(t){return !!t&&t.id==="act_journal"&&!!valCurrFor(findGoal(t.goalId));}
+  function saveDecDraft(){try{if(ui.dec)localStorage.setItem(DEC_KEY,JSON.stringify(ui.dec));else localStorage.removeItem(DEC_KEY);}catch(e){}}
+  function openDecision(gid){
+    var g=findGoal(gid);if(!g||!valCurrFor(g))g=(state.goals||[]).filter(function(x){return valCurrFor(x);})[0];if(!g)return;
+    if(!ui.dec||ui.dec.gid!==g.id)ui.dec={gid:g.id,step:1,t0:Date.now(),d:{tk:"",story:"",p3:"",value:"",basis:"",price:"",doubt:"",act:""}};   // an open draft resumes
+    if(ui.view!=="goals"){ui.view="goals";try{localStorage.setItem(VIEW_KEY,"goals");}catch(e){}}
+    saveDecDraft();render();
+    var s=document.getElementById("dec-sec");if(s&&s.scrollIntoView)s.scrollIntoView({block:"start",behavior:"smooth"});
+  }
+  function decCapture(){   // pull the fields on screen into the draft, so a re-render never loses typing
+    if(!ui.dec)return;var d=ui.dec.d;
+    [["dec-tk","tk"],["dec-story","story"],["dec-value","value"],["dec-price","price"],["dec-doubt","doubt"]].forEach(function(f){var e=document.getElementById(f[0]);if(e)d[f[1]]=e.value;});
+  }
+  function decNext(){
+    decCapture();var w=ui.dec;if(!w)return;var d=w.d;
+    if(w.step===1){if(!d.tk.trim()||!d.story.trim()){toast("Name the company and tell its story first");return;}if(!d.p3){toast("How far does your story get? Pick one");return;}}
+    if(w.step===2){if(!(decNum(d.value)>0)){toast("Put a value per share on it — a rough one is fine");return;}if(!d.basis){toast("How solid is that number? Pick one");return;}}
+    if(w.step===3&&!(decNum(d.price)>0)){toast("Enter the price it trades at");return;}
+    w.step=Math.min(4,w.step+1);saveDecDraft();render();
+  }
+  function decBack(){decCapture();if(!ui.dec)return;ui.dec.step=Math.max(1,ui.dec.step-1);saveDecDraft();render();}
+  function decSave(){
+    decCapture();var w=ui.dec;if(!w)return;var d=w.d;
+    if(!d.doubt.trim()){toast("Name what would make the market right — that’s the check");return;}
+    if(!d.act){toast("Pick what you’re doing");return;}
+    var rec={id:uid(),at:Date.now(),tk:d.tk.trim().slice(0,40),story:d.story.trim().slice(0,800),p3:d.p3,value:decNum(d.value),basis:d.basis,price:decNum(d.price),doubt:d.doubt.trim().slice(0,600),act:d.act};
+    var gid=w.gid,t0=w.t0;ui.dec=null;saveDecDraft();
+    commit(function(){
+      var g=findGoal(gid);if(!g)return;g.decisions=g.decisions||[];g.decisions.push(rec);
+      var t=findTask("act_journal");                     // logging a call is doing today's "log my investment decisions"
+      if(t&&t.goalId===gid&&state.activeId!==t.id){var end=Date.now(),start=Math.max(t0||end,end-30*60000);if(end-start<60000)start=end-60000;t.sessions=t.sessions||[];t.sessions.push({start:start,end:end});}
+    });
+    toast(decAgainst(rec)?"Logged — note it goes against your own value":"Call logged ✓");
+  }
+  function deleteDecision(gid,did){commit(function(){var g=findGoal(gid);if(g)g.decisions=(g.decisions||[]).filter(function(x){return x.id!==did;});});}
+  function onInput(e){
+    var id=e.target&&e.target.id;if(!ui.dec||!id||id.indexOf("dec-")!==0)return;
+    decCapture();saveDecDraft();                          // keep the draft current while typing
+    if(id==="dec-price"){var el=document.getElementById("dec-gap");if(el)el.innerHTML=decGapHtml(decNum(ui.dec.d.value),decNum(e.target.value));}
+  }
+  function decGapHtml(v,p){
+    var g=decGapOf(v,p);if(g==null)return '<span class="dec-muted">Enter the price to see your gap.</span>';
+    var vd=decVerdict(g);
+    return '<span class="asw-v asw-'+vd.k+'">'+vd.t+'</span> <b>'+fmtGap(g)+'</b> <span class="dec-muted">· your value '+fmtNum(v)+' vs price '+fmtNum(p)+(vd.k==="mid"?' · within '+Math.round(EDGE*100)+'%, no clear edge':'')+'</span>'+
+      (Math.abs(g)>=0.5?'<div class="dec-warn">A gap this big usually means an input is off — he’d suspect the model first. (D-42)</div>':'');
+  }
+  function renderDecisions(g){
+    if(!valCurrFor(g))return "";
+    var list=(g.decisions||[]).slice().sort(function(a,b){return b.at-a.at;}),n=list.length,wiz=!!(ui.dec&&ui.dec.gid===g.id);
+    var backed=list.filter(function(d){return d.basis!=="guess";}).length,against=list.filter(decAgainst).length;
+    var stat=n?'<div class="dec-stat">'+n+' call'+(n===1?'':'s')+' · '+backed+' backed by a model'+(n-backed?' · '+(n-backed)+' on a rough guess':'')+(against?' · <span class="dec-bad">'+against+' against your own value</span>':'')+'</div>':'';
+    var rows=n?'<div class="asw-calls">'+(ui.decAll?list:list.slice(0,3)).map(function(d){return decRow(g,d);}).join("")+'</div>'+
+        (n>3?'<button class="asw-more" data-action="dec-all" type="button">'+(ui.decAll?'Show fewer':'Show all '+n+' calls')+'</button>':'')
+      :(wiz?'':'<div class="action-empty">No calls yet. Log one the way he does — story, value, gap, doubt — before you act.</div>');
+    return '<div class="dec" id="dec-sec">'+
+      '<div class="dec-head"><span class="dec-title">Your calls</span><span class="dec-sub">his 4 steps, your decisions</span>'+
+        (wiz?'<button class="dec-x" data-action="dec-cancel" type="button" title="Discard this call" aria-label="Discard this call">&#215;</button>':'')+'</div>'+
+      (wiz?renderDecWizard(g):'<button class="btn btn-primary btn-sm dec-new" data-action="dec-open" data-id="'+g.id+'" type="button">+ Log a decision</button>')+
+      stat+rows+
+    '</div>';
+  }
+  function renderDecWizard(g){
+    var w=ui.dec,d=w.d,st=w.step,names=["Story","Value","Gap","Doubt"],v=decNum(d.value),p=decNum(d.price),body;
+    var dots=names.map(function(n,i){return '<span class="dec-dot'+(i+1<st?' done':(i+1===st?' on':''))+'">'+(i+1)+' '+n+'</span>';}).join("");
+    var pill=function(k,val,label,sub){var on=d[k]===val;return '<button class="dec-pill'+(on?' on':'')+'" data-action="dec-pick" data-k="'+k+'" data-v="'+val+'" type="button" aria-pressed="'+(on?'true':'false')+'">'+label+(sub?'<span>'+sub+'</span>':'')+'</button>';};
+    if(st===1)body='<div class="dec-lead">Tell the story before any number.<span class="dec-ref">D-01</span></div>'+
+      '<input id="dec-tk" class="field" value="'+esc(d.tk)+'" maxlength="40" placeholder="Company or ticker — e.g. ASML" aria-label="Company or ticker">'+
+      '<textarea id="dec-story" class="field note-area dec-area" placeholder="What does it do, who buys it and why — and where is it heading?" aria-label="Your story">'+esc(d.story)+'</textarea>'+
+      '<div class="dec-q">How far does your story get?</div><div class="dec-pills">'+DEC_3P.map(function(x){return pill("p3",x[0],x[1],x[2]);}).join("")+'</div>'+
+      (d.p3==="possible"?'<div class="dec-warn">“Possible” is the weakest test — nearly any story passes it. He’d want a mechanism, and proof it has worked somewhere.</div>':'');
+    else if(st===2)body='<div class="dec-lead">What is it worth per share, from its cash flows and risk? <b>Don’t look up the price yet</b> — decide what it’s worth first.<span class="dec-ref">D-45</span></div>'+
+      '<input id="dec-value" class="field" inputmode="decimal" value="'+esc(d.value)+'" placeholder="Your value per share — e.g. 150" aria-label="Your value per share">'+
+      '<div class="dec-q">How solid is that number?</div><div class="dec-pills">'+DEC_BASIS.map(function(x){return pill("basis",x[0],x[1]);}).join("")+'</div>';
+    else if(st===3)body='<div class="dec-lead">Now look at the price. How far is it from your value?<span class="dec-ref">D-42</span></div>'+
+      '<input id="dec-price" class="field" inputmode="decimal" value="'+esc(d.price)+'" placeholder="Price it trades at — e.g. 170" aria-label="Price">'+
+      '<div id="dec-gap" class="dec-gap">'+decGapHtml(v,p)+'</div>';
+    else body='<div class="dec-gap dec-gap-sum"><b class="dec-tkb">'+esc(d.tk)+'</b> '+decGapHtml(v,p)+'</div>'+
+      '<blockquote class="dec-quote">“Is it that you’re right and the market is wrong? That could be one. [Or] you’re wrong and the market is right.”<cite>— D-42</cite></blockquote>'+
+      '<textarea id="dec-doubt" class="field note-area dec-area" placeholder="What would have to be true for the market to be right instead of you?" aria-label="What would make the market right">'+esc(d.doubt)+'</textarea>'+
+      '<div class="dec-q">So what are you doing?</div><div class="dec-pills">'+DEC_ACTS.map(function(x){return pill("act",x[0],x[1]);}).join("")+'</div>'+
+      (decAgainst({value:v,price:p,act:d.act})?'<div class="dec-warn">That goes against your own value. His rule: “I bought Tesla because I thought it was undervalued; I sold because I thought it was overvalued. I have to play the game I came to play.”</div>':'');
+    return '<div class="dec-wiz"><div class="dec-steps">'+dots+'</div>'+body+
+      '<div class="dec-nav">'+(st>1?'<button class="btn btn-ghost btn-sm" data-action="dec-back" type="button">Back</button>':'<button class="btn btn-ghost btn-sm" data-action="dec-cancel" type="button">Cancel</button>')+
+        (st<4?'<button class="btn btn-primary btn-sm" data-action="dec-next" type="button">Next: '+names[st]+' →</button>':'<button class="btn btn-primary btn-sm" data-action="dec-save" type="button">Save call</button>')+'</div>'+
+    '</div>';
+  }
+  function decRow(g,d){
+    var open=!!ui.decRows[d.id],gap=decGapOf(+d.value,+d.price),vd=decVerdict(gap),ag=decAgainst(d);
+    var act=((DEC_ACTS.filter(function(x){return x[0]===d.act;})[0])||[0,""])[1].toLowerCase();
+    var row='<button class="asw-call" data-action="dec-row" data-id="'+esc(d.id)+'" type="button" aria-expanded="'+(open?'true':'false')+'">'+
+      '<span class="asw-id"><span class="asw-tk">'+esc(d.tk)+'</span><span class="asw-when">'+esc(shortDate(d.at))+'</span></span>'+
+      '<span class="asw-main"><span class="asw-l1">'+(vd?'<span class="asw-v asw-'+vd.k+'">'+vd.t+'</span>':'')+(act?'<span class="asw-did">'+esc(act)+'</span>':'')+'</span>'+
+        '<span class="asw-l2">value '+fmtNum(d.value)+' vs price '+fmtNum(d.price)+(gap!=null?' · '+fmtGap(gap):'')+
+          (d.basis==="guess"?'<span class="asw-ps">rough guess</span>':'')+(ag?'<span class="asw-ps dec-bad">against your value</span>':'')+'</span></span>'+
+      '<span class="asw-chev sm'+(open?' open':'')+'">'+chevronSvg()+'</span></button>';
+    if(!open)return '<div class="asw-c">'+row+'</div>';
+    var p3=((DEC_3P.filter(function(x){return x[0]===d.p3;})[0])||[0,"—"])[1],bs=((DEC_BASIS.filter(function(x){return x[0]===d.basis;})[0])||[0,"—"])[1];
+    return '<div class="asw-c open">'+row+'<div class="asw-det">'+
+      '<div class="asw-dh">Story · '+esc(p3.toLowerCase())+'</div><div class="dec-txt">'+esc(d.story)+'</div>'+
+      '<div class="asw-dh">Value · '+esc(bs.toLowerCase())+'</div><div>'+fmtNum(d.value)+' a share, against a price of '+fmtNum(d.price)+'</div>'+
+      '<div class="asw-dh">Doubt — what would make the market right</div><div class="dec-txt">'+esc(d.doubt)+'</div>'+
+      '<div class="dec-foot"><span>'+esc(new Date(d.at).toLocaleString(undefined,{dateStyle:"medium",timeStyle:"short"}))+'</span>'+
+        '<button class="dec-del" data-action="dec-del" data-id="'+g.id+'" data-did="'+esc(d.id)+'" type="button">Delete</button></div>'+
     '</div></div>';
   }
   function renderGoals(){
@@ -1703,7 +1878,7 @@ h1,h2,h3{margin:0;font-family:var(--font-display);font-weight:600;text-wrap:bala
       '<div class="goal-top"><div style="min-width:0"><div class="goal-name">'+esc(g.name)+'</div>'+meta+'</div>'+
         '<button class="icon-btn danger" data-action="del-goal" data-id="'+g.id+'" title="Delete goal" aria-label="Delete goal">&#215;</button></div>'+
       identityBlock+stat+
-      renderToday(g,"card")+renderAswath(g)+renderSteps(g)+renderProgression(g)+noteBlock+
+      renderToday(g,"card")+renderAswath(g)+renderDecisions(g)+renderSteps(g)+renderProgression(g)+noteBlock+
     '</div>';
   }
   function actionRow(t){
@@ -1717,7 +1892,9 @@ h1,h2,h3{margin:0;font-family:var(--font-display);font-weight:600;text-wrap:bala
     var cueTail=t.cue?'<button class="cue-btn tiny" data-action="cue-edit" data-id="'+t.id+'" type="button">edit</button>':'<button class="cue-btn" data-action="cue-edit" data-id="'+t.id+'" type="button">+ when</button>';
     var depthPill='<button class="depth-pill '+(t.depth==="deep"?"deep":(t.depth==="shallow"?"shallow":"none"))+'" data-action="cycle-depth" data-id="'+t.id+'" type="button" title="Deep or shallow work">'+(t.depth==="deep"?"Deep":(t.depth==="shallow"?"Shallow":"+ depth"))+'</button>';
     var cueEditor=ui.cueOpen[t.id]?('<div class="cue-edit"><input id="cue-'+t.id+'" class="field" value="'+esc(t.cue||"")+'" placeholder="When? e.g. after breakfast, 9am" aria-label="When"><button class="btn btn-primary btn-sm" data-action="cue-save" data-id="'+t.id+'" type="button">Save</button><button class="btn btn-ghost btn-sm" data-action="cue-cancel" data-id="'+t.id+'" type="button">Cancel</button></div>'):"";
-    var btn=running?'<button class="btn btn-stop btn-sm" data-action="stop">Stop</button>':'<button class="btn btn-primary btn-sm" data-action="start" data-id="'+t.id+'">Start</button>';
+    var btn=running?'<button class="btn btn-stop btn-sm" data-action="stop">Stop</button>'
+      :(isDecisionTask(t)?'<button class="btn btn-primary btn-sm" data-action="dec-open" data-id="'+t.goalId+'" type="button">Log one</button>'
+        :'<button class="btn btn-primary btn-sm" data-action="start" data-id="'+t.id+'">Start</button>');
     return '<div class="action-row">'+
       '<div class="action-main">'+
         '<div class="action-name">'+esc(t.name)+depthPill+(running?'<span class="mini-run">running</span>':"")+'</div>'+
