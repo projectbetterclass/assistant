@@ -582,6 +582,55 @@ h1,h2,h3{margin:0;font-family:var(--font-display);font-weight:600;text-wrap:bala
 .asw-learn-t{display:block}
 .asw-learn-s{display:block;margin-top:2px;font-size:11.5px;font-weight:500;color:var(--muted)}
 @media (max-width:460px){.asw-step{grid-template-columns:16px 44px 1fr}.asw-ref{display:none}.asw-det{padding-left:12px}}
+/* today's 30 minutes — the daily curriculum pick */
+.td{margin-top:14px;padding:13px 14px 12px;background:var(--surface-2);border:1px solid var(--line);border-radius:12px}
+.td-head{display:flex;align-items:baseline;justify-content:space-between;gap:10px}
+.td-title{font-family:var(--font-display);font-weight:600;font-size:15.5px;color:var(--ink)}
+.td-mins{font-family:var(--font-mono);font-size:12px;color:var(--muted);white-space:nowrap;font-variant-numeric:tabular-nums}
+.td-mins.met{color:var(--good);font-weight:600}
+.td-bar{height:6px;border-radius:99px;background:var(--surface);border:1px solid var(--line);overflow:hidden;margin:8px 0 10px}
+.td-bar i{display:block;height:100%;background:var(--accent);border-radius:99px;transition:width .35s}
+.td-list{border:1px solid var(--line);border-radius:10px;background:var(--surface);overflow:hidden}
+.td-list .ls+.ls{border-top:1px solid var(--line)}
+.td-az{display:block;width:100%;margin-top:10px;border:none;background:transparent;font-family:inherit;text-align:left;padding:2px 0;cursor:pointer;color:var(--accent);font-size:13px;font-weight:600}
+.td-az-s{display:block;margin-top:1px;font-size:11.5px;font-weight:500;color:var(--muted)}
+.td-foot{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:9px;font-size:12px;color:var(--muted)}
+.td-link{flex:none;border:none;background:transparent;color:var(--accent);font-family:inherit;font-size:12.5px;font-weight:600;padding:0;cursor:pointer;white-space:nowrap}
+.td-az-panel{border-color:var(--accent);background:linear-gradient(180deg,var(--accent-soft),transparent 120px),var(--surface-2)}
+/* a lesson row — today's plan and the A → Z list */
+.ls-row{display:flex;align-items:center;gap:8px;padding:0 10px 0 0}
+.ls-main{flex:1;min-width:0;display:flex;align-items:center;gap:9px;border:none;background:transparent;font-family:inherit;text-align:left;padding:9px 0 9px 11px;cursor:pointer;color:var(--ink)}
+.ls-st{flex:none;width:16px;height:16px;border-radius:50%;border:1.5px solid var(--line-strong);display:inline-grid;place-items:center;font-size:10px;font-weight:700;color:#fff;line-height:1}
+.ls-st.part{border-color:var(--accent);background:linear-gradient(90deg,var(--accent) 50%,transparent 50%)}
+.ls-st.done{border-color:var(--good);background:var(--good)}
+.ls-st.run{border-color:var(--accent);background:var(--accent);animation:pulse 1.5s ease-in-out infinite}
+.ls-n{flex:none;width:26px;font-family:var(--font-mono);font-size:11px;color:var(--faint)}
+.ls-txt{flex:1;min-width:0;display:flex;flex-direction:column;gap:1px}
+.ls-c{font-size:13.5px;font-weight:500;line-height:1.3}
+.ls-s{font-size:11.5px;color:var(--muted)}
+.ls-s b{color:var(--accent);font-weight:600}
+.ls.is-done .ls-c{color:var(--muted)}
+.ls-row .btn{flex:none}
+.ls-today{flex:none;border:1px solid var(--line-strong);background:transparent;color:var(--muted);font-family:inherit;font-size:11.5px;font-weight:600;padding:6px 10px;border-radius:99px;cursor:pointer;white-space:nowrap}
+.ls-today:hover{border-color:var(--accent);color:var(--accent)}
+.ls-today.on{background:var(--accent-soft);border-color:transparent;color:var(--accent)}
+.icon-btn.ls-rm{width:30px;height:30px;font-size:13px;flex:none}
+.ls-det{padding:0 12px 13px 36px}
+.ls-meta{display:flex;align-items:center;flex-wrap:wrap;gap:6px;margin-bottom:6px}
+.ls-meta .curr-tags{margin-top:0}
+/* the curriculum, A → Z */
+.cv-back{display:inline-flex;align-items:center;gap:3px;border:none;background:transparent;color:var(--accent);font-family:inherit;font-size:13.5px;font-weight:600;padding:4px 0;cursor:pointer;margin:0 0 6px -3px}
+.cv-title{font-family:var(--font-display);font-size:22px;font-weight:600;line-height:1.2;margin:2px 0 6px}
+.cv-sub{margin:0;font-size:13px;color:var(--muted);line-height:1.5}
+.cv-rung{margin-top:20px}
+.cv-rh{display:flex;align-items:baseline;flex-wrap:wrap;gap:4px 8px;margin:0 2px 7px}
+.cv-rn{font-family:var(--font-mono);font-size:11px;color:var(--accent);font-weight:600}
+.cv-rt{font-size:12px;text-transform:uppercase;letter-spacing:.07em;font-weight:700;color:var(--ink)}
+.cv-rung.here .cv-rt::after{content:" \00b7  you are here";text-transform:none;letter-spacing:0;color:var(--accent)}
+.cv-rd{font-size:12px;color:var(--muted)}
+.cv-rp{margin-left:auto;font-family:var(--font-mono);font-size:11px;color:var(--faint);white-space:nowrap}
+.cv-list{border:1px solid var(--line);border-radius:12px;background:var(--surface);overflow:hidden}
+.cv-list .ls+.ls{border-top:1px solid var(--line)}
 /* handoff feedback loop */
 .adv-ho{color:var(--accent);border-color:var(--accent-soft)}
 .adv-ho:hover{border-color:var(--accent)}
@@ -625,6 +674,7 @@ h1,h2,h3{margin:0;font-family:var(--font-display);font-weight:600;text-wrap:bala
   var CAT_COLORS=["#4c5fd5","#12a594","#d98207","#dc4a4f","#8b5cf6","#0ea5e9","#d6409f","#65a30d"];
   var DEFAULT_CATS=["Work","Focus","Meetings","Admin","Breaks","Personal","Errands"];
   var DEEP_TARGET_MIN=120;
+  var DAILY_MIN=30;   // your ~30 min a day of curriculum (declared up here: the first render runs before later code)
   var BLOOM=[{k:"Remember",d:"recall the facts & steps"},{k:"Understand",d:"explain why it works"},{k:"Apply",d:"use it on a real case"},{k:"Analyze",d:"break it down & compare"},{k:"Evaluate",d:"judge it & defend your view"},{k:"Create",d:"build something original"}];
   var VAL_RUNGS=["Remember","Understand","Apply","Analyze","Evaluate","Create"];
   /* Damodaran laddered curriculum — content lives in code; only per-lesson done-flags are ever saved into app-state (goal.curr.done). */
@@ -674,10 +724,10 @@ h1,h2,h3{margin:0;font-family:var(--font-display);font-weight:600;text-wrap:bala
   var artNS; // undefined=unknown, null=unavailable, object=ready
   var syncMode="check"; // check|sync|local|error|readonly
   var VIEW_KEY="wmtw_view";
-  function loadView(){try{var v=localStorage.getItem(VIEW_KEY);return (v==="goals"||v==="projects"||v==="review")?v:"now";}catch(e){return "now";}}
+  function loadView(){try{var v=localStorage.getItem(VIEW_KEY);return (v==="goals"||v==="projects"||v==="review"||v==="curriculum")?v:"now";}catch(e){return "now";}}
   var ASW_KEY="wmtw_asw_closed";
   function loadAsw(){try{return localStorage.getItem(ASW_KEY)==="1";}catch(e){return false;}}
-  var ui={addOpen:false, goalOpen:false, actionOpen:{}, noteOpen:{}, cueOpen:{}, idOpen:{}, repOpen:{}, stepAddOpen:{}, proposal:{}, loading:{}, projectOpen:false, projEdit:{}, projLoading:{}, ghLoading:{}, ghErr:{}, adviseLoading:{}, currRefs:{}, projCardOpen:{}, goalSecOpen:{}, aswClosed:loadAsw(), aswAll:false, aswOpen:{}, goalMode:"have", shapeLevel:"new", shapeTopic:"", shapeLoading:false, shapeProposal:null, hoLoading:{}, view:loadView(), date:dayKey(Date.now())};
+  var ui={addOpen:false, goalOpen:false, actionOpen:{}, noteOpen:{}, cueOpen:{}, idOpen:{}, repOpen:{}, stepAddOpen:{}, proposal:{}, loading:{}, projectOpen:false, projEdit:{}, projLoading:{}, ghLoading:{}, ghErr:{}, adviseLoading:{}, currRefs:{}, projCardOpen:{}, goalSecOpen:{}, aswClosed:loadAsw(), aswAll:false, aswOpen:{}, lessonOpen:{}, goalMode:"have", shapeLevel:"new", shapeTopic:"", shapeLoading:false, shapeProposal:null, hoLoading:{}, view:loadView(), date:dayKey(Date.now())};
   var isTouch=("ontouchstart" in window)||(navigator.maxTouchPoints>0);
   var sampleNS; // undefined=unknown, null=unavailable, function=ready
   var GH_SERVER="GitHub Integration";
@@ -923,17 +973,18 @@ h1,h2,h3{margin:0;font-family:var(--font-display);font-weight:600;text-wrap:bala
     else if(a==="ho-grade")gradeHandoff(id,b.getAttribute("data-hid"));
     else if(a==="del-project-log")deleteProjectLog(id,+b.getAttribute("data-at"));
     else if(a==="ho-del"){var hid=b.getAttribute("data-hid");if(window.confirm("Remove this handoff and its feedback?"))commit(function(){var pp=findProject(id);if(pp)pp.handoffs=(pp.handoffs||[]).filter(function(x){return x.id!==hid;});});}
-    else if(a==="cur-start")startLesson(id);
-    else if(a==="cur-nailed")finishLesson(id,"nailed");
-    else if(a==="cur-shaky")finishLesson(id,"shaky");
-    else if(a==="cur-refs"){ui.currRefs=ui.currRefs||{};ui.currRefs[id]=!ui.currRefs[id];render();}
+    else if(a==="cur-start")startLesson(id,b.getAttribute("data-lid"));
+    else if(a==="cur-nailed")finishLesson(id,b.getAttribute("data-lid"),"nailed");
+    else if(a==="cur-shaky")finishLesson(id,b.getAttribute("data-lid"),"shaky");
+    else if(a==="cur-open"){ui.lessonOpen[id]=!ui.lessonOpen[id];render();}
+    else if(a==="cur-today")toggleToday(id,b.getAttribute("data-lid"));
+    else if(a==="cur-suggest"){var sg=findGoal(id);if(sg)saveToday(id,suggestPlan(sg,[]));}
     else if(a==="retry"){syncMode="check";renderChip();persist();}
     else if(a==="set-view"){var v=b.getAttribute("data-view");if(v&&v!==ui.view){ui.view=v;try{localStorage.setItem(VIEW_KEY,v);}catch(e){}render();window.scrollTo(0,0);}}
     else if(a==="toggle-gsec"){var gk=id+':'+b.getAttribute("data-key");ui.goalSecOpen[gk]=!ui.goalSecOpen[gk];render();}
     else if(a==="asw-toggle"){ui.aswClosed=!ui.aswClosed;try{localStorage.setItem(ASW_KEY,ui.aswClosed?"1":"0");}catch(e){}render();}
     else if(a==="asw-all"){ui.aswAll=!ui.aswAll;render();}
     else if(a==="asw-call"){ui.aswOpen[id]=!ui.aswOpen[id];render();}
-    else if(a==="asw-learn"){ui.goalSecOpen[id+':curr']=true;render();var ce=document.querySelector('.gsec-head[data-key="curr"][data-id="'+id+'"]');if(ce&&ce.scrollIntoView)ce.scrollIntoView({behavior:"smooth",block:"start"});}
   }
 
   /* ---------- theme ---------- */
@@ -995,7 +1046,7 @@ h1,h2,h3{margin:0;font-family:var(--font-display);font-weight:600;text-wrap:bala
   function tabBar(){
     var tabs=[["now","Now",clockSvg()],["goals","Goals",goalIcon()],["projects","Projects",projIcon()],["review","Review",reviewIcon()]];
     return '<nav class="tabbar" role="tablist" aria-label="Sections">'+tabs.map(function(t){
-      var on=ui.view===t[0];
+      var on=ui.view===t[0]||(t[0]==="goals"&&ui.view==="curriculum");
       var live=(t[0]==="now"&&state.activeId)?'<span class="tab-live" aria-hidden="true"></span>':"";
       return '<button class="tab'+(on?' active':'')+'" role="tab" aria-selected="'+(on?'true':'false')+'" data-action="set-view" data-view="'+t[0]+'" type="button">'+live+t[2]+'<span class="tab-lbl">'+t[1]+'</span></button>';
     }).join("")+'</nav>';
@@ -1006,6 +1057,7 @@ h1,h2,h3{margin:0;font-family:var(--font-display);font-weight:600;text-wrap:bala
   function render(){
     var html=topBar();
     if(ui.view==="goals")        html+='<div class="view">'+renderGoals()+'</div>';
+    else if(ui.view==="curriculum")html+='<div class="view">'+renderCurriculumView()+'</div>';
     else if(ui.view==="projects")html+='<div class="view">'+renderProjects()+'</div>';
     else if(ui.view==="review")  html+='<div class="view">'+renderReview()+renderPlanned()+'</div>';
     else                         html+=renderHome();
@@ -1018,7 +1070,7 @@ h1,h2,h3{margin:0;font-family:var(--font-display);font-weight:600;text-wrap:bala
     var pick=null,goals=state.goals||[],i,j,k;
     for(i=0;i<goals.length&&!pick;i++){
       var g=goals[i],c=valCurrFor(g);
-      if(c){var cur=currentLesson(g);if(cur)pick={type:"lesson",gid:g.id,goal:g.name,label:cur.lesson.concept,rung:cur.lesson.rung,min:cur.lesson.estimateMin||15,tid:lessonTaskId(g.id)};}
+      if(c){var plan=todayPlan(g),dn=currDone(g);for(var q=0;q<plan.length&&!pick;q++){if(dn[plan[q]])continue;var L=lessonById(plan[q]);pick={type:"lesson",gid:g.id,lid:L.id,goal:g.name,label:L.concept,rung:L.rung,min:lessonLeftMin(g,L),tid:lessonTid(g.id,L.id),cont:lessonLoggedMin(g.id,L.id)>0};}}
     }
     if(!pick){
       var today=dayKey(Date.now());
@@ -1034,9 +1086,9 @@ h1,h2,h3{margin:0;font-family:var(--font-display);font-weight:600;text-wrap:bala
     if(!pick)return "";
     if(state.activeId===pick.tid)return "";               // it's the running hero already
     var start=pick.type==="lesson"
-      ?'<button class="btn btn-primary btn-sm" data-action="cur-start" data-id="'+pick.gid+'" type="button">Start · ~'+pick.min+'m</button>'
+      ?'<button class="btn btn-primary btn-sm" data-action="cur-start" data-id="'+pick.gid+'" data-lid="'+pick.lid+'" type="button">'+(pick.cont?'Continue':'Start')+' · ~'+pick.min+'m</button>'
       :'<button class="btn btn-primary btn-sm" data-action="start" data-id="'+pick.tid+'" type="button">Start</button>';
-    var eye=pick.type==="lesson"?esc(pick.rung)+' · '+esc(pick.goal):esc(pick.goal);
+    var eye=pick.type==="lesson"?'Today’s '+DAILY_MIN+' min · '+esc(pick.rung):esc(pick.goal);
     return '<div class="home-next">'+
       '<div class="home-next-eye">Next up · '+eye+'</div>'+
       '<div class="home-next-row"><div class="home-next-label">'+esc(pick.label)+'</div>'+start+'</div>'+
@@ -1201,67 +1253,132 @@ h1,h2,h3{margin:0;font-family:var(--font-display);font-weight:600;text-wrap:bala
     for(var i=0;i<c.lessons.length;i++){if(!done[c.lessons[i].id])return {lesson:c.lessons[i],idx:i};}
     return null;
   }
-  function lessonTaskId(gid){return "lessontask_"+gid;}
-  function startLesson(gid){
-    var g=findGoal(gid),cur=currentLesson(g);if(!g||!cur)return;
-    var l=cur.lesson,tid=lessonTaskId(gid);
+  /* each lesson gets its own timer task, so time and history stay per lesson even when you pick out of order */
+  function lessonById(lid){var ls=VAL_CURRICULUM.lessons;for(var i=0;i<ls.length;i++)if(ls[i].id===lid)return ls[i];return null;}
+  function lessonTid(gid,lid){return "lesson_"+gid+"_"+lid;}
+  function lessonLoggedMin(gid,lid){var t=findTask(lessonTid(gid,lid));return t?Math.floor(taskSec(t)/60):0;}
+  function lessonLeftMin(g,l){if(currDone(g)[l.id])return 0;return Math.max(5,(l.estimateMin||15)-lessonLoggedMin(g.id,l.id));}
+  /* today's ~30 min: today's own pick if you made one; otherwise yesterday's unfinished picks, topped up with the next lessons in line */
+  function todayPlan(g){
+    if(!valCurrFor(g))return [];
+    var done=currDone(g),t=g.curr&&g.curr.today;
+    if(t&&t.day===dayKey(Date.now()))return (t.ids||[]).filter(lessonById);
+    return suggestPlan(g,((t&&t.ids)||[]).filter(function(id){return lessonById(id)&&!done[id];}));
+  }
+  function suggestPlan(g,ids){
+    var ls=valCurrFor(g).lessons,done=currDone(g),total=0;ids=ids.slice();
+    ids.forEach(function(id){total+=lessonLeftMin(g,lessonById(id));});
+    for(var i=0;i<ls.length&&total<DAILY_MIN;i++){
+      var l=ls[i];if(done[l.id]||ids.indexOf(l.id)>=0)continue;
+      var m=lessonLeftMin(g,l);
+      if(ids.length&&total+m>DAILY_MIN+10)break;          // don't overshoot the day by much
+      ids.push(l.id);total+=m;
+    }
+    return ids;
+  }
+  function saveToday(gid,ids){commit(function(){var g=findGoal(gid);if(!g)return;g.curr=g.curr||{};g.curr.today={day:dayKey(Date.now()),ids:ids};});}
+  function toggleToday(gid,lid){var g=findGoal(gid);if(!g||!lessonById(lid))return;var ids=todayPlan(g),i=ids.indexOf(lid);if(i>=0)ids.splice(i,1);else ids.push(lid);saveToday(gid,ids);}
+  function curMinToday(gid){
+    var key=dayKey(Date.now()),now=Date.now(),s=0,pre="lesson_"+gid+"_";
+    state.tasks.forEach(function(t){if(String(t.id).indexOf(pre)!==0)return;(t.sessions||[]).forEach(function(se){if(dayKey(se.start)===key)s+=((se.end||now)-se.start)/1000;});});
+    return Math.floor(s/60);
+  }
+  function startLesson(gid,lid){
+    var g=findGoal(gid);if(!g)return;
+    var l=lid?lessonById(lid):(currentLesson(g)||{}).lesson;if(!l)return;
+    var tid=lessonTid(gid,l.id),plan=todayPlan(g);
+    if(plan.indexOf(l.id)<0)plan.push(l.id);            // starting a lesson makes it part of today
     commit(function(){
+      var gg=findGoal(gid);if(!gg)return;
+      gg.curr=gg.curr||{};gg.curr.today={day:dayKey(Date.now()),ids:plan};
       var t=findTask(tid);
-      if(!t){t={id:tid,name:"",category:"",estimateMin:null,planned:false,daily:false,goalId:gid,stepId:null,depth:null,cue:"",done:false,createdAt:Date.now(),sessions:[]};state.tasks.push(t);}
-      t.name="📘 "+l.concept;t.estimateMin=l.estimateMin||null;t.goalId=gid;t.daily=false;t.done=false;
+      if(!t){t={id:tid,name:"📘 L"+(l.order<10?"0":"")+l.order+" · "+l.concept,category:"",estimateMin:l.estimateMin||null,planned:false,daily:false,goalId:gid,stepId:null,depth:"deep",cue:"",done:false,createdAt:Date.now(),sessions:[]};state.tasks.push(t);}
+      t.done=false;
       var act=findTask(state.activeId);if(act)closeRunning(act);
       t.sessions=t.sessions||[];t.sessions.push({start:Date.now(),end:null});state.activeId=tid;
     });
   }
-  function finishLesson(gid,grade){
-    var g=findGoal(gid),cur=currentLesson(g);if(!g||!cur)return;
-    var l=cur.lesson,rung=lessonRungIdx(l),tid=lessonTaskId(gid);
+  function finishLesson(gid,lid,grade){
+    var g=findGoal(gid);if(!g)return;
+    var l=lid?lessonById(lid):(currentLesson(g)||{}).lesson;if(!l)return;
+    var rung=lessonRungIdx(l),tid=lessonTid(gid,l.id);
     commit(function(){
       var gg=findGoal(gid);if(!gg)return;
-      if(state.activeId===tid){var t=findTask(tid);if(t)closeRunning(t);state.activeId=null;}
+      var t=findTask(tid);
+      if(state.activeId===tid){if(t)closeRunning(t);state.activeId=null;}
       if(gg.progression){gg.progression.reps=gg.progression.reps||[];gg.progression.reps.push({t:Date.now(),rung:rung,grade:grade,note:"L"+l.order+" · "+l.concept});}
-      if(grade==="nailed"){gg.curr=gg.curr||{};gg.curr.done=gg.curr.done||{};gg.curr.done[l.id]=true;}
+      if(grade==="nailed"){gg.curr=gg.curr||{};gg.curr.done=gg.curr.done||{};gg.curr.done[l.id]=true;if(t)t.done=true;}
     });
-    toast(grade==="nailed"?"Lesson done — clean rep logged ✓":"Logged as shaky — revisit this one");
+    toast(grade==="nailed"?"Lesson done — clean rep logged ✓":"Logged as shaky — it stays open to revisit");
   }
-  function renderCurriculum(g){
+  /* today's plan — on the goal card ("card") and at the top of the A → Z view ("az") */
+  function renderToday(g,where){
     var c=valCurrFor(g);if(!c)return "";
-    var done=currDone(g),total=c.lessons.length,doneCount=0;
-    c.lessons.forEach(function(l){if(done[l.id])doneCount++;});
-    var cur=currentLesson(g);
-    var sum=doneCount+'/'+total+(cur?' · '+esc(cur.lesson.rung):' · complete');
-    if(!cur)return goalSec(g,'curr','Curriculum',sum,function(){return '<div class="curr-done-all">All '+total+' lessons complete — now produce and defend. 🏔</div>';});
-    var l=cur.lesson,tid=lessonTaskId(g.id),running=state.activeId===tid;
+    var plan=todayPlan(g),done=currDone(g),mins=curMinToday(g.id),met=mins>=DAILY_MIN;
+    var allDone=c.lessons.every(function(l){return done[l.id];});
+    var planned=0;plan.forEach(function(id){planned+=lessonLeftMin(g,lessonById(id));});
+    var rows=plan.length?'<div class="td-list">'+plan.map(function(id){return lessonRow(g,lessonById(id),where==="az"?"plan-az":"plan",plan);}).join("")+'</div>'
+      :'<div class="action-empty">'+(allDone?'All '+c.lessons.length+' lessons done — now produce and defend. 🏔':'Nothing picked for today yet — choose a lesson'+(where==="az"?' below.':'.'))+'</div>';
+    var head='<div class="td-head"><span class="td-title">Today’s '+DAILY_MIN+' minutes</span>'+
+      '<span class="td-mins'+(met?' met':'')+'">'+mins+' / '+DAILY_MIN+' min'+(met?' ✓':'')+'</span></div>'+
+      '<div class="td-bar"><i style="width:'+Math.min(mins/DAILY_MIN*100,100).toFixed(0)+'%"></i></div>';
+    var foot=where==="az"
+      ?'<div class="td-foot"><span>'+(plan.length?'Picked ≈ '+planned+' min'+(planned>DAILY_MIN+10?' — do ~'+DAILY_MIN+' today; the rest carries over':''):'')+'</span>'+
+        '<button class="td-link" data-action="cur-suggest" data-id="'+g.id+'" type="button">Reset to next in line</button></div>'
+      :'<button class="td-az" data-action="set-view" data-view="curriculum" type="button">Change today’s pick<span class="td-az-s">See all '+c.lessons.length+' lessons, A → Z →</span></button>';
+    return '<div class="td'+(where==="az"?' td-az-panel':'')+'">'+head+rows+foot+'</div>';
+  }
+  function lessonRow(g,l,ctx,plan){
+    var tid=lessonTid(g.id,l.id),running=state.activeId===tid,isDone=!!currDone(g)[l.id];
+    var est=l.estimateMin||15,logged=lessonLoggedMin(g.id,l.id),open=running||!!ui.lessonOpen[l.id];
+    var st=running?'<span class="ls-st run"></span>':(isDone?'<span class="ls-st done">✓</span>':'<span class="ls-st'+(logged>0?' part':'')+'"></span>');
+    var sub=esc(l.stage_name)+' · '+(isDone||!logged?est+'m':logged+' of '+est+'m')+(running?' · <b>running</b>':'');
+    var act="";
+    if(ctx==="az"){var on=plan.indexOf(l.id)>=0;act='<button class="ls-today'+(on?' on':'')+'" data-action="cur-today" data-id="'+g.id+'" data-lid="'+l.id+'" type="button" aria-pressed="'+(on?'true':'false')+'">'+(on?'✓ Today':'+ Today')+'</button>';}
+    else if(ctx==="plan-az")act='<button class="icon-btn danger ls-rm" data-action="cur-today" data-id="'+g.id+'" data-lid="'+l.id+'" type="button" title="Remove from today" aria-label="Remove from today">&#215;</button>';
+    else if(running)act='<button class="btn btn-stop btn-sm" data-action="stop" type="button">Stop</button>';
+    else if(!isDone)act='<button class="btn btn-primary btn-sm" data-action="cur-start" data-id="'+g.id+'" data-lid="'+l.id+'" type="button">'+(logged?'Continue':'Start')+'</button>';
+    return '<div class="ls'+(isDone?' is-done':'')+(running?' is-run':'')+'">'+
+      '<div class="ls-row"><button class="ls-main" data-action="cur-open" data-id="'+l.id+'" type="button" aria-expanded="'+(open?'true':'false')+'">'+st+
+        '<span class="ls-n">L'+(l.order<10?'0':'')+l.order+'</span>'+
+        '<span class="ls-txt"><span class="ls-c">'+esc(l.concept)+'</span><span class="ls-s">'+sub+'</span></span></button>'+act+'</div>'+
+      (open?lessonDetail(g,l,ctx,running,isDone,logged):'')+
+    '</div>';
+  }
+  function lessonDetail(g,l,ctx,running,isDone,logged){
     var tags=(l.doctrine_ref||[]).map(function(d){return '<span class="curr-tag">'+esc(d)+'</span>';}).join("");
-    var refsOpen=ui.currRefs&&ui.currRefs[g.id];
-    var refs="";
-    if(refsOpen){
-      var rd=(l.read||[]).map(function(x){return '<li>'+esc(x)+'</li>';}).join("");
-      var ex=l.example?'<div class="curr-ex"><b>Lab / example:</b> '+esc(l.example)+'</div>':"";
-      refs='<div class="curr-refs">'+(rd?'<div><b>Read:</b><ul>'+rd+'</ul></div>':"")+ex+'<div class="curr-note">These point into your Valuation Agent repo — desk work, not inside the app.</div></div>';
-    }
-    var hasRefs=(l.read&&l.read.length)||l.example;
-    var refsBtn=hasRefs?'<button class="curr-refs-btn" data-action="cur-refs" data-id="'+g.id+'" type="button">'+(refsOpen?"Hide":"Show")+' what to read / run</button>':"";
-    var startBtn=running
-      ?'<button class="btn btn-stop btn-sm" data-action="stop" type="button">Stop timer</button>'
-      :'<button class="btn btn-primary btn-sm" data-action="cur-start" data-id="'+g.id+'" type="button">Start · ~'+(l.estimateMin||15)+' min</button>';
-    var nxt=c.lessons[cur.idx+1];
-    var peek=nxt?'<div class="curr-next">Up next · '+esc(nxt.rung)+' · '+esc(nxt.concept)+' · ~'+(nxt.estimateMin||15)+'m</div>':'<div class="curr-next">This is the final lesson — the capstone.</div>';
-    return goalSec(g,'curr','Curriculum',sum,function(){return ''+
-      '<div class="curr-card">'+
-        '<div class="curr-meta"><span class="curr-badge">'+esc(l.rung)+'</span>'+
-          '<span class="curr-pos">Lesson '+l.order+' / '+total+'</span>'+
-          '<span class="curr-time">~'+(l.estimateMin||15)+' min</span></div>'+
-        '<div class="curr-stage">'+esc(l.stage_name)+'</div>'+
-        '<div class="curr-concept">'+esc(l.concept)+'</div>'+
-        '<div class="curr-task">'+esc(l.task)+'</div>'+
-        (tags?'<div class="curr-tags">'+tags+'</div>':"")+
-        refsBtn+refs+
-        '<div class="curr-btns">'+startBtn+
-          '<button class="btn btn-primary btn-sm" data-action="cur-nailed" data-id="'+g.id+'" type="button">Nailed it ✓</button>'+
-          '<button class="btn btn-ghost btn-sm" data-action="cur-shaky" data-id="'+g.id+'" type="button">Still shaky</button>'+
-        '</div>'+
-      '</div>'+peek;});
+    var rd=(l.read||[]).map(function(x){return '<li>'+esc(x)+'</li>';}).join("");
+    var ex=l.example?'<div class="curr-ex"><b>Lab / example:</b> '+esc(l.example)+'</div>':"";
+    var refs=(rd||ex)?'<div class="curr-refs">'+(rd?'<div><b>Read:</b><ul>'+rd+'</ul></div>':"")+ex+'<div class="curr-note">These point into your Valuation Agent repo — desk work, not inside the app.</div></div>':"";
+    var go="";
+    if(ctx!=="plan")go=running?'<button class="btn btn-stop btn-sm" data-action="stop" type="button">Stop timer</button>'
+      :'<button class="btn btn-primary btn-sm" data-action="cur-start" data-id="'+g.id+'" data-lid="'+l.id+'" type="button">'+(isDone?'Review it':(logged?'Continue':'Start'))+' · ~'+(isDone?(l.estimateMin||15):lessonLeftMin(g,l))+' min</button>';
+    var grade=(isDone&&!running)?'':'<button class="btn btn-primary btn-sm" data-action="cur-nailed" data-id="'+g.id+'" data-lid="'+l.id+'" type="button">Nailed it ✓</button>'+
+      '<button class="btn btn-ghost btn-sm" data-action="cur-shaky" data-id="'+g.id+'" data-lid="'+l.id+'" type="button">Still shaky</button>';
+    return '<div class="ls-det"><div class="ls-meta"><span class="curr-badge">'+esc(l.rung)+'</span>'+(tags?'<span class="curr-tags">'+tags+'</span>':'')+'</div>'+
+      '<div class="curr-task">'+esc(l.task)+'</div>'+refs+
+      ((go||grade)?'<div class="curr-btns">'+go+grade+'</div>':'')+
+    '</div>';
+  }
+  /* the whole curriculum, A → Z — pick what you feel like; the ladder order is a suggestion, not a lock */
+  function renderCurriculumView(){
+    var back='<button class="cv-back" data-action="set-view" data-view="goals" type="button">'+backSvg()+'Goals</button>';
+    var g=(state.goals||[]).filter(function(x){return valCurrFor(x);})[0];
+    if(!g)return '<section class="sec cv">'+back+'<div class="card empty">The curriculum lives on your investing goal, which isn’t set up here.</div></section>';
+    var c=valCurrFor(g),done=currDone(g),doneN=0,totalMin=0,plan=todayPlan(g),cur=currentLesson(g);
+    c.lessons.forEach(function(l){totalMin+=(l.estimateMin||15);if(done[l.id])doneN++;});
+    var groups=VAL_RUNGS.map(function(r,ri){
+      var ls=c.lessons.filter(function(l){return l.rung===r;});if(!ls.length)return "";
+      var dn=ls.filter(function(l){return done[l.id];}).length,mm=ls.reduce(function(s,l){return s+(l.estimateMin||15);},0);
+      return '<div class="cv-rung'+(cur&&cur.lesson.rung===r?' here':'')+'">'+
+        '<div class="cv-rh"><span class="cv-rn">'+(ri+1)+'</span><span class="cv-rt">'+esc(r)+'</span><span class="cv-rd">'+esc(BLOOM[ri].d)+'</span><span class="cv-rp">'+dn+'/'+ls.length+' · '+fmtDur(mm*60)+'</span></div>'+
+        '<div class="cv-list">'+ls.map(function(l){return lessonRow(g,l,"az",plan);}).join("")+'</div></div>';
+    }).join("");
+    return '<section class="sec cv">'+back+
+      '<h2 class="cv-title">Aswath’s curriculum, A → Z</h2>'+
+      '<p class="cv-sub">'+c.lessons.length+' lessons · '+doneN+' done · about '+fmtDur(totalMin*60)+' in all — roughly '+Math.ceil(totalMin/DAILY_MIN/7)+' weeks at '+DAILY_MIN+' min a day. Pick whatever you feel like; the ladder order is a suggestion, not a lock.</p>'+
+      renderToday(g,"az")+groups+
+    '</section>';
   }
   /* ---------- Aswath's method: his rule + his real calls, right where you decide ---------- */
   function renderAswath(g){
@@ -1281,7 +1398,7 @@ h1,h2,h3{margin:0;font-family:var(--font-display);font-weight:600;text-wrap:bala
     var more=ASWATH_TAKES.length>3?'<button class="asw-more" data-action="asw-all" type="button">'+(ui.aswAll?'Show fewer':'Show all '+ASWATH_TAKES.length+' of his calls')+'</button>':'';
     var c=valCurrFor(g),done=currDone(g),dc=0;c.lessons.forEach(function(l){if(done[l.id])dc++;});
     var cur=currentLesson(g);
-    var learn='<button class="asw-learn" data-action="asw-learn" data-id="'+g.id+'" type="button"><span class="asw-learn-t">Learn his method, step by step →</span><span class="asw-learn-s">Curriculum '+dc+'/'+c.lessons.length+(cur?' · next: '+esc(cur.lesson.stage_name)+' · ~'+(cur.lesson.estimateMin||15)+' min':' · complete')+'</span></button>';
+    var learn='<button class="asw-learn" data-action="set-view" data-view="curriculum" type="button"><span class="asw-learn-t">Learn his method, step by step →</span><span class="asw-learn-s">Curriculum '+dc+'/'+c.lessons.length+(cur?' · next: '+esc(cur.lesson.stage_name)+' · ~'+(cur.lesson.estimateMin||15)+' min':' · complete')+'</span></button>';
     return '<div class="asw open">'+head+'<div class="asw-body">'+
       '<blockquote class="asw-quote">“The odds are in my favour.”<cite>— Aswath Damodaran, buying Intel in 2024</cite></blockquote>'+
       '<p class="asw-lead">He never claims certainty. He values first, then acts only when the price puts the odds on his side — that’s the line between investing and a gamble.</p>'+
@@ -1586,7 +1703,7 @@ h1,h2,h3{margin:0;font-family:var(--font-display);font-weight:600;text-wrap:bala
       '<div class="goal-top"><div style="min-width:0"><div class="goal-name">'+esc(g.name)+'</div>'+meta+'</div>'+
         '<button class="icon-btn danger" data-action="del-goal" data-id="'+g.id+'" title="Delete goal" aria-label="Delete goal">&#215;</button></div>'+
       identityBlock+stat+
-      renderAswath(g)+renderSteps(g)+renderCurriculum(g)+renderProgression(g)+noteBlock+
+      renderToday(g,"card")+renderAswath(g)+renderSteps(g)+renderProgression(g)+noteBlock+
     '</div>';
   }
   function actionRow(t){
@@ -2200,6 +2317,7 @@ h1,h2,h3{margin:0;font-family:var(--font-display);font-weight:600;text-wrap:bala
   }
 
   /* ---------- inline icons ---------- */
+  function backSvg(){return '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"></path></svg>';}
   function chevronSvg(){return '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"></path></svg>';}
   function goalIcon(){return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8.5"></circle><circle cx="12" cy="12" r="3.4"></circle></svg>';}
   function projIcon(){return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="4.5" width="7" height="7" rx="1.6"></rect><rect x="13.5" y="4.5" width="7" height="7" rx="1.6"></rect><rect x="3.5" y="14.5" width="7" height="5" rx="1.6"></rect><rect x="13.5" y="14.5" width="7" height="5" rx="1.6"></rect></svg>';}
