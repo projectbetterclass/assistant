@@ -98,6 +98,12 @@ h1,h2,h3{margin:0;font-family:var(--font-display);font-weight:600;text-wrap:bala
 .icon-btn:hover{color:var(--ink);border-color:var(--line-strong)}
 .icon-btn.danger:hover{color:var(--bad);border-color:var(--bad)}
 .icon-btn:disabled{opacity:.35;cursor:default}
+.icon-btn[data-arm]{position:relative}
+.icon-btn.armed{z-index:2;background:var(--bad);border-color:var(--bad);color:#fff}
+.icon-btn.armed:hover{color:#fff;border-color:var(--bad)}
+.icon-btn.armed::after{content:"Delete?";position:absolute;top:-1px;right:-1px;bottom:-1px;display:flex;align-items:center;justify-content:center;box-sizing:border-box;min-width:83px;padding:0 12px;
+  border-radius:10px;background:var(--bad);color:#fff;font-size:13px;font-weight:700;white-space:nowrap;box-shadow:0 4px 14px -4px rgba(0,0,0,.45)}
+.tr-actions:has(.icon-btn.armed)>:not(.armed){visibility:hidden}   /* armed row: just "Delete?", same layout */
 
 /* cards + sections */
 .card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow)}
@@ -404,6 +410,11 @@ h1,h2,h3{margin:0;font-family:var(--font-display);font-weight:600;text-wrap:bala
 /* task rows */
 .task-list{display:flex;flex-direction:column;gap:10px}
 .task-row{display:flex;gap:14px;align-items:center;padding:15px 16px}
+@media (max-width:460px){   /* phone: a long title gets the full width, its buttons drop to their own line */
+  .task-row{flex-wrap:wrap;row-gap:12px}
+  .task-row .tr-main{flex:1 1 auto}
+  .task-row .tr-actions{margin-left:auto}
+}
 .tr-main{flex:1;min-width:0}
 .tr-name{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-family:var(--font-display);font-size:16.5px;font-weight:600}
 .tr-sub{color:var(--muted);font-size:13px;margin-top:4px;font-variant-numeric:tabular-nums}
@@ -644,6 +655,7 @@ h1,h2,h3{margin:0;font-family:var(--font-display);font-weight:600;text-wrap:bala
 .dec-foot{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:10px;font-size:11.5px;color:var(--faint)}
 .dec-del{border:none;background:transparent;color:var(--faint);font-family:inherit;font-size:12px;font-weight:600;cursor:pointer;padding:0}
 .dec-del:hover{color:var(--bad)}
+.dec-del.armed{color:var(--bad)}
 .dec-wiz{display:flex;flex-direction:column;gap:9px;padding:12px;background:var(--surface);border:1px solid var(--accent);border-radius:11px}
 .dec-steps{display:flex;align-items:center;gap:5px;flex-wrap:wrap}
 .dec-dot{font-size:11px;font-weight:600;padding:3px 9px;border-radius:99px;background:var(--surface-2);color:var(--faint);border:1px solid var(--line);white-space:nowrap}
@@ -772,7 +784,7 @@ h1,h2,h3{margin:0;font-family:var(--font-display);font-weight:600;text-wrap:bala
   function loadAsw(){try{return localStorage.getItem(ASW_KEY)==="1";}catch(e){return false;}}
   var DEC_KEY="wmtw_dec_draft";   // an unfinished call survives a reload — e.g. you switched apps to look up the price
   function loadDecDraft(){try{var s=JSON.parse(localStorage.getItem(DEC_KEY)||"null");if(s&&s.d&&s.gid&&Date.now()-(s.t0||0)<3*86400000)return s;}catch(e){}return null;}
-  var ui={addOpen:false, goalOpen:false, actionOpen:{}, noteOpen:{}, cueOpen:{}, idOpen:{}, repOpen:{}, stepAddOpen:{}, proposal:{}, loading:{}, projectOpen:false, projEdit:{}, projLoading:{}, ghLoading:{}, ghErr:{}, adviseLoading:{}, currRefs:{}, projCardOpen:{}, goalSecOpen:{}, aswClosed:loadAsw(), aswAll:false, aswOpen:{}, lessonOpen:{}, dec:loadDecDraft(), decRows:{}, decAll:false, goalMode:"have", shapeLevel:"new", shapeTopic:"", shapeLoading:false, shapeProposal:null, hoLoading:{}, view:loadView(), date:dayKey(Date.now())};
+  var ui={addOpen:false, goalOpen:false, actionOpen:{}, noteOpen:{}, cueOpen:{}, idOpen:{}, repOpen:{}, stepAddOpen:{}, proposal:{}, loading:{}, projectOpen:false, projEdit:{}, projLoading:{}, ghLoading:{}, ghErr:{}, adviseLoading:{}, currRefs:{}, projCardOpen:{}, goalSecOpen:{}, aswClosed:loadAsw(), aswAll:false, aswOpen:{}, lessonOpen:{}, dec:loadDecDraft(), decRows:{}, decAll:false, armed:null, goalMode:"have", shapeLevel:"new", shapeTopic:"", shapeLoading:false, shapeProposal:null, hoLoading:{}, view:loadView(), date:dayKey(Date.now())};
   var isTouch=("ontouchstart" in window)||(navigator.maxTouchPoints>0);
   var sampleNS; // undefined=unknown, null=unavailable, function=ready
   var GH_SERVER="GitHub Integration";
@@ -946,6 +958,31 @@ h1,h2,h3{margin:0;font-family:var(--font-display);font-weight:600;text-wrap:bala
   function toggleDone(id){commit(function(){var t=findTask(id);if(!t)return;if(!t.done){if(state.activeId===id){closeRunning(t);state.activeId=null;}t.done=true;}else t.done=false;});}
   function deleteTask(id){commit(function(){if(state.activeId===id)state.activeId=null;state.tasks=state.tasks.filter(function(t){return t.id!==id;});});}
 
+  /* ---------- two-tap delete ----------
+     window.confirm() is silently blocked inside the claude.ai sandbox (it always answered "no"), so nothing could be deleted.
+     First tap arms the button ("Delete?"), a second tap within 4s deletes. Painted in place, so a half-typed field is never wiped. */
+  var armTimer;
+  function armed(key,msg){
+    clearTimeout(armTimer);
+    if(ui.armed===key){ui.armed=null;return true;}
+    ui.armed=key;paintArmed();if(msg)toast(msg);
+    armTimer=setTimeout(function(){ui.armed=null;paintArmed();},4000);
+    return false;
+  }
+  function paintArmed(){
+    root.querySelectorAll("[data-arm]").forEach(function(el){
+      var on=el.getAttribute("data-arm")===ui.armed;
+      el.classList.toggle("armed",on);
+      if(el.hasAttribute("data-on"))el.textContent=el.getAttribute(on?"data-on":"data-off");
+      if(el.title)el.setAttribute("aria-label",on?"Tap again to delete":el.title);
+    });
+  }
+  function xBtn(action,id,label,extra){   // the red "Delete?" is an overlay (CSS ::after): the button keeps its size, nothing shifts under your finger
+    var k=action+":"+id,on=ui.armed===k;
+    return '<button class="icon-btn danger'+(on?' armed':'')+'" type="button" data-action="'+action+'" data-id="'+id+'"'+(extra||'')+
+      ' data-arm="'+esc(k)+'" title="'+esc(label)+'" aria-label="'+(on?'Tap again to delete':esc(label))+'">&#215;</button>';
+  }
+
   /* ---------- events ---------- */
   function val(id){var e=document.getElementById(id);return e?e.value:"";}
   function onSubmit(e){
@@ -967,10 +1004,11 @@ h1,h2,h3{margin:0;font-family:var(--font-display);font-weight:600;text-wrap:bala
   function onClick(e){
     var b=e.target.closest("[data-action]");if(!b)return;
     var a=b.getAttribute("data-action"),id=b.getAttribute("data-id");
+    if(ui.armed&&!b.hasAttribute("data-arm")){clearTimeout(armTimer);ui.armed=null;paintArmed();}   // tapped something else: stand down
     if(a==="start")startTask(id);
     else if(a==="stop")stopTask();
     else if(a==="done")toggleDone(id);
-    else if(a==="delete"){if(window.confirm("Delete this task and its logged time?"))deleteTask(id);}
+    else if(a==="delete"){if(armed("delete:"+id,"Tap “Delete?” again to delete it and its logged time"))deleteTask(id);}
     else if(a==="toggle-add"){ui.addOpen=!ui.addOpen;render();}
     else if(a==="theme")toggleTheme();
     else if(a==="export")exportCsv();
@@ -984,7 +1022,7 @@ h1,h2,h3{margin:0;font-family:var(--font-display);font-weight:600;text-wrap:bala
     else if(a==="shape-reshape")shapeTopic(ui.shapeTopic,ui.shapeLevel);
     else if(a==="shape-cancel"){ui.shapeProposal=null;ui.shapeTopic="";render();}
     else if(a==="toggle-action"){ui.actionOpen[id]=!ui.actionOpen[id];render();}
-    else if(a==="del-goal"){if(window.confirm("Delete this goal? Its actions become normal tasks and keep the time you logged."))deleteGoal(id);}
+    else if(a==="del-goal"){if(armed("del-goal:"+id,"Tap “Delete?” again — its actions stay as normal tasks, with their time"))deleteGoal(id);}
     else if(a==="edit-note"){ui.noteOpen[id]=true;render();}
     else if(a==="cancel-note"){ui.noteOpen[id]=false;render();}
     else if(a==="save-note")saveNote(id,val("note-"+id));
@@ -993,7 +1031,7 @@ h1,h2,h3{margin:0;font-family:var(--font-display);font-weight:600;text-wrap:bala
     else if(a==="toggle-pin")togglePin(id);
     else if(a==="toggle-step-add"){ui.stepAddOpen[id]=!ui.stepAddOpen[id];render();}
     else if(a==="toggle-step")toggleStepDone(b.getAttribute("data-gid"),id);
-    else if(a==="del-step"){if(window.confirm("Remove this step? Its sub-steps stay as ungrouped actions and keep their logged time."))deleteStep(b.getAttribute("data-gid"),id);}
+    else if(a==="del-step"){if(armed("del-step:"+id,"Tap “Delete?” again — its sub-steps stay, with their time"))deleteStep(b.getAttribute("data-gid"),id);}
     else if(a==="ai-breakdown")proposeBreakdown(id);
     else if(a==="proposal-add")acceptProposal(id);
     else if(a==="proposal-discard"){ui.proposal[id]=null;render();}
@@ -1008,7 +1046,7 @@ h1,h2,h3{margin:0;font-family:var(--font-display);font-weight:600;text-wrap:bala
     else if(a==="rep-cancel"){ui.repOpen[id]=false;render();}
     else if(a==="toggle-project"){ui.projectOpen=!ui.projectOpen;render();}
     else if(a==="toggle-project-card"){ui.projCardOpen[id]=!ui.projCardOpen[id];render();}
-    else if(a==="del-project"){if(window.confirm("Delete this project and its notes?"))deleteProject(id);}
+    else if(a==="del-project"){if(armed("del-project:"+id,"Tap “Delete?” again to delete the project and its log"))deleteProject(id);}
     else if(a==="set-health")setHealth(id,b.getAttribute("data-val"));
     else if(a==="edit-project"){ui.projEdit[id]=true;render();}
     else if(a==="cancel-project"){ui.projEdit[id]=false;render();}
@@ -1018,7 +1056,7 @@ h1,h2,h3{margin:0;font-family:var(--font-display);font-weight:600;text-wrap:bala
     else if(a==="advice-handoff")handoffAdvice(id,b.getAttribute("data-sec"),parseInt(b.getAttribute("data-idx"),10));
     else if(a==="ho-grade")gradeHandoff(id,b.getAttribute("data-hid"));
     else if(a==="del-project-log")deleteProjectLog(id,+b.getAttribute("data-at"));
-    else if(a==="ho-del"){var hid=b.getAttribute("data-hid");if(window.confirm("Remove this handoff and its feedback?"))commit(function(){var pp=findProject(id);if(pp)pp.handoffs=(pp.handoffs||[]).filter(function(x){return x.id!==hid;});});}
+    else if(a==="ho-del"){var hid=b.getAttribute("data-hid");if(armed("ho-del:"+hid))commit(function(){var pp=findProject(id);if(pp)pp.handoffs=(pp.handoffs||[]).filter(function(x){return x.id!==hid;});});}
     else if(a==="cur-start")startLesson(id,b.getAttribute("data-lid"));
     else if(a==="cur-nailed")finishLesson(id,b.getAttribute("data-lid"),"nailed");
     else if(a==="cur-shaky")finishLesson(id,b.getAttribute("data-lid"),"shaky");
@@ -1033,7 +1071,7 @@ h1,h2,h3{margin:0;font-family:var(--font-display);font-weight:600;text-wrap:bala
     else if(a==="dec-save")decSave();
     else if(a==="dec-row"){ui.decRows[id]=!ui.decRows[id];render();}
     else if(a==="dec-all"){ui.decAll=!ui.decAll;render();}
-    else if(a==="dec-del"){if(window.confirm("Delete this call?"))deleteDecision(id,b.getAttribute("data-did"));}
+    else if(a==="dec-del"){var ddid=b.getAttribute("data-did");if(armed("dec-del:"+ddid))deleteDecision(id,ddid);}
     else if(a==="retry"){syncMode="check";renderChip();persist();}
     else if(a==="set-view"){var v=b.getAttribute("data-view");if(v&&v!==ui.view){ui.view=v;try{localStorage.setItem(VIEW_KEY,v);}catch(e){}render();window.scrollTo(0,0);}}
     else if(a==="toggle-gsec"){var gk=id+':'+b.getAttribute("data-key");ui.goalSecOpen[gk]=!ui.goalSecOpen[gk];render();}
@@ -1599,7 +1637,7 @@ h1,h2,h3{margin:0;font-family:var(--font-display);font-weight:600;text-wrap:bala
       '<div class="asw-dh">Value · '+esc(bs.toLowerCase())+'</div><div>'+fmtNum(d.value)+' a share, against a price of '+fmtNum(d.price)+'</div>'+
       '<div class="asw-dh">Doubt — what would make the market right</div><div class="dec-txt">'+esc(d.doubt)+'</div>'+
       '<div class="dec-foot"><span>'+esc(new Date(d.at).toLocaleString(undefined,{dateStyle:"medium",timeStyle:"short"}))+'</span>'+
-        '<button class="dec-del" data-action="dec-del" data-id="'+g.id+'" data-did="'+esc(d.id)+'" type="button">Delete</button></div>'+
+        '<button class="dec-del'+(ui.armed==="dec-del:"+d.id?' armed':'')+'" data-action="dec-del" data-id="'+g.id+'" data-did="'+esc(d.id)+'" data-arm="dec-del:'+esc(d.id)+'" data-on="Tap again to delete" data-off="Delete" type="button">'+(ui.armed==="dec-del:"+d.id?'Tap again to delete':'Delete')+'</button></div>'+
     '</div></div>';
   }
   function renderGoals(){
@@ -1818,7 +1856,7 @@ h1,h2,h3{margin:0;font-family:var(--font-display);font-weight:600;text-wrap:bala
       '<div class="step-head">'+
         '<button class="step-check'+(st.done?" on":"")+'" type="button" data-action="toggle-step" data-id="'+st.id+'" data-gid="'+g.id+'" aria-pressed="'+(st.done?"true":"false")+'" title="'+(st.done?"Mark step not done":"Mark step done")+'" aria-label="Toggle step done">'+(st.done?"&#10003;":"")+'</button>'+
         '<div class="step-name'+(st.done?" is-done":"")+'">'+esc(st.name)+'</div>'+
-        '<button class="icon-btn danger" type="button" data-action="del-step" data-id="'+st.id+'" data-gid="'+g.id+'" title="Remove step" aria-label="Remove step">&#215;</button>'+
+        xBtn("del-step",st.id,"Remove step",' data-gid="'+g.id+'"')+
       '</div>'+
       '<div class="step-actions">'+
         (acts.length?acts.map(actionRow).join(""):'<div class="action-empty">No sub-steps yet.</div>')+
@@ -1876,7 +1914,7 @@ h1,h2,h3{margin:0;font-family:var(--font-display);font-weight:600;text-wrap:bala
     }
     return '<div class="card goal-card">'+
       '<div class="goal-top"><div style="min-width:0"><div class="goal-name">'+esc(g.name)+'</div>'+meta+'</div>'+
-        '<button class="icon-btn danger" data-action="del-goal" data-id="'+g.id+'" title="Delete goal" aria-label="Delete goal">&#215;</button></div>'+
+        xBtn("del-goal",g.id,"Delete goal")+'</div>'+
       identityBlock+stat+
       renderToday(g,"card")+renderAswath(g)+renderDecisions(g)+renderSteps(g)+renderProgression(g)+noteBlock+
     '</div>';
@@ -1900,7 +1938,7 @@ h1,h2,h3{margin:0;font-family:var(--font-display);font-weight:600;text-wrap:bala
         '<div class="action-name">'+esc(t.name)+depthPill+(running?'<span class="mini-run">running</span>':"")+'</div>'+
         '<div class="action-sub">'+sub+' '+cueTail+'</div>'+cueEditor+
       '</div>'+
-      '<div class="tr-actions">'+btn+'<button class="icon-btn danger" data-action="delete" data-id="'+t.id+'" title="Remove action" aria-label="Remove">&#215;</button></div>'+
+      '<div class="tr-actions">'+btn+xBtn("delete",t.id,"Remove action")+'</div>'+
     '</div>';
   }
 
@@ -2033,7 +2071,7 @@ h1,h2,h3{margin:0;font-family:var(--font-display);font-weight:600;text-wrap:bala
         '<input id="ho-ref-'+h.id+'" class="field" value="'+esc(h.ref||"")+'" placeholder="PR # or link (optional — lets me fetch the diff)" aria-label="PR or commit reference">'+
         '<textarea id="ho-diff-'+h.id+'" class="field note-area" style="min-height:66px" placeholder="…or paste the diff / a short summary of the change. Grounds the review — without it I won’t guess.">'+esc(h.diff||"")+'</textarea>'+
         '<div class="ho-btns"><button class="btn btn-primary btn-sm" data-action="ho-grade" data-id="'+p.id+'" data-hid="'+h.id+'" type="button">'+sparkSvg()+(h.verdict?"Re-grade":"Grade the change")+'</button>'+
-        '<button class="btn btn-ghost btn-sm" data-action="ho-del" data-id="'+p.id+'" data-hid="'+h.id+'" type="button">Remove</button></div>'+
+        '<button class="btn btn-ghost btn-sm" data-action="ho-del" data-id="'+p.id+'" data-hid="'+h.id+'" data-arm="ho-del:'+h.id+'" data-on="Tap again" data-off="Remove" type="button">'+(ui.armed==="ho-del:"+h.id?'Tap again':'Remove')+'</button></div>'+
       '</div>';
     return '<div class="ho-item"><div class="ho-find">“'+esc(h.finding)+'”</div>'+(h.verdict?renderVerdict(h):"")+form+'</div>';
   }
@@ -2288,7 +2326,7 @@ h1,h2,h3{margin:0;font-family:var(--font-display);font-weight:600;text-wrap:bala
     var meta=p.updatedAt?'<div class="proj-upd">Updated '+esc(ago(p.updatedAt))+'</div>':"";
     return '<div class="card goal-card">'+
       '<div class="goal-top"><div style="min-width:0"><div class="goal-name proj-open-name" data-action="toggle-project-card" data-id="'+p.id+'" role="button" tabindex="0" title="Collapse ‘'+esc(p.name)+'’"><span class="proj-mini-chev open">'+chevronSvg()+'</span>'+esc(p.name)+'</div>'+repoLine+'</div>'+
-        '<button class="icon-btn danger" data-action="del-project" data-id="'+p.id+'" title="Delete project" aria-label="Delete project">&#215;</button></div>'+
+        xBtn("del-project",p.id,"Delete project")+'</div>'+
       health+bodyBlock+meta+renderProjectLog(p)+
     '</div>';
   }
@@ -2333,7 +2371,7 @@ h1,h2,h3{margin:0;font-family:var(--font-display);font-weight:600;text-wrap:bala
       '</div>'+
       '<div class="tr-actions">'+btn+pinBtn(t)+
         '<button class="icon-btn" data-action="done" data-id="'+t.id+'" title="Mark done" aria-label="Mark done">&#10003;</button>'+
-        '<button class="icon-btn danger" data-action="delete" data-id="'+t.id+'" title="Delete" aria-label="Delete">&#215;</button>'+
+        xBtn("delete",t.id,"Delete")+
       '</div>'+
     '</div>';
   }
@@ -2376,7 +2414,7 @@ h1,h2,h3{margin:0;font-family:var(--font-display);font-weight:600;text-wrap:bala
       '</div>'+
       '<div class="tr-actions">'+btn+pinBtn(t)+
         '<button class="icon-btn" data-action="done" data-id="'+t.id+'" title="'+(t.done?"Reopen":"Mark done")+'" aria-label="Mark done">'+(t.done?"&#8635;":"&#10003;")+'</button>'+
-        '<button class="icon-btn danger" data-action="delete" data-id="'+t.id+'" title="Delete" aria-label="Delete">&#215;</button>'+
+        xBtn("delete",t.id,"Delete")+
       '</div>'+
     '</div>';
   }
