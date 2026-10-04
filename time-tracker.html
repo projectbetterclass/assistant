@@ -163,6 +163,15 @@ h1,h2,h3{margin:0;font-family:var(--font-display);font-weight:600;text-wrap:bala
 .diff.is-under{color:var(--good)}
 .diff.is-over{color:var(--bad)}
 .now-btns{display:flex;gap:10px;margin-top:6px}
+/* paused: the task waits on the Now card with Continue; what you do meanwhile is the in-between */
+.now-paused{position:relative;overflow:hidden;border-color:var(--warn);background:linear-gradient(180deg,var(--warn-soft),transparent 62%),var(--surface)}
+.now-paused .live-pill{color:var(--warn)}
+.now-paused .now-clock{color:var(--muted)}
+.now-pausefor b{color:var(--warn);font-weight:600}
+.pause-strip{display:flex;align-items:center;gap:10px;margin-top:14px;padding:10px 12px;border:1px solid var(--line);border-left:3px solid var(--warn);border-radius:11px;background:var(--surface)}
+.pause-strip-t{flex:1;min-width:0;font-size:13px;line-height:1.4;color:var(--muted)}
+.pause-strip-t b{color:var(--ink);font-weight:600}
+.pause-strip .btn{flex:none}
 
 /* buttons */
 .btn{border:1px solid transparent;border-radius:11px;padding:12px 18px;font-size:15px;font-weight:600;line-height:1;
@@ -444,6 +453,12 @@ h1,h2,h3{margin:0;font-family:var(--font-display);font-weight:600;text-wrap:bala
 .tl-dur{font-family:var(--font-mono);font-size:12.5px;color:var(--muted);margin-top:2px;font-variant-numeric:tabular-nums}
 .tl-dur .is-over{color:var(--bad);font-weight:600}
 .tl-dur .is-under{color:var(--good);font-weight:600}
+.tl-row.tl-gap{padding:7px 0;border-top-style:dashed}
+.tl-gap .tl-body{font-size:12.5px;line-height:1.4;color:var(--faint);font-style:italic}
+.tl-gap.is-pause .tl-body{color:var(--warn);font-style:normal;font-weight:600}
+.tl-gap svg,.tl-tag svg{width:10px;height:10px;margin-right:4px;vertical-align:-1px}
+.tl-tag{font-family:var(--font-sans);font-size:11.5px;font-weight:600;color:var(--warn);white-space:nowrap}
+.tl-tag.is-cont{color:var(--accent)}
 
 .review-foot{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:14px;padding:0 2px}
 .foot-note{color:var(--faint);font-size:12.5px;line-height:1.5;margin-top:30px;text-align:center;padding:0 8px}
@@ -490,6 +505,7 @@ h1,h2,h3{margin:0;font-family:var(--font-display);font-weight:600;text-wrap:bala
 .tab:hover{color:var(--ink)}
 .tab.active{color:var(--accent);background:var(--accent-soft)}
 .tab-live{position:absolute;top:5px;right:calc(50% - 17px);width:7px;height:7px;border-radius:50%;background:var(--accent);animation:pulse 1.5s ease-in-out infinite}
+.tab-live.is-paused{background:var(--warn);animation:none}
 /* collapsible goal sub-sections */
 .gsec{margin-top:12px;border:1px solid var(--line);border-radius:12px;background:var(--surface-2);overflow:hidden}
 .gsec-head{display:flex;align-items:center;gap:9px;width:100%;border:none;background:transparent;
@@ -842,7 +858,9 @@ h1,h2,h3{margin:0;font-family:var(--font-display);font-weight:600;text-wrap:bala
   }
   function commit(fn){
     if(syncMode==="readonly") return;
-    fn(); state.touched=true; saveLocal(); render(); persist();
+    fn();
+    if(state.paused){var pt=findTask(state.paused.id);if(!pt||state.activeId===pt.id)delete state.paused;else if(pt.done)clearPause();}   // continued, deleted or finished: no longer paused
+    state.touched=true; saveLocal(); render(); persist();
   }
   function persist(){
     if(artNS===null) return; // local-only mode
@@ -906,6 +924,12 @@ h1,h2,h3{margin:0;font-family:var(--font-display);font-weight:600;text-wrap:bala
   function closeRunning(t){(t.sessions||[]).forEach(function(se){if(se.end==null)se.end=Date.now();});}
   function startTask(id){commit(function(){var a=findTask(state.activeId);if(a)closeRunning(a);var t=findTask(id);if(!t)return;t.sessions=t.sessions||[];t.sessions.push({start:Date.now(),end:null});t.done=false;state.activeId=id;});}
   function stopTask(){commit(function(){var t=findTask(state.activeId);if(t)closeRunning(t);state.activeId=null;});}
+  /* pause: the stretch ends (marked "pause"), the task stays on the Now card with Continue; anything started meanwhile is the in-between */
+  function lastSession(t){var l=null;(t.sessions||[]).forEach(function(se){if(!l||se.start>l.start)l=se;});return l;}
+  function pausedTask(){var p=state.paused;if(!p)return null;var t=findTask(p.id);return (t&&!t.done&&state.activeId!==t.id)?t:null;}
+  function pauseTask(){commit(function(){var t=findTask(state.activeId);if(!t)return;var now=Date.now();(t.sessions||[]).forEach(function(se){if(se.end==null){se.end=now;se.pause=true;}});state.paused={id:t.id,at:now};state.activeId=null;});}
+  function clearPause(){var p=state.paused;if(!p)return;var t=findTask(p.id),l=t&&lastSession(t);if(l&&l.pause)delete l.pause;delete state.paused;}   // ended without continuing: just a normal stop
+  function continueTask(){var t=pausedTask();if(!t)return;var other=state.activeId&&findTask(state.activeId);startTask(t.id);if(other)toast("Stopped ‘"+other.name+"’ · back to ‘"+t.name+"’");}
   function quickStart(name,cat){name=(name||"").trim();if(!name)return;commit(function(){var a=findTask(state.activeId);if(a)closeRunning(a);var t={id:uid(),name:name,category:(cat||"").trim(),estimateMin:null,planned:false,done:false,createdAt:Date.now(),sessions:[{start:Date.now(),end:null}]};state.tasks.push(t);state.activeId=t.id;});}
   function addPlanned(name,cat,est){name=(name||"").trim();if(!name)return;ui.addOpen=false;commit(function(){state.tasks.push({id:uid(),name:name,category:(cat||"").trim(),estimateMin:est>0?est:null,planned:true,done:false,createdAt:Date.now(),sessions:[]});});}
   function addLater(name){name=(name||"").trim();if(!name)return;commit(function(){state.tasks.push({id:uid(),name:name,category:"",estimateMin:null,planned:false,later:true,done:false,createdAt:Date.now(),sessions:[]});});}
@@ -978,6 +1002,9 @@ h1,h2,h3{margin:0;font-family:var(--font-display);font-weight:600;text-wrap:bala
     if(ui.armed&&!b.hasAttribute("data-arm")){clearTimeout(armTimer);ui.armed=null;paintArmed();}   // tapped something else: stand down
     if(a==="start")startTask(id);
     else if(a==="stop")stopTask();
+    else if(a==="pause")pauseTask();
+    else if(a==="continue")continueTask();
+    else if(a==="stop-paused")commit(clearPause);
     else if(a==="done")toggleDone(id);
     else if(a==="delete"){if(armed("delete:"+id,"Tap “Delete?” again to delete it and its logged time"))deleteTask(id);}
     else if(a==="toggle-add"){ui.addOpen=!ui.addOpen;render();}
@@ -1110,7 +1137,7 @@ h1,h2,h3{margin:0;font-family:var(--font-display);font-weight:600;text-wrap:bala
     var tabs=[["now","Now",clockSvg()],["goals","Goals",goalIcon()],["projects","Projects",projIcon()],["review","Review",reviewIcon()]];
     return '<nav class="tabbar" role="tablist" aria-label="Sections">'+tabs.map(function(t){
       var on=ui.view===t[0]||(t[0]==="goals"&&ui.view==="curriculum");
-      var live=(t[0]==="now"&&state.activeId)?'<span class="tab-live" aria-hidden="true"></span>':"";
+      var live=t[0]!=="now"?"":(state.activeId?'<span class="tab-live" aria-hidden="true"></span>':(pausedTask()?'<span class="tab-live is-paused" aria-hidden="true"></span>':""));
       return '<button class="tab'+(on?' active':'')+'" role="tab" aria-selected="'+(on?'true':'false')+'" data-action="set-view" data-view="'+t[0]+'" type="button">'+live+t[2]+'<span class="tab-lbl">'+t[1]+'</span></button>';
     }).join("")+'</nav>';
   }
@@ -1148,6 +1175,7 @@ h1,h2,h3{margin:0;font-family:var(--font-display);font-weight:600;text-wrap:bala
     }
     if(!pick)return "";
     if(state.activeId===pick.tid)return "";               // it's the running hero already
+    if(!state.activeId&&state.paused&&state.paused.id===pick.tid)return "";   // …or the paused card
     var start=pick.type==="lesson"
       ?'<button class="btn btn-primary btn-sm" data-action="cur-start" data-id="'+pick.gid+'" data-lid="'+pick.lid+'" type="button">'+(pick.cont?'Continue':'Start')+' · ~'+pick.min+'m</button>'
       :(pick.tid==="act_journal"?'<button class="btn btn-primary btn-sm" data-action="dec-open" data-id="'+pick.gid+'" type="button">Log a decision</button>'
@@ -1198,6 +1226,7 @@ h1,h2,h3{margin:0;font-family:var(--font-display);font-weight:600;text-wrap:bala
     var seen={},pins=[],rest=[];
     state.tasks.filter(function(t){
       if(t.done||t.daily)return false;                    // goal actions live in Goals; skip finished
+      if(state.paused&&state.paused.id===t.id)return false; // paused: it has its own Continue
       if(t.pinned)return true;                             // anything pinned surfaces here
       return !t.planned&&!t.later&&(t.sessions||[]).length; // otherwise only recent ad-hoc
     })
@@ -1207,7 +1236,7 @@ h1,h2,h3{margin:0;font-family:var(--font-display);font-weight:600;text-wrap:bala
   }
 
   function renderNow(){
-    var t=state.activeId?findTask(state.activeId):null;
+    var t=state.activeId?findTask(state.activeId):null, pz=pausedTask();
     if(t){
       var est=t.estimateMin;
       var estLine="";
@@ -1222,10 +1251,31 @@ h1,h2,h3{margin:0;font-family:var(--font-display);font-weight:600;text-wrap:bala
         '<div class="depth-tog"><span class="depth-lbl">Focus level:</span>'+
           '<button class="dbtn'+(t.depth==="deep"?" on":"")+'" data-action="set-depth" data-id="'+t.id+'" data-val="deep" type="button">Deep</button>'+
           '<button class="dbtn'+(t.depth==="shallow"?" on-sh":"")+'" data-action="set-depth" data-id="'+t.id+'" data-val="shallow" type="button">Shallow</button></div>'+
-        '<div class="now-btns"><button class="btn btn-stop btn-lg" data-action="stop">'+stopSvg()+'Stop &amp; log time</button></div>'+
+        '<div class="now-btns"><button class="btn btn-ghost btn-lg" data-action="pause" type="button">'+pauseSvg()+'Pause</button>'+
+          '<button class="btn btn-stop btn-lg" data-action="stop" type="button">'+stopSvg()+'Stop</button></div>'+
+        (pz?pauseStrip(pz):"")+
         (isTouch?'<div class="now-swipe-hint">Swipe the card sideways to stop</div>':"")+
       '</div>';
     }
+    if(pz)return pausedCard(pz)+idleCard(true);
+    return idleCard(false);
+  }
+  function pausedSince(){return '<span data-run-start="'+state.paused.at+'" data-run-base="1" data-run-fmt="dur">'+fmtDur(1+(Date.now()-state.paused.at)/1000)+'</span>';}   // +1s: reads "<1m", never "0m"
+  function pausedCard(t){
+    return '<div class="card now now-paused">'+
+      '<div class="now-head"><span class="live-pill">'+pauseSvg()+'Paused</span>'+chip(t.category)+(t.goalId?'<span class="chip chip-goal">'+esc(goalName(t.goalId))+'</span>':"")+'</div>'+
+      '<div class="now-name">'+esc(t.name)+'</div>'+
+      '<div class="now-clock">'+fmtClock(taskSec(t))+'</div>'+
+      '<div class="now-est now-pausefor">Paused for <b>'+pausedSince()+'</b></div>'+
+      '<div class="now-btns"><button class="btn btn-primary btn-lg" data-action="continue" type="button">'+playSvg()+'Continue</button>'+
+        '<button class="btn btn-ghost btn-lg" data-action="stop-paused" type="button">'+stopSvg()+'Stop</button></div>'+
+    '</div>';
+  }
+  function pauseStrip(t){   // on the running card: something else is on hold
+    return '<div class="pause-strip"><span class="pause-strip-t"><b>'+esc(t.name)+'</b> is paused · '+pausedSince()+'</span>'+
+      '<button class="btn btn-ghost btn-sm" data-action="continue" type="button">'+playSvg()+'Back to it</button></div>';
+  }
+  function idleCard(paused){
     var opts=usedCats().map(function(c){return '<option value="'+esc(c)+'">';}).join("");
     var rec=recentQuick();
     var recentsHtml=rec.length?('<div class="recents"><span class="recents-lbl">Again</span>'+rec.map(function(t){
@@ -1238,7 +1288,7 @@ h1,h2,h3{margin:0;font-family:var(--font-display);font-weight:600;text-wrap:bala
       '</span>';
     }).join("")+'</div>'):'';
     return '<div class="card now now-idle">'+
-      '<div class="now-idle-label">What are you working on?</div>'+
+      '<div class="now-idle-label">'+(paused?'Something else in between?':'What are you working on?')+'</div>'+
       '<form class="quick" data-action="quick-start" autocomplete="off">'+
         '<input id="q-name" class="field" placeholder="Name it — e.g. Emails, a break, a call" aria-label="Activity name">'+
         '<input id="q-cat" class="field field-cat" placeholder="Category (optional)" list="cats" aria-label="Category">'+
@@ -1246,7 +1296,8 @@ h1,h2,h3{margin:0;font-family:var(--font-display);font-weight:600;text-wrap:bala
         '<datalist id="cats">'+opts+'</datalist>'+
       '</form>'+
       recentsHtml+
-      '<p class="hint">Perfect for the unplanned stuff — hit start, and stop when you’re done to see exactly how long it took.</p>'+
+      '<p class="hint">'+(paused?'Whatever you start here shows up in Review as what you did in between. Tap Continue above when you’re back.'
+        :'Perfect for the unplanned stuff — hit start, and stop when you’re done to see exactly how long it took.')+'</p>'+
     '</div>';
   }
 
@@ -1372,6 +1423,7 @@ h1,h2,h3{margin:0;font-family:var(--font-display);font-weight:600;text-wrap:bala
       gg.curr=gg.curr||{};gg.curr.today={day:dayKey(Date.now()),ids:plan};
       var t=findTask(tid);
       if(state.activeId===tid){if(t)closeRunning(t);state.activeId=null;}
+      if(state.paused&&state.paused.id===tid)clearPause();   // grading ends a paused lesson
       if(gg.progression){gg.progression.reps=gg.progression.reps||[];gg.progression.reps.push({t:Date.now(),rung:rung,grade:grade,note:"L"+l.order+" · "+l.concept});}
       if(grade==="nailed"){gg.curr=gg.curr||{};gg.curr.done=gg.curr.done||{};gg.curr.done[l.id]=true;if(t)t.done=true;}
     });
@@ -2303,6 +2355,13 @@ h1,h2,h3{margin:0;font-family:var(--font-display);font-weight:600;text-wrap:bala
     '</div>';
   }
 
+  function tlGap(isPause,html,at){
+    return '<div class="tl-row tl-gap'+(isPause?' is-pause':'')+'"><div class="tl-time">'+(at?'<span class="tl-start">'+hhmm(at)+'</span><span>now</span>':'')+'</div><div class="tl-body">'+html+'</div></div>';
+  }
+  function pausedGap(t,se){   // seconds since this task's previous stretch, when that one ended with Pause
+    var b=null;(t.sessions||[]).forEach(function(x){if(x!==se&&x.end!=null&&x.end<=se.start&&(!b||x.end>b.end))b=x;});
+    return b&&b.pause?(se.start-b.end)/1000:null;
+  }
   function renderReview(){
     var key=ui.date, now=Date.now(), isToday=key===dayKey(now);
     var entries=[];
@@ -2384,19 +2443,30 @@ h1,h2,h3{margin:0;font-family:var(--font-display);font-weight:600;text-wrap:bala
       }).join("")+'</div>';
     }
 
-    // timeline
+    // timeline — with the in-between spelled out: gaps between stretches, pauses, and where you picked a task back up
     var tl="";
     if(entries.length){
+      var GAP_MIN=120,prev=null,pzt=(isToday&&!state.activeId)?pausedTask():null;
       tl='<div class="card timeline">'+entries.map(function(e){
         var live=e.se.end==null, end=live?now:e.se.end, dur=(end-e.se.start)/1000;
+        var gapRow="";
+        if(prev&&prev.se.end!=null){
+          var gap=(e.se.start-prev.se.end)/1000, pzGap=!!prev.se.pause&&prev.t.id===e.t.id;
+          if(gap>=GAP_MIN)gapRow=tlGap(pzGap,pzGap?pauseSvg()+'Paused '+fmtDur(gap)+' · nothing else tracked':fmtDur(gap)+' not tracked');
+        }
+        prev=e;
+        var cont=pausedGap(e.t,e.se);
+        var tags=(e.se.pause?' · <span class="tl-tag">'+pauseSvg()+'paused</span>':'')+(cont!=null?' · <span class="tl-tag is-cont">'+playSvg()+'continued after '+fmtDur(cont)+'</span>':'');
         var extra="";
         if(e.t.planned&&e.t.estimateMin){var d=taskSec(e.t)-e.t.estimateMin*60;extra=' <span class="'+(d>0?"is-over":"is-under")+'">'+(d>0?"+"+fmtDur(d)+" vs est":fmtDur(-d)+" under")+'</span>';}
-        var durCell=live?'<span data-run-start="'+e.se.start+'" data-run-base="0" data-run-fmt="dur">'+fmtDur(dur)+'</span> · running':fmtDur(dur)+extra;
-        return '<div class="tl-row">'+
+        var durCell=(live?'<span data-run-start="'+e.se.start+'" data-run-base="0" data-run-fmt="dur">'+fmtDur(dur)+'</span> · running':fmtDur(dur)+extra)+tags;
+        return gapRow+'<div class="tl-row">'+
           '<div class="tl-time"><span class="tl-start">'+hhmm(e.se.start)+'</span><span>'+(live?"now":hhmm(end))+'</span></div>'+
           '<div class="tl-body"><div class="tl-name">'+esc(e.t.name)+chip(e.t.category)+'</div><div class="tl-dur">'+durCell+'</div></div>'+
         '</div>';
-      }).join("")+'</div>';
+      }).join("")+
+      (pzt?tlGap(true,pauseSvg()+esc(pzt.name)+' paused · '+pausedSince()+' so far',state.paused.at):'')+
+      '</div>';
     } else {
       tl='<div class="card empty">Nothing tracked '+(isToday?"yet today":"on this day")+'. '+(isToday?"Start a timer above to begin.":"")+'</div>';
     }
@@ -2426,6 +2496,7 @@ h1,h2,h3{margin:0;font-family:var(--font-display);font-weight:600;text-wrap:bala
   function playSvg(){return '<svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M7 5.5v13a1 1 0 0 0 1.53.85l10-6.5a1 1 0 0 0 0-1.7l-10-6.5A1 1 0 0 0 7 5.5Z"></path></svg>';}
   function sparkSvg(){return '<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2l1.7 5.6L19 9l-5.3 1.4L12 16l-1.7-5.6L5 9l5.3-1.4L12 2z"></path></svg>';}
   function logSvg(){return '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h10"></path></svg>';}
+  function pauseSvg(){return '<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="6" y="5" width="4" height="14" rx="1.2"></rect><rect x="14" y="5" width="4" height="14" rx="1.2"></rect></svg>';}
   function stopSvg(){return '<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="6" width="12" height="12" rx="2"></rect></svg>';}
 })();
 </script>
