@@ -16,3 +16,8 @@ How it works (read before editing):
 - Don't change the declared capabilities unless I ask.
 
 What I want to change: <describe it here>
+
+Video transcripts: to read any video from my YouTube library (e.g. Aswath
+Damodaran, Justin Sung), run `py scripts/video_source.py <youtube-url>` or
+`py scripts/video_source.py --find "words"`. It returns the transcript plus any
+chart/slide readings for that video (see README "Reading YouTube transcripts").

@@ -51,3 +51,23 @@ deploy mechanism.
 
 Steps 5 and 6 are both needed for a change to be "done": publish makes it
 live, commit keeps a record.
+
+## Reading YouTube transcripts (for lessons)
+
+The video library from the `youtube-digest` project is available to chats here.
+`scripts/video_source.py` pulls one video's **transcript** and, where screen
+capture has run, its **on-screen charts/slides** (read by Claude vision, with
+the time in the video), matched by video id:
+
+```
+py scripts/video_source.py https://www.youtube.com/watch?v=<id>
+py scripts/video_source.py --find "damodaran equity risk premium"
+py scripts/video_source.py <id> --out notes/<name>.md
+```
+
+It reads the copy on the PC first (`Downloads/Youtube Scraper`) and falls back
+to the public GitHub repo, so it works from a phone/cloud session too. Covers
+every channel in the library (Aswath Damodaran, Justin Sung, HealthyGamerGG, …).
+Use it when writing or checking lessons, e.g. for `valuation_curriculum.json`:
+quote what was said, cite the video link, and treat chart readings as possibly
+misread (check a number against the video before relying on it).
