@@ -680,6 +680,49 @@ h1,h2,h3{margin:0;font-family:var(--font-display);font-weight:600;text-wrap:bala
 .prime-form{display:flex;gap:8px;margin-top:10px}
 .prime-form .field{flex:1}
 .prime-form .btn{flex:none}
+/* spaced revisits: 5 minutes, a new company, no notes */
+.ses-rev{border-color:var(--warn)}
+.ses-rev-head{display:flex;align-items:baseline;justify-content:space-between;gap:8px}
+.ses-rev-t{font-size:11px;text-transform:uppercase;letter-spacing:.07em;color:var(--warn);font-weight:600}
+.ses-rev-left{font-family:var(--font-mono);font-size:11.5px;color:var(--muted);font-variant-numeric:tabular-nums;white-space:nowrap}
+.ses-rev .ses-bar{margin-bottom:10px}
+.ses-rev .ses-seg.is-now{background:var(--warn-soft);box-shadow:inset 0 0 0 1px var(--warn)}
+.ses-rev .ses-bar b{background:var(--warn)}
+.home-next.rev{border-left-color:var(--warn)}
+.home-next.rev .home-next-eye{color:var(--warn)}
+.rev-why{margin-top:9px;font-size:12.5px;color:var(--muted);line-height:1.45}
+.td-rev{margin-top:12px;padding-top:10px;border-top:1px dashed var(--line)}
+.td-rev-h{display:flex;flex-wrap:wrap;align-items:baseline;gap:3px 8px;font-size:11px;text-transform:uppercase;letter-spacing:.07em;color:var(--warn);font-weight:600;margin-bottom:4px}
+.td-rev-h span{text-transform:none;letter-spacing:0;font-weight:500;color:var(--muted)}
+.td-rev-row{display:flex;align-items:center;gap:9px;padding:8px 0;border-top:1px solid var(--line)}
+.td-rev-h+.td-rev-row{border-top:0}
+.td-rev-t{flex:1;min-width:0;display:flex;flex-direction:column;gap:1px}
+.td-rev-row .btn{flex:none}
+.td-rev-later{font-size:12px;color:var(--muted);margin-top:6px;line-height:1.45}
+.td-metric{display:flex;flex-wrap:wrap;align-items:baseline;gap:2px 8px;font-size:12.5px;color:var(--muted);margin:-4px 0 10px}
+.td-metric b{color:var(--good);font-family:var(--font-mono);font-weight:600}
+.td-metric-s{font-size:11px;color:var(--faint);font-style:italic}
+.ls-st.shaky{border-color:var(--warn);background:linear-gradient(90deg,var(--warn) 50%,transparent 50%)}
+.ls-wait{flex:none;font-family:var(--font-mono);font-size:11px;color:var(--faint);white-space:nowrap;padding:0 6px}
+/* pieces of a goal: tick them off; blocks fold to one line */
+.action-row.is-done .action-name{color:var(--muted);text-decoration:line-through;text-decoration-thickness:1px}
+.icon-btn.is-on{color:var(--good);border-color:var(--good)}
+button.step-name{border:none;background:transparent;text-align:left;padding:0;cursor:pointer;color:var(--ink);display:flex;align-items:center;flex-wrap:wrap;gap:3px 8px}
+button.step-name:hover .step-nm{color:var(--accent)}
+.step-nm{flex:1 1 100%;min-width:0}   /* name on its own line; when · count · chevron on the next */
+@media (max-width:460px){   /* phone: a piece's name gets the full width, its Start · ✓ · × drop to their own line */
+  .action-row{flex-wrap:wrap;row-gap:6px}
+  .action-row .action-main{flex:1 1 100%}
+  .action-row .tr-actions{margin-left:auto}
+}
+.step-count{font-family:var(--font-mono);font-size:11px;font-weight:500;color:var(--faint)}
+.step-count.all{color:var(--good)}
+.step-when{font-family:var(--font-sans);font-size:10px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--accent);background:var(--accent-soft);padding:2px 7px;border-radius:99px;line-height:1.3}
+.step-chev{display:inline-flex;color:var(--faint)}
+.step-chev svg{width:12px;height:12px;transition:transform .15s}
+.step-chev.open svg{transform:rotate(90deg)}
+.step.is-closed{padding:10px 13px}
+.step.is-done{opacity:.7}
 /* your calls — the decision log, his 4 steps */
 .dec{margin-top:14px;padding:13px 14px 12px;background:var(--surface-2);border:1px solid var(--line);border-radius:12px}
 .dec-head{display:flex;align-items:baseline;flex-wrap:wrap;gap:4px 9px;margin-bottom:10px}
@@ -765,6 +808,8 @@ h1,h2,h3{margin:0;font-family:var(--font-display);font-weight:600;text-wrap:bala
   var DEEP_TARGET_MIN=120;
   var DAILY_MIN=30;   // your ~30 min a day of curriculum (declared up here: the first render runs before later code)
   var SES_STAGES=[["prime","Prime",3],["encode","Encode",17],["retrieve","Retrieve",6],["reflect","Reflect",4]];   // one sitting, in Justin Sung's order — adds up to DAILY_MIN
+  var REV_DAYS={nailed:10,shaky:3}, REV_MIN=5;   // spaced revisit: test when 20–30% has faded (Justin Sung) — a nailed lesson once after 10 days, a shaky one after 3
+  var REV_CO={KO:"PEP",NVDA:"AMD",TSLA:"BYD",JPM:"WFC",INTC:"IBM"};   // the revisit is the same question on a new company (Aswath: a company every week)
   var EDGE=0.10;      // your value within ±10% of the price = "about fair", no clear edge
   var DEC_3P=[["possible","Possible","it can happen"],["plausible","Plausible","a mechanism, and it’s happened before"],["probable","Probable","it’s already worked somewhere"]];   // his 3P test, D-01
   var DEC_BASIS=[["guess","Rough guess"],["quick","Quick model"],["full","Full valuation"]];
@@ -828,7 +873,7 @@ h1,h2,h3{margin:0;font-family:var(--font-display);font-weight:600;text-wrap:bala
   function loadSes(){try{var s=JSON.parse(localStorage.getItem(SES_KEY)||"null");if(s&&s.tid&&s.d&&Date.now()-(s.at||0)<2*86400000)return s;}catch(e){}return null;}
   var DEC_KEY="wmtw_dec_draft";   // an unfinished call survives a reload — e.g. you switched apps to look up the price
   function loadDecDraft(){try{var s=JSON.parse(localStorage.getItem(DEC_KEY)||"null");if(s&&s.d&&s.gid&&Date.now()-(s.t0||0)<3*86400000)return s;}catch(e){}return null;}
-  var ui={addOpen:false, goalOpen:false, actionOpen:{}, noteOpen:{}, cueOpen:{}, idOpen:{}, repOpen:{}, stepAddOpen:{}, proposal:{}, loading:{}, projectOpen:false, projEdit:{}, projLoading:{}, adviseLoading:{}, currRefs:{}, projCardOpen:{}, goalSecOpen:{}, aswClosed:loadAsw(), aswAll:false, aswOpen:{}, lessonOpen:{}, dec:loadDecDraft(), decRows:{}, decAll:false, armed:null, ses:loadSes(), goalMode:"have", shapeLevel:"new", shapeTopic:"", shapeLoading:false, shapeProposal:null, hoLoading:{}, view:loadView(), date:dayKey(Date.now())};
+  var ui={addOpen:false, goalOpen:false, actionOpen:{}, noteOpen:{}, cueOpen:{}, idOpen:{}, repOpen:{}, stepAddOpen:{}, proposal:{}, loading:{}, projectOpen:false, projEdit:{}, projLoading:{}, adviseLoading:{}, currRefs:{}, projCardOpen:{}, goalSecOpen:{}, aswClosed:loadAsw(), aswAll:false, aswOpen:{}, lessonOpen:{}, stepOpen:{}, dec:loadDecDraft(), decRows:{}, decAll:false, armed:null, ses:loadSes(), goalMode:"have", shapeLevel:"new", shapeTopic:"", shapeLoading:false, shapeProposal:null, hoLoading:{}, view:loadView(), date:dayKey(Date.now())};
   var isTouch=("ontouchstart" in window)||(navigator.maxTouchPoints>0);
   var sampleNS; // undefined=unknown, null=unavailable, function=ready
 
@@ -1107,10 +1152,13 @@ h1,h2,h3{margin:0;font-family:var(--font-display);font-weight:600;text-wrap:bala
     else if(a==="cur-when-cancel"){ui.cueOpen["when:"+id]=false;render();}
     else if(a==="ses-stage"){sesCapture();if(ui.ses){ui.ses.stage=parseInt(b.getAttribute("data-i"),10)||0;saveSes();render();}}
     else if(a==="ses-old"){sesCapture();if(ui.ses){var ov=b.getAttribute("data-v"),oi=ui.ses.d.old.indexOf(ov);if(oi>=0)ui.ses.d.old.splice(oi,1);else ui.ses.d.old.push(ov);saveSes();render();}}
-    else if(a==="ses-stop"){sesCapture();commit(function(){sesWrite(null);var st=findTask(state.activeId);if(st)closeRunning(st);state.activeId=null;});}
+    else if(a==="ses-stop"){sesCapture();if(ui.ses&&ui.ses.rev){saveSes();stopTask();}else commit(function(){sesWrite(null);var st=findTask(state.activeId);if(st)closeRunning(st);state.activeId=null;});}   // a revisit keeps its draft; a sitting files its notes
+    else if(a==="rev-start")startRevisit(id,b.getAttribute("data-lid"));
+    else if(a==="rev-nailed")finishRevisit(id,b.getAttribute("data-lid"),"nailed");
+    else if(a==="rev-shaky")finishRevisit(id,b.getAttribute("data-lid"),"shaky");
+    else if(a==="toggle-step-open"){var sg=findGoal(b.getAttribute("data-gid")),ss=sg&&(sg.steps||[]).filter(function(x){return x.id===id;})[0];if(ss)ui.stepOpen[id]=!stepIsOpen(sg,ss);render();}
     else if(a==="asw-go"){var ai=-1;ASWATH_TAKES.forEach(function(x,i){if(x.tk===id)ai=i;});if(ai>=0){ui.aswClosed=false;if(ai>=3)ui.aswAll=true;ui.aswOpen[id]=true;if(ui.view!=="goals"){ui.view="goals";try{localStorage.setItem(VIEW_KEY,"goals");}catch(e){}}render();var ae=document.querySelector('.asw-call[data-id="'+id+'"]');if(ae&&ae.scrollIntoView)ae.scrollIntoView({block:"center"});}}
-    else if(a==="cur-nailed"){sesCapture();finishLesson(id,b.getAttribute("data-lid"),"nailed");}
-    else if(a==="cur-shaky"){sesCapture();finishLesson(id,b.getAttribute("data-lid"),"shaky");}
+    else if(a==="cur-nailed"||a==="cur-shaky"){sesCapture();var gl=b.getAttribute("data-lid"),gr=a==="cur-nailed"?"nailed":"shaky";(revRunning(id,gl)?finishRevisit:finishLesson)(id,gl,gr);}   // graded while its revisit runs → it's the revisit's grade
     else if(a==="cur-open"){ui.lessonOpen[id]=!ui.lessonOpen[id];render();}
     else if(a==="cur-today")toggleToday(id,b.getAttribute("data-lid"));
     else if(a==="cur-suggest"){var sg=findGoal(id);if(sg)saveToday(id,suggestPlan(sg,[]));}
@@ -1163,6 +1211,10 @@ h1,h2,h3{margin:0;font-family:var(--font-display);font-weight:600;text-wrap:bala
       if(mk)mk.style.left=Math.min(ssec/60/DAILY_MIN*100,100).toFixed(1)+"%";
       sb.querySelectorAll(".ses-seg").forEach(function(el,i){el.classList.toggle("is-now",i===si);});
       if(sg)sg.textContent=(si!==ui.ses.stage)?"Suggested now: "+SES_STAGES[si][1]:"";}
+    var rb=document.getElementById("rev-mark");
+    if(rb&&st&&ui.ses&&ui.ses.rev){var rsec=Math.max(0,(now-(runningStart(st)||now))/1000),rl=document.getElementById("rev-left");
+      rb.style.left=Math.min(rsec/(REV_MIN*60)*100,100).toFixed(1)+"%";
+      if(rl)rl.textContent=rsec>=REV_MIN*60?"time's up — grade it":fmtClock(REV_MIN*60-rsec)+" left";}
     var d=document.getElementById("live-diff");
     if(d&&state.activeId){var t=findTask(state.activeId);if(t&&t.estimateMin){var diff=taskSec(t)-t.estimateMin*60;d.textContent=(diff>=0?"over by "+fmtDur(diff):fmtDur(-diff)+" left");d.className="diff "+(diff>0?"is-over":"is-under");}}
   }
@@ -1201,7 +1253,7 @@ h1,h2,h3{margin:0;font-family:var(--font-display);font-weight:600;text-wrap:bala
     }).join("")+'</nav>';
   }
   function renderHome(){
-    return '<div class="view home">'+renderNow()+homeNext()+homePrime()+homeGlance()+renderCaptureHome()+'</div>';
+    return '<div class="view home">'+renderNow()+homeNext()+homeRevisit()+homePrime()+homeGlance()+renderCaptureHome()+'</div>';
   }
   function render(){
     var html=topBar();
@@ -1219,7 +1271,7 @@ h1,h2,h3{margin:0;font-family:var(--font-display);font-weight:600;text-wrap:bala
     var pick=null,goals=state.goals||[],i,j,k;
     for(i=0;i<goals.length&&!pick;i++){
       var g=goals[i],c=valCurrFor(g);
-      if(c){var plan=todayPlan(g),dn=currDone(g);for(var q=0;q<plan.length&&!pick;q++){if(dn[plan[q]])continue;var L=lessonById(plan[q]);pick={type:"lesson",gid:g.id,lid:L.id,goal:g.name,label:L.concept,rung:L.rung,when:(g.curr&&g.curr.when)||"",min:lessonLeftMin(g,L),tid:lessonTid(g.id,L.id),cont:lessonLoggedMin(g.id,L.id)>0};}}
+      if(c){var plan=todayPlan(g),dn=currDone(g);for(var q=0;q<plan.length&&!pick;q++){if(dn[plan[q]]||revFor(g,plan[q]))continue;var L=lessonById(plan[q]);pick={type:"lesson",gid:g.id,lid:L.id,goal:g.name,label:L.concept,rung:L.rung,when:(g.curr&&g.curr.when)||"",min:lessonLeftMin(g,L),tid:lessonTid(g.id,L.id),cont:lessonLoggedMin(g.id,L.id)>0};}}
     }
     if(!pick){
       var today=dayKey(Date.now());
@@ -1299,7 +1351,7 @@ h1,h2,h3{margin:0;font-family:var(--font-display);font-weight:600;text-wrap:bala
     if(t){
       var est=t.estimateMin;
       var estLine="";
-      if(est){var diff=taskSec(t)-est*60;estLine='<div class="now-est">Estimate <b>'+esc(fmtDur(est*60))+'</b> · <span id="live-diff" class="diff '+(diff>0?"is-over":"is-under")+'">'+(diff>=0?"over by "+esc(fmtDur(diff)):esc(fmtDur(-diff))+" left")+'</span></div>';}
+      if(est&&!revRunning(t.goalId,null)){var diff=taskSec(t)-est*60;estLine='<div class="now-est">Estimate <b>'+esc(fmtDur(est*60))+'</b> · <span id="live-diff" class="diff '+(diff>0?"is-over":"is-under")+'">'+(diff>=0?"over by "+esc(fmtDur(diff)):esc(fmtDur(-diff))+" left")+'</span></div>';}
       return '<div class="card now now-active">'+
         '<div class="now-head"><span class="live-pill"><span class="bl"></span>Running</span>'+chip(t.category)+(t.goalId?'<span class="chip chip-goal">'+esc(goalName(t.goalId))+'</span>':"")+
           '<button class="now-pin'+(t.pinned?" is-on":"")+'" type="button" data-action="toggle-pin" data-id="'+t.id+'" aria-pressed="'+(t.pinned?"true":"false")+'" title="'+(t.pinned?"Pinned to quick-start — tap to unpin":"Pin to quick-start")+'">'+(t.pinned?"★ Pinned":"☆ Pin")+'</button>'+
@@ -1430,9 +1482,65 @@ h1,h2,h3{margin:0;font-family:var(--font-display);font-weight:600;text-wrap:bala
   function lessonRungIdx(l){var i=VAL_RUNGS.indexOf(l.rung);return i<0?0:i;}
   function currDone(g){return (g.curr&&g.curr.done)||{};}
   function currentLesson(g){
-    var c=valCurrFor(g);if(!c)return null;var done=currDone(g);
-    for(var i=0;i<c.lessons.length;i++){if(!done[c.lessons[i].id])return {lesson:c.lessons[i],idx:i};}
+    var c=valCurrFor(g);if(!c)return null;
+    for(var i=0;i<c.lessons.length;i++){if(lessonOpen(g,c.lessons[i].id))return {lesson:c.lessons[i],idx:i};}
     return null;
+  }
+  /* ---------- spaced revisits: a nailed lesson comes back once after 10 days, a shaky one after 3 — 5 minutes, a new company, no notes ---------- */
+  function revSched(g){return (g&&g.curr&&g.curr.rev)||{};}
+  function revFor(g,lid){return revSched(g)[lid]||null;}
+  function lessonOpen(g,lid){return !currDone(g)[lid]&&!revFor(g,lid);}   // still to do as a full sitting; a pending revisit waits for its day instead
+  function revCo(l){return REV_CO[lessonCo(l)]||"a new company";}
+  function revDays(r){return Math.ceil((r.due-Date.now())/86400000);}   // days until due; 0 or less = due now
+  function revAgo(r){return Math.max(0,Math.round((Date.now()-r.set)/86400000));}
+  function revList(g){var s=revSched(g),out=[];Object.keys(s).forEach(function(lid){var l=lessonById(lid);if(l)out.push({l:l,r:s[lid],days:revDays(s[lid])});});out.sort(function(a,b){return a.r.due-b.r.due;});return out;}
+  function revDue(g){return revList(g).filter(function(x){return x.days<=0;});}
+  function revRunning(gid,lid){var t=state.activeId&&findTask(state.activeId);if(!isLessonTask(t)||!ui.ses||!ui.ses.rev||ui.ses.tid!==t.id)return false;return lid?t.id===lessonTid(gid,lid):(gid?t.goalId===gid:true);}
+  function setRevisit(g,lid,grade,fromRev){   // inside commit(): what comes back, and when
+    g.curr=g.curr||{};var rev=g.curr.rev=g.curr.rev||{},cur=rev[lid],now=Date.now();
+    if(grade==="nailed"){
+      var passed=g.curr.revPassed=g.curr.revPassed||{};
+      if((fromRev&&cur&&cur.kind==="nailed")||passed[lid]){delete rev[lid];passed[lid]=passed[lid]||now;return;}   // still there after 10 days: it's yours
+      rev[lid]={due:now+REV_DAYS.nailed*86400000,kind:"nailed",set:now};
+    } else rev[lid]={due:now+REV_DAYS.shaky*86400000,kind:"shaky",set:now};
+  }
+  function startRevisit(gid,lid){
+    var g=findGoal(gid),l=lessonById(lid);if(!g||!l)return;
+    var tid=lessonTid(gid,lid);
+    commit(function(){
+      var gg=findGoal(gid);if(!gg)return;
+      if(ui.ses&&!(ui.ses.tid===tid&&ui.ses.rev))sesWrite(null);   // some other half-done sitting: file its notes first
+      var t=findTask(tid);
+      if(!t){t={id:tid,name:"📘 "+lessonN(l)+" · "+l.concept,category:"",estimateMin:l.estimateMin||null,planned:false,daily:false,goalId:gid,stepId:null,depth:"deep",cue:"",done:false,createdAt:Date.now(),sessions:[]};state.tasks.push(t);}
+      var act=findTask(state.activeId);if(act)closeRunning(act);
+      t.sessions=t.sessions||[];t.sessions.push({start:Date.now(),end:null});state.activeId=tid;
+      if(!ui.ses)ui.ses={tid:tid,at:Date.now(),rev:true,co:revCo(l),stage:0,primed:false,d:{guess:"",qs:"",answer:"",confuse:"",old:[]}};
+      saveSes();
+    });
+  }
+  function finishRevisit(gid,lid,grade){
+    var g=findGoal(gid),l=lessonById(lid);if(!g||!l)return;
+    var tid=lessonTid(gid,lid),rung=lessonRungIdx(l),r=revFor(g,lid),keeps=grade==="nailed"&&((r&&r.kind==="nailed")||!!((g.curr&&g.curr.revPassed)||{})[lid]);
+    commit(function(){
+      var gg=findGoal(gid);if(!gg)return;var t=findTask(tid),s=ui.ses,co=(s&&s.co)||revCo(l);
+      if(t){t.study=t.study||[];t.study.push({at:Date.now(),rev:true,co:co,answer:(s&&s.d&&s.d.answer)||"",grade:grade});}
+      if(s&&s.tid===tid){ui.ses=null;saveSes();}
+      if(state.activeId===tid){if(t)closeRunning(t);state.activeId=null;}
+      if(state.paused&&state.paused.id===tid)clearPause();
+      if(gg.progression){gg.progression.reps=gg.progression.reps||[];gg.progression.reps.push({t:Date.now(),rung:rung,grade:grade,note:lessonN(l)+" revisit · "+co});}
+      gg.curr=gg.curr||{};gg.curr.done=gg.curr.done||{};
+      if(grade==="nailed"){gg.curr.done[l.id]=true;if(t)t.done=true;}
+      else {delete gg.curr.done[l.id];if(t)t.done=false;}   // faded: not yours yet — honest count
+      setRevisit(gg,l.id,grade,true);
+    });
+    toast(grade==="nailed"?(keeps?"Still there after 10 days — it’s yours ✓":"Nailed without the notes — one more check in 10 days"):"Faded — it comes back in 3 days, without the notes");
+  }
+  function withoutNotes(g){   // the learning metric: lessons you can do without the notes, of those graded (minutes are the showing-up metric)
+    var done=currDone(g),graded={},nailed=0,pre="lesson_"+g.id+"_",c=g.curr||{};
+    state.tasks.forEach(function(t){if(String(t.id).indexOf(pre)!==0)return;var lid=t.id.slice(pre.length);if(lessonById(lid)&&(t.study||[]).some(function(s){return s.grade;}))graded[lid]=1;});
+    [done,c.rev||{},c.revPassed||{}].forEach(function(m){Object.keys(m).forEach(function(k){if(m[k]&&lessonById(k))graded[k]=1;});});   // every grade leaves one of these behind, sitting or not
+    Object.keys(graded).forEach(function(k){if(done[k])nailed++;});
+    return {graded:Object.keys(graded).length,nailed:nailed,passed:Object.keys((g.curr&&g.curr.revPassed)||{}).length};
   }
   /* each lesson gets its own timer task, so time and history stay per lesson even when you pick out of order */
   function lessonById(lid){var ls=VAL_CURRICULUM.lessons;for(var i=0;i<ls.length;i++)if(ls[i].id===lid)return ls[i];return null;}
@@ -1442,15 +1550,15 @@ h1,h2,h3{margin:0;font-family:var(--font-display);font-weight:600;text-wrap:bala
   /* today's ~30 min: today's own pick if you made one; otherwise yesterday's unfinished picks, topped up with the next lessons in line */
   function todayPlan(g){
     if(!valCurrFor(g))return [];
-    var done=currDone(g),t=g.curr&&g.curr.today;
+    var t=g.curr&&g.curr.today;
     if(t&&t.day===dayKey(Date.now()))return (t.ids||[]).filter(lessonById);
-    return suggestPlan(g,((t&&t.ids)||[]).filter(function(id){return lessonById(id)&&!done[id];}));
+    return suggestPlan(g,((t&&t.ids)||[]).filter(function(id){return lessonById(id)&&lessonOpen(g,id);}));
   }
   function suggestPlan(g,ids){
-    var ls=valCurrFor(g).lessons,done=currDone(g),total=0;ids=ids.slice();
+    var ls=valCurrFor(g).lessons,total=0;ids=ids.slice();
     ids.forEach(function(id){total+=lessonLeftMin(g,lessonById(id));});
     for(var i=0;i<ls.length&&total<DAILY_MIN;i++){
-      var l=ls[i];if(done[l.id]||ids.indexOf(l.id)>=0)continue;
+      var l=ls[i];if(!lessonOpen(g,l.id)||ids.indexOf(l.id)>=0)continue;
       var m=lessonLeftMin(g,l);
       if(ids.length&&total+m>DAILY_MIN+10)break;          // don't overshoot the day by much
       ids.push(l.id);total+=m;
@@ -1493,9 +1601,12 @@ h1,h2,h3{margin:0;font-family:var(--font-display);font-weight:600;text-wrap:bala
       if(state.activeId===tid){if(t)closeRunning(t);state.activeId=null;}
       if(state.paused&&state.paused.id===tid)clearPause();   // grading ends a paused lesson
       if(gg.progression){gg.progression.reps=gg.progression.reps||[];gg.progression.reps.push({t:Date.now(),rung:rung,grade:grade,note:"L"+l.order+" · "+l.concept});}
-      if(grade==="nailed"){gg.curr=gg.curr||{};gg.curr.done=gg.curr.done||{};gg.curr.done[l.id]=true;if(t)t.done=true;}
+      gg.curr=gg.curr||{};gg.curr.done=gg.curr.done||{};
+      if(grade==="nailed"){gg.curr.done[l.id]=true;if(t)t.done=true;}
+      else {delete gg.curr.done[l.id];if(t)t.done=false;}   // needed the notes: not yours yet
+      setRevisit(gg,l.id,grade,false);
     });
-    toast(grade==="nailed"?"Nailed without the notes — clean rep logged ✓":"Shaky — it stays open; come back to it without the notes");
+    toast(grade==="nailed"?"Nailed without the notes ✓ — it comes back once, in "+REV_DAYS.nailed+" days":"Shaky — it comes back in "+REV_DAYS.shaky+" days, without the notes");
   }
   /* ---------- the guided 30 minutes: prime → encode → retrieve → reflect (Justin Sung's order), on the running lesson ---------- */
   function sesFor(t){   // the draft for this lesson task; a fresh one if the lesson changed — pre-filled with last night's prime
@@ -1508,7 +1619,9 @@ h1,h2,h3{margin:0;font-family:var(--font-display);font-weight:600;text-wrap:bala
   function sesCapture(){if(!ui.ses)return;var d=ui.ses.d;[["ses-guess","guess"],["ses-qs","qs"],["ses-answer","answer"],["ses-confuse","confuse"]].forEach(function(f){var e=document.getElementById(f[0]);if(e)d[f[1]]=e.value;});}
   function sesWrite(grade,tid){   // called inside commit(): store the sitting on its lesson task, carry the open question forward, clear the draft
     var s=ui.ses;if(!s||(tid&&s.tid!==tid))return;var t=findTask(s.tid),info=t&&lessonOfTask(t);if(!info){ui.ses=null;saveSes();return;}
-    var d=s.d,any=[d.guess,d.qs,d.answer,d.confuse].some(function(x){return (x||"").trim();})||d.old.length;
+    var d=s.d;
+    if(s.rev){if((d.answer||"").trim()){t.study=t.study||[];t.study.push({at:Date.now(),rev:true,co:s.co,answer:d.answer,grade:grade||null});}ui.ses=null;saveSes();return;}   // a revisit: just the answer, no carry-over
+    var any=[d.guess,d.qs,d.answer,d.confuse].some(function(x){return (x||"").trim();})||d.old.length;
     if(any){t.study=t.study||[];t.study.push({at:Date.now(),guess:d.guess,qs:d.qs,answer:d.answer,confuse:d.confuse,old:d.old.slice(),grade:grade||null});}
     var g=info.g;g.curr=g.curr||{};
     if((d.confuse||"").trim())g.curr.carry={q:d.confuse.trim().slice(0,240),lid:info.l.id,at:Date.now()};
@@ -1519,6 +1632,7 @@ h1,h2,h3{margin:0;font-family:var(--font-display);font-weight:600;text-wrap:bala
   function sesStageAt(sec){var m=sec/60,acc=0;for(var i=0;i<SES_STAGES.length;i++){acc+=SES_STAGES[i][2];if(m<acc)return i;}return SES_STAGES.length-1;}
   function renderSession(t){
     var info=lessonOfTask(t);if(!info)return "";var g=info.g,l=info.l,s=sesFor(t),d=s.d,co=lessonCo(l),st=s.stage;
+    if(s.rev)return renderRevisit(t,g,l,s);
     var sec=lessonSecToday(t),now=sesStageAt(sec);
     var pills=SES_STAGES.map(function(x,i){return '<button class="ses-pill'+(i===st?' on':(i<st?' done':''))+'" data-action="ses-stage" data-i="'+i+'" type="button" aria-pressed="'+(i===st?'true':'false')+'">'+(i+1)+' '+x[1]+'<span>'+x[2]+'m</span></button>';}).join("");
     var segs=SES_STAGES.map(function(x,i){return '<i class="ses-seg'+(i===now?' is-now':'')+'" style="width:'+(x[2]/DAILY_MIN*100).toFixed(1)+'%"></i>';}).join("");   // not "now": that's the running card's class
@@ -1550,8 +1664,46 @@ h1,h2,h3{margin:0;font-family:var(--font-display);font-weight:600;text-wrap:bala
       '<button class="btn btn-ghost btn-sm" data-action="ses-stop" type="button">Not yet — stop for today</button></div>';}
     return '<div class="ses"><div class="ses-pills">'+pills+'</div>'+bar+body+'</div>';
   }
+  /* the 5-minute revisit on the running card: same question, new company, nothing open */
+  function renderRevisit(t,g,l,s){
+    var sec=Math.max(0,(Date.now()-(runningStart(t)||Date.now()))/1000),pct=Math.min(sec/(REV_MIN*60)*100,100),r=revFor(g,l.id);
+    var why=r?(r.kind==="nailed"?'Nailed '+revAgo(r)+' days ago. If it’s still there without the notes, it’s yours.':'Shaky '+revAgo(r)+' days ago. Try it again without the notes.'):'A check, without the notes.';
+    return '<div class="ses ses-rev">'+
+      '<div class="ses-rev-head"><span class="ses-rev-t">Revisit · '+REV_MIN+' min · no notes</span><span class="ses-rev-left" id="rev-left">'+(sec>=REV_MIN*60?'time’s up — grade it':fmtClock(REV_MIN*60-sec)+' left')+'</span></div>'+
+      '<div class="ses-bar"><i class="ses-seg is-now" style="width:100%"></i><b id="rev-mark" style="left:'+pct.toFixed(1)+'%"></b></div>'+
+      '<div class="ses-q"><b>'+lessonN(l)+' · '+esc(l.concept)+'</b><span class="ses-co">now on '+esc(s.co)+'</span></div>'+
+      '<div class="ses-task">'+esc(l.task)+'</div>'+
+      '<div class="ses-rule"><b>Same question, new company.</b> Do it for '+esc(s.co)+' from memory, then check it against your map. '+esc(why)+'</div>'+
+      '<label class="ses-lbl" for="ses-answer">Your answer for '+esc(s.co)+', without the notes</label>'+
+      '<textarea id="ses-answer" class="field note-area ses-area" placeholder="Three lines from memory, or the backbone of the map…">'+esc(s.d.answer)+'</textarea>'+
+      '<div class="ses-why">Test when some of it has faded — that’s the point of the gap. <i>Justin Sung</i></div>'+
+      '<div class="ses-lbl">Still there?</div>'+
+      '<div class="curr-btns"><button class="btn btn-primary btn-sm" data-action="rev-nailed" data-id="'+g.id+'" data-lid="'+l.id+'" type="button">Yes — without the notes ✓</button>'+
+      '<button class="btn btn-ghost btn-sm" data-action="rev-shaky" data-id="'+g.id+'" data-lid="'+l.id+'" type="button">Faded — needed the notes</button>'+
+      '<button class="btn btn-ghost btn-sm" data-action="ses-stop" type="button">Stop for now</button></div>'+
+    '</div>';
+  }
+  /* on Home: a revisit that's due — 5 minutes, and on a bad day it alone keeps the streak */
+  function homeRevisit(){
+    var g=(state.goals||[]).filter(function(x){return valCurrFor(x);})[0];if(!g)return "";
+    if(isLessonTask(state.activeId&&findTask(state.activeId)))return "";
+    var due=revDue(g);if(!due.length)return "";
+    var x=due[0],l=x.l,r=x.r,more=due.length-1;
+    var why=r.kind==="nailed"?'Nailed '+revAgo(r)+' days ago — if it’s still there without the notes, it’s yours.':'Shaky '+revAgo(r)+' days ago — try it again without the notes.';
+    return '<div class="home-next rev">'+
+      '<div class="home-next-eye">Revisit due · '+REV_MIN+' min · no notes</div>'+
+      '<div class="home-next-row"><div class="home-next-label">'+lessonN(l)+' · '+esc(l.concept)+' <span class="ses-co">on '+esc(revCo(l))+'</span></div>'+
+        '<button class="btn btn-primary btn-sm" data-action="rev-start" data-id="'+g.id+'" data-lid="'+l.id+'" type="button">Revisit · '+REV_MIN+'m</button></div>'+
+      '<div class="rev-why">'+esc(why)+(more?' · '+more+' more due in Goals':'')+' Bad day? This alone keeps the streak.</div>'+
+    '</div>';
+  }
+  function revRow(g,x){
+    var l=x.l,running=revRunning(g.id,l.id);
+    return '<div class="td-rev-row"><span class="ls-n">'+lessonN(l)+'</span><span class="td-rev-t"><span class="ls-c">'+esc(l.concept)+'</span><span class="ls-s">'+(x.r.kind==="nailed"?'nailed':'shaky')+' '+revAgo(x.r)+'d ago · on '+esc(revCo(l))+(running?' · <b>running</b>':'')+'</span></span>'+
+      (running?'<button class="btn btn-stop btn-sm" data-action="stop" type="button">Stop</button>':'<button class="btn btn-primary btn-sm" data-action="rev-start" data-id="'+g.id+'" data-lid="'+l.id+'" type="button">Revisit</button>')+'</div>';
+  }
   /* priming (Justin Sung): read tomorrow's question, guess, sleep on it — 3 minutes, gist only. The guess is waiting when the sitting starts. */
-  function primeTarget(g){var done=currDone(g),plan=todayPlan(g);for(var i=0;i<plan.length;i++)if(!done[plan[i]])return lessonById(plan[i]);var nx=suggestPlan(g,[]);return nx.length?lessonById(nx[0]):null;}
+  function primeTarget(g){var plan=todayPlan(g);for(var i=0;i<plan.length;i++)if(lessonOpen(g,plan[i]))return lessonById(plan[i]);var nx=suggestPlan(g,[]);return nx.length?lessonById(nx[0]):null;}
   function savePrime(gid,lid,guess){guess=(guess||"").trim();if(!guess){toast("A hunch is enough — one line");return;}commit(function(){var g=findGoal(gid);if(!g)return;g.curr=g.curr||{};g.curr.prime={lid:lid,guess:guess.slice(0,240),at:Date.now()};});toast("Primed — the sitting starts with your guess");}
   function homePrime(){
     var g=(state.goals||[]).filter(function(x){return valCurrFor(x);})[0];if(!g)return "";
@@ -1576,24 +1728,30 @@ h1,h2,h3{margin:0;font-family:var(--font-display);font-weight:600;text-wrap:bala
     var when=(g.curr&&g.curr.when)||"",whenUi=ui.cueOpen["when:"+g.id]
       ?'<form class="cue-edit" data-action="cur-when" data-id="'+g.id+'" autocomplete="off"><input id="cur-when-'+g.id+'" class="field" value="'+esc(when)+'" placeholder="When and where? e.g. after coffee, at the desk" aria-label="When"><button class="btn btn-primary btn-sm" type="submit">Save</button><button class="btn btn-ghost btn-sm" data-action="cur-when-cancel" data-id="'+g.id+'" type="button">Cancel</button></form>'
       :'<button class="td-when'+(when?'':' is-empty')+'" data-action="cur-when-edit" data-id="'+g.id+'" type="button" title="Decide once: when and where">'+(when?esc(when):'+ when & where')+'</button>';
+    var wn=withoutNotes(g),metric=wn.graded?'<div class="td-metric"><span><b>'+wn.nailed+'</b> of '+wn.graded+' without the notes'+(wn.passed?' · <b>'+wn.passed+'</b> still there after '+REV_DAYS.nailed+' days':'')+'</span><span class="td-metric-s">minutes = showing up · this = learning</span></div>':'';
     var head='<div class="td-head"><span class="td-title">Today’s '+DAILY_MIN+' minutes</span>'+
       '<span class="td-mins'+(met?' met':'')+'">'+mins+' / '+DAILY_MIN+' min'+(met?' ✓':'')+'</span></div>'+whenUi+
-      '<div class="td-bar"><i style="width:'+Math.min(mins/DAILY_MIN*100,100).toFixed(0)+'%"></i></div>';
+      '<div class="td-bar"><i style="width:'+Math.min(mins/DAILY_MIN*100,100).toFixed(0)+'%"></i></div>'+metric;
+    var rl=revList(g),due=rl.filter(function(x){return x.days<=0;}),later=rl.filter(function(x){return x.days>0;});
+    var revHtml=rl.length?'<div class="td-rev"><div class="td-rev-h">Revisits<span>'+REV_MIN+' min · a new company · no notes</span></div>'+
+      due.map(function(x){return revRow(g,x);}).join("")+
+      (later.length?'<div class="td-rev-later">Coming up: '+later.map(function(x){return lessonN(x.l)+' in '+x.days+'d';}).join(' · ')+'</div>':'')+'</div>':'';
     var foot=where==="az"
       ?'<div class="td-foot"><span>'+(plan.length?'Picked ≈ '+planned+' min'+(planned>DAILY_MIN+10?' — do ~'+DAILY_MIN+' today; the rest carries over':''):'')+'</span>'+
         '<button class="td-link" data-action="cur-suggest" data-id="'+g.id+'" type="button">Reset to next in line</button></div>'
       :'<button class="td-az" data-action="set-view" data-view="curriculum" type="button">Change today’s pick<span class="td-az-s">See all '+c.lessons.length+' lessons, A → Z →</span></button>';
-    return '<div class="td'+(where==="az"?' td-az-panel':'')+'">'+head+rows+foot+'</div>';
+    return '<div class="td'+(where==="az"?' td-az-panel':'')+'">'+head+rows+revHtml+foot+'</div>';
   }
   function lessonRow(g,l,ctx,plan){
-    var tid=lessonTid(g.id,l.id),running=state.activeId===tid,isDone=!!currDone(g)[l.id];
+    var tid=lessonTid(g.id,l.id),running=state.activeId===tid,isDone=!!currDone(g)[l.id],rv=revFor(g,l.id),rvDays=rv?revDays(rv):0;
     var est=l.estimateMin||15,logged=lessonLoggedMin(g.id,l.id),open=running||!!ui.lessonOpen[l.id];
-    var st=running?'<span class="ls-st run"></span>':(isDone?'<span class="ls-st done">✓</span>':'<span class="ls-st'+(logged>0?' part':'')+'"></span>');
-    var sub=esc(l.stage_name)+(l.co?' · on '+esc(l.co):'')+' · '+(isDone||!logged?est+'m':logged+' of '+est+'m')+(running?' · <b>running</b>':'');
+    var st=running?'<span class="ls-st run"></span>':(isDone?'<span class="ls-st done">✓</span>':'<span class="ls-st'+(rv?' shaky':(logged>0?' part':''))+'"></span>');
+    var sub=esc(l.stage_name)+(l.co?' · on '+esc(l.co):'')+' · '+(isDone||!logged?est+'m':logged+' of '+est+'m')+(rv?' · <b>revisit '+(rvDays<=0?'due':'in '+rvDays+'d')+'</b>':'')+(running?' · <b>running</b>':'');
     var act="";
     if(ctx==="az"){var on=plan.indexOf(l.id)>=0;act='<button class="ls-today'+(on?' on':'')+'" data-action="cur-today" data-id="'+g.id+'" data-lid="'+l.id+'" type="button" aria-pressed="'+(on?'true':'false')+'">'+(on?'✓ Today':'+ Today')+'</button>';}
     else if(ctx==="plan-az")act='<button class="icon-btn danger ls-rm" data-action="cur-today" data-id="'+g.id+'" data-lid="'+l.id+'" type="button" title="Remove from today" aria-label="Remove from today">&#215;</button>';
     else if(running)act='<button class="btn btn-stop btn-sm" data-action="stop" type="button">Stop</button>';
+    else if(rv)act=rvDays<=0?'<button class="btn btn-primary btn-sm" data-action="rev-start" data-id="'+g.id+'" data-lid="'+l.id+'" type="button">Revisit</button>':'<span class="ls-wait">in '+rvDays+'d</span>';
     else if(!isDone)act='<button class="btn btn-primary btn-sm" data-action="cur-start" data-id="'+g.id+'" data-lid="'+l.id+'" type="button">'+(logged?'Continue':'Start')+'</button>';
     return '<div class="ls'+(isDone?' is-done':'')+(running?' is-run':'')+'">'+
       '<div class="ls-row"><button class="ls-main" data-action="cur-open" data-id="'+l.id+'" type="button" aria-expanded="'+(open?'true':'false')+'">'+st+
@@ -1607,9 +1765,10 @@ h1,h2,h3{margin:0;font-family:var(--font-display);font-weight:600;text-wrap:bala
     var rd=(l.read||[]).map(function(x){return '<li>'+esc(x)+'</li>';}).join("");
     var ex=l.example?'<div class="curr-ex"><b>Lab / example:</b> '+esc(l.example)+'</div>':"";
     var refs=(rd||ex)?'<div class="curr-refs">'+(rd?'<div><b>Read:</b><ul>'+rd+'</ul></div>':"")+ex+'<div class="curr-note">These point into your Valuation Agent repo — desk work, not inside the app.</div></div>':"";
-    var go="";
+    var go="",rv=revFor(g,l.id),rvDays=rv?revDays(rv):0;
     if(ctx!=="plan")go=running?'<button class="btn btn-stop btn-sm" data-action="stop" type="button">Stop timer</button>'
-      :'<button class="btn btn-primary btn-sm" data-action="cur-start" data-id="'+g.id+'" data-lid="'+l.id+'" type="button">'+(isDone?'Review it':(logged?'Continue':'Start'))+' · ~'+(isDone?(l.estimateMin||15):lessonLeftMin(g,l))+' min</button>';
+      :(rv?'<button class="btn '+(rvDays<=0?'btn-primary':'btn-ghost')+' btn-sm" data-action="rev-start" data-id="'+g.id+'" data-lid="'+l.id+'" type="button">'+(rvDays<=0?'Revisit now · ~'+REV_MIN+' min':'Revisit early · due in '+rvDays+'d')+'</button>'
+      :'<button class="btn btn-primary btn-sm" data-action="cur-start" data-id="'+g.id+'" data-lid="'+l.id+'" type="button">'+(isDone?'Review it':(logged?'Continue':'Start'))+' · ~'+(isDone?(l.estimateMin||15):lessonLeftMin(g,l))+' min</button>');
     var grade=(isDone&&!running)?'':'<button class="btn btn-primary btn-sm" data-action="cur-nailed" data-id="'+g.id+'" data-lid="'+l.id+'" type="button">Nailed — without notes ✓</button>'+
       '<button class="btn btn-ghost btn-sm" data-action="cur-shaky" data-id="'+g.id+'" data-lid="'+l.id+'" type="button">Shaky — needed the notes</button>';
     var call=l.call?'<button class="curr-call" data-action="asw-go" data-id="'+l.call+'" type="button">In his '+esc(l.call)+' call →</button>':'';
@@ -2014,18 +2173,23 @@ h1,h2,h3{margin:0;font-family:var(--font-display);font-weight:600;text-wrap:bala
       '<button class="btn btn-primary btn-sm" type="submit">Add step</button>'+
       '<button class="btn btn-ghost btn-sm" data-action="toggle-step-add" data-id="'+g.id+'" type="button">Cancel</button></form>';
   }
+  /* blocks: only the first one with something left is open — the rest are one line each, so a long plan never reads as a wall */
+  function stepDefaultOpen(g,st){var steps=g.steps||[];for(var i=0;i<steps.length;i++){var s=steps[i];if(s.done)continue;var a=stepActions(g.id,s.id);if(a.length&&a.every(function(x){return x.done;}))continue;return s.id===st.id;}return false;}
+  function stepIsOpen(g,st){var v=ui.stepOpen[st.id];return v==null?stepDefaultOpen(g,st):!!v;}
   function stepBlock(g,st){
-    var acts=stepActions(g.id,st.id);
-    return '<div class="step">'+
+    var acts=stepActions(g.id,st.id).slice().sort(function(a,b){return (a.done?1:0)-(b.done?1:0);}),dn=acts.filter(function(a){return a.done;}).length,open=stepIsOpen(g,st);
+    var count=acts.length?'<span class="step-count'+(dn===acts.length?' all':'')+'">'+dn+'/'+acts.length+'</span>':'';
+    var when=st.when?'<span class="step-when">'+esc(st.when)+'</span>':'';
+    return '<div class="step'+(open?'':' is-closed')+(st.done?' is-done':'')+'">'+
       '<div class="step-head">'+
         '<button class="step-check'+(st.done?" on":"")+'" type="button" data-action="toggle-step" data-id="'+st.id+'" data-gid="'+g.id+'" aria-pressed="'+(st.done?"true":"false")+'" title="'+(st.done?"Mark step not done":"Mark step done")+'" aria-label="Toggle step done">'+(st.done?"&#10003;":"")+'</button>'+
-        '<div class="step-name'+(st.done?" is-done":"")+'">'+esc(st.name)+'</div>'+
+        '<button class="step-name'+(st.done?" is-done":"")+'" type="button" data-action="toggle-step-open" data-id="'+st.id+'" data-gid="'+g.id+'" aria-expanded="'+(open?'true':'false')+'"><span class="step-nm">'+esc(st.name)+'</span>'+when+count+'<span class="step-chev'+(open?' open':'')+'">'+chevronSvg()+'</span></button>'+
         xBtn("del-step",st.id,"Remove step",' data-gid="'+g.id+'"')+
       '</div>'+
-      '<div class="step-actions">'+
-        (acts.length?acts.map(actionRow).join(""):'<div class="action-empty">No sub-steps yet.</div>')+
-        (ui.actionOpen[st.id]?stepActionForm(g,st):'<button class="btn btn-ghost btn-sm act-add-btn" data-action="toggle-action" data-id="'+st.id+'" type="button">+ Add sub-step</button>')+
-      '</div>'+
+      (open?'<div class="step-actions">'+
+        (acts.length?acts.map(actionRow).join(""):'<div class="action-empty">No pieces yet.</div>')+
+        (ui.actionOpen[st.id]?stepActionForm(g,st):'<button class="btn btn-ghost btn-sm act-add-btn" data-action="toggle-action" data-id="'+st.id+'" type="button">+ Add a piece</button>')+
+      '</div>':'')+
     '</div>';
   }
   function renderSteps(g){
@@ -2086,23 +2250,25 @@ h1,h2,h3{margin:0;font-family:var(--font-display);font-weight:600;text-wrap:bala
   function actionRow(t){
     var running=state.activeId===t.id,now=Date.now(),tday=startOfToday(),wk=last7Start(),todaySec=0,weekSec=0;
     (t.sessions||[]).forEach(function(se){var end=se.end==null?now:se.end,dur=(end-se.start)/1000;if(se.start>=tday)todaySec+=dur;if(se.start>=wk)weekSec+=dur;});
-    var subParts=[];
+    var done=!!t.done&&!running,ever=(t.sessions||[]).length>0,subParts=[];
     if(t.cue)subParts.push(t.cue);
-    subParts.push(todaySec>=1?fmtDur(todaySec)+" today":"Not yet today");
-    subParts.push(fmtDur(weekSec)+" this week");
+    if(done)subParts.push("Done ✓"+(ever?" · "+fmtDur(taskSec(t))+" logged":""));
+    else if(!ever)subParts.push("Not started yet");
+    else {subParts.push(todaySec>=1?fmtDur(todaySec)+" today":"Not yet today");subParts.push(fmtDur(weekSec)+" this week");}
     var sub=esc(subParts.join(" · "));
-    var cueTail=t.cue?'<button class="cue-btn tiny" data-action="cue-edit" data-id="'+t.id+'" type="button">edit</button>':'<button class="cue-btn" data-action="cue-edit" data-id="'+t.id+'" type="button">+ when</button>';
-    var depthPill='<button class="depth-pill '+(t.depth==="deep"?"deep":(t.depth==="shallow"?"shallow":"none"))+'" data-action="cycle-depth" data-id="'+t.id+'" type="button" title="Deep or shallow work">'+(t.depth==="deep"?"Deep":(t.depth==="shallow"?"Shallow":"+ depth"))+'</button>';
+    var cueTail=done?'':(t.cue?'<button class="cue-btn tiny" data-action="cue-edit" data-id="'+t.id+'" type="button">edit</button>':'<button class="cue-btn" data-action="cue-edit" data-id="'+t.id+'" type="button">+ when</button>');
+    var depthPill=done?'':'<button class="depth-pill '+(t.depth==="deep"?"deep":(t.depth==="shallow"?"shallow":"none"))+'" data-action="cycle-depth" data-id="'+t.id+'" type="button" title="Deep or shallow work">'+(t.depth==="deep"?"Deep":(t.depth==="shallow"?"Shallow":"+ depth"))+'</button>';
     var cueEditor=ui.cueOpen[t.id]?('<div class="cue-edit"><input id="cue-'+t.id+'" class="field" value="'+esc(t.cue||"")+'" placeholder="When? e.g. after breakfast, 9am" aria-label="When"><button class="btn btn-primary btn-sm" data-action="cue-save" data-id="'+t.id+'" type="button">Save</button><button class="btn btn-ghost btn-sm" data-action="cue-cancel" data-id="'+t.id+'" type="button">Cancel</button></div>'):"";
     var btn=running?'<button class="btn btn-stop btn-sm" data-action="stop">Stop</button>'
-      :(isDecisionTask(t)?'<button class="btn btn-primary btn-sm" data-action="dec-open" data-id="'+t.goalId+'" type="button">Log one</button>'
-        :'<button class="btn btn-primary btn-sm" data-action="start" data-id="'+t.id+'">Start</button>');
-    return '<div class="action-row">'+
+      :(done?'':(isDecisionTask(t)?'<button class="btn btn-primary btn-sm" data-action="dec-open" data-id="'+t.goalId+'" type="button">Log one</button>'
+        :'<button class="btn btn-primary btn-sm" data-action="start" data-id="'+t.id+'">Start</button>'));
+    var tick='<button class="icon-btn'+(done?' is-on':'')+'" data-action="done" data-id="'+t.id+'" type="button" title="'+(done?'Reopen':'Done — tick it off')+'" aria-label="'+(done?'Reopen':'Mark done')+'">'+(done?'&#8635;':'&#10003;')+'</button>';
+    return '<div class="action-row'+(done?' is-done':'')+'">'+
       '<div class="action-main">'+
         '<div class="action-name">'+esc(t.name)+depthPill+(running?'<span class="mini-run">running</span>':"")+'</div>'+
         '<div class="action-sub">'+sub+' '+cueTail+'</div>'+cueEditor+
       '</div>'+
-      '<div class="tr-actions">'+btn+xBtn("delete",t.id,"Remove action")+'</div>'+
+      '<div class="tr-actions">'+btn+tick+xBtn("delete",t.id,"Remove action")+'</div>'+
     '</div>';
   }
 
