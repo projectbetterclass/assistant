@@ -65,9 +65,30 @@ py scripts/video_source.py --find "damodaran equity risk premium"
 py scripts/video_source.py <id> --out notes/<name>.md
 ```
 
+To find **which** videos a lesson should come from, search what is said and
+shown in every video of every channel (~7,600 videos). Results are ranked by how
+many of your words a video contains, then how much it is *about* them, each with
+its best excerpt:
+
+```
+py scripts/video_source.py --search "spaced repetition" --channel "justin sung"
+py scripts/video_source.py --search procrastination --k 20
+py scripts/video_source.py --search motivation --phrase "dopamine detox"
+```
+
+Words match whole (plus plurals; "studying" also finds "study"), `word*` matches
+a prefix, and exact phrases go in quotes (`'like this'` in PowerShell) or
+`--phrase`. `--channel` narrows to channels whose name contains it; `--k` sets
+how many videos come back (default 10). Then open the best hits with
+`py scripts/video_source.py <url>` to read them in full.
+
 It reads the copy on the PC first (`Downloads/Youtube Scraper`) and falls back
 to the public GitHub repo, so it works from a phone/cloud session too. Covers
 every channel in the library (Aswath Damodaran, Justin Sung, HealthyGamerGG, …).
+`--search` needs the library on disk: on the PC it just works (about 1 s with
+`--channel`, a few seconds across everything, longer while the PC is busy); in
+a phone/cloud session the first search prints a one-time `git clone` command to
+run.
 Use it when writing or checking lessons, e.g. for `valuation_curriculum.json`:
 quote what was said, cite the video link, and treat chart readings as possibly
 misread (check a number against the video before relying on it).

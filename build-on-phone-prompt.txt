@@ -21,3 +21,7 @@ Video transcripts: to read any video from my YouTube library (e.g. Aswath
 Damodaran, Justin Sung), run `py scripts/video_source.py <youtube-url>` or
 `py scripts/video_source.py --find "words"`. It returns the transcript plus any
 chart/slide readings for that video (see README "Reading YouTube transcripts").
+To find which videos cover a topic across all channels, run
+`py scripts/video_source.py --search "topic words"` (add --channel "name" to
+narrow it). The first search in a cloud session prints a one-time git clone
+command for the library; run it, then search again.
