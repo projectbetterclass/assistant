@@ -1,0 +1,11 @@
+{
+  "_comment": "Example verdicts from a feedback system, to show the scorer working. Replace with real recorded verdicts. Keys are gold-case ids; values are yes | partial | no.",
+  "va-doctrine-map": "partial",
+  "va-map-comment": "yes",
+  "ew-add-tests": "yes",
+  "ew-buy-signal": "no",
+  "yt-transcript-check": "yes",
+  "yt-disclaimer": "yes",
+  "ia-recovery-lock": "yes",
+  "ia-recovery-warning": "partial"
+}

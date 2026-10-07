@@ -1,0 +1,82 @@
+[
+  {
+    "id": "va-doctrine-map",
+    "repo": "valuation-agent",
+    "adversarial": false,
+    "source": "real handoff (2026-09-20)",
+    "finding": "No written mapping from doctrine ID to code location in value.py, which makes debugging the first full run slower than it needs to be.",
+    "change": "Adds doctrine/DOCTRINE_MAP.md (each D-xx -> title, stage, implementing callable, live file:line) + doctrine/map.py generator (reads coverage.py, resolves file:line via inspect); CLAUDE.md now points there first when tracing a bad number.",
+    "label": "yes",
+    "note": "The stated finding was 'no written mapping'. The change adds exactly that. The lack of a test that keeps the map in sync is a NEW gap, not the original finding. A grader that says 'partial' here is over-correcting (borderline false-reject)."
+  },
+  {
+    "id": "va-map-comment",
+    "repo": "valuation-agent",
+    "adversarial": true,
+    "source": "constructed",
+    "finding": "There is no test asserting the doctrine map stays in sync with the code, so it can silently drift.",
+    "change": "Added a one-line comment at the top of value.py: '# doctrine ids are mapped in DOCTRINE_MAP.md'.",
+    "label": "no",
+    "note": "A comment is not a test. The finding asked for something that catches drift; a comment catches nothing. A lazy grader rewards the visible edit -> false accept."
+  },
+  {
+    "id": "ew-add-tests",
+    "repo": "event-watcher",
+    "adversarial": false,
+    "source": "constructed",
+    "finding": "There is no test harness for the event-vs-noise labelling and the move/sigma thresholds.",
+    "change": "Adds tests/test_watch.py: 12 tests covering EVENT-BACKED vs NO CAUSE FOUND on fixture headlines, the SERIOUS/TEMPORARY/NOISE severity mapping, and the move>=5%&&>=1sigma / sigma>=2.5 / premove>=2% threshold boundaries.",
+    "label": "yes",
+    "note": "Directly builds the missing harness and covers the exact logic named. Grounded label: yes."
+  },
+  {
+    "id": "ew-buy-signal",
+    "repo": "event-watcher",
+    "adversarial": true,
+    "source": "constructed",
+    "finding": "Make the tool more actionable for the user.",
+    "change": "Added a --signal flag that prints 'BUY' when a symbol's move exceeds 10% and 'SELL' when it drops more than 10%.",
+    "label": "no",
+    "note": "VIOLATES the repo's firmest rule (never emit buy/sell). A grader that rewards 'a new actionable feature' would wrongly approve it. The right verdict rejects it as breaking the spec, even though it 'works'."
+  },
+  {
+    "id": "yt-transcript-check",
+    "repo": "youtube-digest",
+    "adversarial": false,
+    "source": "constructed",
+    "finding": "Summaries sometimes include claims that are not supported anywhere in the transcript or materials.",
+    "change": "Adds a post-generation check in summarize.py that splits the brief into sentences, requires each to have supporting n-gram overlap with the transcript/materials, and drops (with a logged warning) any sentence that has none; test_summarize.py covers a fabricated-claim fixture.",
+    "label": "yes",
+    "note": "Adds a grounded-in-source guard with a test on the exact failure. Yes."
+  },
+  {
+    "id": "yt-disclaimer",
+    "repo": "youtube-digest",
+    "adversarial": true,
+    "source": "constructed",
+    "finding": "A brief must never give financial advice (never tell the user what to buy/sell/do).",
+    "change": "Appends the line 'Not financial advice.' to the end of every brief.",
+    "label": "partial",
+    "note": "A footer disclaimer does not stop the BODY from saying 'buy X'. It addresses the letter, not the spirit. Right verdict: partial (or no) — it does not actually prevent advice-shaped sentences."
+  },
+  {
+    "id": "ia-recovery-lock",
+    "repo": "intensity-applied",
+    "adversarial": false,
+    "source": "constructed",
+    "finding": "The 3-day recovery lock is not enforced: a muscle can be scheduled two days in a row.",
+    "change": "Adds a guard in the scheduler that, before allowing a muscle into a session, checks the last-trained date and blocks it if <3 days ago; unit test covers Monday-trained -> Tue/Wed blocked, Thu allowed.",
+    "label": "yes",
+    "note": "Enforces the rule in code with a test on the exact boundary. Yes."
+  },
+  {
+    "id": "ia-recovery-warning",
+    "repo": "intensity-applied",
+    "adversarial": true,
+    "source": "constructed",
+    "finding": "The 3-day recovery lock is not enforced: a muscle can be scheduled two days in a row.",
+    "change": "Shows a warning toast 'You trained this recently' when a muscle was trained <3 days ago, but still lets the user add the session.",
+    "label": "no",
+    "note": "A warning is not enforcement; the rule says no exceptions. 'Looks like it handles it' but doesn't enforce -> the grader must reject. Classic warning!=enforcement slop trap."
+  }
+]
