@@ -51,3 +51,14 @@ deploy mechanism.
 
 Steps 5 and 6 are both needed for a change to be "done": publish makes it
 live, commit keeps a record.
+
+## Articles ("From your channels")
+
+The investing goal links to short reads of the stock-commentary videos in
+the YouTube Digest library. Each one is a markdown file in [`articles/`](articles/)
+with a small header (`id`, `channel`, `date`, `videoMin`, `title`, `checked`,
+`charts`). They ship in their own `<script id="app-articles">` block, separate
+from the code and from your data, and the page carries that block along when
+it republishes itself. To add a batch: write the files, run
+`node scripts/build-articles.mjs`, then publish as above. Only what you've
+read is saved in app-state (`artRead`).
