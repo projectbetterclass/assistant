@@ -917,6 +917,7 @@ button.step-name:hover .step-nm{color:var(--accent)}
 .branch-add:hover{color:var(--accent);border-color:var(--accent)}
 .branch-form{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0 0 20px}
 .branch-form .field{flex:1 1 100%;background:var(--surface)}
+.solo-grid{display:flex;flex-direction:column;gap:12px}
 .card.solo{padding:5px}
 .card.solo .branch{border-color:transparent;background:transparent;padding:10px 9px}
 .card.solo .br-name{font-family:var(--font-display);font-size:17px;line-height:1.25}
@@ -932,6 +933,97 @@ button.step-name:hover .step-nm{color:var(--accent)}
 .gp-addb{margin-top:12px}
 .gp-addb .branch-add,.gp-addb .branch-form{width:100%;margin-left:0}
 .cv-back-t{max-width:30ch;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+/* ---- wide screens: sections move to a side rail and each page spreads into columns. On a phone these wrappers vanish (display:contents) so nothing moves. ---- */
+.rail-brand,.top-date,.br-id,.br-bar{display:none}
+.home-a,.home-b,.gp-cols,.gp-main,.gp-side,.rv-cols,.rv-a,.rv-b{display:contents}
+@media (min-width:1000px){
+  :root{--rail:236px}
+  body{padding-left:var(--rail)}
+  #root{max-width:1520px;padding:28px 40px 48px}
+  /* the rail */
+  .rail-brand{display:flex;align-items:center;gap:10px;position:fixed;top:0;left:0;z-index:41;width:var(--rail);padding:calc(28px + env(safe-area-inset-top,0px)) 24px 0;color:var(--ink)}
+  .rail-brand svg{flex:none;color:var(--accent)}
+  .rail-brand span{font-family:var(--font-display);font-size:19px;font-weight:600;line-height:1.1;letter-spacing:-.01em}
+  .tabbar{top:0;right:auto;width:var(--rail);flex-direction:column;justify-content:flex-start;gap:4px;padding:calc(104px + env(safe-area-inset-top,0px)) 14px 20px;border-top:0;border-right:1px solid var(--line);box-shadow:none}
+  .tab{flex:none;max-width:none;flex-direction:row;gap:12px;padding:11px 14px;font-size:14px}
+  .tab svg{width:20px;height:20px}
+  .tab-live{top:50%;right:16px;margin-top:-3.5px}
+  /* the header: today's date where the name was */
+  .top{margin:0 0 6px}
+  .top .brand{display:none}
+  .top-date{display:block;font-family:var(--font-display);font-size:26px;font-weight:600;line-height:1.15;letter-spacing:-.01em}
+  .sec{margin-top:22px}
+  /* Now: what to do now | the day and the inbox */
+  .home{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);gap:20px;align-items:start;margin-top:22px}
+  .home-a,.home-b{display:flex;flex-direction:column;gap:16px;min-width:0}
+  /* Goals: the main goal across the top, its branches hanging below it like a family tree */
+  .goal-tree{gap:16px}
+  .solo-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:16px}
+  .north-head{display:grid;grid-template-columns:minmax(0,1fr) auto;grid-template-areas:"eye eye" "name stat" "id stat";column-gap:40px;row-gap:6px;padding:20px 26px 22px}
+  .north-eye{grid-area:eye}
+  .north-name{grid-area:name;font-size:27px;max-width:30ch}
+  .north-id{grid-area:id;font-size:16px}
+  .north-stat{grid-area:stat;align-self:end;flex-direction:column;align-items:flex-end;gap:4px;margin:0}
+  .north-stat b{font-size:26px;font-weight:500;line-height:1}
+  .north-wk{font-size:12px;text-transform:uppercase;letter-spacing:.07em;color:var(--faint)}
+  .north-stat .dots{margin-top:4px}
+  .north-kids{padding:4px 26px 24px}
+  .north-h{margin:14px 0 0;line-height:16px}
+  .branches{position:relative;display:grid;grid-template-columns:repeat(var(--n,2),minmax(0,1fr));gap:16px;padding:26px 0 0}
+  .branches::before{content:"";position:absolute;top:0;height:2px;background:var(--line-strong);border-radius:2px;
+    left:calc((100% - (var(--n,2) - 1) * 16px) / (2 * var(--n,2)));right:calc((100% - (var(--n,2) - 1) * 16px) / (2 * var(--n,2)))}
+  .branches::after{content:"";position:absolute;left:calc(50% - 1px);top:-34px;width:2px;height:34px;background:var(--line-strong)}   /* the trunk: from the goal above down to the split */
+  .branches .branch{flex-direction:column;align-items:flex-start;gap:12px;padding:18px 18px 16px}
+  .branches .branch::before{left:calc(50% - 1px);top:-27px;width:2px;height:27px;border:0;border-radius:0;background:var(--line-strong)}
+  .branches .branch:not(:last-child)::after{display:none}
+  .branches .branch:nth-child(n+5)::before{display:none}
+  .branches .br-chev{position:absolute;top:18px;right:16px}
+  .branches .ring,.branches .ring svg{width:46px;height:46px}
+  .branches .ring-n{font-size:12px}
+  .branches .br-txt{gap:5px;width:100%}
+  .branches .br-name{font-family:var(--font-display);font-size:19px;line-height:1.2;padding-right:22px}
+  .br-id{display:block;font-family:var(--font-display);font-style:italic;font-size:13.5px;line-height:1.35;color:var(--muted)}
+  .br-sub{font-size:12.5px}
+  .br-bar{display:block;height:5px;margin-top:6px;border-radius:99px;background:var(--surface-2);border:1px solid var(--line);overflow:hidden}
+  .br-bar i{display:block;height:100%;background:var(--accent);border-radius:99px}
+  .north .branch-add,.gp-kids .branch-add{display:inline-block;width:auto;margin:16px 0 0}
+  .north .branch-form,.gp-kids .branch-form{margin:16px 0 0;max-width:560px}
+  .card.solo{padding:8px}
+  .card.solo .branch{padding:14px 12px}
+  /* a goal's page: the doing on the left, the plan and notes on the right */
+  .gp .goal-card{padding:24px 28px 24px}
+  .goal-name.gp-name{font-size:30px;max-width:32ch}
+  .gp .goal-identity{font-size:17px}
+  .gp-kids{margin-top:18px;padding:4px 20px 20px}
+  .gp-kids .branches{padding-top:26px}
+  .gp-cols{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(0,1fr);gap:0 28px;align-items:start;margin-top:6px}
+  .gp-cols.one{grid-template-columns:minmax(0,1fr)}
+  .gp-cols.one .gp-main:empty{display:none}
+  .gp-main,.gp-side{display:block;min-width:0}
+  /* projects as a board; an open one takes the full row */
+  .proj-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:14px;align-items:start}
+  .proj-list>.goal-card{grid-column:1/-1}
+  /* review: numbers on the left, the day's timeline on the right */
+  .rv-cols{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);gap:20px;align-items:start;margin-top:16px}
+  .rv-a,.rv-b{display:block;min-width:0}
+  .rv-a>.breakdown{margin-bottom:16px}
+  .plan-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(440px,1fr));gap:12px}
+  /* the A → Z lists: two rungs side by side */
+  .cv-rungs{display:grid;grid-template-columns:1fr 1fr;gap:22px 24px;margin-top:22px;align-items:start}
+  .cv-rungs .cv-rung{margin-top:0}
+  .cv-title{font-size:30px}
+  /* articles: the list in two columns; an article at reading width with its buttons alongside */
+  .rd-list{display:grid;grid-template-columns:1fr 1fr;border-bottom:0}
+  .rd-row+.rd-row{border-top:0}
+  .rd-row{border-bottom:1px solid var(--line)}
+  .rd-row:nth-child(odd){border-right:1px solid var(--line)}
+  .rd-row:last-child:nth-child(odd){grid-column:1/-1;border-right:0}
+  .rd-none{grid-column:1/-1;border-bottom:1px solid var(--line)}
+  .rd-art{display:grid;grid-template-columns:minmax(0,720px) 300px;justify-content:center;column-gap:48px;align-items:start}
+  .rd-art>*{grid-column:1}
+  .rd-art>.rd-foot{grid-column:2;grid-row:2/span 4;position:sticky;top:24px;margin-top:6px;padding:16px;border:1px solid var(--line);border-radius:12px;background:var(--surface)}
+  .rd-title{font-size:32px}
+}
 </style>
 
 <div id="root"></div>
@@ -1489,10 +1581,12 @@ button.step-name:hover .step-nm{color:var(--accent)}
   function chip(cat){if(!cat)return "";return '<span class="chip"><span class="cdot" style="background:'+catColor(cat)+'"></span>'+esc(cat)+'</span>';}
   function pinBtn(t){return '<button class="icon-btn pin'+(t.pinned?" is-on":"")+'" type="button" data-action="toggle-pin" data-id="'+t.id+'" aria-pressed="'+(t.pinned?"true":"false")+'" title="'+(t.pinned?"Pinned to quick-start — tap to unpin":"Pin to quick-start")+'" aria-label="'+(t.pinned?"Unpin from quick-start":"Pin to quick-start")+'">'+(t.pinned?"★":"☆")+'</button>';}
 
+  function todayLong(){var d=new Date();return ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"][d.getDay()]+" "+d.getDate()+" "+["January","February","March","April","May","June","July","August","September","October","November","December"][d.getMonth()];}
   function topBar(){
     var c=chipData();
     return '<div class="top">'+
       '<div class="brand">'+clockSvg()+'<h1>Where My Time Went</h1></div>'+
+      '<div class="top-date">'+todayLong()+'</div>'+   // on a wide screen the name moves to the rail and today's date takes its place
       '<div class="top-actions">'+
         '<button class="chip-sync '+c.cls+'" data-action="retry" title="'+esc(c.title)+'"><span class="dot"></span>'+esc(c.label)+'</button>'+
         '<button class="icon-btn" data-action="theme" aria-label="Toggle light or dark theme">'+(effectiveTheme()==="dark"?"&#9788;":"&#9789;")+'</button>'+
@@ -1500,14 +1594,16 @@ button.step-name:hover .step-nm{color:var(--accent)}
   }
   function tabBar(){
     var tabs=[["now","Now",clockSvg()],["goals","Goals",goalIcon()],["projects","Projects",projIcon()],["review","Review",reviewIcon()]];
-    return '<nav class="tabbar" role="tablist" aria-label="Sections">'+tabs.map(function(t){
+    return '<div class="rail-brand" aria-hidden="true">'+clockSvg()+'<span>Where My Time Went</span></div>'+   // shown with the side rail on wide screens
+      '<nav class="tabbar" role="tablist" aria-label="Sections">'+tabs.map(function(t){
       var on=ui.view===t[0]||(t[0]==="goals"&&(ui.view==="curriculum"||ui.view==="reading"||ui.view==="goal"));
       var live=t[0]!=="now"?"":(state.activeId?'<span class="tab-live" aria-hidden="true"></span>':(pausedTask()?'<span class="tab-live is-paused" aria-hidden="true"></span>':""));
       return '<button class="tab'+(on?' active':'')+'" role="tab" aria-selected="'+(on?'true':'false')+'" data-action="set-view" data-view="'+t[0]+'" type="button">'+live+t[2]+'<span class="tab-lbl">'+t[1]+'</span></button>';
     }).join("")+'</nav>';
   }
   function renderHome(){
-    return '<div class="view home">'+renderNow()+homeNext()+homeRevisit()+homePrime()+homeGlance()+renderCaptureHome()+'</div>';
+    // a phone gets one column; a wide screen puts what to do now on the left and the day + inbox on the right
+    return '<div class="view home"><div class="home-a">'+renderNow()+homeNext()+homeRevisit()+homePrime()+'</div><div class="home-b">'+homeGlance()+renderCaptureHome()+'</div></div>';
   }
   function render(){
     var html=topBar();
@@ -2192,7 +2288,7 @@ button.step-name:hover .step-nm{color:var(--accent)}
     return '<section class="sec cv">'+back+
       '<h2 class="cv-title">'+esc(c.azTitle)+'</h2>'+
       '<p class="cv-sub">'+c.lessons.length+' lessons · '+doneN+' done · about '+fmtDur(totalMin*60)+' in all — roughly '+Math.ceil(totalMin/DAILY_MIN/7)+' week'+(Math.ceil(totalMin/DAILY_MIN/7)===1?'':'s')+' at '+DAILY_MIN+' min a day. '+esc(c.blurb)+'</p>'+
-      renderToday(g,"az")+groups+
+      renderToday(g,"az")+'<div class="cv-rungs">'+groups+'</div>'+
     '</section>';
   }
   /* ---------- Aswath's method: his rule + his real calls, right where you decide ---------- */
@@ -2397,11 +2493,21 @@ button.step-name:hover .step-nm{color:var(--accent)}
     }
     return parts.join(' · ');
   }
+  /* how far along: lessons done on a track, or pieces done on a goal with daily pieces */
+  function goalProgress(g){
+    var c=currFor(g);
+    if(c){var d=currDone(g);return c.lessons.filter(function(l){return d[l.id];}).length/c.lessons.length;}
+    var a=state.tasks.filter(function(t){return t.goalId===g.id&&t.daily;});
+    return a.length?a.filter(function(t){return t.done;}).length/a.length:null;
+  }
   function branchRow(g){
+    var p=goalProgress(g);   // the identity line and the bar show where there's room (wide screens)
     return '<button class="branch" data-action="goal-open" data-id="'+g.id+'" type="button">'+goalRing(g)+
-      '<span class="br-txt"><span class="br-name">'+esc(g.name)+'</span><span class="br-sub">'+goalBrief(g)+'</span></span>'+
+      '<span class="br-txt"><span class="br-name">'+esc(g.name)+'</span>'+(g.identity?'<span class="br-id">“'+esc(g.identity)+'”</span>':'')+
+        '<span class="br-sub">'+goalBrief(g)+'</span>'+(p!=null?'<span class="br-bar" aria-hidden="true"><i style="width:'+Math.round(p*100)+'%"></i></span>':'')+'</span>'+
       '<span class="br-chev">'+chevronSvg()+'</span></button>';
   }
+  function branchList(kids){return '<div class="branches" style="--n:'+Math.min(kids.length,4)+'">'+kids.map(branchRow).join("")+'</div>';}
   function branchAdd(g){
     return ui.branchOpen[g.id]
       ?'<form class="branch-form" data-action="add-branch" data-id="'+g.id+'" autocomplete="off"><input id="branch-'+g.id+'" class="field" maxlength="140" placeholder="A branch — e.g. Business: offers and sales" aria-label="New branch"><button class="btn btn-primary btn-sm" type="submit">Add</button><button class="btn btn-ghost btn-sm" data-action="branch-toggle" data-id="'+g.id+'" type="button">Cancel</button></form>'
@@ -2416,10 +2522,10 @@ button.step-name:hover .step-nm{color:var(--accent)}
         '<span class="north-eye">Main goal</span>'+
         '<span class="north-name">'+esc(g.name)+'</span>'+
         (g.identity?'<span class="north-id">“'+esc(g.identity)+'”</span>':'')+
-        '<span class="north-stat"><b>'+fmtDur(st.weekSec)+'</b> this week<span class="dots">'+dots+'</span>'+(sk.streak>=2?'<span class="streak">'+sk.streak+'-day streak</span>':'')+'</span>'+
+        '<span class="north-stat"><b>'+fmtDur(st.weekSec)+'</b><span class="north-wk"> this week</span><span class="dots">'+dots+'</span>'+(sk.streak>=2?'<span class="streak">'+sk.streak+'-day streak</span>':'')+'</span>'+
       '</button>'+
       '<div class="north-kids"><div class="north-h">'+kids.length+' branch'+(kids.length===1?'':'es')+'</div>'+
-        '<div class="branches">'+kids.map(branchRow).join("")+'</div>'+branchAdd(g)+'</div>'+
+        branchList(kids)+branchAdd(g)+'</div>'+
     '</div>';
   }
   function renderGoals(){
@@ -2436,7 +2542,9 @@ button.step-name:hover .step-nm{color:var(--accent)}
         addForm=standardGoalForm();
       }
     }
-    var body=goals.length?('<div class="goal-list">'+goals.map(function(g){return goalKids(g.id).length?mainGoalCard(g):'<div class="card solo">'+branchRow(g)+'</div>';}).join("")+'</div>')
+    var mains=goals.filter(function(g){return goalKids(g.id).length;}),solos=goals.filter(function(g){return !goalKids(g.id).length;});   // main goals on top, standalone goals under them
+    var body=goals.length?('<div class="goal-list goal-tree">'+mains.map(mainGoalCard).join("")+
+        (solos.length?'<div class="solo-grid">'+solos.map(function(g){return '<div class="card solo">'+branchRow(g)+'</div>';}).join("")+'</div>':'')+'</div>')
       :(ui.goalOpen?"":'<div class="card empty">No goals yet. Add one, break it into small daily actions, and your tracked time will show whether you’re actually on track.</div>');
     return '<section class="sec">'+
       '<div class="sec-head"><h2>Goals</h2><button class="btn btn-ghost btn-sm" data-action="toggle-goal" type="button">'+(ui.goalOpen?"Close":"+ New")+'</button></div>'+
@@ -2711,16 +2819,19 @@ button.step-name:hover .step-nm{color:var(--accent)}
     var name=ui.nameOpen[g.id]
       ?'<form class="gname-edit" data-action="goal-name" data-id="'+g.id+'" autocomplete="off"><input id="gname-'+g.id+'" class="field" maxlength="140" value="'+esc(g.name)+'" aria-label="Goal name"><div class="note-btns"><button class="btn btn-primary btn-sm" type="submit">Save</button><button class="btn btn-ghost btn-sm" data-action="gname-cancel" data-id="'+g.id+'" type="button">Cancel</button></div></form>'
       :'<button class="goal-name gp-name" data-action="gname-edit" data-id="'+g.id+'" type="button" title="Rename">'+esc(g.name)+'<span class="gp-pen" aria-hidden="true">✎</span></button>';
-    var branches=kids.length?'<div class="gp-kids"><div class="north-h">'+kids.length+' branch'+(kids.length===1?'':'es')+' · tap one to open it</div><div class="branches">'+kids.map(branchRow).join("")+'</div>'+branchAdd(g)+'</div>':'';
+    var branches=kids.length?'<div class="gp-kids"><div class="north-h">'+kids.length+' branch'+(kids.length===1?'':'es')+' · tap one to open it</div>'+branchList(kids)+branchAdd(g)+'</div>':'';
     var hasWork=(g.steps||[]).length||state.tasks.some(function(t){return t.goalId===g.id&&t.daily;});
     var steps=(kids.length&&!hasWork)?'':renderSteps(g);   // a main goal's work lives in its branches
     var ladder=(kids.length&&!g.progression)?'':renderProgression(g);
     var addB=(!kids.length&&!up&&!currFor(g))?'<div class="gp-addb">'+branchAdd(g)+'</div>':'';
+    // two columns on a wide screen: the doing (today, ideas, calls) on the left, the plan and notes on the right; one column on a phone, same order
+    var main=renderToday(g,"card")+renderIdeas(g)+renderAswath(g)+renderReadingEntry(g)+renderDecisions(g),side=ladder+addB+noteBlock;
+    if(main)side=steps+side;else main=steps;
     return '<div class="card goal-card">'+
       '<div class="goal-top"><div style="min-width:0;flex:1">'+eye+name+meta+'</div>'+
         xBtn("del-goal",g.id,kids.length?"Delete goal (its branches stay)":"Delete goal")+'</div>'+
       identityBlock+stat+branches+
-      renderToday(g,"card")+renderIdeas(g)+renderAswath(g)+renderReadingEntry(g)+renderDecisions(g)+steps+ladder+addB+noteBlock+
+      '<div class="gp-cols'+(main?'':' one')+'"><div class="gp-main">'+main+'</div><div class="gp-side">'+side+'</div></div>'+
     '</div>';
   }
   function actionRow(t){
@@ -2989,7 +3100,7 @@ button.step-name:hover .step-nm{color:var(--accent)}
       '<input id="pr-name" class="field" placeholder="Project name — e.g. Time tracker" aria-label="Project name">'+
       '<input id="pr-repo" class="field" placeholder="Repo (optional) — owner/name" aria-label="Repo">'+
       '<button class="btn btn-primary" type="submit">Add project</button></form>'):"";
-    var body=projs.length?('<div class="goal-list">'+projs.map(function(p){return ui.projCardOpen[p.id]?projectCard(p):projectRow(p);}).join("")+'</div>')
+    var body=projs.length?('<div class="goal-list proj-list">'+projs.map(function(p){return ui.projCardOpen[p.id]?projectCard(p):projectRow(p);}).join("")+'</div>')
       :(ui.projectOpen?"":'<div class="card empty">No projects yet. Add one to see its status at a glance and talk it through.</div>');
     return '<section class="sec">'+
       '<div class="sec-head"><h2>Projects</h2><button class="btn btn-ghost btn-sm" data-action="toggle-project" type="button">'+(ui.projectOpen?"Close":"+ New")+'</button></div>'+
@@ -3106,7 +3217,7 @@ button.step-name:hover .step-nm{color:var(--accent)}
         '<datalist id="cats2">'+usedCats().map(function(c){return '<option value="'+esc(c)+'">';}).join("")+'</datalist>'+
         '<button class="btn btn-primary" type="submit">Add planned task</button>'+
       '</form>' : "";
-    var rows= planned.length? '<div class="task-list">'+planned.map(plannedRow).join("")+'</div>'
+    var rows= planned.length? '<div class="task-list plan-grid">'+planned.map(plannedRow).join("")+'</div>'
       : (ui.addOpen?"":'<div class="card empty">No planned tasks yet. Add one with an estimate to see how your guess compares to reality.</div>');
     return '<section class="sec">'+
       '<div class="sec-head"><h2>Planned tasks</h2><button class="btn btn-ghost btn-sm" data-action="toggle-add" type="button">'+(ui.addOpen?"Close":"+ New")+'</button></div>'+
@@ -3264,7 +3375,7 @@ button.step-name:hover .step-nm{color:var(--accent)}
         '</div>'+
         (isToday?'':'<button class="btn btn-ghost btn-sm" data-action="today" type="button">Jump to today</button>')+
       '</div>'+
-      tiles+deepCard+gb+bd+tl+
+      tiles+'<div class="rv-cols"><div class="rv-a">'+deepCard+gb+bd+'</div><div class="rv-b">'+tl+'</div></div>'+
       '<div class="review-foot"><span></span><button class="btn btn-ghost btn-sm" data-action="export" type="button">Export CSV</button></div>'+
     '</section>';
   }
