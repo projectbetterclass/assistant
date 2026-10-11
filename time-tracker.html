@@ -17,6 +17,8 @@
   --warn-soft:#fbeed8;
   --bad:#dc4a4f;
   --bad-soft:#fbe7e8;
+  /* branch identity in a goal's split bar (validated categorical order; light steps, checked on the white card) */
+  --s1:#2a78d6;--s2:#eb6834;--s3:#1baf7a;--s4:#eda100;--s5:#e87ba4;--s6:#008300;--s7:#6250d6;--s8:#e34948;
   --shadow:0 1px 2px rgba(23,32,43,.05),0 8px 28px -18px rgba(23,32,43,.28);
   --radius:15px;
   --font-display:'Fraunces',Georgia,'Times New Roman',serif;
@@ -42,6 +44,7 @@
     --warn-soft:#2e2515;
     --bad:#ff6f74;
     --bad-soft:#301a1c;
+    --s1:#3987e5;--s2:#d95926;--s3:#199e70;--s4:#c98500;--s5:#d55181;--s6:#008300;--s7:#9085e9;--s8:#e66767;
     --shadow:0 1px 2px rgba(0,0,0,.3),0 10px 30px -18px rgba(0,0,0,.6);
   }
 }
@@ -63,6 +66,7 @@
   --warn-soft:#2e2515;
   --bad:#ff6f74;
   --bad-soft:#301a1c;
+  --s1:#3987e5;--s2:#d95926;--s3:#199e70;--s4:#c98500;--s5:#d55181;--s6:#008300;--s7:#9085e9;--s8:#e66767;
   --shadow:0 1px 2px rgba(0,0,0,.3),0 10px 30px -18px rgba(0,0,0,.6);
 }
 *{box-sizing:border-box}
@@ -880,20 +884,80 @@ button.step-name:hover .step-nm{color:var(--accent)}
 .dly-row{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
 .dly-t{flex:1 1 200px;min-width:0;font-size:13px;line-height:1.45;color:var(--muted)}
 .dly-row .btn{flex:none}
-/* goals as a tree: the main goal on top, its branches hanging off a trunk line */
-.north{padding:0;overflow:hidden}
-.north-head{display:flex;flex-direction:column;align-items:stretch;gap:5px;width:100%;border:none;text-align:left;font-family:inherit;color:var(--ink);cursor:pointer;
-  padding:15px 16px 14px;background:linear-gradient(180deg,var(--accent-soft),transparent 92%)}
-.north-head:focus-visible,.branch:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
-.north-eye{display:flex;align-items:center;gap:8px;font-size:11px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--accent)}
-.north-eye::before,.gp-eye.is-main::before{content:"";flex:none;width:7px;height:7px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 3px var(--accent-soft),0 0 0 4px var(--accent)}
-.north-eye::after{content:"Open \2192";margin-left:auto;font-size:12px;font-weight:600;letter-spacing:0;text-transform:none;opacity:.85}
-.north-head:hover .north-eye::after{opacity:1;text-decoration:underline;text-underline-offset:3px}
-.north-name{font-family:var(--font-display);font-size:21px;font-weight:600;line-height:1.22;text-wrap:balance}
-.north-id{font-family:var(--font-display);font-style:italic;font-size:14.5px;line-height:1.35;color:var(--muted)}
-.north-stat{display:flex;align-items:center;flex-wrap:wrap;gap:6px 9px;margin-top:5px;font-size:13px;color:var(--muted)}
-.north-stat b{color:var(--ink);font-weight:600;font-family:var(--font-mono);font-variant-numeric:tabular-nums}
-.north-kids{padding:4px 12px 13px;border-top:1px solid var(--line)}
+/* the goals overview: every goal on one screen, each with its hours against 100 */
+.ov{display:flex;flex-direction:column;gap:12px}
+.gsum{padding:14px 16px 13px}
+.gsum-figs{display:flex;flex-wrap:wrap;gap:6px 28px}
+.gsum-fig{display:flex;flex-direction:column;gap:2px}
+.gsum-fig b{font-size:24px;font-weight:600;line-height:1.1;color:var(--ink)}
+.gsum-fig span{font-size:12px;color:var(--muted)}
+.gsum-key{display:flex;flex-direction:column;gap:7px;margin-top:12px;padding-top:13px;border-top:1px solid var(--line)}
+.hm-lbl{position:relative;height:15px;font-size:11px;line-height:15px;color:var(--muted)}
+.hm-lbl i{position:absolute;top:0;font-style:normal;white-space:nowrap}
+.hm-lbl .k0{left:0}
+.hm-lbl .k20{margin-left:-1px}
+.hm-lbl .k100{right:0}
+/* the hours bar: one scale everywhere (0 to 100h), the track a lighter step of the fill, a tick at 20h */
+.hm{position:relative;display:block;width:100%;height:6px;border-radius:0 3px 3px 0;background:var(--accent-soft)}
+.hm i{position:absolute;left:0;top:0;bottom:0;min-width:3px;border-radius:0 3px 3px 0;background:var(--accent)}
+.hm.full i{background:var(--good)}
+.hm-t{position:absolute;top:-3px;bottom:-3px;width:2px;margin-left:-1px;border-radius:1px;background:var(--faint)}
+.hm-done{color:var(--good);font-weight:600}
+.mg{padding:0;overflow:hidden}
+.mg-head{display:flex;flex-direction:column;gap:5px;width:100%;border:none;text-align:left;font-family:inherit;color:var(--ink);cursor:pointer;
+  padding:14px 16px 8px;background:linear-gradient(180deg,var(--accent-soft),transparent 92%)}
+.mg-head:focus-visible,.gl:focus-visible,.branch:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
+.mg-eye{display:flex;align-items:center;gap:8px;font-size:11px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--accent)}
+.mg-eye::before,.gp-eye.is-main::before{content:"";flex:none;width:7px;height:7px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 3px var(--accent-soft),0 0 0 4px var(--accent)}
+.mg-eye::after{content:"Open \2192";margin-left:auto;font-size:12px;font-weight:600;letter-spacing:0;text-transform:none;opacity:.85}
+.mg-row{display:flex;align-items:flex-end;justify-content:space-between;gap:14px}
+.mg-name{min-width:0;font-family:var(--font-display);font-size:19px;font-weight:600;line-height:1.22;text-wrap:balance;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.mg-tot{flex:none;display:flex;flex-direction:column;align-items:flex-end;gap:2px;text-align:right}
+.mg-tot b{font-size:20px;font-weight:600;line-height:1.1}
+.mg-tot span{font-size:11.5px;color:var(--muted);white-space:nowrap}
+.mg-body{padding:6px 16px 10px}
+/* a main goal's split: one stacked bar, a 2px surface gap between branches, square at the start and rounded at the end */
+.mg-split{display:flex;gap:2px;height:10px}
+.mg-split .seg{min-width:3px;height:100%}
+.mg-split .seg:last-child{border-radius:0 4px 4px 0}
+.mg-split .seg-o{background:var(--faint)}
+.mg-split.empty{background:var(--surface-2);box-shadow:inset 0 0 0 1px var(--line);border-radius:0 4px 4px 0}
+.mg-cap{margin-top:6px;font-size:11.5px;line-height:1.4;color:var(--faint)}
+.mg-kids{margin-top:8px;padding-left:10px;border-left:2px solid var(--line)}
+.mg .branch-add{width:100%;margin:8px 0 0}
+.mg .branch-form{margin:8px 0 0}
+.gl{display:flex;flex-direction:column;gap:6px;width:100%;border:none;background:transparent;text-align:left;font-family:inherit;color:var(--ink);padding:10px 8px;cursor:pointer}
+.gl+.gl{border-top:1px solid var(--line)}
+.gl-top{display:flex;align-items:center;gap:8px;min-width:0}
+.sw{flex:none;display:inline-block;width:10px;height:10px;border-radius:3px}
+.gl-name{flex:1;min-width:0;font-size:14.5px;font-weight:600;line-height:1.3;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.gl-h{flex:none;font-family:var(--font-mono);font-size:13px;font-weight:500;color:var(--ink);font-variant-numeric:tabular-nums}
+.gl-sub{display:flex;justify-content:space-between;gap:10px;font-size:11.5px;line-height:1.3;color:var(--muted)}
+.gl-sub b{color:var(--ink);font-weight:600}
+.og{padding:4px 8px}
+.og-h{margin:10px 8px 0;font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--faint)}
+@media (hover:hover){
+  .gl:hover{background:var(--surface-2)}
+  .mg-head:hover .mg-eye::after{opacity:1;text-decoration:underline;text-underline-offset:3px}
+}
+/* time on tasks that aren't on any goal */
+.loose{margin-top:12px;padding-top:10px;border-top:1px solid var(--line)}
+.loose-head{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;border:none;background:transparent;padding:2px 0;font-family:inherit;font-size:13px;line-height:1.4;color:var(--muted);text-align:left;cursor:pointer}
+.loose-head b{color:var(--ink);font-family:var(--font-mono);font-weight:500}
+.loose-go{flex:none;color:var(--accent);font-weight:600;font-size:12.5px}
+.loose-list{margin-top:8px}
+.loose-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px 10px;align-items:center;padding:9px 0;border-top:1px solid var(--line)}
+.loose-nm{min-width:0;font-size:13.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.loose-t{font-family:var(--font-mono);font-size:12.5px;color:var(--muted)}
+.loose-sel{grid-column:1/-1;width:100%;padding:8px 10px;border:1px solid var(--line-strong);border-radius:9px;background:var(--surface-2);color:var(--ink);font-family:inherit;font-size:16px}
+.loose-note{margin-top:8px;font-size:11.5px;color:var(--faint)}
+/* a goal's page: its hours */
+.gp-hours{margin-top:12px}
+.gp-hrow{display:flex;justify-content:space-between;gap:10px;margin-bottom:7px;font-size:12.5px;color:var(--muted)}
+.gp-hrow b{color:var(--ink);font-family:var(--font-mono);font-weight:500}
+.br-hrs{font-size:11.5px;color:var(--muted)}
+.branch .hm{margin-top:5px}
+.br-name .sw{margin-right:7px;vertical-align:1px}
 .north-h{margin:11px 4px 8px;font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--faint)}
 .branches{display:flex;flex-direction:column;gap:7px;padding-left:20px}
 .branch{position:relative;display:flex;align-items:center;gap:12px;width:100%;min-width:0;border:1px solid var(--line);border-radius:12px;background:var(--surface);
@@ -917,16 +981,11 @@ button.step-name:hover .step-nm{color:var(--accent)}
 @media (hover:hover){   /* a tap on a phone shouldn't leave a branch looking hovered */
   .branch:hover{border-color:var(--accent)}
   .branch:hover .br-chev{color:var(--accent);transform:translateX(2px)}
-  .card.solo .branch:hover{background:var(--surface-2)}
 }
 .branch-add{display:block;width:calc(100% - 20px);margin:8px 0 0 20px;border:1px dashed var(--line-strong);background:transparent;color:var(--muted);font-family:inherit;font-size:13px;font-weight:600;text-align:left;padding:9px 12px;border-radius:11px;cursor:pointer}
 .branch-add:hover{color:var(--accent);border-color:var(--accent)}
 .branch-form{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0 0 20px}
 .branch-form .field{flex:1 1 100%;background:var(--surface)}
-.solo-grid{display:flex;flex-direction:column;gap:12px}
-.card.solo{padding:5px}
-.card.solo .branch{border-color:transparent;background:transparent;padding:10px 9px}
-.card.solo .br-name{font-family:var(--font-display);font-size:17px;line-height:1.25}
 .gp-eye{margin:0 0 3px;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--faint)}
 .gp-eye.is-main{display:flex;align-items:center;gap:8px;margin-bottom:6px;color:var(--accent)}
 .gp-up{border:none;background:transparent;padding:0;margin:0;font-family:inherit;font-size:12.5px;font-weight:600;letter-spacing:0;text-transform:none;color:var(--accent);cursor:pointer;text-decoration:underline;text-decoration-color:var(--accent-soft);text-underline-offset:3px}
@@ -940,7 +999,7 @@ button.step-name:hover .step-nm{color:var(--accent)}
 .gp-addb .branch-add,.gp-addb .branch-form{width:100%;margin-left:0}
 .cv-back-t{max-width:30ch;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 /* ---- wide screens: sections move to a side rail and each page spreads into columns. On a phone these wrappers vanish (display:contents) so nothing moves. ---- */
-.rail-brand,.top-date,.br-id,.br-bar{display:none}
+.rail-brand,.top-date,.br-id{display:none}
 .home-a,.home-b,.gp-cols,.gp-main,.gp-side,.rv-cols,.rv-a,.rv-b{display:contents}
 @media (min-width:1000px){
   :root{--rail:236px}
@@ -962,19 +1021,17 @@ button.step-name:hover .step-nm{color:var(--accent)}
   /* Now: what to do now | the day and the inbox */
   .home{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);gap:20px;align-items:start;margin-top:22px}
   .home-a,.home-b{display:flex;flex-direction:column;gap:16px;min-width:0}
-  /* Goals: the main goal across the top, its branches hanging below it like a family tree */
-  .goal-tree{gap:16px}
-  .solo-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:16px}
-  .north-head{display:grid;grid-template-columns:minmax(0,1fr) auto;grid-template-areas:"eye eye" "name stat" "id stat";column-gap:40px;row-gap:6px;padding:20px 26px 22px}
-  .north-eye{grid-area:eye}
-  .north-name{grid-area:name;font-size:27px;max-width:30ch}
-  .north-id{grid-area:id;font-size:16px}
-  .north-stat{grid-area:stat;align-self:end;flex-direction:column;align-items:flex-end;gap:4px;margin:0}
-  .north-stat b{font-size:26px;font-weight:500;line-height:1}
-  .north-wk{font-size:12px;text-transform:uppercase;letter-spacing:.07em;color:var(--faint)}
-  .north-stat .dots{margin-top:4px}
-  .north-kids{padding:4px 26px 24px}
+  /* Goals: totals across the top, then the main goals and the other goals side by side */
+  .gsum{display:flex;flex-wrap:wrap;align-items:center;gap:14px 40px;padding:16px 22px}
+  .gsum-key{flex:1 1 380px;max-width:640px;margin:0 0 0 auto;padding:0;border:0}
+  .loose{flex:1 1 100%;margin-top:0}
+  .ov{display:grid;grid-template-columns:repeat(auto-fit,minmax(420px,1fr));gap:16px;align-items:start}
+  .mg-head{padding:16px 20px 8px}
+  .mg-name{font-size:21px}
+  .mg-body{padding:6px 20px 14px}
+  .og{padding:6px 12px}
   .north-h{margin:14px 0 0;line-height:16px}
+  /* a main goal's page: its branches as tiles hanging below it */
   .branches{position:relative;display:grid;grid-template-columns:repeat(var(--n,2),minmax(0,1fr));gap:16px;padding:26px 0 0}
   .branches::before{content:"";position:absolute;top:0;height:2px;background:var(--line-strong);border-radius:2px;
     left:calc((100% - (var(--n,2) - 1) * 16px) / (2 * var(--n,2)));right:calc((100% - (var(--n,2) - 1) * 16px) / (2 * var(--n,2)))}
@@ -990,12 +1047,8 @@ button.step-name:hover .step-nm{color:var(--accent)}
   .branches .br-name{font-family:var(--font-display);font-size:19px;line-height:1.2;padding-right:22px}
   .br-id{display:block;font-family:var(--font-display);font-style:italic;font-size:13.5px;line-height:1.35;color:var(--muted)}
   .br-sub{font-size:12.5px}
-  .br-bar{display:block;height:5px;margin-top:6px;border-radius:99px;background:var(--surface-2);border:1px solid var(--line);overflow:hidden}
-  .br-bar i{display:block;height:100%;background:var(--accent);border-radius:99px}
-  .north .branch-add,.gp-kids .branch-add{display:inline-block;width:auto;margin:16px 0 0}
-  .north .branch-form,.gp-kids .branch-form{margin:16px 0 0;max-width:560px}
-  .card.solo{padding:8px}
-  .card.solo .branch{padding:14px 12px}
+  .gp-kids .branch-add{display:inline-block;width:auto;margin:16px 0 0}
+  .gp-kids .branch-form{margin:16px 0 0;max-width:560px}
   /* a goal's page: the doing on the left, the plan and notes on the right */
   .gp .goal-card{padding:24px 28px 24px}
   .goal-name.gp-name{font-size:30px;max-width:32ch}
@@ -1220,7 +1273,7 @@ button.step-name:hover .step-nm{color:var(--accent)}
   function loadSes(){try{var s=JSON.parse(localStorage.getItem(SES_KEY)||"null");if(s&&s.tid&&s.d&&Date.now()-(s.at||0)<2*86400000)return s;}catch(e){}return null;}
   var DEC_KEY="wmtw_dec_draft";   // an unfinished call survives a reload — e.g. you switched apps to look up the price
   function loadDecDraft(){try{var s=JSON.parse(localStorage.getItem(DEC_KEY)||"null");if(s&&s.d&&s.gid&&Date.now()-(s.t0||0)<3*86400000)return s;}catch(e){}return null;}
-  var ui={addOpen:false, goalOpen:false, actionOpen:{}, noteOpen:{}, cueOpen:{}, idOpen:{}, repOpen:{}, stepAddOpen:{}, proposal:{}, loading:{}, projectOpen:false, projEdit:{}, projLoading:{}, adviseLoading:{}, currRefs:{}, projCardOpen:{}, goalSecOpen:{}, aswClosed:loadAsw(), aswAll:false, aswOpen:{}, lessonOpen:{}, stepOpen:{}, dec:loadDecDraft(), decRows:{}, decAll:false, armed:null, ses:loadSes(), goalMode:"have", shapeLevel:"new", shapeTopic:"", shapeLoading:false, shapeProposal:null, hoLoading:{}, ideaOpen:{}, view:loadView(), goalId:loadGoalId(), nameOpen:{}, branchOpen:{}, cvGoal:loadCvGoal(), art:loadArt(), date:dayKey(Date.now())};
+  var ui={looseOpen:false, addOpen:false, goalOpen:false, actionOpen:{}, noteOpen:{}, cueOpen:{}, idOpen:{}, repOpen:{}, stepAddOpen:{}, proposal:{}, loading:{}, projectOpen:false, projEdit:{}, projLoading:{}, adviseLoading:{}, currRefs:{}, projCardOpen:{}, goalSecOpen:{}, aswClosed:loadAsw(), aswAll:false, aswOpen:{}, lessonOpen:{}, stepOpen:{}, dec:loadDecDraft(), decRows:{}, decAll:false, armed:null, ses:loadSes(), goalMode:"have", shapeLevel:"new", shapeTopic:"", shapeLoading:false, shapeProposal:null, hoLoading:{}, ideaOpen:{}, view:loadView(), goalId:loadGoalId(), nameOpen:{}, branchOpen:{}, cvGoal:loadCvGoal(), art:loadArt(), date:dayKey(Date.now())};
   var isTouch=("ontouchstart" in window)||(navigator.maxTouchPoints>0);
   var sampleNS; // undefined=unknown, null=unavailable, function=ready
 
@@ -1234,6 +1287,11 @@ button.step-name:hover .step-nm{color:var(--accent)}
   root.addEventListener("click",onClick);
   root.addEventListener("submit",onSubmit);
   root.addEventListener("input",onInput);
+  root.addEventListener("change",function(e){   // linking a task's time to a goal, from the overview
+    var el=e.target;if(!el||el.getAttribute("data-action")!=="link-goal"||!el.value)return;
+    var tid=el.getAttribute("data-id"),gid=el.value;
+    commit(function(){var t=findTask(tid);if(t&&findGoal(gid))t.goalId=gid;});
+  });
   initSwipeToStop();
 
   /* ---------- swipe the running card sideways to stop ---------- */
@@ -1533,6 +1591,7 @@ button.step-name:hover .step-nm{color:var(--accent)}
     else if(a==="rd-filter"){ui.art.f=b.getAttribute("data-f")||"all";saveArt();render();}
     else if(a==="rd-done"){var nxA=artNext(id);setArt(nxA?nxA.id:null);commit(function(){state.artRead=state.artRead||{};state.artRead[id]=Date.now();});window.scrollTo(0,0);}
     else if(a==="rd-unread"){commit(function(){if(state.artRead)delete state.artRead[id];});}
+    else if(a==="loose-toggle"){ui.looseOpen=!ui.looseOpen;render();}
     else if(a==="goal-open"){openGoalPage(id);render();window.scrollTo(0,0);}
     else if(a==="branch-toggle"){ui.branchOpen[id]=!ui.branchOpen[id];render();var bf=document.getElementById("branch-"+id);if(bf)bf.focus();}
     else if(a==="gname-edit"){ui.nameOpen[id]=true;render();var gf=document.getElementById("gname-"+id);if(gf){gf.focus();gf.select();}}
@@ -2550,41 +2609,105 @@ button.step-name:hover .step-nm{color:var(--accent)}
     }
     return parts.join(' · ');
   }
-  /* how far along: lessons done on a track, or pieces done on a goal with daily pieces */
-  function goalProgress(g){
-    var c=currFor(g);
-    if(c){var d=currDone(g);return c.lessons.filter(function(l){return d[l.id];}).length/c.lessons.length;}
-    var s=shelfOf(g),L=s?shelfArts(s):[];
-    if(L.length)return L.filter(artRead).length/L.length;   // a goal with a shelf: how much of it you've read
-    var a=state.tasks.filter(function(t){return t.goalId===g.id&&t.daily;});
-    return a.length?a.filter(function(t){return t.done;}).length/a.length:null;
-  }
-  function branchRow(g){
-    var p=goalProgress(g);   // the identity line and the bar show where there's room (wide screens)
+  /* a branch as a tile on its main goal's page: today's ring, the line about it, and its hours against 100 */
+  function branchRow(g,slot){
+    var t=goalStats(treeIds(g)).total;
     return '<button class="branch" data-action="goal-open" data-id="'+g.id+'" type="button">'+goalRing(g)+
-      '<span class="br-txt"><span class="br-name">'+esc(g.name)+'</span>'+(g.identity?'<span class="br-id">“'+esc(g.identity)+'”</span>':'')+
-        '<span class="br-sub">'+goalBrief(g)+'</span>'+(p!=null?'<span class="br-bar" aria-hidden="true"><i style="width:'+Math.round(p*100)+'%"></i></span>':'')+'</span>'+
+      '<span class="br-txt"><span class="br-name">'+(slot?'<span class="sw" style="background:var(--s'+slot+')" aria-hidden="true"></span>':'')+esc(g.name)+'</span>'+(g.identity?'<span class="br-id">“'+esc(g.identity)+'”</span>':'')+
+        '<span class="br-sub">'+goalBrief(g)+'</span><span class="br-hrs">'+fmtDur(t)+' in total'+(t>=60?' · '+nextMark(t):'')+'</span>'+hoursMeter(t)+'</span>'+
       '<span class="br-chev">'+chevronSvg()+'</span></button>';
   }
-  function branchList(kids){return '<div class="branches" style="--n:'+Math.min(kids.length,4)+'">'+kids.map(branchRow).join("")+'</div>';}
+  function branchList(kids){return '<div class="branches" style="--n:'+Math.min(kids.length,4)+'">'+kids.map(function(k,i){return branchRow(k,i<8?i+1:0);}).join("")+'</div>';}
   function branchAdd(g){
     return ui.branchOpen[g.id]
       ?'<form class="branch-form" data-action="add-branch" data-id="'+g.id+'" autocomplete="off"><input id="branch-'+g.id+'" class="field" maxlength="140" placeholder="A branch — e.g. Business: offers and sales" aria-label="New branch"><button class="btn btn-primary btn-sm" type="submit">Add</button><button class="btn btn-ghost btn-sm" data-action="branch-toggle" data-id="'+g.id+'" type="button">Cancel</button></form>'
       :'<button class="branch-add" data-action="branch-toggle" data-id="'+g.id+'" type="button">+ Add a branch</button>';
   }
-  /* a main goal on the overview: the goal, how the week went across all of it, and its branches */
+  /* ---------- the overview: every goal on one screen, each with its hours against 100 ---------- */
+  var HOUR_GOAL=100,HOUR_BASICS=20;   // 20h: roughly what the basics of a new skill take (Josh Kaufman, The First 20 Hours) · 100h: a rule of thumb for getting ahead of most people who start
+  function lastActive(ids){var m=0;state.tasks.forEach(function(t){if(ids.indexOf(t.goalId)<0)return;(t.sessions||[]).forEach(function(se){if(se.start>m)m=se.start;});});return m;}
+  function hoursMeter(sec){   // one scale everywhere: 0 to 100 hours, with a tick at 20
+    var h=sec/3600,pct=Math.min(h/HOUR_GOAL,1)*100;
+    return '<span class="hm'+(h>=HOUR_GOAL?' full':'')+'" role="img" aria-label="'+esc(fmtDur(sec))+' of '+HOUR_GOAL+' hours">'+
+      (sec>=60?'<i style="width:'+pct.toFixed(2)+'%"></i>':'')+'<b class="hm-t" style="left:'+(HOUR_BASICS/HOUR_GOAL*100)+'%"></b></span>';
+  }
+  function nextMark(sec){
+    var h=sec/3600;
+    if(sec<60)return "";   // nothing yet: the bar says it
+    if(h>=HOUR_GOAL)return '<span class="hm-done">✓ past '+HOUR_GOAL+'h</span>';
+    var m=h<HOUR_BASICS?HOUR_BASICS:HOUR_GOAL;
+    return esc(fmtDur(m*3600-sec))+' to '+m+'h';
+  }
+  function goalPulse(ids,st){   // this week's time, or how long it has been quiet
+    if(st.weekSec>=60)return '<b>'+fmtDur(st.weekSec)+'</b> this week';
+    if(st.total<60)return 'not started';
+    var d=Math.round((startOfToday()-new Date(lastActive(ids)).setHours(0,0,0,0))/86400000);
+    return 'quiet for '+d+' day'+(d===1?'':'s');
+  }
+  /* one goal as a row: name, hours, the bar, and what's next on it */
+  function goalLine(g,slot){
+    var ids=treeIds(g),st=goalStats(ids);
+    return '<button class="gl" data-action="goal-open" data-id="'+g.id+'" type="button">'+
+      '<span class="gl-top">'+(slot?'<span class="sw" style="background:var(--s'+slot+')" aria-hidden="true"></span>':'')+
+        '<span class="gl-name">'+esc(g.name)+'</span><span class="gl-h">'+fmtDur(st.total)+'</span></span>'+
+      hoursMeter(st.total)+
+      '<span class="gl-sub"><span>'+goalPulse(ids,st)+'</span><span>'+nextMark(st.total)+'</span></span></button>';
+  }
+  /* a main goal's hours, split by branch: one stacked bar, each branch in its own color (fixed by its place in the list) */
+  function goalSplit(g,kids,total){
+    if(total<60)return '<div class="mg-split empty" aria-hidden="true"></div><div class="mg-cap">No hours yet. Time on any branch shows up here, split by branch.</div>';
+    var segs=[],label=[],rest=goalStats(g.id).total,own=rest;
+    kids.forEach(function(k,i){var t=goalStats(treeIds(k)).total;
+      if(i<8&&t>=60){segs.push('<span class="seg" style="flex-grow:'+Math.round(t)+';background:var(--s'+(i+1)+')" title="'+esc(k.name+' · '+fmtDur(t)+' · '+Math.round(t/total*100)+'%')+'"></span>');label.push(k.name+' '+fmtDur(t));}
+      else rest+=t;});
+    if(rest>=60)segs.push('<span class="seg seg-o" style="flex-grow:'+Math.round(rest)+'" title="'+esc((rest===own?'On the goal itself':'Other')+' · '+fmtDur(rest))+'"></span>');
+    return '<div class="mg-split" role="img" aria-label="'+esc('How '+fmtDur(total)+' splits: '+label.join(', '))+'">'+segs.join("")+'</div>'+
+      '<div class="mg-cap">How its '+fmtDur(total)+' splits across its branches</div>';
+  }
+  /* a main goal on the overview: its total, how it splits, and a row per branch */
   function mainGoalCard(g){
-    var kids=goalKids(g.id),st=goalStats(treeIds(g)),sk=goalStreak(treeIds(g));
-    var dots="";for(var i=6;i>=0;i--){var k=dayKey(startOfToday()-i*86400000);dots+='<i class="'+(st.days[k]?"on":"")+'"></i>';}
-    return '<div class="card north">'+
-      '<button class="north-head" data-action="goal-open" data-id="'+g.id+'" type="button">'+
-        '<span class="north-eye">Main goal</span>'+
-        '<span class="north-name">'+esc(g.name)+'</span>'+
-        (g.identity?'<span class="north-id">“'+esc(g.identity)+'”</span>':'')+
-        '<span class="north-stat"><b>'+fmtDur(st.weekSec)+'</b><span class="north-wk"> this week</span><span class="dots">'+dots+'</span>'+(sk.streak>=2?'<span class="streak">'+sk.streak+'-day streak</span>':'')+'</span>'+
+    var kids=goalKids(g.id),st=goalStats(treeIds(g));
+    return '<div class="card mg">'+
+      '<button class="mg-head" data-action="goal-open" data-id="'+g.id+'" type="button">'+
+        '<span class="mg-eye">Main goal</span>'+
+        '<span class="mg-row"><span class="mg-name">'+esc(g.name)+'</span>'+
+          '<span class="mg-tot"><b>'+fmtDur(st.total)+'</b><span>'+(st.weekSec>=60?fmtDur(st.weekSec)+' this week':'in total')+'</span></span></span>'+
       '</button>'+
-      '<div class="north-kids"><div class="north-h">'+kids.length+' branch'+(kids.length===1?'':'es')+'</div>'+
-        branchList(kids)+branchAdd(g)+'</div>'+
+      '<div class="mg-body">'+goalSplit(g,kids,st.total)+
+        '<div class="mg-kids">'+kids.map(function(k,i){return goalLine(k,i<8?i+1:0);}).join("")+'</div>'+branchAdd(g)+'</div>'+
+    '</div>';
+  }
+  function otherGoalsCard(solos,label){return '<div class="card og">'+(label?'<div class="og-h">Other goals</div>':'')+solos.map(function(g){return goalLine(g,0);}).join("")+'</div>';}
+  /* time on tasks that aren't on any goal, and a way to put them on one */
+  function looseTasks(){return state.tasks.filter(function(t){return !t.goalId&&taskSec(t)>=60;}).sort(function(a,b){return taskSec(b)-taskSec(a);});}
+  function goalOptions(){
+    var o='<option value="">Add to a goal…</option>';
+    (function walk(list,d){list.forEach(function(g){o+='<option value="'+g.id+'">'+(d?new Array(d+1).join("\u2003")+'↳ ':'')+esc(shortName(g.name))+'</option>';walk(goalKids(g.id),d+1);});})(topGoals(),0);
+    return o;
+  }
+  function looseBlock(){
+    var L=looseTasks(),sec=L.reduce(function(s,t){return s+taskSec(t);},0);
+    if(sec<60)return "";
+    var open=!!ui.looseOpen;
+    return '<div class="loose"><button class="loose-head" data-action="loose-toggle" type="button" aria-expanded="'+(open?'true':'false')+'">'+
+        '<span><b>'+fmtDur(sec)+'</b> tracked on tasks that aren’t on a goal</span><span class="loose-go">'+(open?'Close':'Link them')+'</span></button>'+
+      (open?'<div class="loose-list">'+L.slice(0,12).map(function(t){
+          return '<div class="loose-row"><span class="loose-nm">'+esc(t.name)+'</span><span class="loose-t">'+fmtDur(taskSec(t))+'</span>'+
+            '<select class="loose-sel" data-action="link-goal" data-id="'+t.id+'" aria-label="'+esc('Add '+t.name+' to a goal')+'">'+goalOptions()+'</select></div>';}).join("")+'</div>'+
+        '<div class="loose-note">Its hours, past and future, then count toward that goal. Chores can stay where they are.</div>':'')+
+    '</div>';
+  }
+  /* the top of the overview: totals, how to read the bars, and the time that isn't on a goal yet */
+  function goalsSummary(goals){
+    var ids=[];goals.forEach(function(g){ids=ids.concat(treeIds(g));});
+    var st=goalStats(ids);
+    return '<div class="card gsum">'+
+      '<div class="gsum-figs"><div class="gsum-fig"><b>'+fmtDur(st.total)+'</b><span>on your goals, all time</span></div>'+
+        '<div class="gsum-fig"><b>'+fmtDur(st.weekSec)+'</b><span>this week</span></div></div>'+
+      '<div class="gsum-key" role="img" aria-label="'+esc('How to read the bars: each runs from 0 to '+HOUR_GOAL+' hours. The tick at '+HOUR_BASICS+' hours is roughly the basics of a new skill; '+HOUR_GOAL+' hours puts you ahead of most people who start.')+'">'+
+        '<span class="hm"><b class="hm-t" style="left:'+(HOUR_BASICS/HOUR_GOAL*100)+'%"></b></span>'+
+        '<span class="hm-lbl" aria-hidden="true"><i class="k0">0</i><i class="k20" style="left:'+(HOUR_BASICS/HOUR_GOAL*100)+'%">'+HOUR_BASICS+'h · the basics</i><i class="k100">'+HOUR_GOAL+'h · ahead of most who start</i></span></div>'+
+      looseBlock()+
     '</div>';
   }
   function renderGoals(){
@@ -2601,9 +2724,9 @@ button.step-name:hover .step-nm{color:var(--accent)}
         addForm=standardGoalForm();
       }
     }
-    var mains=goals.filter(function(g){return goalKids(g.id).length;}),solos=goals.filter(function(g){return !goalKids(g.id).length;});   // main goals on top, standalone goals under them
-    var body=goals.length?('<div class="goal-list goal-tree">'+mains.map(mainGoalCard).join("")+
-        (solos.length?'<div class="solo-grid">'+solos.map(function(g){return '<div class="card solo">'+branchRow(g)+'</div>';}).join("")+'</div>':'')+'</div>')
+    var mains=goals.filter(function(g){return goalKids(g.id).length;}),solos=goals.filter(function(g){return !goalKids(g.id).length;});   // main goals first, standalone goals in one card after them
+    var body=goals.length?('<div class="goal-list goal-tree">'+goalsSummary(goals)+'<div class="ov">'+mains.map(mainGoalCard).join("")+
+        (solos.length?otherGoalsCard(solos,mains.length>0):'')+'</div></div>')
       :(ui.goalOpen?"":'<div class="card empty">No goals yet. Add one, break it into small daily actions, and your tracked time will show whether you’re actually on track.</div>');
     return '<section class="sec">'+
       '<div class="sec-head"><h2>Goals</h2><button class="btn btn-ghost btn-sm" data-action="toggle-goal" type="button">'+(ui.goalOpen?"Close":"+ New")+'</button></div>'+
@@ -2841,6 +2964,12 @@ button.step-name:hover .step-nm{color:var(--accent)}
     var back=up?backTo(up):'<button class="cv-back" data-action="set-view" data-view="goals" type="button">'+backSvg()+'Goals</button>';
     return '<section class="sec gp">'+back+goalCard(g)+'</section>';
   }
+  /* on a goal's page: a main goal shows how its hours split; any other goal shows its hours against 100 */
+  function hoursBlock(g,kids){
+    var st=goalStats(kids.length?treeIds(g):g.id);
+    if(kids.length)return '<div class="gp-hours">'+goalSplit(g,kids,st.total)+'</div>';
+    return '<div class="gp-hours"><div class="gp-hrow"><span><b>'+fmtDur(st.total)+'</b> of '+HOUR_GOAL+'h</span><span>'+nextMark(st.total)+'</span></div>'+hoursMeter(st.total)+'</div>';
+  }
   function goalCard(g){
     var kids=goalKids(g.id),up=goalParent(g),ids=kids.length?treeIds(g):g.id;
     var st=goalStats(ids);
@@ -2889,7 +3018,7 @@ button.step-name:hover .step-nm{color:var(--accent)}
     return '<div class="card goal-card">'+
       '<div class="goal-top"><div style="min-width:0;flex:1">'+eye+name+meta+'</div>'+
         xBtn("del-goal",g.id,kids.length?"Delete goal (its branches stay)":"Delete goal")+'</div>'+
-      identityBlock+stat+branches+
+      identityBlock+stat+hoursBlock(g,kids)+branches+
       '<div class="gp-cols'+(main?'':' one')+'"><div class="gp-main">'+main+'</div><div class="gp-side">'+side+'</div></div>'+
     '</div>';
   }
