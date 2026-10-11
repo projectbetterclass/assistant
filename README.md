@@ -52,13 +52,23 @@ deploy mechanism.
 Steps 5 and 6 are both needed for a change to be "done": publish makes it
 live, commit keeps a record.
 
-## Articles ("From your channels")
+## Articles (the reading shelves)
 
-The investing goal links to short reads of the stock-commentary videos in
-the YouTube Digest library. Each one is a markdown file in [`articles/`](articles/)
-with a small header (`id`, `channel`, `date`, `videoMin`, `title`, `checked`,
-`charts`). They ship in their own `<script id="app-articles">` block, separate
-from the code and from your data, and the page carries that block along when
-it republishes itself. To add a batch: write the files, run
+Short reads live on three shelves, each on one goal:
+
+| Shelf | Goal | What's on it |
+|---|---|---|
+| `invest` (the default) | Long-term investing | "From your channels": the stock-commentary videos, newest first |
+| `business` | Business: offers & sales | Alex & Leila Hormozi videos, as a numbered path |
+| `books` | Read 20 minutes a day | Chapter notes, in my own words, for the books on the shelf |
+
+Each one is a markdown file in [`articles/`](articles/) with a small header:
+`id`, `channel` (for a book: its title), `title`, and either a `date` (dated
+videos) or an `n` (the place in a path or on the shelf). Optional: `shelf`,
+`videoMin`, `part` (a chapter, e.g. `Ch. 3–4`), `by` (a book's author),
+`checked`, `charts`. Lesson ids such as `L08` or `P02` in the text become
+links to the lesson. They ship in their own `<script id="app-articles">` block,
+separate from the code and from your data, and the page carries that block
+along when it republishes itself. To add a batch: write the files, run
 `node scripts/build-articles.mjs`, then publish as above. Only what you've
 read is saved in app-state (`artRead`).
