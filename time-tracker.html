@@ -792,6 +792,44 @@ button.step-name:hover .step-nm{color:var(--accent)}
 .adv-basis.is-grounded{background:var(--good-soft);color:var(--good)}
 .adv-basis.is-guess{background:var(--warn-soft);color:var(--warn)}
 .adv-why{font-size:11.5px;color:var(--faint);line-height:1.4;margin-top:3px}
+/* building products: the idea in a sitting, the videos, the idea board */
+.ses-teach{padding:10px 12px;margin:6px 0 8px;background:var(--surface-2);border:1px solid var(--line);border-left:3px solid var(--accent);border-radius:9px;font-size:13.5px;line-height:1.55;color:var(--ink)}
+.curr-refs ul{margin:3px 0 0;padding-left:18px}
+.ls-vid{color:var(--accent);font-weight:600;text-decoration:none}
+.ls-vid:hover{text-decoration:underline}
+.ls-vid-w{color:var(--muted)}
+.ideas{margin-top:14px;padding:13px 14px 12px;background:var(--surface-2);border:1px solid var(--line);border-radius:12px}
+.ideas .dec-head{margin-bottom:8px}
+.idea+.idea{border-top:1px solid var(--line)}
+.idea-head{display:flex;align-items:center;gap:10px;width:100%;border:none;background:transparent;font-family:inherit;text-align:left;padding:10px 11px;cursor:pointer;color:var(--ink)}
+.idea-head:hover{background:var(--surface-2)}
+.idea-star{flex:none;font-size:16px;color:var(--faint);width:18px;text-align:center}
+.idea-star.on{color:var(--warn)}
+.idea-txt{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+.idea-nm{font-size:14px;font-weight:600;line-height:1.3}
+.idea-sum{display:flex;flex-wrap:wrap;gap:2px 10px;font-size:11.5px;color:var(--muted)}
+.idea-sc b{font-weight:600}
+.idea-sc b.y{color:var(--good)}
+.idea-sc b.n{color:var(--bad)}
+.idea-body{padding:0 11px 12px 39px}
+.idea-h{font-size:10.5px;text-transform:uppercase;letter-spacing:.06em;color:var(--faint);font-weight:600;margin:2px 0 6px}
+.idea-q{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:5px 10px;padding:7px 0;border-top:1px solid var(--line)}
+.idea-q:first-of-type{border-top:0}
+.idea-qt{flex:1 1 180px;font-size:12.5px;line-height:1.4;color:var(--muted)}
+.idea-qt b{color:var(--ink);font-weight:600}
+.idea-ps{display:flex;gap:4px;flex:none}
+.idea-p{border:1px solid var(--line-strong);background:transparent;color:var(--muted);font-family:inherit;font-size:11.5px;font-weight:600;padding:5px 9px;border-radius:99px;cursor:pointer;white-space:nowrap}
+.idea-p.on-y{background:var(--good-soft);border-color:var(--good);color:var(--good)}
+.idea-p.on-u{background:var(--warn-soft);border-color:var(--warn);color:var(--warn)}
+.idea-p.on-n{background:var(--bad-soft);border-color:var(--bad);color:var(--bad)}
+.idea-foot{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px;margin-top:10px}
+.idea-talked{font-size:12.5px;color:var(--muted)}
+.idea-talked b{color:var(--ink);font-family:var(--font-mono)}
+.idea-fnote{font-size:12px;font-weight:600;color:var(--warn)}
+.idea-add{display:flex;gap:8px;margin-top:10px}
+.idea-add .field{flex:1;background:var(--surface)}
+.idea-add .btn{flex:none}
+@media (max-width:460px){.idea-body{padding-left:11px}}
 /* from your channels: the commentary videos as short reads */
 .rd-entry{display:block;width:100%;margin-top:12px;border:1px solid var(--line-strong);background:var(--surface-2);color:var(--ink);font-family:inherit;text-align:left;padding:11px 12px;border-radius:10px;cursor:pointer}
 .rd-entry:hover{border-color:var(--accent)}
@@ -901,6 +939,81 @@ button.step-name:hover .step-nm{color:var(--accent)}
     {"id": "L33", "order": 33, "rung": "Produce", "stage_name": "Produce", "concept": "Your own end-to-end valuation", "task": "Pick a company you actually care about. Write its STORY first (D-01), then build the full valuation producing your own inputs at every stage. This is the produce-not-consume milestone.", "estimateMin": 120, "doctrine_ref": ["D-01"], "read": [], "example": "lab: build it yourself, using value.py only as a check"},
     {"id": "L34", "order": 34, "rung": "Produce", "stage_name": "Write it up", "concept": "A defensible valuation memo", "task": "Turn your valuation into a short memo: the story, the key judgments (each cited to a doctrine point with its sensitivity), a simulation/range, and the value-vs-price verdict. Then GRINDE-map the method so it sticks.", "estimateMin": 90, "doctrine_ref": ["D-01", "D-41", "D-42"], "read": [], "example": "GRINDE-map the whole method afterwards"}
   ]};
+  VAL_CURRICULUM.key="val";VAL_CURRICULUM.rungs=VAL_RUNGS;VAL_CURRICULUM.rungDesc=VAL_RUNG_DESC;
+  VAL_CURRICULUM.azTitle="Aswath’s curriculum, A → Z";
+  VAL_CURRICULUM.blurb="One real question on a real company per sitting. Pick whatever you feel like — the order is a suggestion, not a lock. Stuck? Do the one that feels easy and come back; your brain will tell you what it’s ready for.";
+  VAL_CURRICULUM.allDone="now produce and defend. 🏔";
+
+  /* Building products — the same sittings as the valuation ladder, but "an idea a week" instead of "a company a week":
+     every lesson runs on the idea you've starred on the idea board ({idea} in a task). Sources: Zero to One (Thiel),
+     The Mom Test (Fitzpatrick), $100M Offers (Hormozi) — summarised in my words, with the chapter to read — and videos
+     from the youtube-digest library. Only done-flags, revisits and the idea board are ever saved into app-state. */
+  var THIEL_Q=[["eng","Engineering","clearly better, not a bit better?"],["time","Timing","why now?"],["mono","Monopoly","a big share of a small market?"],["people","People","the skills or team to build it?"],["dist","Distribution","a way to reach customers, not just build?"],["dur","Durability","still yours in 10 years?"],["secret","Secret","something others don’t see?"]];
+  var PROD_CURRICULUM={goal_id:"mueihahzka4by",key:"prod",title:"Building products",azTitle:"Building products, A → Z",
+    rungs:["Find","Test","Offer","Reach","Keep","Decide"],
+    rungDesc:["which market — and where to start small","find out if people really want it, before you build","make it worth paying for, and price it","get it to the first 100 people","what stops others copying it","score your ideas, pick one, set a kill rule"],
+    blurb:"One real question on one of your own ideas per sitting — the one you’ve starred on the idea board. Each lesson says which chapter of Zero to One, The Mom Test or $100M Offers to read if you want more; the idea in the lesson is enough for the sitting.",
+    allDone:"now pick one idea and test it. 🚀",
+    lessons:[
+    {id:"P01",order:1,rung:"Find",stage_name:"New or copy?",concept:"Zero to one, or one to n",estimateMin:30,
+      teach:"Thiel splits progress in two. Going from 0 to 1 means making something new. Going from 1 to n means copying what already works into more places. Copying is easier to start but crowded, because everyone else can copy too. His test question: what important truth do very few people agree with you on? Most solo founders’ first products are 1 to n — a known product, done better for a narrow group. That can work, as long as you know which one you’re doing.",
+      task:"Is {idea} a 0-to-1 or a 1-to-n idea? Answer Thiel’s question for its area in one sentence. Judge: if it’s 1 to n, what do you do that the ones you copy don’t? If you can’t name it, that’s the first gap. Try it this week: find the three closest products to {idea} and write what each one gets wrong.",
+      read:["Zero to One, ch. 1 (The Challenge of the Future)"]},
+    {id:"P02",order:2,rung:"Find",stage_name:"A starving crowd",concept:"The market matters more than the offer",estimateMin:30,
+      teach:"Hormozi ranks it: the market matters more than the offer, and the offer more than how well you sell. A good market passes four tests — people are in real pain (not a nice-to-have), they can pay, you can find them in one place, and the market is growing. Miss one and it fails: unemployed people have the pain but not the money; newspaper buyers can pay but the market is shrinking. If you know a market from your own life, start there — you already know its pain.",
+      task:"Score {idea}’s market on the four tests: pain, money, easy to find, growing. Do the same for one other market you could serve with the same skills. Judge: which one passes all four? Try it this week: write down where the people in the better market gather — a subreddit, a group, a newsletter.",
+      read:["$100M Offers, the “starving crowd” chapter"],
+      watch:[{t:"Alex Hormozi · The Key To Finding a Profitable Market",u:"https://www.youtube.com/watch?v=LqC-oXjatmA",w:"the four tests, with the resume-coach and seniors-dating examples"}]},
+    {id:"P03",order:3,rung:"Find",stage_name:"Start small",concept:"Own a tiny market first",estimateMin:30,
+      teach:"Thiel: competition eats profits, so a new company should start by owning a small market, and only then grow. Amazon started with books, PayPal with eBay’s power sellers, Facebook with one college. “We only need 1% of a huge market” is a trap — you start in a fight with everyone. The Mom Test adds the practical check: if the people you talk to don’t share the same problem, your group is still too broad.",
+      task:"Write {idea}’s smallest real market in one sentence: who, doing what, where. Roughly how many of them are there, and how would you reach the first 100? Judge: is it small enough that you’d be their obvious choice, but big enough to matter? Try it this week: message three people in that group.",
+      read:["Zero to One, ch. 3 and ch. 5 (“start small and monopolize”)","The Mom Test, ch. 7 (Choosing your customers)"]},
+    {id:"P04",order:4,rung:"Test",stage_name:"The Mom Test",concept:"Ask about their life, not your idea",estimateMin:30,
+      teach:"Ask your mom if your idea is good and she’ll say yes, because she loves you — and everyone else is polite too. The fix has three rules: talk about their life, not your idea; ask about specific things that already happened, not opinions about the future; talk less and listen. Bad: “Would you use this?”, “How much would you pay?”. Good: “Walk me through the last time this happened”, “What have you tried?”, “What did it cost you?”. Fastlane’s founders ran 20 of these calls a week and found their product in what people already did.",
+      task:"Write three bad questions and three good ones for {idea}, then rewrite each bad one into a good one. Judge: which good question is most likely to show you you’re wrong? Try it this week: ask it to two real people, and add them to “talked to” on the idea board.",
+      read:["The Mom Test, ch. 1 (The Mom Test)"],
+      watch:[{t:"Starter Story · How This SaaS Hit $69K/Month In Just 2 Months",u:"https://www.youtube.com/watch?v=BA_fC95p43c",w:"2,000 customer calls using the Mom Test — and how they narrowed an all-in-one tool to one job"}]},
+    {id:"P05",order:5,rung:"Test",stage_name:"Bad data",concept:"Compliments, fluff and feature requests",estimateMin:30,
+      teach:"Three things feel like progress and aren’t. Compliments (“that’s cool”) — deflect them. Fluff: “I usually”, “I would”, “I might” — anchor it by asking for the last real time it happened. Feature requests — dig under them by asking why they want it. If you left a conversation feeling great but learned no fact about their life, it was a pitch, not a test.",
+      task:"Take three reactions you’ve had to {idea} — or typical ones: “Nice!”, “I’d use that”, “It should have X”. Sort each into compliment, fluff or idea, and write the follow-up question that turns it into a fact. Judge: what’s the one fact about your customer you still don’t know? Try it this week: get that fact from one person.",
+      read:["The Mom Test, ch. 2 (Avoiding bad data)"]},
+    {id:"P06",order:6,rung:"Test",stage_name:"Commitment",concept:"Time, reputation, money",estimateMin:30,
+      teach:"A conversation only counts if it ends with a commitment, because a commitment is how people tell you the truth. It comes in three currencies: time (a follow-up, trying the beta), reputation (an introduction, a public testimonial), money (a pre-order, a deposit). “That went well” with no next step is a zombie lead. Cleo built a waitlist from LinkedIn posts and sold its paid beta only to that list — about $30K a month within days, before any public launch.",
+      task:"For {idea}, write the commitment you’ll ask for at each stage: after a first chat, after a demo, and before you build the full product. Judge: what’s the smallest money commitment that would really prove demand? Try it this week: ask one person for it.",
+      read:["The Mom Test, ch. 5 (Commitment and advancement)"],
+      watch:[{t:"Starter Story · How My App Hit $60K/Month in 2 Months",u:"https://www.youtube.com/watch?v=XifgHi9R5Rc",w:"waitlist first, a paid beta for the list, no public launch"}]},
+    {id:"P07",order:7,rung:"Offer",stage_name:"The value equation",concept:"What makes an offer worth paying for",estimateMin:30,
+      teach:"Hormozi: value = (the dream outcome × how likely they believe they’ll get it) ÷ (how long it takes × how much effort it costs them). Liposuction and a $5 weight-loss ebook promise the same outcome; the price gap is the other three parts — a doctor with 10,000 surgeries behind him beats one with a single surgery. Making bigger promises is easy. The bottom half is harder and worth more: getting people the result faster and with less effort.",
+      task:"Write {idea}’s four parts, one line each. Judge: which part is weakest, and what one concrete change would cut the time or the effort for the customer? Try it this week: make that change in a mock-up or in how you pitch it.",
+      read:["$100M Offers, the “value equation” chapter"],
+      watch:[{t:"Alex Hormozi · This ONE Equation Will Make You RICH",u:"https://www.youtube.com/watch?v=5MHQr-Z17Hc",w:"the four parts, with the liposuction and 10,000-surgeries examples"}]},
+    {id:"P08",order:8,rung:"Offer",stage_name:"Price",concept:"Charge what it’s worth",estimateMin:30,
+      teach:"If you sell what everyone sells, you compete on price and lose. Make an offer people can’t compare, then charge for the value. Hormozi’s math: at a 20% profit margin, raising the price 20% doubles your profit. When he tripled the price at his gym, a third of the members left and revenue still doubled. A higher price also pays for better results, which is what keeps customers.",
+      task:"Set a price for {idea} and defend it with the value equation, not with your costs. Compare it with what the customer pays today for their workaround — their time counts. Judge: are you underpricing out of fear? Try it this week: say the price in your next conversation, or put it on a page, and watch the reaction.",
+      read:["$100M Offers, the “commodity problem” and pricing chapters"],
+      watch:[{t:"Alex Hormozi · How To Raise Your Prices",u:"https://www.youtube.com/watch?v=Gy-RmpRif-I",w:"the margin math, and the letter he actually sent"}]},
+    {id:"P09",order:9,rung:"Reach",stage_name:"Distribution",concept:"If you build it, they won’t just come",estimateMin:30,
+      teach:"Thiel: poor sales, not a poor product, is the most common reason companies fail. A customer has to be worth more over their lifetime than it costs to get them, and the trap is the middle — too cheap to sell person to person, too small for ads to pay. Greg Isenberg adds that distribution isn’t posting: it’s knowing where your customers’ attention already lives and the words they use for their problem — before you build.",
+      task:"Make a distribution map for {idea}: 20 places its customers already pay attention — subreddits, creators, newsletters, groups, search terms, tools they pay for. Pick one channel for the first 100 users. Judge: what will one customer cost you there, and what will they pay you in a year? Try it this week: post or reply once in that channel.",
+      read:["Zero to One, ch. 11 (If You Build It, Will They Come?)"],
+      watch:[{t:"Greg Isenberg · “Learn AI” Is Bad Advice. Learn This Instead",u:"https://www.youtube.com/watch?v=jJIOA4GroBw",w:"the distribution map and the 48-hour loop"}]},
+    {id:"P10",order:10,rung:"Reach",stage_name:"The first 100",concept:"Do things that don’t scale",estimateMin:30,
+      teach:"The first 100 users come by hand. Super Demo, now at $250K a month, talked to 100+ founders before building. Then three steps: catch the people already searching (comparison pages, free tools), do things that don’t scale (the founder made free demos for founders who asked on Reddit — in public, so others saw them), and show up wherever your users already are. Launch early: speed is the one advantage a small founder has.",
+      task:"Write {idea}’s first-100 plan: who is already searching for a solution, one thing that doesn’t scale you’d do for each early user, and where you’ll show up. Judge: which step gets you the first 10, and how fast? Try it this week: do the unscalable thing for one person.",
+      read:["Zero to One, ch. 11 (the sales methods)"],
+      watch:[{t:"Starter Story · How This $250K/Month SaaS Got Its First 100 Users",u:"https://www.youtube.com/watch?v=l4WEqPX52Cg",w:"his three-step playbook"}]},
+    {id:"P11",order:11,rung:"Keep",stage_name:"Moats",concept:"What keeps it yours",estimateMin:30,
+      teach:"Thiel’s four things that keep a business yours: technology at least 10 times better at something important, network effects (each user makes it better for the others), economies of scale (cheaper the bigger you get), and brand. Hormozi adds: if anyone can start your business tomorrow, the price falls — the best moats are things only you know how to do. A small product rarely has one on day one; the question is which one it could build.",
+      task:"Which of the four could {idea} have in five years — honestly? Name it, and what you’d have to do from day one to build it. Judge: if a funded competitor copied {idea} next month, what would they still not have? Try it this week: write that answer as your one-line pitch.",
+      read:["Zero to One, ch. 5 (Last Mover Advantage)"],
+      watch:[{t:"Alex Hormozi · What Makes The Perfect Business (5 Things)",u:"https://www.youtube.com/watch?v=3fsJFUvA6Ts",w:"the fifth thing, “unique”: capital, know-how and brand as moats"}]},
+    {id:"P12",order:12,rung:"Decide",stage_name:"The seven questions",concept:"Score it, pick one, set a kill rule",estimateMin:30,
+      teach:"Thiel’s seven questions for any new business: engineering (clearly better, not a bit better), timing (why now), monopoly (a big share of a small market), people (the right team or skills), distribution (a way to deliver, not just build), durability (defensible 10–20 years out), and a secret (something others don’t see). He blames the cleantech bust on companies that failed most of them. You don’t need seven yeses — but every “no” is a risk you’re choosing.",
+      task:"Score every idea on your idea board on the seven questions. Pick the one to test next, and write the result that would make you drop it — for example, fewer than 3 of 10 people commit. Judge: is your favourite also the best-scoring one? If not, why? Try it this week: run its test.",
+      read:["Zero to One, ch. 13 (Seeing Green)"]}
+  ]};
+  PROD_CURRICULUM.lessons.forEach(function(l){l.track="prod";});
+  var CURRICULA=[VAL_CURRICULUM,PROD_CURRICULUM];
 
   /* Aswath's own calls — curated from valuation-agent data/aswath_takes.json (his videos, via youtube-digest).
      Frozen at their dates, older per-share numbers pre-date splits: a worked example of method, never a signal. */
@@ -922,6 +1035,9 @@ button.step-name:hover .step-nm{color:var(--accent)}
   var syncMode="check"; // check|sync|local|error|readonly
   var VIEW_KEY="wmtw_view";
   function loadView(){try{var v=localStorage.getItem(VIEW_KEY);return (v==="goals"||v==="projects"||v==="review"||v==="curriculum"||v==="reading")?v:"now";}catch(e){return "now";}}
+  var CV_KEY="wmtw_cv_goal";   // which track's A → Z you opened — survives the reload after a publish
+  function loadCvGoal(){try{return localStorage.getItem(CV_KEY)||null;}catch(e){return null;}}
+  function setCvGoal(id){ui.cvGoal=id||null;try{if(id)localStorage.setItem(CV_KEY,id);else localStorage.removeItem(CV_KEY);}catch(e){}}
   var ART_KEY="wmtw_art";   // the article you're on + the list filter — publishing reloads the page, this brings you back
   function loadArt(){try{var s=JSON.parse(localStorage.getItem(ART_KEY)||"null");if(s&&typeof s==="object")return {id:s.id||null,f:s.f||"all"};}catch(e){}return {id:null,f:"all"};}
   var ASW_KEY="wmtw_asw_closed";
@@ -930,7 +1046,7 @@ button.step-name:hover .step-nm{color:var(--accent)}
   function loadSes(){try{var s=JSON.parse(localStorage.getItem(SES_KEY)||"null");if(s&&s.tid&&s.d&&Date.now()-(s.at||0)<2*86400000)return s;}catch(e){}return null;}
   var DEC_KEY="wmtw_dec_draft";   // an unfinished call survives a reload — e.g. you switched apps to look up the price
   function loadDecDraft(){try{var s=JSON.parse(localStorage.getItem(DEC_KEY)||"null");if(s&&s.d&&s.gid&&Date.now()-(s.t0||0)<3*86400000)return s;}catch(e){}return null;}
-  var ui={addOpen:false, goalOpen:false, actionOpen:{}, noteOpen:{}, cueOpen:{}, idOpen:{}, repOpen:{}, stepAddOpen:{}, proposal:{}, loading:{}, projectOpen:false, projEdit:{}, projLoading:{}, adviseLoading:{}, currRefs:{}, projCardOpen:{}, goalSecOpen:{}, aswClosed:loadAsw(), aswAll:false, aswOpen:{}, lessonOpen:{}, stepOpen:{}, dec:loadDecDraft(), decRows:{}, decAll:false, armed:null, ses:loadSes(), goalMode:"have", shapeLevel:"new", shapeTopic:"", shapeLoading:false, shapeProposal:null, hoLoading:{}, view:loadView(), art:loadArt(), date:dayKey(Date.now())};
+  var ui={addOpen:false, goalOpen:false, actionOpen:{}, noteOpen:{}, cueOpen:{}, idOpen:{}, repOpen:{}, stepAddOpen:{}, proposal:{}, loading:{}, projectOpen:false, projEdit:{}, projLoading:{}, adviseLoading:{}, currRefs:{}, projCardOpen:{}, goalSecOpen:{}, aswClosed:loadAsw(), aswAll:false, aswOpen:{}, lessonOpen:{}, stepOpen:{}, dec:loadDecDraft(), decRows:{}, decAll:false, armed:null, ses:loadSes(), goalMode:"have", shapeLevel:"new", shapeTopic:"", shapeLoading:false, shapeProposal:null, hoLoading:{}, ideaOpen:{}, view:loadView(), cvGoal:loadCvGoal(), art:loadArt(), date:dayKey(Date.now())};
   var isTouch=("ontouchstart" in window)||(navigator.maxTouchPoints>0);
   var sampleNS; // undefined=unknown, null=unavailable, function=ready
 
@@ -1147,6 +1263,7 @@ button.step-name:hover .step-nm{color:var(--accent)}
     else if(a==="add-project-log"){var lpid=f.getAttribute("data-id");addProjectLog(lpid,val("plog-"+lpid));}
     else if(a==="cur-when"){var wg=f.getAttribute("data-id");ui.cueOpen["when:"+wg]=false;commit(function(){var g=findGoal(wg);if(!g)return;g.curr=g.curr||{};g.curr.when=(val("cur-when-"+wg)||"").trim().slice(0,80);});}
     else if(a==="prime-save")savePrime(f.getAttribute("data-id"),f.getAttribute("data-lid"),val("prime-guess"));
+    else if(a==="idea-add")addIdea(f.getAttribute("data-id"),val("idea-name"));
   }
   function onClick(e){
     var b=e.target.closest("[data-action]");if(!b)return;
@@ -1237,7 +1354,13 @@ button.step-name:hover .step-nm{color:var(--accent)}
     else if(a==="rd-filter"){ui.art.f=b.getAttribute("data-f")||"all";saveArt();render();}
     else if(a==="rd-done"){var nxA=artNext(id);setArt(nxA?nxA.id:null);commit(function(){state.artRead=state.artRead||{};state.artRead[id]=Date.now();});window.scrollTo(0,0);}
     else if(a==="rd-unread"){commit(function(){if(state.artRead)delete state.artRead[id];});}
-    else if(a==="rd-lesson"){var rlid=b.getAttribute("data-lid");ui.lessonOpen[rlid]=true;ui.view="curriculum";try{localStorage.setItem(VIEW_KEY,"curriculum");}catch(e){}render();var rle=document.querySelector('.ls-main[data-id="'+rlid+'"]');if(rle&&rle.scrollIntoView)rle.scrollIntoView({block:"start"});}
+    else if(a==="idea-open"){ui.ideaOpen[id]=!ui.ideaOpen[id];render();}
+    else if(a==="idea-q"){var qiid=b.getAttribute("data-iid"),qk=b.getAttribute("data-k"),qv=b.getAttribute("data-v");commit(function(){var it=findIdea(findGoal(id),qiid);if(!it)return;it.q=it.q||{};if(it.q[qk]===qv)delete it.q[qk];else it.q[qk]=qv;});}
+    else if(a==="idea-talk"){var tiid=b.getAttribute("data-iid");commit(function(){var it=findIdea(findGoal(id),tiid);if(it)it.talked=(it.talked||0)+1;});toast("Logged — a conversation about their life, not your idea");}
+    else if(a==="idea-focus"){var fiid=b.getAttribute("data-iid");commit(function(){var g=findGoal(id);if(g&&findIdea(g,fiid))g.ideaFocus=fiid;});toast("Lessons now run on this idea");}
+    else if(a==="idea-del"){var diid=b.getAttribute("data-iid");if(armed("idea-del:"+diid))commit(function(){var g=findGoal(id);if(!g)return;g.ideas=(g.ideas||[]).filter(function(x){return x.id!==diid;});if(g.ideaFocus===diid)g.ideaFocus=(g.ideas[0]||{}).id||null;});}
+    else if(a==="cv-open"){setCvGoal(id);ui.view="curriculum";try{localStorage.setItem(VIEW_KEY,"curriculum");}catch(e){}render();window.scrollTo(0,0);}
+    else if(a==="rd-lesson"){var rlid=b.getAttribute("data-lid"),rlg=currGoals().filter(function(x){return inCurr(x,rlid);})[0];if(rlg)setCvGoal(rlg.id);ui.lessonOpen[rlid]=true;ui.view="curriculum";try{localStorage.setItem(VIEW_KEY,"curriculum");}catch(e){}render();var rle=document.querySelector('.ls-main[data-id="'+rlid+'"]');if(rle&&rle.scrollIntoView)rle.scrollIntoView({block:"start"});}
     else if(a==="toggle-gsec"){var gk=id+':'+b.getAttribute("data-key");ui.goalSecOpen[gk]=!ui.goalSecOpen[gk];render();}
     else if(a==="asw-toggle"){ui.aswClosed=!ui.aswClosed;try{localStorage.setItem(ASW_KEY,ui.aswClosed?"1":"0");}catch(e){}render();}
     else if(a==="asw-all"){ui.aswAll=!ui.aswAll;render();}
@@ -1336,8 +1459,8 @@ button.step-name:hover .step-nm{color:var(--accent)}
   function homeNext(){
     var pick=null,goals=state.goals||[],i,j,k;
     for(i=0;i<goals.length&&!pick;i++){
-      var g=goals[i],c=valCurrFor(g);
-      if(c){var plan=todayPlan(g),dn=currDone(g);for(var q=0;q<plan.length&&!pick;q++){if(dn[plan[q]]||revFor(g,plan[q]))continue;var L=lessonById(plan[q]);pick={type:"lesson",gid:g.id,lid:L.id,goal:g.name,label:L.concept,rung:L.rung,when:(g.curr&&g.curr.when)||"",min:lessonLeftMin(g,L),tid:lessonTid(g.id,L.id),cont:lessonLoggedMin(g.id,L.id)>0};}}
+      var g=goals[i],c=currFor(g);
+      if(c){var plan=todayPlan(g),dn=currDone(g);for(var q=0;q<plan.length&&!pick;q++){if(dn[plan[q]]||revFor(g,plan[q]))continue;var L=lessonById(plan[q]);pick={type:"lesson",gid:g.id,lid:L.id,goal:g.name,label:L.concept,rung:L.rung,track:c.key==="prod"?c.title:"",when:(g.curr&&g.curr.when)||"",min:lessonLeftMin(g,L),tid:lessonTid(g.id,L.id),cont:lessonLoggedMin(g.id,L.id)>0};}}
     }
     if(!pick){
       var today=dayKey(Date.now());
@@ -1357,7 +1480,7 @@ button.step-name:hover .step-nm{color:var(--accent)}
       ?'<button class="btn btn-primary btn-sm" data-action="cur-start" data-id="'+pick.gid+'" data-lid="'+pick.lid+'" type="button">'+(pick.cont?'Continue':'Start')+' · ~'+pick.min+'m</button>'
       :(pick.tid==="act_journal"?'<button class="btn btn-primary btn-sm" data-action="dec-open" data-id="'+pick.gid+'" type="button">Log a decision</button>'
         :'<button class="btn btn-primary btn-sm" data-action="start" data-id="'+pick.tid+'" type="button">Start</button>');
-    var eye=pick.type==="lesson"?'Today’s '+DAILY_MIN+' min · '+esc(pick.rung)+(pick.when?' · '+esc(pick.when):''):esc(pick.goal);
+    var eye=pick.type==="lesson"?'Today’s '+DAILY_MIN+' min · '+(pick.track?esc(pick.track)+' · ':'')+esc(pick.rung)+(pick.when?' · '+esc(pick.when):''):esc(pick.goal);
     return '<div class="home-next">'+
       '<div class="home-next-eye">Next up · '+eye+'</div>'+
       '<div class="home-next-row"><div class="home-next-label">'+esc(pick.label)+'</div>'+start+'</div>'+
@@ -1538,17 +1661,22 @@ button.step-name:hover .step-nm{color:var(--accent)}
     '</form>';
   }
   /* ---------- valuation curriculum (laddered lessons) ---------- */
-  function valCurrFor(g){return g&&VAL_CURRICULUM.goal_id===g.id?VAL_CURRICULUM:null;}
+  function valCurrFor(g){return g&&VAL_CURRICULUM.goal_id===g.id?VAL_CURRICULUM:null;}   // the investing goal: Aswath's calls, the decision log, the articles
+  function currFor(g){if(!g)return null;for(var i=0;i<CURRICULA.length;i++)if(CURRICULA[i].goal_id===g.id)return CURRICULA[i];return null;}   // any goal with a lesson track
+  function currOfLesson(l){for(var i=0;i<CURRICULA.length;i++)if(CURRICULA[i].lessons.indexOf(l)>=0)return CURRICULA[i];return VAL_CURRICULUM;}
+  function currGoals(){return (state.goals||[]).filter(currFor);}
+  function isProd(l){return !!l&&l.track==="prod";}
   function ladderNames(g){var p=g.progression;return (valCurrFor(g)&&p&&p.ladder.length===VAL_RUNGS.length)?VAL_RUNGS:p.ladder;}
   function ladderDescs(g){return ladderNames(g)===VAL_RUNGS?VAL_RUNG_DESC:BLOOM.map(function(x){return x.d;});}
   function isLessonTask(t){return !!t&&String(t.id).indexOf("lesson_")===0;}
-  function lessonOfTask(t){var m=String(t&&t.id||"").match(/^lesson_(.+)_(L\d+)$/);if(!m)return null;var g=findGoal(m[1]),l=lessonById(m[2]);return (g&&l)?{g:g,l:l}:null;}
-  function lessonCo(l){return l.co||l.call||"the company";}
-  function lessonN(l){return "L"+(l.order<10?"0":"")+l.order;}
-  function lessonRungIdx(l){var i=VAL_RUNGS.indexOf(l.rung);return i<0?0:i;}
+  function lessonOfTask(t){var m=String(t&&t.id||"").match(/^lesson_(.+)_([A-Z]\d+)$/);if(!m)return null;var g=findGoal(m[1]),l=lessonById(m[2]);return (g&&l)?{g:g,l:l}:null;}
+  function lessonCo(l){if(isProd(l)){var fi=focusIdea();return fi?fi.name:"your idea";}return l.co||l.call||"the company";}
+  function lessonTask(l){return String(l.task||"").replace(/\{idea\}/g,lessonCo(l));}   // a product lesson runs on the starred idea
+  function lessonN(l){return l.id;}
+  function lessonRungIdx(l){var i=currOfLesson(l).rungs.indexOf(l.rung);return i<0?0:i;}
   function currDone(g){return (g.curr&&g.curr.done)||{};}
   function currentLesson(g){
-    var c=valCurrFor(g);if(!c)return null;
+    var c=currFor(g);if(!c)return null;
     for(var i=0;i<c.lessons.length;i++){if(lessonOpen(g,c.lessons[i].id))return {lesson:c.lessons[i],idx:i};}
     return null;
   }
@@ -1556,7 +1684,7 @@ button.step-name:hover .step-nm{color:var(--accent)}
   function revSched(g){return (g&&g.curr&&g.curr.rev)||{};}
   function revFor(g,lid){return revSched(g)[lid]||null;}
   function lessonOpen(g,lid){return !currDone(g)[lid]&&!revFor(g,lid);}   // still to do as a full sitting; a pending revisit waits for its day instead
-  function revCo(l){return REV_CO[lessonCo(l)]||"a new company";}
+  function revCo(l){if(isProd(l)){var fi=focusIdea(),o=prodIdeas().filter(function(x){return !fi||x.id!==fi.id;})[0];return o?o.name:"a different idea of yours";}return REV_CO[lessonCo(l)]||"a new company";}
   function revDays(r){return Math.ceil((r.due-Date.now())/86400000);}   // days until due; 0 or less = due now
   function revAgo(r){return Math.max(0,Math.round((Date.now()-r.set)/86400000));}
   function revList(g){var s=revSched(g),out=[];Object.keys(s).forEach(function(lid){var l=lessonById(lid);if(l)out.push({l:l,r:s[lid],days:revDays(s[lid])});});out.sort(function(a,b){return a.r.due-b.r.due;});return out;}
@@ -1609,19 +1737,20 @@ button.step-name:hover .step-nm{color:var(--accent)}
     return {graded:Object.keys(graded).length,nailed:nailed,passed:Object.keys((g.curr&&g.curr.revPassed)||{}).length};
   }
   /* each lesson gets its own timer task, so time and history stay per lesson even when you pick out of order */
-  function lessonById(lid){var ls=VAL_CURRICULUM.lessons;for(var i=0;i<ls.length;i++)if(ls[i].id===lid)return ls[i];return null;}
+  function lessonById(lid){for(var c=0;c<CURRICULA.length;c++){var ls=CURRICULA[c].lessons;for(var i=0;i<ls.length;i++)if(ls[i].id===lid)return ls[i];}return null;}
+  function inCurr(g,lid){var c=currFor(g),l=lessonById(lid);return !!(c&&l&&c.lessons.indexOf(l)>=0);}
   function lessonTid(gid,lid){return "lesson_"+gid+"_"+lid;}
   function lessonLoggedMin(gid,lid){var t=findTask(lessonTid(gid,lid));return t?Math.floor(taskSec(t)/60):0;}
   function lessonLeftMin(g,l){if(currDone(g)[l.id])return 0;return Math.max(5,(l.estimateMin||15)-lessonLoggedMin(g.id,l.id));}
   /* today's ~30 min: today's own pick if you made one; otherwise yesterday's unfinished picks, topped up with the next lessons in line */
   function todayPlan(g){
-    if(!valCurrFor(g))return [];
-    var t=g.curr&&g.curr.today;
-    if(t&&t.day===dayKey(Date.now()))return (t.ids||[]).filter(lessonById);
-    return suggestPlan(g,((t&&t.ids)||[]).filter(function(id){return lessonById(id)&&lessonOpen(g,id);}));
+    if(!currFor(g))return [];
+    var t=g.curr&&g.curr.today,mine=function(id){return inCurr(g,id);};
+    if(t&&t.day===dayKey(Date.now()))return (t.ids||[]).filter(mine);
+    return suggestPlan(g,((t&&t.ids)||[]).filter(function(id){return mine(id)&&lessonOpen(g,id);}));
   }
   function suggestPlan(g,ids){
-    var ls=valCurrFor(g).lessons,total=0;ids=ids.slice();
+    var ls=currFor(g).lessons,total=0;ids=ids.slice();
     ids.forEach(function(id){total+=lessonLeftMin(g,lessonById(id));});
     for(var i=0;i<ls.length&&total<DAILY_MIN;i++){
       var l=ls[i];if(!lessonOpen(g,l.id)||ids.indexOf(l.id)>=0)continue;
@@ -1648,7 +1777,7 @@ button.step-name:hover .step-nm{color:var(--accent)}
       gg.curr=gg.curr||{};gg.curr.today={day:dayKey(Date.now()),ids:plan};
       if(ui.ses&&ui.ses.tid!==tid)sesWrite(null);          // another lesson's half-done sitting: keep its notes, don't lose them
       var t=findTask(tid);
-      if(!t){t={id:tid,name:"📘 L"+(l.order<10?"0":"")+l.order+" · "+l.concept,category:"",estimateMin:l.estimateMin||null,planned:false,daily:false,goalId:gid,stepId:null,depth:"deep",cue:"",done:false,createdAt:Date.now(),sessions:[]};state.tasks.push(t);}
+      if(!t){t={id:tid,name:"📘 "+lessonN(l)+" · "+l.concept,category:"",estimateMin:l.estimateMin||null,planned:false,daily:false,goalId:gid,stepId:null,depth:"deep",cue:"",done:false,createdAt:Date.now(),sessions:[]};state.tasks.push(t);}
       t.done=false;
       var act=findTask(state.activeId);if(act)closeRunning(act);
       t.sessions=t.sessions||[];t.sessions.push({start:Date.now(),end:null});state.activeId=tid;
@@ -1666,7 +1795,7 @@ button.step-name:hover .step-nm{color:var(--accent)}
       sesWrite(grade,tid);                                   // what you guessed, asked, answered and still find confusing
       if(state.activeId===tid){if(t)closeRunning(t);state.activeId=null;}
       if(state.paused&&state.paused.id===tid)clearPause();   // grading ends a paused lesson
-      if(gg.progression){gg.progression.reps=gg.progression.reps||[];gg.progression.reps.push({t:Date.now(),rung:rung,grade:grade,note:"L"+l.order+" · "+l.concept});}
+      if(gg.progression){gg.progression.reps=gg.progression.reps||[];gg.progression.reps.push({t:Date.now(),rung:rung,grade:grade,note:lessonN(l)+" · "+l.concept});}
       gg.curr=gg.curr||{};gg.curr.done=gg.curr.done||{};
       if(grade==="nailed"){gg.curr.done[l.id]=true;if(t)t.done=true;}
       else {delete gg.curr.done[l.id];if(t)t.done=false;}   // needed the notes: not yours yet
@@ -1705,16 +1834,17 @@ button.step-name:hover .step-nm{color:var(--accent)}
     var bar='<div class="ses-bar" id="ses-bar">'+segs+'<b id="ses-mark" style="left:'+Math.min(sec/60/DAILY_MIN*100,100).toFixed(1)+'%"></b></div>'+
       '<div class="ses-sug" id="ses-sug">'+(now!==st?'Suggested now: '+SES_STAGES[now][1]:'')+'</div>';
     var call=l.call?'<button class="curr-call" data-action="asw-go" data-id="'+l.call+'" type="button">In his '+esc(l.call)+' call →</button>':'';
-    var ask='<div class="ses-q"><b>'+lessonN(l)+' · '+esc(l.concept)+'</b><span class="ses-co">on '+esc(co)+'</span></div><div class="ses-task">'+esc(l.task)+'</div>';
+    var ask='<div class="ses-q"><b>'+lessonN(l)+' · '+esc(l.concept)+'</b><span class="ses-co">on '+esc(co)+'</span></div><div class="ses-task">'+esc(lessonTask(l))+'</div>';
     var nav=function(i){return '<div class="dec-nav"><span></span><button class="btn btn-primary btn-sm" data-action="ses-stage" data-i="'+i+'" type="button">Next: '+SES_STAGES[i][1]+' →</button></div>';};
     var body;
     if(st===0)body=ask+call+
       '<label class="ses-lbl" for="ses-guess">Your guess, one line — before any reading'+(s.primed?' · <span class="ses-ok">you primed this ✓</span>':'')+'</label>'+
       '<input id="ses-guess" class="field" value="'+esc(d.guess)+'" placeholder="What do you think the answer is?">'+
       '<div class="ses-why">Generate first, check later — recognising isn’t recalling. <i>Justin Sung</i></div>'+nav(1);
-    else if(st===1){var rd=(l.read||[]).map(function(x){return '<li>'+esc(x)+'</li>';}).join("");
-      body=ask+'<div class="ses-rule"><b>One priority: compare and judge.</b> How is this like or unlike what you already know? Which matters more for '+esc(co)+'? Never more than two paragraphs without a question. Draw it on your map as you go — grouped, connected, with arrows.</div>'+
-      ((rd||l.example)?'<div class="curr-refs">'+(rd?'<div><b>Read:</b><ul>'+rd+'</ul></div>':'')+(l.example?'<div class="curr-ex"><b>Lab / example:</b> '+esc(l.example)+'</div>':'')+'</div>':'')+
+    else if(st===1){
+      body=ask+(l.teach?'<div class="ses-teach"><b>The idea.</b> '+esc(l.teach)+'</div>':'')+
+      '<div class="ses-rule"><b>One priority: compare and judge.</b> How is this like or unlike what you already know? Which matters more for '+esc(co)+'? Never more than two paragraphs without a question. Draw it on your map as you go — grouped, connected, with arrows.</div>'+
+      lessonRefs(l,"ses")+
       '<label class="ses-lbl" for="ses-qs">Confused? Good — write it as a question</label>'+
       '<textarea id="ses-qs" class="field note-area ses-area" placeholder="Questions as they come up…">'+esc(d.qs)+'</textarea>'+nav(2);}
     else if(st===2)body=ask+'<div class="ses-rule"><b>Close the reading.</b> Answer the question for '+esc(co)+' in three lines, from memory — or redraw the backbone of your map.</div>'+
@@ -1738,8 +1868,8 @@ button.step-name:hover .step-nm{color:var(--accent)}
       '<div class="ses-rev-head"><span class="ses-rev-t">Revisit · '+REV_MIN+' min · no notes</span><span class="ses-rev-left" id="rev-left">'+(sec>=REV_MIN*60?'time’s up — grade it':fmtClock(REV_MIN*60-sec)+' left')+'</span></div>'+
       '<div class="ses-bar"><i class="ses-seg is-now" style="width:100%"></i><b id="rev-mark" style="left:'+pct.toFixed(1)+'%"></b></div>'+
       '<div class="ses-q"><b>'+lessonN(l)+' · '+esc(l.concept)+'</b><span class="ses-co">now on '+esc(s.co)+'</span></div>'+
-      '<div class="ses-task">'+esc(l.task)+'</div>'+
-      '<div class="ses-rule"><b>Same question, new company.</b> Do it for '+esc(s.co)+' from memory, then check it against your map. '+esc(why)+'</div>'+
+      '<div class="ses-task">'+esc(lessonTask(l))+'</div>'+
+      '<div class="ses-rule"><b>Same question, '+(isProd(l)?'another idea':'new company')+'.</b> Do it for '+esc(s.co)+' from memory, then check it against your map. '+esc(why)+'</div>'+
       '<label class="ses-lbl" for="ses-answer">Your answer for '+esc(s.co)+', without the notes</label>'+
       '<textarea id="ses-answer" class="field note-area ses-area" placeholder="Three lines from memory, or the backbone of the map…">'+esc(s.d.answer)+'</textarea>'+
       '<div class="ses-why">Test when some of it has faded — that’s the point of the gap. <i>Justin Sung</i></div>'+
@@ -1751,9 +1881,9 @@ button.step-name:hover .step-nm{color:var(--accent)}
   }
   /* on Home: a revisit that's due — 5 minutes, and on a bad day it alone keeps the streak */
   function homeRevisit(){
-    var g=(state.goals||[]).filter(function(x){return valCurrFor(x);})[0];if(!g)return "";
     if(isLessonTask(state.activeId&&findTask(state.activeId)))return "";
-    var due=revDue(g);if(!due.length)return "";
+    var g=currGoals().filter(function(x){return revDue(x).length;})[0];if(!g)return "";
+    var due=revDue(g);
     var x=due[0],l=x.l,r=x.r,more=due.length-1;
     var why=r.kind==="nailed"?'Nailed '+revAgo(r)+' days ago — if it’s still there without the notes, it’s yours.':'Shaky '+revAgo(r)+' days ago — try it again without the notes.';
     return '<div class="home-next rev">'+
@@ -1772,12 +1902,12 @@ button.step-name:hover .step-nm{color:var(--accent)}
   function primeTarget(g){var plan=todayPlan(g);for(var i=0;i<plan.length;i++)if(lessonOpen(g,plan[i]))return lessonById(plan[i]);var nx=suggestPlan(g,[]);return nx.length?lessonById(nx[0]):null;}
   function savePrime(gid,lid,guess){guess=(guess||"").trim();if(!guess){toast("A hunch is enough — one line");return;}commit(function(){var g=findGoal(gid);if(!g)return;g.curr=g.curr||{};g.curr.prime={lid:lid,guess:guess.slice(0,240),at:Date.now()};});toast("Primed — the sitting starts with your guess");}
   function homePrime(){
-    var g=(state.goals||[]).filter(function(x){return valCurrFor(x);})[0];if(!g)return "";
+    var g=currGoals()[0];if(!g)return "";
     if(isLessonTask(state.activeId&&findTask(state.activeId)))return "";     // not while a lesson runs
     var l=primeTarget(g);if(!l)return "";
     var pr=g.curr&&g.curr.prime,hit=!!(pr&&pr.lid===l.id&&pr.guess),cy=g.curr&&g.curr.carry;
     var carry=(cy&&cy.q)?'<div class="prime-carry">Still open from last time: “'+esc(cy.q)+'”</div>':'';
-    var q='<div class="prime-q"><b>'+lessonN(l)+' · '+esc(l.concept)+'</b><span class="ses-co">on '+esc(lessonCo(l))+'</span><div class="ses-task">'+esc(l.task)+'</div></div>';
+    var q='<div class="prime-q"><b>'+lessonN(l)+' · '+esc(l.concept)+'</b><span class="ses-co">on '+esc(lessonCo(l))+'</span><div class="ses-task">'+esc(lessonTask(l))+'</div></div>';
     if(hit)return '<div class="prime is-primed"><div class="home-next-eye">Primed ✓ · your guess is waiting</div>'+q+'<div class="prime-guess">“'+esc(pr.guess)+'”</div>'+carry+'</div>';
     return '<div class="prime"><div class="home-next-eye">Prime it · 3 minutes</div>'+q+carry+
       '<form class="prime-form" data-action="prime-save" data-id="'+g.id+'" data-lid="'+l.id+'" autocomplete="off"><input id="prime-guess" class="field" placeholder="One-line guess — no reading, just a hunch" aria-label="Your guess"><button class="btn btn-primary btn-sm" type="submit">Save</button></form>'+
@@ -1785,12 +1915,12 @@ button.step-name:hover .step-nm{color:var(--accent)}
   }
   /* today's plan — on the goal card ("card") and at the top of the A → Z view ("az") */
   function renderToday(g,where){
-    var c=valCurrFor(g);if(!c)return "";
+    var c=currFor(g);if(!c)return "";
     var plan=todayPlan(g),done=currDone(g),mins=curMinToday(g.id),met=mins>=DAILY_MIN;
     var allDone=c.lessons.every(function(l){return done[l.id];});
     var planned=0;plan.forEach(function(id){planned+=lessonLeftMin(g,lessonById(id));});
     var rows=plan.length?'<div class="td-list">'+plan.map(function(id){return lessonRow(g,lessonById(id),where==="az"?"plan-az":"plan",plan);}).join("")+'</div>'
-      :'<div class="action-empty">'+(allDone?'All '+c.lessons.length+' lessons done — now produce and defend. 🏔':'Nothing picked for today yet — choose a lesson'+(where==="az"?' below.':'.'))+'</div>';
+      :'<div class="action-empty">'+(allDone?'All '+c.lessons.length+' lessons done — '+esc(c.allDone):'Nothing picked for today yet — choose a lesson'+(where==="az"?' below.':'.'))+'</div>';
     var when=(g.curr&&g.curr.when)||"",whenUi=ui.cueOpen["when:"+g.id]
       ?'<form class="cue-edit" data-action="cur-when" data-id="'+g.id+'" autocomplete="off"><input id="cur-when-'+g.id+'" class="field" value="'+esc(when)+'" placeholder="When and where? e.g. after coffee, at the desk" aria-label="When"><button class="btn btn-primary btn-sm" type="submit">Save</button><button class="btn btn-ghost btn-sm" data-action="cur-when-cancel" data-id="'+g.id+'" type="button">Cancel</button></form>'
       :'<button class="td-when'+(when?'':' is-empty')+'" data-action="cur-when-edit" data-id="'+g.id+'" type="button" title="Decide once: when and where">'+(when?esc(when):'+ when & where')+'</button>';
@@ -1799,13 +1929,13 @@ button.step-name:hover .step-nm{color:var(--accent)}
       '<span class="td-mins'+(met?' met':'')+'">'+mins+' / '+DAILY_MIN+' min'+(met?' ✓':'')+'</span></div>'+whenUi+
       '<div class="td-bar"><i style="width:'+Math.min(mins/DAILY_MIN*100,100).toFixed(0)+'%"></i></div>'+metric;
     var rl=revList(g),due=rl.filter(function(x){return x.days<=0;}),later=rl.filter(function(x){return x.days>0;});
-    var revHtml=rl.length?'<div class="td-rev"><div class="td-rev-h">Revisits<span>'+REV_MIN+' min · a new company · no notes</span></div>'+
+    var revHtml=rl.length?'<div class="td-rev"><div class="td-rev-h">Revisits<span>'+REV_MIN+' min · '+(c.key==="prod"?'another idea':'a new company')+' · no notes</span></div>'+
       due.map(function(x){return revRow(g,x);}).join("")+
       (later.length?'<div class="td-rev-later">Coming up: '+later.map(function(x){return lessonN(x.l)+' in '+x.days+'d';}).join(' · ')+'</div>':'')+'</div>':'';
     var foot=where==="az"
       ?'<div class="td-foot"><span>'+(plan.length?'Picked ≈ '+planned+' min'+(planned>DAILY_MIN+10?' — do ~'+DAILY_MIN+' today; the rest carries over':''):'')+'</span>'+
         '<button class="td-link" data-action="cur-suggest" data-id="'+g.id+'" type="button">Reset to next in line</button></div>'
-      :'<button class="td-az" data-action="set-view" data-view="curriculum" type="button">Change today’s pick<span class="td-az-s">See all '+c.lessons.length+' lessons, A → Z →</span></button>';
+      :'<button class="td-az" data-action="cv-open" data-id="'+g.id+'" type="button">Change today’s pick<span class="td-az-s">See all '+c.lessons.length+' lessons, A → Z →</span></button>';
     return '<div class="td'+(where==="az"?' td-az-panel':'')+'">'+head+rows+revHtml+foot+'</div>';
   }
   function lessonRow(g,l,ctx,plan){
@@ -1821,16 +1951,22 @@ button.step-name:hover .step-nm{color:var(--accent)}
     else if(!isDone)act='<button class="btn btn-primary btn-sm" data-action="cur-start" data-id="'+g.id+'" data-lid="'+l.id+'" type="button">'+(logged?'Continue':'Start')+'</button>';
     return '<div class="ls'+(isDone?' is-done':'')+(running?' is-run':'')+'">'+
       '<div class="ls-row"><button class="ls-main" data-action="cur-open" data-id="'+l.id+'" type="button" aria-expanded="'+(open?'true':'false')+'">'+st+
-        '<span class="ls-n">L'+(l.order<10?'0':'')+l.order+'</span>'+
+        '<span class="ls-n">'+lessonN(l)+'</span>'+
         '<span class="ls-txt"><span class="ls-c">'+esc(l.concept)+'</span><span class="ls-s">'+sub+'</span></span></button>'+act+'</div>'+
       (open?lessonDetail(g,l,ctx,running,isDone,logged):'')+
     '</div>';
   }
+  function lessonRefs(l,where){   // what to read, what to watch, the lab — and where it lives
+    var rd=(l.read||[]).map(function(x){return '<li>'+esc(x)+'</li>';}).join("");
+    var wt=(l.watch||[]).map(function(v){return '<li><a class="ls-vid" href="'+esc(v.u)+'" target="_blank" rel="noopener">'+esc(v.t)+' ↗</a>'+(v.w?'<span class="ls-vid-w"> — '+esc(v.w)+'</span>':'')+'</li>';}).join("");
+    var ex=l.example?'<div class="curr-ex"><b>Lab / example:</b> '+esc(l.example)+'</div>':"";
+    if(!rd&&!wt&&!ex)return "";
+    var note=where==="ses"?"":(isProd(l)?'<div class="curr-note">The idea itself opens in step 2 of the sitting — guess first. The chapter and the video are for when you want more.</div>':'<div class="curr-note">These point into your Valuation Agent repo — desk work, not inside the app.</div>');
+    return '<div class="curr-refs">'+(rd?'<div><b>Read:</b><ul>'+rd+'</ul></div>':"")+(wt?'<div class="curr-ex"><b>Watch:</b><ul>'+wt+'</ul></div>':"")+ex+note+'</div>';
+  }
   function lessonDetail(g,l,ctx,running,isDone,logged){
     var tags=(l.doctrine_ref||[]).map(function(d){return '<span class="curr-tag">'+esc(d)+'</span>';}).join("");
-    var rd=(l.read||[]).map(function(x){return '<li>'+esc(x)+'</li>';}).join("");
-    var ex=l.example?'<div class="curr-ex"><b>Lab / example:</b> '+esc(l.example)+'</div>':"";
-    var refs=(rd||ex)?'<div class="curr-refs">'+(rd?'<div><b>Read:</b><ul>'+rd+'</ul></div>':"")+ex+'<div class="curr-note">These point into your Valuation Agent repo — desk work, not inside the app.</div></div>':"";
+    var refs=lessonRefs(l,"detail");
     var go="",rv=revFor(g,l.id),rvDays=rv?revDays(rv):0;
     if(ctx!=="plan")go=running?'<button class="btn btn-stop btn-sm" data-action="stop" type="button">Stop timer</button>'
       :(rv?'<button class="btn '+(rvDays<=0?'btn-primary':'btn-ghost')+' btn-sm" data-action="rev-start" data-id="'+g.id+'" data-lid="'+l.id+'" type="button">'+(rvDays<=0?'Revisit now · ~'+REV_MIN+' min':'Revisit early · due in '+rvDays+'d')+'</button>'
@@ -1839,7 +1975,7 @@ button.step-name:hover .step-nm{color:var(--accent)}
       '<button class="btn btn-ghost btn-sm" data-action="cur-shaky" data-id="'+g.id+'" data-lid="'+l.id+'" type="button">Shaky — needed the notes</button>';
     var call=l.call?'<button class="curr-call" data-action="asw-go" data-id="'+l.call+'" type="button">In his '+esc(l.call)+' call →</button>':'';
     return '<div class="ls-det"><div class="ls-meta"><span class="curr-badge">'+esc(l.rung)+'</span>'+(tags?'<span class="curr-tags">'+tags+'</span>':'')+'</div>'+
-      '<div class="curr-task">'+esc(l.task)+'</div>'+call+refs+
+      '<div class="curr-task">'+esc(lessonTask(l))+'</div>'+call+refs+
       ((go||grade)?'<div class="curr-btns">'+go+grade+'</div>':'')+
     '</div>';
   }
@@ -1936,23 +2072,58 @@ button.step-name:hover .step-nm{color:var(--accent)}
         '<div class="rd-note">Written from the video’s transcript'+(a.charts?' and on-screen charts':'')+(a.checked?'. Prices checked '+esc(artDate(a.checked)):'')+'. A study aid, not a tip.</div></div>'+
     '</article>';
   }
+  /* ---------- the idea board: every product idea you're weighing, scored on Thiel's seven questions; lessons run on the starred one ---------- */
+  function prodGoal(){return findGoal(PROD_CURRICULUM.goal_id);}
+  function prodIdeas(){var g=prodGoal();return (g&&g.ideas)||[];}
+  function focusIdea(){var g=prodGoal(),ids=prodIdeas();if(!ids.length)return null;return ids.filter(function(x){return x.id===(g&&g.ideaFocus);})[0]||ids[0];}
+  function findIdea(g,iid){return ((g&&g.ideas)||[]).filter(function(x){return x.id===iid;})[0];}
+  function ideaScore(it){var q=it.q||{},y=0,u=0,n=0;THIEL_Q.forEach(function(k){var v=q[k[0]];if(v==="y")y++;else if(v==="n")n++;else if(v==="u")u++;});return {y:y,u:u,n:n,open:THIEL_Q.length-y-u-n};}
+  function addIdea(gid,name){name=(name||"").trim();if(!name)return;commit(function(){var g=findGoal(gid);if(!g)return;g.ideas=g.ideas||[];var it={id:uid(),name:name.slice(0,80),at:Date.now(),q:{},talked:0};g.ideas.push(it);if(!g.ideaFocus)g.ideaFocus=it.id;});}
+  function renderIdeas(g){
+    if(!currFor(g)||currFor(g).key!=="prod")return "";
+    var ideas=g.ideas||[],fi=focusIdea();
+    var rows=ideas.map(function(it){
+      var open=!!ui.ideaOpen[it.id],sc=ideaScore(it),isF=fi&&fi.id===it.id;
+      var sum='<span class="idea-sc"><b class="y">'+sc.y+' yes</b> · '+sc.u+' not sure · <b class="n">'+sc.n+' no</b>'+(sc.open?' · '+sc.open+' open':'')+'</span><span class="idea-talk-s">talked to '+(it.talked||0)+'</span>';
+      var head='<button class="idea-head" data-action="idea-open" data-id="'+esc(it.id)+'" type="button" aria-expanded="'+(open?'true':'false')+'">'+
+        '<span class="idea-star'+(isF?' on':'')+'" aria-hidden="true">'+(isF?'★':'☆')+'</span>'+
+        '<span class="idea-txt"><span class="idea-nm">'+esc(it.name)+'</span><span class="idea-sum">'+sum+'</span></span>'+
+        '<span class="asw-chev sm'+(open?' open':'')+'">'+chevronSvg()+'</span></button>';
+      if(!open)return '<div class="idea">'+head+'</div>';
+      var qs=THIEL_Q.map(function(k){var v=(it.q||{})[k[0]];
+        var pill=function(val,lbl){return '<button class="idea-p'+(v===val?' on-'+val:'')+'" data-action="idea-q" data-id="'+g.id+'" data-iid="'+esc(it.id)+'" data-k="'+k[0]+'" data-v="'+val+'" type="button" aria-pressed="'+(v===val?'true':'false')+'">'+lbl+'</button>';};
+        return '<div class="idea-q"><span class="idea-qt"><b>'+esc(k[1])+'</b> — '+esc(k[2])+'</span><span class="idea-ps">'+pill("y","Yes")+pill("u","Not sure")+pill("n","No")+'</span></div>';}).join("");
+      return '<div class="idea open">'+head+'<div class="idea-body">'+
+        '<div class="idea-h">Thiel’s seven questions</div>'+qs+
+        '<div class="idea-foot"><span class="idea-talked">Talked to <b>'+(it.talked||0)+'</b> '+((it.talked||0)===1?'person':'people')+' about their life — Mom Test style</span>'+
+          '<button class="btn btn-ghost btn-sm" data-action="idea-talk" data-id="'+g.id+'" data-iid="'+esc(it.id)+'" type="button">+1 talked</button></div>'+
+        '<div class="idea-foot">'+(isF?'<span class="idea-fnote">★ Lessons run on this idea</span>':'<button class="btn btn-ghost btn-sm" data-action="idea-focus" data-id="'+g.id+'" data-iid="'+esc(it.id)+'" type="button">☆ Run lessons on this</button>')+
+          '<button class="dec-del'+(ui.armed==="idea-del:"+it.id?' armed':'')+'" data-action="idea-del" data-id="'+g.id+'" data-iid="'+esc(it.id)+'" data-arm="idea-del:'+esc(it.id)+'" data-on="Tap again to delete" data-off="Delete idea" type="button">'+(ui.armed==="idea-del:"+it.id?'Tap again to delete':'Delete idea')+'</button></div>'+
+      '</div></div>';
+    }).join("");
+    return '<div class="ideas" id="ideas-sec">'+
+      '<div class="dec-head"><span class="dec-title">Your ideas</span><span class="dec-sub">scored on Thiel’s seven questions · lessons run on the ★ one</span></div>'+
+      (ideas.length?'<div class="asw-calls">'+rows+'</div>':'<div class="action-empty">Every product idea you’re weighing goes here — even half-formed ones. Until you add one, the lessons say “your idea”.</div>')+
+      '<form class="idea-add" data-action="idea-add" data-id="'+g.id+'" autocomplete="off"><input id="idea-name" class="field" maxlength="80" placeholder="An idea — e.g. a habit app for night-shift nurses" aria-label="New idea"><button class="btn btn-primary btn-sm" type="submit">Add</button></form>'+
+    '</div>';
+  }
   /* the whole curriculum, A → Z — pick what you feel like; the ladder order is a suggestion, not a lock */
   function renderCurriculumView(){
     var back='<button class="cv-back" data-action="set-view" data-view="goals" type="button">'+backSvg()+'Goals</button>';
-    var g=(state.goals||[]).filter(function(x){return valCurrFor(x);})[0];
+    var g=findGoal(ui.cvGoal);if(!currFor(g))g=currGoals()[0];   // whichever track you opened; the investing one by default
     if(!g)return '<section class="sec cv">'+back+'<div class="card empty">The curriculum lives on your investing goal, which isn’t set up here.</div></section>';
-    var c=valCurrFor(g),done=currDone(g),doneN=0,totalMin=0,plan=todayPlan(g),cur=currentLesson(g);
+    var c=currFor(g),done=currDone(g),doneN=0,totalMin=0,plan=todayPlan(g),cur=currentLesson(g);
     c.lessons.forEach(function(l){totalMin+=(l.estimateMin||15);if(done[l.id])doneN++;});
-    var groups=VAL_RUNGS.map(function(r,ri){
+    var groups=c.rungs.map(function(r,ri){
       var ls=c.lessons.filter(function(l){return l.rung===r;});if(!ls.length)return "";
       var dn=ls.filter(function(l){return done[l.id];}).length,mm=ls.reduce(function(s,l){return s+(l.estimateMin||15);},0);
       return '<div class="cv-rung'+(cur&&cur.lesson.rung===r?' here':'')+'">'+
-        '<div class="cv-rh"><span class="cv-rn">'+(ri+1)+'</span><span class="cv-rt">'+esc(r)+'</span><span class="cv-rd">'+esc(VAL_RUNG_DESC[ri])+'</span><span class="cv-rp">'+dn+'/'+ls.length+' · '+fmtDur(mm*60)+'</span></div>'+
+        '<div class="cv-rh"><span class="cv-rn">'+(ri+1)+'</span><span class="cv-rt">'+esc(r)+'</span><span class="cv-rd">'+esc(c.rungDesc[ri])+'</span><span class="cv-rp">'+dn+'/'+ls.length+' · '+fmtDur(mm*60)+'</span></div>'+
         '<div class="cv-list">'+ls.map(function(l){return lessonRow(g,l,"az",plan);}).join("")+'</div></div>';
     }).join("");
     return '<section class="sec cv">'+back+
-      '<h2 class="cv-title">Aswath’s curriculum, A → Z</h2>'+
-      '<p class="cv-sub">'+c.lessons.length+' lessons · '+doneN+' done · about '+fmtDur(totalMin*60)+' in all — roughly '+Math.ceil(totalMin/DAILY_MIN/7)+' weeks at '+DAILY_MIN+' min a day. One real question on a real company per sitting. Pick whatever you feel like — the order is a suggestion, not a lock. Stuck? Do the one that feels easy and come back; your brain will tell you what it’s ready for.</p>'+
+      '<h2 class="cv-title">'+esc(c.azTitle)+'</h2>'+
+      '<p class="cv-sub">'+c.lessons.length+' lessons · '+doneN+' done · about '+fmtDur(totalMin*60)+' in all — roughly '+Math.ceil(totalMin/DAILY_MIN/7)+' week'+(Math.ceil(totalMin/DAILY_MIN/7)===1?'':'s')+' at '+DAILY_MIN+' min a day. '+esc(c.blurb)+'</p>'+
       renderToday(g,"az")+groups+
     '</section>';
   }
@@ -1974,7 +2145,7 @@ button.step-name:hover .step-nm{color:var(--accent)}
     var more=ASWATH_TAKES.length>3?'<button class="asw-more" data-action="asw-all" type="button">'+(ui.aswAll?'Show fewer':'Show all '+ASWATH_TAKES.length+' of his calls')+'</button>':'';
     var c=valCurrFor(g),done=currDone(g),dc=0;c.lessons.forEach(function(l){if(done[l.id])dc++;});
     var cur=currentLesson(g);
-    var learn='<button class="asw-learn" data-action="set-view" data-view="curriculum" type="button"><span class="asw-learn-t">Learn his method, step by step →</span><span class="asw-learn-s">Curriculum '+dc+'/'+c.lessons.length+(cur?' · next: '+esc(cur.lesson.stage_name)+' · ~'+(cur.lesson.estimateMin||15)+' min':' · complete')+'</span></button>';
+    var learn='<button class="asw-learn" data-action="cv-open" data-id="'+g.id+'" type="button"><span class="asw-learn-t">Learn his method, step by step →</span><span class="asw-learn-s">Curriculum '+dc+'/'+c.lessons.length+(cur?' · next: '+esc(cur.lesson.stage_name)+' · ~'+(cur.lesson.estimateMin||15)+' min':' · complete')+'</span></button>';
     return '<div class="asw open">'+head+'<div class="asw-body">'+
       '<blockquote class="asw-quote">“The odds are in my favour.”<cite>— Aswath Damodaran, buying Intel in 2024</cite></blockquote>'+
       '<p class="asw-lead">He never claims certainty. He values first, then acts only when the price puts the odds on his side — that’s the line between investing and a gamble.</p>'+
@@ -2403,7 +2574,7 @@ button.step-name:hover .step-nm{color:var(--accent)}
       '<div class="goal-top"><div style="min-width:0"><div class="goal-name">'+esc(g.name)+'</div>'+meta+'</div>'+
         xBtn("del-goal",g.id,"Delete goal")+'</div>'+
       identityBlock+stat+
-      renderToday(g,"card")+renderAswath(g)+renderReadingEntry(g)+renderDecisions(g)+renderSteps(g)+renderProgression(g)+noteBlock+
+      renderToday(g,"card")+renderIdeas(g)+renderAswath(g)+renderReadingEntry(g)+renderDecisions(g)+renderSteps(g)+renderProgression(g)+noteBlock+
     '</div>';
   }
   function actionRow(t){
