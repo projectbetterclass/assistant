@@ -874,6 +874,64 @@ button.step-name:hover .step-nm{color:var(--accent)}
 .rd-link{border:none;background:none;padding:0;color:var(--muted);font-family:inherit;font-size:13px;font-weight:500;text-decoration:underline;cursor:pointer}
 .rd-btns{display:flex;flex-wrap:wrap;gap:8px}
 .rd-note{margin-top:12px;font-size:11.5px;color:var(--faint)}
+/* goals as a tree: the main goal on top, its branches hanging off a trunk line */
+.north{padding:0;overflow:hidden}
+.north-head{display:flex;flex-direction:column;align-items:stretch;gap:5px;width:100%;border:none;text-align:left;font-family:inherit;color:var(--ink);cursor:pointer;
+  padding:15px 16px 14px;background:linear-gradient(180deg,var(--accent-soft),transparent 92%)}
+.north-head:focus-visible,.branch:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
+.north-eye{display:flex;align-items:center;gap:8px;font-size:11px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--accent)}
+.north-eye::before,.gp-eye.is-main::before{content:"";flex:none;width:7px;height:7px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 3px var(--accent-soft),0 0 0 4px var(--accent)}
+.north-eye::after{content:"Open \2192";margin-left:auto;font-size:12px;font-weight:600;letter-spacing:0;text-transform:none;opacity:.85}
+.north-head:hover .north-eye::after{opacity:1;text-decoration:underline;text-underline-offset:3px}
+.north-name{font-family:var(--font-display);font-size:21px;font-weight:600;line-height:1.22;text-wrap:balance}
+.north-id{font-family:var(--font-display);font-style:italic;font-size:14.5px;line-height:1.35;color:var(--muted)}
+.north-stat{display:flex;align-items:center;flex-wrap:wrap;gap:6px 9px;margin-top:5px;font-size:13px;color:var(--muted)}
+.north-stat b{color:var(--ink);font-weight:600;font-family:var(--font-mono);font-variant-numeric:tabular-nums}
+.north-kids{padding:4px 12px 13px;border-top:1px solid var(--line)}
+.north-h{margin:11px 4px 8px;font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--faint)}
+.branches{display:flex;flex-direction:column;gap:7px;padding-left:20px}
+.branch{position:relative;display:flex;align-items:center;gap:12px;width:100%;min-width:0;border:1px solid var(--line);border-radius:12px;background:var(--surface);
+  color:var(--ink);font-family:inherit;text-align:left;padding:10px 10px 10px 11px;cursor:pointer;transition:border-color .15s,background .15s,transform .1s}
+.branch:active{transform:scale(.99)}
+.branches .branch::before{content:"";position:absolute;left:-14px;top:-8px;width:12px;height:calc(50% + 8px);border-left:2px solid var(--line-strong);border-bottom:2px solid var(--line-strong);border-bottom-left-radius:9px;pointer-events:none}
+.branches .branch:not(:last-child)::after{content:"";position:absolute;left:-14px;top:-8px;bottom:-8px;border-left:2px solid var(--line-strong);pointer-events:none}   /* the trunk runs on past this branch */
+.ring{position:relative;flex:none;width:36px;height:36px}
+.ring svg{display:block}
+.ring-track{fill:none;stroke:var(--line);stroke-width:3.5}
+.ring-on{fill:none;stroke:var(--accent);stroke-width:3.5;stroke-linecap:round;transition:stroke-dasharray .4s ease}
+.ring.met .ring-on{stroke:var(--good)}
+.ring-n{position:absolute;inset:0;display:grid;place-items:center;font-family:var(--font-mono);font-size:10.5px;font-weight:500;letter-spacing:-.03em;color:var(--muted);font-variant-numeric:tabular-nums}
+.ring-n.ck{font-family:var(--font-sans);font-size:14px;font-weight:700;letter-spacing:0;color:var(--good)}
+.br-txt{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+.br-name{font-size:15px;font-weight:600;line-height:1.3;overflow-wrap:anywhere}
+.br-sub{font-size:12px;line-height:1.4;color:var(--muted)}
+.br-sub b{color:var(--ink);font-weight:600;font-family:var(--font-mono);font-variant-numeric:tabular-nums}
+.br-sub b.warn{color:var(--warn);font-family:var(--font-sans)}
+.br-chev{flex:none;display:grid;place-items:center;color:var(--faint);transition:color .15s,transform .15s}
+@media (hover:hover){   /* a tap on a phone shouldn't leave a branch looking hovered */
+  .branch:hover{border-color:var(--accent)}
+  .branch:hover .br-chev{color:var(--accent);transform:translateX(2px)}
+  .card.solo .branch:hover{background:var(--surface-2)}
+}
+.branch-add{display:block;width:calc(100% - 20px);margin:8px 0 0 20px;border:1px dashed var(--line-strong);background:transparent;color:var(--muted);font-family:inherit;font-size:13px;font-weight:600;text-align:left;padding:9px 12px;border-radius:11px;cursor:pointer}
+.branch-add:hover{color:var(--accent);border-color:var(--accent)}
+.branch-form{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0 0 20px}
+.branch-form .field{flex:1 1 100%;background:var(--surface)}
+.card.solo{padding:5px}
+.card.solo .branch{border-color:transparent;background:transparent;padding:10px 9px}
+.card.solo .br-name{font-family:var(--font-display);font-size:17px;line-height:1.25}
+.gp-eye{margin:0 0 3px;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--faint)}
+.gp-eye.is-main{display:flex;align-items:center;gap:8px;margin-bottom:6px;color:var(--accent)}
+.gp-up{border:none;background:transparent;padding:0;margin:0;font-family:inherit;font-size:12.5px;font-weight:600;letter-spacing:0;text-transform:none;color:var(--accent);cursor:pointer;text-decoration:underline;text-decoration-color:var(--accent-soft);text-underline-offset:3px}
+.gp-up:hover{text-decoration-color:var(--accent)}
+.goal-name.gp-name{display:block;border:none;background:transparent;padding:0;margin:0;text-align:left;color:var(--ink);font-size:22px;line-height:1.22;text-wrap:balance;cursor:pointer}
+.gp-pen{margin-left:7px;font-family:var(--font-sans);font-size:14px;font-weight:400;color:var(--faint);transition:color .15s}
+.gp-name:hover .gp-pen{color:var(--accent)}
+.gname-edit{display:flex;flex-direction:column;gap:8px;margin:4px 0 6px}
+.gp-kids{margin-top:14px;padding:2px 12px 12px;background:var(--surface-2);border:1px solid var(--line);border-radius:12px}
+.gp-addb{margin-top:12px}
+.gp-addb .branch-add,.gp-addb .branch-form{width:100%;margin-left:0}
+.cv-back-t{max-width:30ch;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 </style>
 
 <div id="root"></div>
@@ -949,7 +1007,7 @@ button.step-name:hover .step-nm{color:var(--accent)}
      The Mom Test (Fitzpatrick), $100M Offers (Hormozi) — summarised in my words, with the chapter to read — and videos
      from the youtube-digest library. Only done-flags, revisits and the idea board are ever saved into app-state. */
   var THIEL_Q=[["eng","Engineering","clearly better, not a bit better?"],["time","Timing","why now?"],["mono","Monopoly","a big share of a small market?"],["people","People","the skills or team to build it?"],["dist","Distribution","a way to reach customers, not just build?"],["dur","Durability","still yours in 10 years?"],["secret","Secret","something others don’t see?"]];
-  var PROD_CURRICULUM={goal_id:"mueihahzka4by",key:"prod",title:"Building products",azTitle:"Building products, A → Z",
+  var PROD_CURRICULUM={goal_id:"goal_build",key:"prod",title:"Building products",azTitle:"Building products, A → Z",
     rungs:["Find","Test","Offer","Reach","Keep","Decide"],
     rungDesc:["which market — and where to start small","find out if people really want it, before you build","make it worth paying for, and price it","get it to the first 100 people","what stops others copying it","score your ideas, pick one, set a kill rule"],
     blurb:"One real question on one of your own ideas per sitting — the one you’ve starred on the idea board. Each lesson says which chapter of Zero to One, The Mom Test or $100M Offers to read if you want more; the idea in the lesson is enough for the sitting.",
@@ -1034,7 +1092,9 @@ button.step-name:hover .step-nm{color:var(--accent)}
   var artNS; // undefined=unknown, null=unavailable, object=ready
   var syncMode="check"; // check|sync|local|error|readonly
   var VIEW_KEY="wmtw_view";
-  function loadView(){try{var v=localStorage.getItem(VIEW_KEY);return (v==="goals"||v==="projects"||v==="review"||v==="curriculum"||v==="reading")?v:"now";}catch(e){return "now";}}
+  function loadView(){try{var v=localStorage.getItem(VIEW_KEY);return (v==="goals"||v==="projects"||v==="review"||v==="curriculum"||v==="reading"||v==="goal")?v:"now";}catch(e){return "now";}}
+  var GOAL_KEY="wmtw_goal";   // the goal page you're on — survives the reload after a publish
+  function loadGoalId(){try{return localStorage.getItem(GOAL_KEY)||null;}catch(e){return null;}}
   var CV_KEY="wmtw_cv_goal";   // which track's A → Z you opened — survives the reload after a publish
   function loadCvGoal(){try{return localStorage.getItem(CV_KEY)||null;}catch(e){return null;}}
   function setCvGoal(id){ui.cvGoal=id||null;try{if(id)localStorage.setItem(CV_KEY,id);else localStorage.removeItem(CV_KEY);}catch(e){}}
@@ -1046,7 +1106,7 @@ button.step-name:hover .step-nm{color:var(--accent)}
   function loadSes(){try{var s=JSON.parse(localStorage.getItem(SES_KEY)||"null");if(s&&s.tid&&s.d&&Date.now()-(s.at||0)<2*86400000)return s;}catch(e){}return null;}
   var DEC_KEY="wmtw_dec_draft";   // an unfinished call survives a reload — e.g. you switched apps to look up the price
   function loadDecDraft(){try{var s=JSON.parse(localStorage.getItem(DEC_KEY)||"null");if(s&&s.d&&s.gid&&Date.now()-(s.t0||0)<3*86400000)return s;}catch(e){}return null;}
-  var ui={addOpen:false, goalOpen:false, actionOpen:{}, noteOpen:{}, cueOpen:{}, idOpen:{}, repOpen:{}, stepAddOpen:{}, proposal:{}, loading:{}, projectOpen:false, projEdit:{}, projLoading:{}, adviseLoading:{}, currRefs:{}, projCardOpen:{}, goalSecOpen:{}, aswClosed:loadAsw(), aswAll:false, aswOpen:{}, lessonOpen:{}, stepOpen:{}, dec:loadDecDraft(), decRows:{}, decAll:false, armed:null, ses:loadSes(), goalMode:"have", shapeLevel:"new", shapeTopic:"", shapeLoading:false, shapeProposal:null, hoLoading:{}, ideaOpen:{}, view:loadView(), cvGoal:loadCvGoal(), art:loadArt(), date:dayKey(Date.now())};
+  var ui={addOpen:false, goalOpen:false, actionOpen:{}, noteOpen:{}, cueOpen:{}, idOpen:{}, repOpen:{}, stepAddOpen:{}, proposal:{}, loading:{}, projectOpen:false, projEdit:{}, projLoading:{}, adviseLoading:{}, currRefs:{}, projCardOpen:{}, goalSecOpen:{}, aswClosed:loadAsw(), aswAll:false, aswOpen:{}, lessonOpen:{}, stepOpen:{}, dec:loadDecDraft(), decRows:{}, decAll:false, armed:null, ses:loadSes(), goalMode:"have", shapeLevel:"new", shapeTopic:"", shapeLoading:false, shapeProposal:null, hoLoading:{}, ideaOpen:{}, view:loadView(), goalId:loadGoalId(), nameOpen:{}, branchOpen:{}, cvGoal:loadCvGoal(), art:loadArt(), date:dayKey(Date.now())};
   var isTouch=("ontouchstart" in window)||(navigator.maxTouchPoints>0);
   var sampleNS; // undefined=unknown, null=unavailable, function=ready
 
@@ -1199,8 +1259,8 @@ button.step-name:hover .step-nm{color:var(--accent)}
   function quickStart(name,cat){name=(name||"").trim();if(!name)return;commit(function(){var a=findTask(state.activeId);if(a)closeRunning(a);var t={id:uid(),name:name,category:(cat||"").trim(),estimateMin:null,planned:false,done:false,createdAt:Date.now(),sessions:[{start:Date.now(),end:null}]};state.tasks.push(t);state.activeId=t.id;});}
   function addPlanned(name,cat,est){name=(name||"").trim();if(!name)return;ui.addOpen=false;commit(function(){state.tasks.push({id:uid(),name:name,category:(cat||"").trim(),estimateMin:est>0?est:null,planned:true,done:false,createdAt:Date.now(),sessions:[]});});}
   function addLater(name){name=(name||"").trim();if(!name)return;commit(function(){state.tasks.push({id:uid(),name:name,category:"",estimateMin:null,planned:false,later:true,done:false,createdAt:Date.now(),sessions:[]});});}
-  function addGoal(name,deadline,identity){name=(name||"").trim();if(!name)return;ui.goalOpen=false;commit(function(){state.goals=state.goals||[];state.goals.push({id:uid(),name:name,deadline:deadline||null,identity:(identity||"").trim(),createdAt:Date.now()});});}
-  function deleteGoal(id){commit(function(){state.goals=(state.goals||[]).filter(function(g){return g.id!==id;});state.tasks.forEach(function(t){if(t.goalId===id){t.goalId=null;t.daily=false;}});});}
+  function addGoal(name,deadline,identity,parentId){name=(name||"").trim();if(!name)return;ui.goalOpen=false;if(parentId)ui.branchOpen[parentId]=false;commit(function(){state.goals=state.goals||[];var g={id:uid(),name:name,deadline:deadline||null,identity:(identity||"").trim(),createdAt:Date.now()};if(parentId&&findGoal(parentId))g.parentId=parentId;state.goals.push(g);});}
+  function deleteGoal(id){if(ui.goalId===id)openGoalPage(null);commit(function(){var gone=findGoal(id),up=gone&&gone.parentId;state.goals=(state.goals||[]).filter(function(g){return g.id!==id;});state.goals.forEach(function(g){if(g.parentId===id){if(up)g.parentId=up;else delete g.parentId;}});/* its branches move up a level */state.tasks.forEach(function(t){if(t.goalId===id){t.goalId=null;t.daily=false;}});});}
   function addAction(gid,sid,text,cue){text=(text||"").trim();if(!text)return;ui.actionOpen[sid||gid]=false;commit(function(){state.tasks.push({id:uid(),name:text,category:"",estimateMin:null,planned:false,daily:true,goalId:gid,stepId:sid||null,depth:null,cue:(cue||"").trim(),done:false,createdAt:Date.now(),sessions:[]});});}
   function addStep(gid,name){name=(name||"").trim();if(!name)return;ui.stepAddOpen[gid]=false;commit(function(){var g=findGoal(gid);if(!g)return;g.steps=g.steps||[];g.steps.push({id:uid(),name:name,done:false,createdAt:Date.now()});});}
   function deleteStep(gid,sid){commit(function(){var g=findGoal(gid);if(!g)return;g.steps=(g.steps||[]).filter(function(s){return s.id!==sid;});state.tasks.forEach(function(t){if(t.goalId===gid&&t.stepId===sid)t.stepId=null;});});}
@@ -1264,6 +1324,8 @@ button.step-name:hover .step-nm{color:var(--accent)}
     else if(a==="cur-when"){var wg=f.getAttribute("data-id");ui.cueOpen["when:"+wg]=false;commit(function(){var g=findGoal(wg);if(!g)return;g.curr=g.curr||{};g.curr.when=(val("cur-when-"+wg)||"").trim().slice(0,80);});}
     else if(a==="prime-save")savePrime(f.getAttribute("data-id"),f.getAttribute("data-lid"),val("prime-guess"));
     else if(a==="idea-add")addIdea(f.getAttribute("data-id"),val("idea-name"));
+    else if(a==="add-branch"){var bp=f.getAttribute("data-id");addGoal(val("branch-"+bp),null,"",bp);}
+    else if(a==="goal-name"){var rg=f.getAttribute("data-id"),rn=(val("gname-"+rg)||"").trim();ui.nameOpen[rg]=false;if(rn)commit(function(){var g=findGoal(rg);if(g)g.name=rn.slice(0,140);});else render();}
   }
   function onClick(e){
     var b=e.target.closest("[data-action]");if(!b)return;
@@ -1333,7 +1395,7 @@ button.step-name:hover .step-nm{color:var(--accent)}
     else if(a==="rev-nailed")finishRevisit(id,b.getAttribute("data-lid"),"nailed");
     else if(a==="rev-shaky")finishRevisit(id,b.getAttribute("data-lid"),"shaky");
     else if(a==="toggle-step-open"){var sg=findGoal(b.getAttribute("data-gid")),ss=sg&&(sg.steps||[]).filter(function(x){return x.id===id;})[0];if(ss)ui.stepOpen[id]=!stepIsOpen(sg,ss);render();}
-    else if(a==="asw-go"){var ai=-1;ASWATH_TAKES.forEach(function(x,i){if(x.tk===id)ai=i;});if(ai>=0){ui.aswClosed=false;if(ai>=3)ui.aswAll=true;ui.aswOpen[id]=true;if(ui.view!=="goals"){ui.view="goals";try{localStorage.setItem(VIEW_KEY,"goals");}catch(e){}}render();var ae=document.querySelector('.asw-call[data-id="'+id+'"]');if(ae&&ae.scrollIntoView)ae.scrollIntoView({block:"center"});}}
+    else if(a==="asw-go"){var ai=-1;ASWATH_TAKES.forEach(function(x,i){if(x.tk===id)ai=i;});if(ai>=0){ui.aswClosed=false;if(ai>=3)ui.aswAll=true;ui.aswOpen[id]=true;var ag=currGoals().filter(function(x){return valCurrFor(x);})[0];openGoalPage(ag?ag.id:null);render();var ae=document.querySelector('.asw-call[data-id="'+id+'"]');if(ae&&ae.scrollIntoView)ae.scrollIntoView({block:"center"});}}
     else if(a==="cur-nailed"||a==="cur-shaky"){sesCapture();var gl=b.getAttribute("data-lid"),gr=a==="cur-nailed"?"nailed":"shaky";(revRunning(id,gl)?finishRevisit:finishLesson)(id,gl,gr);}   // graded while its revisit runs → it's the revisit's grade
     else if(a==="cur-open"){ui.lessonOpen[id]=!ui.lessonOpen[id];render();}
     else if(a==="cur-today")toggleToday(id,b.getAttribute("data-lid"));
@@ -1354,6 +1416,10 @@ button.step-name:hover .step-nm{color:var(--accent)}
     else if(a==="rd-filter"){ui.art.f=b.getAttribute("data-f")||"all";saveArt();render();}
     else if(a==="rd-done"){var nxA=artNext(id);setArt(nxA?nxA.id:null);commit(function(){state.artRead=state.artRead||{};state.artRead[id]=Date.now();});window.scrollTo(0,0);}
     else if(a==="rd-unread"){commit(function(){if(state.artRead)delete state.artRead[id];});}
+    else if(a==="goal-open"){openGoalPage(id);render();window.scrollTo(0,0);}
+    else if(a==="branch-toggle"){ui.branchOpen[id]=!ui.branchOpen[id];render();var bf=document.getElementById("branch-"+id);if(bf)bf.focus();}
+    else if(a==="gname-edit"){ui.nameOpen[id]=true;render();var gf=document.getElementById("gname-"+id);if(gf){gf.focus();gf.select();}}
+    else if(a==="gname-cancel"){ui.nameOpen[id]=false;render();}
     else if(a==="idea-open"){ui.ideaOpen[id]=!ui.ideaOpen[id];render();}
     else if(a==="idea-q"){var qiid=b.getAttribute("data-iid"),qk=b.getAttribute("data-k"),qv=b.getAttribute("data-v");commit(function(){var it=findIdea(findGoal(id),qiid);if(!it)return;it.q=it.q||{};if(it.q[qk]===qv)delete it.q[qk];else it.q[qk]=qv;});}
     else if(a==="idea-talk"){var tiid=b.getAttribute("data-iid");commit(function(){var it=findIdea(findGoal(id),tiid);if(it)it.talked=(it.talked||0)+1;});toast("Logged — a conversation about their life, not your idea");}
@@ -1435,7 +1501,7 @@ button.step-name:hover .step-nm{color:var(--accent)}
   function tabBar(){
     var tabs=[["now","Now",clockSvg()],["goals","Goals",goalIcon()],["projects","Projects",projIcon()],["review","Review",reviewIcon()]];
     return '<nav class="tabbar" role="tablist" aria-label="Sections">'+tabs.map(function(t){
-      var on=ui.view===t[0]||(t[0]==="goals"&&(ui.view==="curriculum"||ui.view==="reading"));
+      var on=ui.view===t[0]||(t[0]==="goals"&&(ui.view==="curriculum"||ui.view==="reading"||ui.view==="goal"));
       var live=t[0]!=="now"?"":(state.activeId?'<span class="tab-live" aria-hidden="true"></span>':(pausedTask()?'<span class="tab-live is-paused" aria-hidden="true"></span>':""));
       return '<button class="tab'+(on?' active':'')+'" role="tab" aria-selected="'+(on?'true':'false')+'" data-action="set-view" data-view="'+t[0]+'" type="button">'+live+t[2]+'<span class="tab-lbl">'+t[1]+'</span></button>';
     }).join("")+'</nav>';
@@ -1446,6 +1512,7 @@ button.step-name:hover .step-nm{color:var(--accent)}
   function render(){
     var html=topBar();
     if(ui.view==="goals")        html+='<div class="view">'+renderGoals()+'</div>';
+    else if(ui.view==="goal")    html+='<div class="view">'+renderGoalPage()+'</div>';
     else if(ui.view==="curriculum")html+='<div class="view">'+renderCurriculumView()+'</div>';
     else if(ui.view==="reading")html+='<div class="view">'+renderReadingView()+'</div>';
     else if(ui.view==="projects")html+='<div class="view">'+renderProjects()+'</div>';
@@ -1480,11 +1547,11 @@ button.step-name:hover .step-nm{color:var(--accent)}
       ?'<button class="btn btn-primary btn-sm" data-action="cur-start" data-id="'+pick.gid+'" data-lid="'+pick.lid+'" type="button">'+(pick.cont?'Continue':'Start')+' · ~'+pick.min+'m</button>'
       :(pick.tid==="act_journal"?'<button class="btn btn-primary btn-sm" data-action="dec-open" data-id="'+pick.gid+'" type="button">Log a decision</button>'
         :'<button class="btn btn-primary btn-sm" data-action="start" data-id="'+pick.tid+'" type="button">Start</button>');
-    var eye=pick.type==="lesson"?'Today’s '+DAILY_MIN+' min · '+(pick.track?esc(pick.track)+' · ':'')+esc(pick.rung)+(pick.when?' · '+esc(pick.when):''):esc(pick.goal);
+    var eye=pick.type==="lesson"?'Today’s '+DAILY_MIN+' min · '+esc(shortName(pick.goal))+' · '+esc(pick.rung)+(pick.when?' · '+esc(pick.when):''):esc(pick.goal);
     return '<div class="home-next">'+
       '<div class="home-next-eye">Next up · '+eye+'</div>'+
       '<div class="home-next-row"><div class="home-next-label">'+esc(pick.label)+'</div>'+start+'</div>'+
-      '<button class="home-next-more" data-action="set-view" data-view="goals" type="button">Open Goals →</button>'+
+      '<button class="home-next-more" data-action="goal-open" data-id="'+pick.gid+'" type="button">Open '+esc(shortName(pick.goal))+' →</button>'+
     '</div>';
   }
   function homeGlance(){
@@ -1605,17 +1672,17 @@ button.step-name:hover .step-nm{color:var(--accent)}
   function last7Start(){return startOfToday()-6*86400000;}
   function goalName(id){var g=(state.goals||[]).filter(function(x){return x.id===id;})[0];return g?g.name:"";}
   function goalActions(gid){return state.tasks.filter(function(t){return t.goalId===gid&&t.daily;});}
-  function goalStreak(gid){
-    var set={};
-    state.tasks.forEach(function(t){if(t.goalId!==gid)return;(t.sessions||[]).forEach(function(se){set[dayKey(se.start)]=1;});});
+  function goalStreak(gid){   // gid: one goal id, or a list (a main goal and its branches)
+    var set={},ids=Array.isArray(gid)?gid:[gid];
+    state.tasks.forEach(function(t){if(ids.indexOf(t.goalId)<0)return;(t.sessions||[]).forEach(function(se){set[dayKey(se.start)]=1;});});
     var todayDone=!!set[dayKey(startOfToday())],yestDone=!!set[dayKey(startOfToday()-86400000)];
     var start=todayDone?startOfToday():(yestDone?startOfToday()-86400000:null),streak=0;
     if(start!=null){var d=start;while(set[dayKey(d)]){streak++;d-=86400000;}}
     return {streak:streak,todayDone:todayDone,yestDone:yestDone};
   }
-  function goalStats(gid){
-    var now=Date.now(),wk=last7Start(),tday=startOfToday(),weekSec=0,todaySec=0,total=0,days={};
-    state.tasks.forEach(function(t){if(t.goalId!==gid)return;(t.sessions||[]).forEach(function(se){
+  function goalStats(gid){   // gid: one goal id, or a list (a main goal and its branches)
+    var now=Date.now(),wk=last7Start(),tday=startOfToday(),weekSec=0,todaySec=0,total=0,days={},ids=Array.isArray(gid)?gid:[gid];
+    state.tasks.forEach(function(t){if(ids.indexOf(t.goalId)<0)return;(t.sessions||[]).forEach(function(se){
       var end=se.end==null?now:se.end,dur=(end-se.start)/1000;total+=dur;
       if(se.start>=wk){weekSec+=dur;days[dayKey(se.start)]=1;}
       if(se.start>=tday)todaySec+=dur;
@@ -2037,7 +2104,8 @@ button.step-name:hover .step-nm{color:var(--accent)}
   function renderReadingView(){
     var a=ui.art.id?artById(ui.art.id):null;
     if(a)return renderArticle(a);
-    var back='<button class="cv-back" data-action="set-view" data-view="goals" type="button">'+backSvg()+'Goals</button>';
+    var ig=currGoals().filter(function(x){return valCurrFor(x);})[0];
+    var back=ig?backTo(ig):'<button class="cv-back" data-action="set-view" data-view="goals" type="button">'+backSvg()+'Goals</button>';
     if(!ARTICLES.length)return '<section class="sec cv">'+back+'<div class="card empty">No articles yet.</div></section>';
     var f=ui.art.f,list=artList(f),chans=[],mins=0,vmins=0;
     ARTICLES.forEach(function(x){var c=artChan(x.channel);if(chans.indexOf(c)<0)chans.push(c);mins+=artMin(x);vmins+=(x.videoMin||0);});
@@ -2109,8 +2177,8 @@ button.step-name:hover .step-nm{color:var(--accent)}
   }
   /* the whole curriculum, A → Z — pick what you feel like; the ladder order is a suggestion, not a lock */
   function renderCurriculumView(){
-    var back='<button class="cv-back" data-action="set-view" data-view="goals" type="button">'+backSvg()+'Goals</button>';
     var g=findGoal(ui.cvGoal);if(!currFor(g))g=currGoals()[0];   // whichever track you opened; the investing one by default
+    var back=g?backTo(g):'<button class="cv-back" data-action="set-view" data-view="goals" type="button">'+backSvg()+'Goals</button>';
     if(!g)return '<section class="sec cv">'+back+'<div class="card empty">The curriculum lives on your investing goal, which isn’t set up here.</div></section>';
     var c=currFor(g),done=currDone(g),doneN=0,totalMin=0,plan=todayPlan(g),cur=currentLesson(g);
     c.lessons.forEach(function(l){totalMin+=(l.estimateMin||15);if(done[l.id])doneN++;});
@@ -2191,7 +2259,7 @@ button.step-name:hover .step-nm{color:var(--accent)}
   function openDecision(gid){
     var g=findGoal(gid);if(!g||!valCurrFor(g))g=(state.goals||[]).filter(function(x){return valCurrFor(x);})[0];if(!g)return;
     if(!ui.dec||ui.dec.gid!==g.id)ui.dec={gid:g.id,step:1,t0:Date.now(),d:{tk:"",story:"",p3:"",value:"",basis:"",price:"",doubt:"",act:""}};   // an open draft resumes
-    if(ui.view!=="goals"){ui.view="goals";try{localStorage.setItem(VIEW_KEY,"goals");}catch(e){}}
+    openGoalPage(g.id);
     saveDecDraft();render();
     var s=document.getElementById("dec-sec");if(s&&s.scrollIntoView)s.scrollIntoView({block:"start",behavior:"smooth"});
   }
@@ -2293,8 +2361,69 @@ button.step-name:hover .step-nm{color:var(--accent)}
         '<button class="dec-del'+(ui.armed==="dec-del:"+d.id?' armed':'')+'" data-action="dec-del" data-id="'+g.id+'" data-did="'+esc(d.id)+'" data-arm="dec-del:'+esc(d.id)+'" data-on="Tap again to delete" data-off="Delete" type="button">'+(ui.armed==="dec-del:"+d.id?'Tap again to delete':'Delete')+'</button></div>'+
     '</div></div>';
   }
+  /* ---------- goals as a tree: a main goal, its branches, and a page for each ---------- */
+  function goalKids(id){return (state.goals||[]).filter(function(x){return x.parentId===id;});}
+  function goalParent(g){return g&&g.parentId?findGoal(g.parentId):null;}
+  function topGoals(){return (state.goals||[]).filter(function(x){return !goalParent(x);});}
+  function treeIds(g){var out=[g.id];goalKids(g.id).forEach(function(k){out=out.concat(treeIds(k));});return out;}
+  function shortName(n){n=String(n||"");return n.length>34?n.slice(0,32).replace(/\s+\S*$/,"")+"…":n;}
+  function openGoalPage(id){ui.goalId=id||null;ui.view=id?"goal":"goals";try{localStorage.setItem(VIEW_KEY,ui.view);if(id)localStorage.setItem(GOAL_KEY,id);else localStorage.removeItem(GOAL_KEY);}catch(e){}}
+  function backTo(g){return '<button class="cv-back" data-action="goal-open" data-id="'+g.id+'" type="button">'+backSvg()+'<span class="cv-back-t">'+esc(shortName(g.name))+'</span></button>';}
+  /* today's ring: minutes of today's lessons against the daily target — or, for a goal without lessons, days active this week */
+  function goalRing(g){
+    var c=currFor(g),pct,met,title,n;
+    if(c){var m=curMinToday(g.id);pct=Math.min(m/DAILY_MIN,1);met=m>=DAILY_MIN;title=m+" of "+DAILY_MIN+" min today";n=m;}
+    else {var st=goalStats(treeIds(g));pct=st.activeDays/7;met=st.activeDays>=5;title=st.activeDays+" of the last 7 days";n=st.activeDays+"/7";}
+    var r=15,cf=2*Math.PI*r,on=(pct*cf).toFixed(1);
+    return '<span class="ring'+(met?' met':'')+'" title="'+esc(title)+'"><svg viewBox="0 0 36 36" width="36" height="36" aria-hidden="true">'+
+      '<circle cx="18" cy="18" r="'+r+'" class="ring-track"></circle>'+
+      (pct>0?'<circle cx="18" cy="18" r="'+r+'" class="ring-on" stroke-dasharray="'+on+' '+cf.toFixed(1)+'" transform="rotate(-90 18 18)"></circle>':'')+
+      '</svg><span class="ring-n'+(met?' ck':'')+'">'+(met?'✓':n)+'</span></span>';
+  }
+  /* one line about where a goal stands, in the words you'd use */
+  function goalBrief(g){
+    var c=currFor(g),parts=[];
+    if(c){
+      var m=curMinToday(g.id),done=currDone(g),dn=c.lessons.filter(function(l){return done[l.id];}).length,cur=currentLesson(g),due=revDue(g).length;
+      parts.push('<b>'+m+'/'+DAILY_MIN+'</b> min today');
+      if(due)parts.push('<b class="warn">'+due+' revisit'+(due===1?'':'s')+' due</b>');
+      else if(cur)parts.push('next: '+esc(lessonN(cur.lesson))+' '+esc(cur.lesson.stage_name));
+      parts.push(dn+'/'+c.lessons.length+' lessons');
+    } else {
+      var acts=state.tasks.filter(function(t){return t.goalId===g.id&&t.daily;}),ad=acts.filter(function(t){return t.done;}).length,st=goalStats(treeIds(g));
+      parts.push(st.weekSec>=60?'<b>'+fmtDur(st.weekSec)+'</b> this week':'nothing this week');
+      if(acts.length)parts.push(ad+'/'+acts.length+' pieces done');
+      else if(!goalKids(g.id).length)parts.push('no steps yet');
+    }
+    return parts.join(' · ');
+  }
+  function branchRow(g){
+    return '<button class="branch" data-action="goal-open" data-id="'+g.id+'" type="button">'+goalRing(g)+
+      '<span class="br-txt"><span class="br-name">'+esc(g.name)+'</span><span class="br-sub">'+goalBrief(g)+'</span></span>'+
+      '<span class="br-chev">'+chevronSvg()+'</span></button>';
+  }
+  function branchAdd(g){
+    return ui.branchOpen[g.id]
+      ?'<form class="branch-form" data-action="add-branch" data-id="'+g.id+'" autocomplete="off"><input id="branch-'+g.id+'" class="field" maxlength="140" placeholder="A branch — e.g. Business: offers and sales" aria-label="New branch"><button class="btn btn-primary btn-sm" type="submit">Add</button><button class="btn btn-ghost btn-sm" data-action="branch-toggle" data-id="'+g.id+'" type="button">Cancel</button></form>'
+      :'<button class="branch-add" data-action="branch-toggle" data-id="'+g.id+'" type="button">+ Add a branch</button>';
+  }
+  /* a main goal on the overview: the goal, how the week went across all of it, and its branches */
+  function mainGoalCard(g){
+    var kids=goalKids(g.id),st=goalStats(treeIds(g)),sk=goalStreak(treeIds(g));
+    var dots="";for(var i=6;i>=0;i--){var k=dayKey(startOfToday()-i*86400000);dots+='<i class="'+(st.days[k]?"on":"")+'"></i>';}
+    return '<div class="card north">'+
+      '<button class="north-head" data-action="goal-open" data-id="'+g.id+'" type="button">'+
+        '<span class="north-eye">Main goal</span>'+
+        '<span class="north-name">'+esc(g.name)+'</span>'+
+        (g.identity?'<span class="north-id">“'+esc(g.identity)+'”</span>':'')+
+        '<span class="north-stat"><b>'+fmtDur(st.weekSec)+'</b> this week<span class="dots">'+dots+'</span>'+(sk.streak>=2?'<span class="streak">'+sk.streak+'-day streak</span>':'')+'</span>'+
+      '</button>'+
+      '<div class="north-kids"><div class="north-h">'+kids.length+' branch'+(kids.length===1?'':'es')+'</div>'+
+        '<div class="branches">'+kids.map(branchRow).join("")+'</div>'+branchAdd(g)+'</div>'+
+    '</div>';
+  }
   function renderGoals(){
-    var goals=state.goals||[];
+    var goals=topGoals();
     var addForm="";
     if(ui.goalOpen){
       if(aiEnabled()){
@@ -2307,7 +2436,7 @@ button.step-name:hover .step-nm{color:var(--accent)}
         addForm=standardGoalForm();
       }
     }
-    var body=goals.length?('<div class="goal-list">'+goals.map(goalCard).join("")+'</div>')
+    var body=goals.length?('<div class="goal-list">'+goals.map(function(g){return goalKids(g.id).length?mainGoalCard(g):'<div class="card solo">'+branchRow(g)+'</div>';}).join("")+'</div>')
       :(ui.goalOpen?"":'<div class="card empty">No goals yet. Add one, break it into small daily actions, and your tracked time will show whether you’re actually on track.</div>');
     return '<section class="sec">'+
       '<div class="sec-head"><h2>Goals</h2><button class="btn btn-ghost btn-sm" data-action="toggle-goal" type="button">'+(ui.goalOpen?"Close":"+ New")+'</button></div>'+
@@ -2538,13 +2667,21 @@ button.step-name:hover .step-nm{color:var(--accent)}
     if(ui.stepAddOpen[g.id])html+=stepAddForm(g);
     return html;
   }
+  function renderGoalPage(){
+    var g=findGoal(ui.goalId);
+    if(!g){ui.view="goals";return renderGoals();}
+    var up=goalParent(g);
+    var back=up?backTo(up):'<button class="cv-back" data-action="set-view" data-view="goals" type="button">'+backSvg()+'Goals</button>';
+    return '<section class="sec gp">'+back+goalCard(g)+'</section>';
+  }
   function goalCard(g){
-    var st=goalStats(g.id);
+    var kids=goalKids(g.id),up=goalParent(g),ids=kids.length?treeIds(g):g.id;
+    var st=goalStats(ids);
     var meta="";
     if(g.deadline){var days=Math.ceil((keyToDate(g.deadline).getTime()-startOfToday())/86400000);
       meta='<div class="goal-meta"><span class="chip">'+(days>=0?days+" day"+(days===1?"":"s")+" left":Math.abs(days)+" day"+(Math.abs(days)===1?"":"s")+" overdue")+'</span></div>';}
     var dots="";for(var i=6;i>=0;i--){var k=dayKey(startOfToday()-i*86400000);dots+='<i class="'+(st.days[k]?"on":"")+'"></i>';}
-    var sk=goalStreak(g.id),streakLine="";
+    var sk=goalStreak(ids),streakLine="";
     if(sk.streak>=2&&sk.todayDone)streakLine='<span class="streak">'+sk.streak+'-day streak</span>';
     else if(sk.streak>=1&&!sk.todayDone)streakLine='<span class="streak warn">'+sk.streak+'-day streak · keep it alive today</span>';
     else if(st.total>0&&!sk.todayDone&&!sk.yestDone)streakLine='<span class="streak bad">Missed yesterday — don’t miss twice</span>';
@@ -2570,11 +2707,20 @@ button.step-name:hover .step-nm{color:var(--accent)}
     } else {
       identityBlock='<button class="btn btn-ghost btn-sm id-add" data-action="id-edit" data-id="'+g.id+'" type="button">+ Identity</button>';
     }
+    var eye='<div class="gp-eye'+(!up&&kids.length?' is-main':'')+'">'+(up?'Branch of <button class="gp-up" data-action="goal-open" data-id="'+up.id+'" type="button">'+esc(shortName(up.name))+'</button>':(kids.length?'Main goal':'Goal'))+'</div>';
+    var name=ui.nameOpen[g.id]
+      ?'<form class="gname-edit" data-action="goal-name" data-id="'+g.id+'" autocomplete="off"><input id="gname-'+g.id+'" class="field" maxlength="140" value="'+esc(g.name)+'" aria-label="Goal name"><div class="note-btns"><button class="btn btn-primary btn-sm" type="submit">Save</button><button class="btn btn-ghost btn-sm" data-action="gname-cancel" data-id="'+g.id+'" type="button">Cancel</button></div></form>'
+      :'<button class="goal-name gp-name" data-action="gname-edit" data-id="'+g.id+'" type="button" title="Rename">'+esc(g.name)+'<span class="gp-pen" aria-hidden="true">✎</span></button>';
+    var branches=kids.length?'<div class="gp-kids"><div class="north-h">'+kids.length+' branch'+(kids.length===1?'':'es')+' · tap one to open it</div><div class="branches">'+kids.map(branchRow).join("")+'</div>'+branchAdd(g)+'</div>':'';
+    var hasWork=(g.steps||[]).length||state.tasks.some(function(t){return t.goalId===g.id&&t.daily;});
+    var steps=(kids.length&&!hasWork)?'':renderSteps(g);   // a main goal's work lives in its branches
+    var ladder=(kids.length&&!g.progression)?'':renderProgression(g);
+    var addB=(!kids.length&&!up&&!currFor(g))?'<div class="gp-addb">'+branchAdd(g)+'</div>':'';
     return '<div class="card goal-card">'+
-      '<div class="goal-top"><div style="min-width:0"><div class="goal-name">'+esc(g.name)+'</div>'+meta+'</div>'+
-        xBtn("del-goal",g.id,"Delete goal")+'</div>'+
-      identityBlock+stat+
-      renderToday(g,"card")+renderIdeas(g)+renderAswath(g)+renderReadingEntry(g)+renderDecisions(g)+renderSteps(g)+renderProgression(g)+noteBlock+
+      '<div class="goal-top"><div style="min-width:0;flex:1">'+eye+name+meta+'</div>'+
+        xBtn("del-goal",g.id,kids.length?"Delete goal (its branches stay)":"Delete goal")+'</div>'+
+      identityBlock+stat+branches+
+      renderToday(g,"card")+renderIdeas(g)+renderAswath(g)+renderReadingEntry(g)+renderDecisions(g)+steps+ladder+addB+noteBlock+
     '</div>';
   }
   function actionRow(t){
