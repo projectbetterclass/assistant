@@ -955,6 +955,37 @@ button.step-name:hover .step-nm{color:var(--accent)}
 .gp-hours{margin-top:12px}
 .gp-hrow{display:flex;justify-content:space-between;gap:10px;margin-bottom:7px;font-size:12.5px;color:var(--muted)}
 .gp-hrow b{color:var(--ink);font-family:var(--font-mono);font-weight:500}
+/* the FIRE number, on the financial freedom goal */
+.fire{margin-top:14px;padding:14px 15px 13px;border:1px solid var(--line);border-left:3px solid var(--good);border-radius:12px;background:var(--surface-2)}
+.fire-top{display:flex;align-items:center;justify-content:space-between;gap:10px;min-height:38px}
+.fire-eye{font-size:11px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--good)}
+.fire-num{font-family:var(--font-mono);font-size:clamp(28px,8vw,36px);font-weight:500;line-height:1.1;letter-spacing:-.02em;font-variant-numeric:tabular-nums;margin-top:2px}
+.fire-sub{margin-top:5px;font-size:13.5px;line-height:1.45;color:var(--muted)}
+.fire-sub b{color:var(--ink);font-weight:600}
+.fire-rates{display:flex;flex-wrap:wrap;gap:7px;margin-top:11px}
+.fire-prog{margin-top:15px}
+.fm{position:relative;display:block;height:8px;border-radius:0 4px 4px 0;background:var(--good-soft);box-shadow:inset 0 0 0 1px var(--line)}
+.fm i{position:absolute;left:0;top:0;bottom:0;min-width:3px;border-radius:0 4px 4px 0;background:var(--good)}
+.fire-when{margin-top:11px;font-size:14px;line-height:1.45}
+.fire-when b{font-weight:600}
+.fire-when.is-there{color:var(--good);font-weight:600}
+.fire-h{margin:15px 0 6px;font-size:11px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--faint)}
+.fire-tbl{border:1px solid var(--line);border-radius:10px;background:var(--surface);overflow:hidden}
+.fr{display:flex;justify-content:space-between;gap:12px;padding:8px 12px;font-size:13.5px;font-variant-numeric:tabular-nums}
+.fr+.fr{border-top:1px solid var(--line)}
+.fr-m{color:var(--muted)}
+.fr-y{font-family:var(--font-mono);font-size:12.5px;color:var(--ink);white-space:nowrap}
+.fr.on{background:var(--good-soft)}
+.fr.on .fr-m{color:var(--ink);font-weight:600}
+.fire-form{display:flex;flex-direction:column;gap:10px;margin-top:13px;max-width:520px}
+.fire-lbl{display:flex;flex-direction:column;gap:5px;font-size:12.5px;font-weight:500;color:var(--muted)}
+.fire-lbl .field{background:var(--surface)}
+.fire-note{margin:12px 0 0;font-size:11.5px;line-height:1.5;color:var(--faint)}
+.mg-fire{display:flex;align-items:baseline;flex-wrap:wrap;gap:3px 9px;width:100%;margin:2px 0 12px;padding:9px 11px;border:1px solid var(--line);border-left:3px solid var(--good);border-radius:9px;background:var(--surface-2);font-family:inherit;text-align:left;color:var(--ink);cursor:pointer}
+.mg-fire:hover{border-color:var(--line-strong);border-left-color:var(--good)}
+.mg-fire-k{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--good)}
+.mg-fire b{font-family:var(--font-mono);font-size:14.5px;font-weight:500}
+.mg-fire-t{margin-left:auto;font-size:12px;color:var(--muted)}
 .br-hrs{font-size:11.5px;color:var(--muted)}
 .branch .hm{margin-top:5px}
 .br-name .sw{margin-right:7px;vertical-align:1px}
@@ -1057,6 +1088,8 @@ button.step-name:hover .step-nm{color:var(--accent)}
   .gp-kids .branches{padding-top:26px}
   .gp-cols{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(0,1fr);gap:0 28px;align-items:start;margin-top:6px}
   .gp-cols.one{grid-template-columns:minmax(0,1fr)}
+  .fire:has(.fire-b){display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:0 36px;align-items:start;padding:16px 20px 16px}
+  .fire-b .fire-h:first-child{margin-top:8px}
   .gp-cols.one .gp-main:empty{display:none}
   .gp-main,.gp-side{display:block;min-width:0}
   /* projects as a board; an open one takes the full row */
@@ -1258,6 +1291,9 @@ button.step-name:hover .step-nm{color:var(--accent)}
   var state=loadState();
   var artNS; // undefined=unknown, null=unavailable, object=ready
   var syncMode="check"; // check|sync|local|error|readonly
+  // constants the first render() below already needs (a var further down is still undefined then)
+  var HOUR_GOAL=100,HOUR_BASICS=20;   // 20h: roughly what the basics of a new skill take (Josh Kaufman, The First 20 Hours) · 100h: a rule of thumb for getting ahead of most people who start
+  var FIRE_REAL=0.05,FIRE_RATES=[4,3.5],FIRE_STEPS=[500,1000,2000,3000];   // 5% a year after inflation: a stock-heavy portfolio's long-run average, not a promise
   var VIEW_KEY="wmtw_view";
   function loadView(){try{var v=localStorage.getItem(VIEW_KEY);return (v==="goals"||v==="projects"||v==="review"||v==="curriculum"||v==="reading"||v==="goal")?v:"now";}catch(e){return "now";}}
   var GOAL_KEY="wmtw_goal";   // the goal page you're on — survives the reload after a publish
@@ -1273,7 +1309,7 @@ button.step-name:hover .step-nm{color:var(--accent)}
   function loadSes(){try{var s=JSON.parse(localStorage.getItem(SES_KEY)||"null");if(s&&s.tid&&s.d&&Date.now()-(s.at||0)<2*86400000)return s;}catch(e){}return null;}
   var DEC_KEY="wmtw_dec_draft";   // an unfinished call survives a reload — e.g. you switched apps to look up the price
   function loadDecDraft(){try{var s=JSON.parse(localStorage.getItem(DEC_KEY)||"null");if(s&&s.d&&s.gid&&Date.now()-(s.t0||0)<3*86400000)return s;}catch(e){}return null;}
-  var ui={looseOpen:false, addOpen:false, goalOpen:false, actionOpen:{}, noteOpen:{}, cueOpen:{}, idOpen:{}, repOpen:{}, stepAddOpen:{}, proposal:{}, loading:{}, projectOpen:false, projEdit:{}, projLoading:{}, adviseLoading:{}, currRefs:{}, projCardOpen:{}, goalSecOpen:{}, aswClosed:loadAsw(), aswAll:false, aswOpen:{}, lessonOpen:{}, stepOpen:{}, dec:loadDecDraft(), decRows:{}, decAll:false, armed:null, ses:loadSes(), goalMode:"have", shapeLevel:"new", shapeTopic:"", shapeLoading:false, shapeProposal:null, hoLoading:{}, ideaOpen:{}, view:loadView(), goalId:loadGoalId(), nameOpen:{}, branchOpen:{}, cvGoal:loadCvGoal(), art:loadArt(), date:dayKey(Date.now())};
+  var ui={looseOpen:false, fireOpen:{}, addOpen:false, goalOpen:false, actionOpen:{}, noteOpen:{}, cueOpen:{}, idOpen:{}, repOpen:{}, stepAddOpen:{}, proposal:{}, loading:{}, projectOpen:false, projEdit:{}, projLoading:{}, adviseLoading:{}, currRefs:{}, projCardOpen:{}, goalSecOpen:{}, aswClosed:loadAsw(), aswAll:false, aswOpen:{}, lessonOpen:{}, stepOpen:{}, dec:loadDecDraft(), decRows:{}, decAll:false, armed:null, ses:loadSes(), goalMode:"have", shapeLevel:"new", shapeTopic:"", shapeLoading:false, shapeProposal:null, hoLoading:{}, ideaOpen:{}, view:loadView(), goalId:loadGoalId(), nameOpen:{}, branchOpen:{}, cvGoal:loadCvGoal(), art:loadArt(), date:dayKey(Date.now())};
   var isTouch=("ontouchstart" in window)||(navigator.maxTouchPoints>0);
   var sampleNS; // undefined=unknown, null=unavailable, function=ready
 
@@ -1497,6 +1533,7 @@ button.step-name:hover .step-nm{color:var(--accent)}
     else if(a==="prime-save")savePrime(f.getAttribute("data-id"),f.getAttribute("data-lid"),val("prime-guess"));
     else if(a==="idea-add")addIdea(f.getAttribute("data-id"),val("idea-name"));
     else if(a==="add-branch"){var bp=f.getAttribute("data-id");addGoal(val("branch-"+bp),null,"",bp);}
+    else if(a==="fire-save"){var fg=f.getAttribute("data-id");saveFire(fg,val("fire-month-"+fg),val("fire-have-"+fg),val("fire-add-"+fg));}
     else if(a==="goal-name"){var rg=f.getAttribute("data-id"),rn=(val("gname-"+rg)||"").trim();ui.nameOpen[rg]=false;if(rn)commit(function(){var g=findGoal(rg);if(g)g.name=rn.slice(0,140);});else render();}
   }
   function onClick(e){
@@ -1592,6 +1629,9 @@ button.step-name:hover .step-nm{color:var(--accent)}
     else if(a==="rd-done"){var nxA=artNext(id);setArt(nxA?nxA.id:null);commit(function(){state.artRead=state.artRead||{};state.artRead[id]=Date.now();});window.scrollTo(0,0);}
     else if(a==="rd-unread"){commit(function(){if(state.artRead)delete state.artRead[id];});}
     else if(a==="loose-toggle"){ui.looseOpen=!ui.looseOpen;render();}
+    else if(a==="fire-edit"){ui.fireOpen[id]=true;render();var ff=document.getElementById("fire-add-"+id);if(ff)ff.focus();}
+    else if(a==="fire-cancel"){ui.fireOpen[id]=false;render();}
+    else if(a==="fire-rate"){var fr=parseFloat(b.getAttribute("data-rate"));if(FIRE_RATES.indexOf(fr)>=0)commit(function(){var g=findGoal(id);if(g&&g.fire)g.fire.rate=fr;});}
     else if(a==="goal-open"){openGoalPage(id);render();window.scrollTo(0,0);}
     else if(a==="branch-toggle"){ui.branchOpen[id]=!ui.branchOpen[id];render();var bf=document.getElementById("branch-"+id);if(bf)bf.focus();}
     else if(a==="gname-edit"){ui.nameOpen[id]=true;render();var gf=document.getElementById("gname-"+id);if(gf){gf.focus();gf.select();}}
@@ -2624,7 +2664,6 @@ button.step-name:hover .step-nm{color:var(--accent)}
       :'<button class="branch-add" data-action="branch-toggle" data-id="'+g.id+'" type="button">+ Add a branch</button>';
   }
   /* ---------- the overview: every goal on one screen, each with its hours against 100 ---------- */
-  var HOUR_GOAL=100,HOUR_BASICS=20;   // 20h: roughly what the basics of a new skill take (Josh Kaufman, The First 20 Hours) · 100h: a rule of thumb for getting ahead of most people who start
   function lastActive(ids){var m=0;state.tasks.forEach(function(t){if(ids.indexOf(t.goalId)<0)return;(t.sessions||[]).forEach(function(se){if(se.start>m)m=se.start;});});return m;}
   function hoursMeter(sec){   // one scale everywhere: 0 to 100 hours, with a tick at 20
     var h=sec/3600,pct=Math.min(h/HOUR_GOAL,1)*100;
@@ -2673,7 +2712,7 @@ button.step-name:hover .step-nm{color:var(--accent)}
         '<span class="mg-row"><span class="mg-name">'+esc(g.name)+'</span>'+
           '<span class="mg-tot"><b>'+fmtDur(st.total)+'</b><span>'+(st.weekSec>=60?fmtDur(st.weekSec)+' this week':'in total')+'</span></span></span>'+
       '</button>'+
-      '<div class="mg-body">'+goalSplit(g,kids,st.total)+
+      '<div class="mg-body">'+fireLine(g)+goalSplit(g,kids,st.total)+
         '<div class="mg-kids">'+kids.map(function(k,i){return goalLine(k,i<8?i+1:0);}).join("")+'</div>'+branchAdd(g)+'</div>'+
     '</div>';
   }
@@ -2970,6 +3009,59 @@ button.step-name:hover .step-nm{color:var(--accent)}
     if(kids.length)return '<div class="gp-hours">'+goalSplit(g,kids,st.total)+'</div>';
     return '<div class="gp-hours"><div class="gp-hrow"><span><b>'+fmtDur(st.total)+'</b> of '+HOUR_GOAL+'h</span><span>'+nextMark(st.total)+'</span></div>'+hoursMeter(st.total)+'</div>';
   }
+  /* ---------- FIRE number: what you need invested to live off it, and how long getting there takes ---------- */
+  function money(n){return "€"+Math.round(n).toLocaleString("en-US");}
+  function moneyShort(n){if(n>=1e6)return "€"+(Math.round(n/1e5)/10)+"M";if(n>=1e4)return "€"+Math.round(n/1e3)+"k";return money(n);}
+  function fireTarget(f){return f.month*12/(f.rate/100);}
+  function fireYears(target,have,add){   // years until `have` plus `add` a month reaches `target`, in today's money; null = never
+    if(have>=target)return 0;
+    var r=Math.pow(1+FIRE_REAL,1/12)-1;
+    if(add<=0)return have>0?Math.log(target/have)/Math.log(1+r)/12:null;
+    return Math.log((target*r+add)/(have*r+add))/Math.log(1+r)/12;
+  }
+  function fireWhen(y){if(y==null)return "";if(y<1)return "under a year";var n=Math.round(y);return n+" year"+(n===1?"":"s")+" · "+(new Date().getFullYear()+n);}
+  function fireNum(s){var n=parseInt(String(s||"").replace(/[^\d]/g,""),10);return isNaN(n)?0:Math.min(n,1e10);}   // whole euros; "1.000", "1,000" and "€1000" all read as 1000
+  function saveFire(gid,month,have,add){
+    ui.fireOpen[gid]=false;
+    commit(function(){var g=findGoal(gid);if(!g||!g.fire)return;var m=fireNum(month);if(m>0)g.fire.month=m;g.fire.have=fireNum(have);g.fire.add=fireNum(add);});
+  }
+  function renderFire(g){
+    var f=g.fire;if(!f)return "";
+    var target=fireTarget(f),have=f.have||0,add=f.add||0,pct=Math.min(have/target,1)*100;
+    var head='<div class="fire-top"><span class="fire-eye">FIRE number</span>'+(ui.fireOpen[g.id]?'':'<button class="btn btn-ghost btn-sm" data-action="fire-edit" data-id="'+g.id+'" type="button">Edit</button>')+'</div>'+
+      '<div class="fire-num">'+money(target)+'</div>'+
+      '<div class="fire-sub">invested, so you can take out <b>'+money(f.month)+' a month</b> ('+money(f.month*12)+' a year) once you stop working</div>'+
+      '<div class="fire-rates" role="group" aria-label="How much you take out each year">'+FIRE_RATES.map(function(r){
+        return '<button class="lvl'+(f.rate===r?' on':'')+'" data-action="fire-rate" data-id="'+g.id+'" data-rate="'+r+'" type="button" aria-pressed="'+(f.rate===r)+'">'+r+'% a year · '+(r===4?'the classic rule':'safer if you stop early')+'</button>';}).join("")+'</div>';
+    if(ui.fireOpen[g.id]){
+      return '<div class="fire">'+head+
+        '<form class="fire-form" data-action="fire-save" data-id="'+g.id+'" autocomplete="off">'+
+          '<label class="fire-lbl" for="fire-add-'+g.id+'">Investing each month (€)<input id="fire-add-'+g.id+'" class="field" inputmode="numeric" value="'+(add||"")+'" placeholder="e.g. 1000"></label>'+
+          '<label class="fire-lbl" for="fire-have-'+g.id+'">Invested now (€)<input id="fire-have-'+g.id+'" class="field" inputmode="numeric" value="'+(have||"")+'" placeholder="0"></label>'+
+          '<label class="fire-lbl" for="fire-month-'+g.id+'">A month once you stop working (€, in today’s money)<input id="fire-month-'+g.id+'" class="field" inputmode="numeric" value="'+f.month+'"></label>'+
+          '<div class="note-btns"><button class="btn btn-primary btn-sm" type="submit">Save</button><button class="btn btn-ghost btn-sm" data-action="fire-cancel" data-id="'+g.id+'" type="button">Cancel</button></div>'+
+        '</form></div>';
+    }
+    var y=fireYears(target,have,add);
+    var when=have>=target?'<div class="fire-when is-there">✓ You’ve reached it.</div>'
+      :(y==null?'<div class="fire-when">Add what you invest each month to see when you get there. <button class="cue-btn" data-action="fire-edit" data-id="'+g.id+'" type="button">Add it</button></div>'
+        :'<div class="fire-when">'+(add>0?'At <b>'+money(add)+' a month</b>':'With no more added')+': about <b>'+fireWhen(y)+'</b></div>');
+    var steps=FIRE_STEPS.slice();if(add>0&&steps.indexOf(add)<0)steps.push(add);steps.sort(function(a,b){return a-b;});
+    var rows=have>=target?'':'<div class="fire-h">Years to get there, by what you invest each month</div><div class="fire-tbl">'+steps.map(function(m){
+        return '<div class="fr'+(m===add?' on':'')+'"><span class="fr-m">'+money(m)+' a month</span><span class="fr-y">'+fireWhen(fireYears(target,have,m))+'</span></div>';}).join("")+'</div>';
+    return '<div class="fire"><div class="fire-a">'+head+
+      '<div class="fire-prog"><div class="gp-hrow"><span><b>'+money(have)+'</b> invested</span><span>'+(pct>=1||have===0?Math.floor(pct):'<1')+'% of the way</span></div>'+
+        '<span class="fm" role="img" aria-label="'+esc(money(have)+' of '+money(target))+'">'+(have>0?'<i style="width:'+pct.toFixed(2)+'%"></i>':'')+'</span></div>'+
+      when+'</div><div class="fire-b">'+rows+
+      '<p class="fire-note">All in today’s money, before tax. It assumes your investments grow 5% a year after inflation, a long-run average for a mostly-stock portfolio, not a promise. The 4% rule comes from US market history for 30-year retirements; if you stop working young, 3.5% is the safer plan.</p>'+
+    '</div></div>';
+  }
+  function fireLine(g){   // the overview's one line about it
+    var f=g.fire;if(!f)return "";
+    var target=fireTarget(f),have=f.have||0,add=f.add||0,y=fireYears(target,have,add);
+    var tail=have>=target?'reached ✓':(y!=null&&add>0?'about '+Math.round(y)+' yrs at '+moneyShort(add)+'/mo':moneyShort(have)+' invested so far');
+    return '<button class="mg-fire" data-action="goal-open" data-id="'+g.id+'" type="button"><span class="mg-fire-k">FIRE number</span><b>'+moneyShort(target)+'</b><span class="mg-fire-t">'+esc(tail)+'</span></button>';
+  }
   function goalCard(g){
     var kids=goalKids(g.id),up=goalParent(g),ids=kids.length?treeIds(g):g.id;
     var st=goalStats(ids);
@@ -3018,7 +3110,7 @@ button.step-name:hover .step-nm{color:var(--accent)}
     return '<div class="card goal-card">'+
       '<div class="goal-top"><div style="min-width:0;flex:1">'+eye+name+meta+'</div>'+
         xBtn("del-goal",g.id,kids.length?"Delete goal (its branches stay)":"Delete goal")+'</div>'+
-      identityBlock+stat+hoursBlock(g,kids)+branches+
+      identityBlock+stat+hoursBlock(g,kids)+renderFire(g)+branches+
       '<div class="gp-cols'+(main?'':' one')+'"><div class="gp-main">'+main+'</div><div class="gp-side">'+side+'</div></div>'+
     '</div>';
   }
