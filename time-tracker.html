@@ -981,6 +981,10 @@ button.step-name:hover .step-nm{color:var(--accent)}
 .fire-lbl{display:flex;flex-direction:column;gap:5px;font-size:12.5px;font-weight:500;color:var(--muted)}
 .fire-lbl .field{background:var(--surface)}
 .fire-note{margin:12px 0 0;font-size:11.5px;line-height:1.5;color:var(--faint)}
+.fire-inf{margin:0;font-size:13px;line-height:1.55;color:var(--muted)}
+.fire-inf b{color:var(--ink);font-weight:600;font-variant-numeric:tabular-nums}
+.gp-fire{margin-top:14px}
+.gp-fire .mg-fire{margin:0}
 .mg-fire{display:flex;align-items:baseline;flex-wrap:wrap;gap:3px 9px;width:100%;margin:2px 0 12px;padding:9px 11px;border:1px solid var(--line);border-left:3px solid var(--good);border-radius:9px;background:var(--surface-2);font-family:inherit;text-align:left;color:var(--ink);cursor:pointer}
 .mg-fire:hover{border-color:var(--line-strong);border-left-color:var(--good)}
 .mg-fire-k{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--good)}
@@ -2712,7 +2716,7 @@ button.step-name:hover .step-nm{color:var(--accent)}
         '<span class="mg-row"><span class="mg-name">'+esc(g.name)+'</span>'+
           '<span class="mg-tot"><b>'+fmtDur(st.total)+'</b><span>'+(st.weekSec>=60?fmtDur(st.weekSec)+' this week':'in total')+'</span></span></span>'+
       '</button>'+
-      '<div class="mg-body">'+fireLine(g)+goalSplit(g,kids,st.total)+
+      '<div class="mg-body">'+fireLine(fireHolder(g))+goalSplit(g,kids,st.total)+
         '<div class="mg-kids">'+kids.map(function(k,i){return goalLine(k,i<8?i+1:0);}).join("")+'</div>'+branchAdd(g)+'</div>'+
     '</div>';
   }
@@ -3046,18 +3050,21 @@ button.step-name:hover .step-nm{color:var(--accent)}
     var when=have>=target?'<div class="fire-when is-there">✓ You’ve reached it.</div>'
       :(y==null?'<div class="fire-when">Add what you invest each month to see when you get there. <button class="cue-btn" data-action="fire-edit" data-id="'+g.id+'" type="button">Add it</button></div>'
         :'<div class="fire-when">'+(add>0?'At <b>'+money(add)+' a month</b>':'With no more added')+': about <b>'+fireWhen(y)+'</b></div>');
+    var yr=y!=null&&have<target?Math.max(1,Math.round(y)):25,inYr=new Date().getFullYear()+yr,grow=function(i){return Math.pow(1+i,yr);};
+    var infl='<div class="fire-h">Inflation</div><p class="fire-inf">Your '+money(f.month)+' is in today’s money. Prices rise, so in '+inYr+(y!=null&&have<target?'':' (25 years from now)')+' the same life costs about <b>'+money(f.month*grow(0.02))+' a month</b> if prices rise 2% a year, or <b>'+money(f.month*grow(0.03))+'</b> at 3%. Your '+moneyShort(target)+' grows the same way: about '+moneyShort(target*grow(0.02))+' in '+inYr+'’s euros at 2%. And inflation doesn’t stay put: eurozone prices rose over 8% in 2022. So update the number once a year.</p>';
     var steps=FIRE_STEPS.slice();if(add>0&&steps.indexOf(add)<0)steps.push(add);steps.sort(function(a,b){return a-b;});
     var rows=have>=target?'':'<div class="fire-h">Years to get there, by what you invest each month</div><div class="fire-tbl">'+steps.map(function(m){
         return '<div class="fr'+(m===add?' on':'')+'"><span class="fr-m">'+money(m)+' a month</span><span class="fr-y">'+fireWhen(fireYears(target,have,m))+'</span></div>';}).join("")+'</div>';
     return '<div class="fire"><div class="fire-a">'+head+
       '<div class="fire-prog"><div class="gp-hrow"><span><b>'+money(have)+'</b> invested</span><span>'+(pct>=1||have===0?Math.floor(pct):'<1')+'% of the way</span></div>'+
         '<span class="fm" role="img" aria-label="'+esc(money(have)+' of '+money(target))+'">'+(have>0?'<i style="width:'+pct.toFixed(2)+'%"></i>':'')+'</span></div>'+
-      when+'</div><div class="fire-b">'+rows+
-      '<p class="fire-note">All in today’s money, before tax. It assumes your investments grow 5% a year after inflation, a long-run average for a mostly-stock portfolio, not a promise. The 4% rule comes from US market history for 30-year retirements; if you stop working young, 3.5% is the safer plan.</p>'+
+      when+'</div><div class="fire-b">'+rows+infl+
+      '<p class="fire-note">Before tax. The years assume your investments grow 5% a year more than prices do, a long-run average for a mostly-stock portfolio, not a promise. The 4% rule comes from US market history for 30-year retirements; if you stop working young, 3.5% is the safer plan.</p>'+
     '</div></div>';
   }
-  function fireLine(g){   // the overview's one line about it
-    var f=g.fire;if(!f)return "";
+  function fireHolder(g){var ids=treeIds(g);for(var i=0;i<ids.length;i++){var x=findGoal(ids[i]);if(x&&x.fire)return x;}return null;}
+  function fireLine(g){   // one line about it, on the main goal (overview and its page); opens the goal that holds it
+    var f=g&&g.fire;if(!f)return "";
     var target=fireTarget(f),have=f.have||0,add=f.add||0,y=fireYears(target,have,add);
     var tail=have>=target?'reached ✓':(y!=null&&add>0?'about '+Math.round(y)+' yrs at '+moneyShort(add)+'/mo':moneyShort(have)+' invested so far');
     return '<button class="mg-fire" data-action="goal-open" data-id="'+g.id+'" type="button"><span class="mg-fire-k">FIRE number</span><b>'+moneyShort(target)+'</b><span class="mg-fire-t">'+esc(tail)+'</span></button>';
@@ -3110,7 +3117,7 @@ button.step-name:hover .step-nm{color:var(--accent)}
     return '<div class="card goal-card">'+
       '<div class="goal-top"><div style="min-width:0;flex:1">'+eye+name+meta+'</div>'+
         xBtn("del-goal",g.id,kids.length?"Delete goal (its branches stay)":"Delete goal")+'</div>'+
-      identityBlock+stat+hoursBlock(g,kids)+renderFire(g)+branches+
+      identityBlock+stat+hoursBlock(g,kids)+(g.fire?renderFire(g):(kids.length&&fireHolder(g)?'<div class="gp-fire">'+fireLine(fireHolder(g))+'</div>':''))+branches+
       '<div class="gp-cols'+(main?'':' one')+'"><div class="gp-main">'+main+'</div><div class="gp-side">'+side+'</div></div>'+
     '</div>';
   }
