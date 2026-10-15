@@ -499,6 +499,28 @@ h1,h2,h3{margin:0;font-family:var(--font-display);font-weight:600;text-wrap:bala
 .home-glance:hover{border-color:var(--line-strong)}
 .home-glance b{color:var(--ink);font-family:var(--font-mono);font-weight:600}
 .home-glance-go{flex:none;color:var(--accent);font-weight:600;font-size:12.5px}
+/* today's round: every daily thing at its minutes for today */
+.round{padding:14px 15px 15px}
+.round-head{display:flex;align-items:baseline;justify-content:space-between;gap:10px}
+.round-eye{font-size:11px;text-transform:uppercase;letter-spacing:.07em;color:var(--accent);font-weight:600}
+.round-n{font-size:12.5px;color:var(--muted)}
+.round-n b{font-family:var(--font-mono);color:var(--ink);font-weight:600}
+.round-sub{display:flex;align-items:center;flex-wrap:wrap;gap:6px;font-size:13px;color:var(--muted);margin:5px 0 11px}
+.round-sel{border:1px solid var(--line-strong);border-radius:8px;background:var(--surface-2);color:var(--ink);font-family:var(--font-mono);font-size:16px;padding:3px 6px}
+.round-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.rt{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:6px 8px;padding:8px 8px 10px 11px;border:1px solid var(--line);border-radius:11px;background:var(--surface-2);min-width:0}
+.rt-n{min-width:0;border:none;background:transparent;padding:0;font-family:inherit;font-size:13.5px;font-weight:600;color:var(--ink);text-align:left;cursor:pointer;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.rt-n:hover{color:var(--accent)}
+.rt-go{flex:none;width:36px;height:36px;border-radius:9px;border:1px solid var(--accent);background:var(--accent);color:var(--accent-ink);font-size:12px;line-height:1;display:inline-grid;place-items:center;cursor:pointer}
+.rt-go.is-stop{background:var(--bad);border-color:var(--bad);color:#fff}
+.rt-m{grid-column:1/-1;min-width:0;font-family:var(--font-mono);font-size:11.5px;color:var(--muted);font-variant-numeric:tabular-nums;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rt-bar{grid-column:1/-1;height:4px;border-radius:99px;background:var(--surface);box-shadow:inset 0 0 0 1px var(--line);overflow:hidden}
+.rt-bar i{display:block;height:100%;background:var(--accent);border-radius:99px}
+.rt.is-on{border-color:var(--accent);background:var(--accent-soft)}
+.rt.is-done{border-color:var(--good);background:var(--good-soft)}
+.rt.is-done .rt-m{color:var(--good);font-weight:600}
+.rt.is-done .rt-bar i{background:var(--good)}
+@media (max-width:360px){.rt{grid-template-areas:"n n" "m go" "bar bar";padding:8px 7px 9px 10px;gap:6px}.rt-n{grid-area:n}.rt-go{grid-area:go;width:32px;height:32px}.rt-m{grid-area:m}.rt-bar{grid-area:bar}.rt-u{display:none}}   /* a small phone: the name gets the whole width */
 .tabbar{position:fixed;left:0;right:0;bottom:0;z-index:40;display:flex;justify-content:center;gap:2px;
   background:var(--surface);border-top:1px solid var(--line);
   padding:7px 10px calc(7px + env(safe-area-inset-bottom,0px));box-shadow:0 -2px 14px -10px rgba(0,0,0,.35)}
@@ -1137,6 +1159,28 @@ button.step-name:hover .step-nm{color:var(--accent)}
   var DEEP_TARGET_MIN=120;
   var DAILY_MIN=30;   // your ~30 min a day of curriculum (declared up here: the first render runs before later code)
   var SES_STAGES=[["prime","Prime",3],["encode","Encode",17],["retrieve","Retrieve",6],["reflect","Reflect",4]];   // one sitting, in Justin Sung's order — adds up to DAILY_MIN
+  /* the daily round: on weekdays every daily thing gets the same short target (state.dayRound.weekday, the user's 14 minutes); weekends keep the longer ones */
+  function isWeekday(ms){var d=new Date(ms==null?Date.now():ms).getDay();return d>=1&&d<=5;}
+  function weekdayMin(){var r=state.dayRound;return r&&r.weekday>0?r.weekday:0;}
+  function roundThings(){var r=state.dayRound;return r&&r.things?r.things.map(findGoal).filter(Boolean):[];}
+  function inRound(g){var r=state.dayRound;return !!(g&&r&&r.things&&r.things.indexOf(g.id)>=0);}
+  function roundLabel(g){var r=state.dayRound,l=r&&r.labels&&r.labels[g.id];return l||shortName(String(g.name).split(":")[0]);}
+  function curTarget(){return weekdayMin()&&isWeekday()?weekdayMin():DAILY_MIN;}   // today's minutes of lessons
+  function thingTarget(g){   // today's minutes for a goal: its lessons, its daily minutes, or its place in the round (0 = none)
+    if(currFor(g))return inRound(g)?curTarget():DAILY_MIN;
+    if(g.dailyMin)return inRound(g)&&weekdayMin()&&isWeekday()?weekdayMin():g.dailyMin;
+    return inRound(g)?weekdayMin():0;
+  }
+  function azWeeks(totalMin){   // how long a track takes at your pace: the weekday round and the longer weekends, or a flat 30 a day
+    var wd=weekdayMin(),wk=wd?5*wd+2*DAILY_MIN:7*DAILY_MIN,n=Math.ceil(totalMin/wk);
+    return n+' week'+(n===1?'':'s')+' at '+(wd?wd+' min on weekdays and '+DAILY_MIN+' at weekends':DAILY_MIN+' min a day');
+  }
+  function thingMinToday(g){return currFor(g)?curMinToday(g.id):Math.floor(goalStats(treeIds(g)).todaySec/60);}   // a lesson track counts its lessons, like its card
+  function sesStages(){   // one sitting, scaled to today's lesson minutes: same four stages, same order
+    var t=curTarget();if(t===DAILY_MIN)return SES_STAGES;
+    var out=SES_STAGES.map(function(x){return [x[0],x[1],Math.max(1,Math.round(x[2]*t/DAILY_MIN))];}),sum=0;
+    out.forEach(function(x){sum+=x[2];});out[1][2]=Math.max(1,out[1][2]+t-sum);return out;
+  }
   var REV_DAYS={nailed:10,shaky:3}, REV_MIN=5;   // spaced revisit: test when 20–30% has faded (Justin Sung) — a nailed lesson once after 10 days, a shaky one after 3
   var REV_CO={KO:"PEP",NVDA:"AMD",TSLA:"BYD",JPM:"WFC",INTC:"IBM"};   // the revisit is the same question on a new company (Aswath: a company every week)
   var EDGE=0.10;      // your value within ±10% of the price = "about fair", no clear edge
@@ -1327,8 +1371,9 @@ button.step-name:hover .step-nm{color:var(--accent)}
   root.addEventListener("click",onClick);
   root.addEventListener("submit",onSubmit);
   root.addEventListener("input",onInput);
-  root.addEventListener("change",function(e){   // linking a task's time to a goal, from the overview
-    var el=e.target;if(!el||el.getAttribute("data-action")!=="link-goal"||!el.value)return;
+  root.addEventListener("change",function(e){   // linking a task's time to a goal, from the overview; the round's weekday minutes
+    var el=e.target;if(el&&el.getAttribute("data-action")==="round-min"){var rv=parseInt(el.value,10);if(rv>0)commit(function(){if(state.dayRound)state.dayRound.weekday=rv;});return;}
+    if(!el||el.getAttribute("data-action")!=="link-goal"||!el.value)return;
     var tid=el.getAttribute("data-id"),gid=el.value;
     commit(function(){var t=findTask(tid);if(t&&findGoal(gid))t.goalId=gid;});
   });
@@ -1548,6 +1593,10 @@ button.step-name:hover .step-nm{color:var(--accent)}
     else if(a==="daily-start"){var dg=findGoal(id);if(dg){   // its clock is a task of its own; made again if you deleted it
       if(!(dg.timer&&findTask(dg.timer))){var nt={id:"act_"+uid(),name:"📖 Reading",category:"",estimateMin:null,planned:false,daily:false,goalId:dg.id,depth:null,cue:"",done:false,createdAt:Date.now(),sessions:[]};state.tasks.push(nt);dg.timer=nt.id;}
       startTask(dg.timer);}}
+    else if(a==="round-start"){var rg=findGoal(id);if(rg){
+      if(currFor(rg)&&(currentLesson(rg)||{}).lesson)startLesson(rg.id);
+      else{if(!(rg.timer&&findTask(rg.timer))){var rk={id:"act_"+uid(),name:"⏱ "+roundLabel(rg),category:"",estimateMin:null,planned:false,daily:false,goalId:rg.id,depth:null,cue:"",done:false,createdAt:Date.now(),sessions:[]};state.tasks.push(rk);rg.timer=rk.id;}
+        startTask(rg.timer);}}}
     else if(a==="stop")stopTask();
     else if(a==="pause")pauseTask();
     else if(a==="continue")continueTask();
@@ -1682,9 +1731,9 @@ button.step-name:hover .step-nm{color:var(--accent)}
     });
     var sb=document.getElementById("ses-bar"),st=state.activeId&&findTask(state.activeId);
     if(sb&&isLessonTask(st)&&ui.ses){var ssec=lessonSecToday(st),si=sesStageAt(ssec),mk=document.getElementById("ses-mark"),sg=document.getElementById("ses-sug");
-      if(mk)mk.style.left=Math.min(ssec/60/DAILY_MIN*100,100).toFixed(1)+"%";
+      if(mk)mk.style.left=Math.min(ssec/60/curTarget()*100,100).toFixed(1)+"%";
       sb.querySelectorAll(".ses-seg").forEach(function(el,i){el.classList.toggle("is-now",i===si);});
-      if(sg)sg.textContent=(si!==ui.ses.stage)?"Suggested now: "+SES_STAGES[si][1]:"";}
+      if(sg)sg.textContent=(si!==ui.ses.stage)?"Suggested now: "+sesStages()[si][1]:"";}
     var rb=document.getElementById("rev-mark");
     if(rb&&st&&ui.ses&&ui.ses.rev){var rsec=Math.max(0,(now-(runningStart(st)||now))/1000),rl=document.getElementById("rev-left");
       rb.style.left=Math.min(rsec/(REV_MIN*60)*100,100).toFixed(1)+"%";
@@ -1731,7 +1780,7 @@ button.step-name:hover .step-nm{color:var(--accent)}
   }
   function renderHome(){
     // a phone gets one column; a wide screen puts what to do now on the left and the day + inbox on the right
-    return '<div class="view home"><div class="home-a">'+renderNow()+homeNext()+homeRevisit()+homePrime()+'</div><div class="home-b">'+homeGlance()+renderCaptureHome()+'</div></div>';
+    return '<div class="view home"><div class="home-a">'+renderNow()+homeRound()+homeNext()+homeRevisit()+homePrime()+'</div><div class="home-b">'+homeGlance()+renderCaptureHome()+'</div></div>';
   }
   function render(){
     var html=topBar();
@@ -1747,6 +1796,22 @@ button.step-name:hover .step-nm{color:var(--accent)}
   }
 
   /* ---------- home: the single "what now?" screen ---------- */
+  /* today's round: every daily thing, its minutes today against today's target, and one button to start it */
+  function homeRound(){
+    var L=roundThings(),wd=weekdayMin();if(!L.length||!wd)return "";
+    var run=state.activeId&&findTask(state.activeId),done=0;
+    var tiles=L.map(function(g){
+      var T=thingTarget(g),m=thingMinToday(g),ok=m>=T,on=!!(run&&treeIds(g).indexOf(run.goalId)>=0);if(ok)done++;
+      return '<div class="rt'+(ok?' is-done':'')+(on?' is-on':'')+'"><button class="rt-n" data-action="goal-open" data-id="'+g.id+'" type="button">'+esc(roundLabel(g))+'</button>'+
+        (on?'<button class="rt-go is-stop" data-action="stop" type="button" aria-label="'+esc('Stop '+roundLabel(g))+'">■</button>'
+          :'<button class="rt-go" data-action="round-start" data-id="'+g.id+'" type="button" aria-label="'+esc('Start '+roundLabel(g))+'">▶</button>')+
+        '<span class="rt-m">'+(ok?'✓ ':'')+m+' / '+T+'<span class="rt-u"> min</span></span><span class="rt-bar"><i style="width:'+Math.min(100,Math.round(m/T*100))+'%"></i></span></div>';}).join("");
+    var opts=[10,14,15,20,25,30].map(function(v){return '<option value="'+v+'"'+(v===wd?' selected':'')+'>'+v+'</option>';}).join(""),
+      sel='<select class="round-sel" data-action="round-min" aria-label="Minutes on each thing, on weekdays">'+opts+'</select>';
+    return '<section class="card round"><div class="round-head"><span class="round-eye">Today’s round</span><span class="round-n"><b>'+done+'</b> of '+L.length+' done</span></div>'+
+      '<div class="round-sub">'+(isWeekday()?'Weekdays: '+sel+' min on each.':'Weekend: '+DAILY_MIN+' min for lessons, the usual for reading, '+sel+' for the rest.')+'</div>'+
+      '<div class="round-grid">'+tiles+'</div></section>';
+  }
   function homeNext(){
     var pick=null,goals=state.goals||[],i,j,k;
     for(i=0;i<goals.length&&!pick;i++){
@@ -1771,7 +1836,7 @@ button.step-name:hover .step-nm{color:var(--accent)}
       ?'<button class="btn btn-primary btn-sm" data-action="cur-start" data-id="'+pick.gid+'" data-lid="'+pick.lid+'" type="button">'+(pick.cont?'Continue':'Start')+' · ~'+pick.min+'m</button>'
       :(pick.tid==="act_journal"?'<button class="btn btn-primary btn-sm" data-action="dec-open" data-id="'+pick.gid+'" type="button">Log a decision</button>'
         :'<button class="btn btn-primary btn-sm" data-action="start" data-id="'+pick.tid+'" type="button">Start</button>');
-    var eye=pick.type==="lesson"?'Today’s '+DAILY_MIN+' min · '+esc(shortName(pick.goal))+' · '+esc(pick.rung)+(pick.when?' · '+esc(pick.when):''):esc(pick.goal);
+    var eye=pick.type==="lesson"?'Today’s '+curTarget()+' min · '+esc(shortName(pick.goal))+' · '+esc(pick.rung)+(pick.when?' · '+esc(pick.when):''):esc(pick.goal);
     return '<div class="home-next">'+
       '<div class="home-next-eye">Next up · '+eye+'</div>'+
       '<div class="home-next-row"><div class="home-next-label">'+esc(pick.label)+'</div>'+start+'</div>'+
@@ -2043,10 +2108,10 @@ button.step-name:hover .step-nm{color:var(--accent)}
   function suggestPlan(g,ids){
     var ls=currFor(g).lessons,total=0;ids=ids.slice();
     ids.forEach(function(id){total+=lessonLeftMin(g,lessonById(id));});
-    for(var i=0;i<ls.length&&total<DAILY_MIN;i++){
+    for(var i=0,T=curTarget();i<ls.length&&total<T;i++){
       var l=ls[i];if(!lessonOpen(g,l.id)||ids.indexOf(l.id)>=0)continue;
       var m=lessonLeftMin(g,l);
-      if(ids.length&&total+m>DAILY_MIN+10)break;          // don't overshoot the day by much
+      if(ids.length&&total+m>T+10)break;          // don't overshoot the day by much
       ids.push(l.id);total+=m;
     }
     return ids;
@@ -2115,18 +2180,18 @@ button.step-name:hover .step-nm{color:var(--accent)}
     ui.ses=null;saveSes();
   }
   function lessonSecToday(t){var key=dayKey(Date.now()),now=Date.now(),s=0;(t.sessions||[]).forEach(function(se){if(dayKey(se.start)===key)s+=((se.end||now)-se.start)/1000;});return s;}
-  function sesStageAt(sec){var m=sec/60,acc=0;for(var i=0;i<SES_STAGES.length;i++){acc+=SES_STAGES[i][2];if(m<acc)return i;}return SES_STAGES.length-1;}
+  function sesStageAt(sec){var m=sec/60,acc=0,S=sesStages();for(var i=0;i<S.length;i++){acc+=S[i][2];if(m<acc)return i;}return S.length-1;}
   function renderSession(t){
     var info=lessonOfTask(t);if(!info)return "";var g=info.g,l=info.l,s=sesFor(t),d=s.d,co=lessonCo(l),st=s.stage;
     if(s.rev)return renderRevisit(t,g,l,s);
-    var sec=lessonSecToday(t),now=sesStageAt(sec);
-    var pills=SES_STAGES.map(function(x,i){return '<button class="ses-pill'+(i===st?' on':(i<st?' done':''))+'" data-action="ses-stage" data-i="'+i+'" type="button" aria-pressed="'+(i===st?'true':'false')+'">'+(i+1)+' '+x[1]+'<span>'+x[2]+'m</span></button>';}).join("");
-    var segs=SES_STAGES.map(function(x,i){return '<i class="ses-seg'+(i===now?' is-now':'')+'" style="width:'+(x[2]/DAILY_MIN*100).toFixed(1)+'%"></i>';}).join("");   // not "now": that's the running card's class
-    var bar='<div class="ses-bar" id="ses-bar">'+segs+'<b id="ses-mark" style="left:'+Math.min(sec/60/DAILY_MIN*100,100).toFixed(1)+'%"></b></div>'+
-      '<div class="ses-sug" id="ses-sug">'+(now!==st?'Suggested now: '+SES_STAGES[now][1]:'')+'</div>';
+    var sec=lessonSecToday(t),now=sesStageAt(sec),S=sesStages(),T=curTarget();
+    var pills=S.map(function(x,i){return '<button class="ses-pill'+(i===st?' on':(i<st?' done':''))+'" data-action="ses-stage" data-i="'+i+'" type="button" aria-pressed="'+(i===st?'true':'false')+'">'+(i+1)+' '+x[1]+'<span>'+x[2]+'m</span></button>';}).join("");
+    var segs=S.map(function(x,i){return '<i class="ses-seg'+(i===now?' is-now':'')+'" style="width:'+(x[2]/T*100).toFixed(1)+'%"></i>';}).join("");   // not "now": that's the running card's class
+    var bar='<div class="ses-bar" id="ses-bar">'+segs+'<b id="ses-mark" style="left:'+Math.min(sec/60/T*100,100).toFixed(1)+'%"></b></div>'+
+      '<div class="ses-sug" id="ses-sug">'+(now!==st?'Suggested now: '+S[now][1]:'')+'</div>';
     var call=l.call?'<button class="curr-call" data-action="asw-go" data-id="'+l.call+'" type="button">In his '+esc(l.call)+' call →</button>':'';
     var ask='<div class="ses-q"><b>'+lessonN(l)+' · '+esc(l.concept)+'</b><span class="ses-co">on '+esc(co)+'</span></div><div class="ses-task">'+esc(lessonTask(l))+'</div>';
-    var nav=function(i){return '<div class="dec-nav"><span></span><button class="btn btn-primary btn-sm" data-action="ses-stage" data-i="'+i+'" type="button">Next: '+SES_STAGES[i][1]+' →</button></div>';};
+    var nav=function(i){return '<div class="dec-nav"><span></span><button class="btn btn-primary btn-sm" data-action="ses-stage" data-i="'+i+'" type="button">Next: '+S[i][1]+' →</button></div>';};
     var body;
     if(st===0)body=ask+call+
       '<label class="ses-lbl" for="ses-guess">Your guess, one line — before any reading'+(s.primed?' · <span class="ses-ok">you primed this ✓</span>':'')+'</label>'+
@@ -2207,7 +2272,7 @@ button.step-name:hover .step-nm{color:var(--accent)}
   /* today's plan — on the goal card ("card") and at the top of the A → Z view ("az") */
   function renderToday(g,where){
     var c=currFor(g);if(!c)return "";
-    var plan=todayPlan(g),done=currDone(g),mins=curMinToday(g.id),met=mins>=DAILY_MIN;
+    var plan=todayPlan(g),done=currDone(g),mins=curMinToday(g.id),T=curTarget(),met=mins>=T;
     var allDone=c.lessons.every(function(l){return done[l.id];});
     var planned=0;plan.forEach(function(id){planned+=lessonLeftMin(g,lessonById(id));});
     var rows=plan.length?'<div class="td-list">'+plan.map(function(id){return lessonRow(g,lessonById(id),where==="az"?"plan-az":"plan",plan);}).join("")+'</div>'
@@ -2216,15 +2281,15 @@ button.step-name:hover .step-nm{color:var(--accent)}
       ?'<form class="cue-edit" data-action="cur-when" data-id="'+g.id+'" autocomplete="off"><input id="cur-when-'+g.id+'" class="field" value="'+esc(when)+'" placeholder="When and where? e.g. after coffee, at the desk" aria-label="When"><button class="btn btn-primary btn-sm" type="submit">Save</button><button class="btn btn-ghost btn-sm" data-action="cur-when-cancel" data-id="'+g.id+'" type="button">Cancel</button></form>'
       :'<button class="td-when'+(when?'':' is-empty')+'" data-action="cur-when-edit" data-id="'+g.id+'" type="button" title="Decide once: when and where">'+(when?esc(when):'+ when & where')+'</button>';
     var wn=withoutNotes(g),metric=wn.graded?'<div class="td-metric"><span><b>'+wn.nailed+'</b> of '+wn.graded+' without the notes'+(wn.passed?' · <b>'+wn.passed+'</b> still there after '+REV_DAYS.nailed+' days':'')+'</span><span class="td-metric-s">minutes = showing up · this = learning</span></div>':'';
-    var head='<div class="td-head"><span class="td-title">Today’s '+DAILY_MIN+' minutes</span>'+
-      '<span class="td-mins'+(met?' met':'')+'">'+mins+' / '+DAILY_MIN+' min'+(met?' ✓':'')+'</span></div>'+whenUi+
-      '<div class="td-bar"><i style="width:'+Math.min(mins/DAILY_MIN*100,100).toFixed(0)+'%"></i></div>'+metric;
+    var head='<div class="td-head"><span class="td-title">Today’s '+T+' minutes</span>'+
+      '<span class="td-mins'+(met?' met':'')+'">'+mins+' / '+T+' min'+(met?' ✓':'')+'</span></div>'+whenUi+
+      '<div class="td-bar"><i style="width:'+Math.min(mins/T*100,100).toFixed(0)+'%"></i></div>'+metric;
     var rl=revList(g),due=rl.filter(function(x){return x.days<=0;}),later=rl.filter(function(x){return x.days>0;});
     var revHtml=rl.length?'<div class="td-rev"><div class="td-rev-h">Revisits<span>'+REV_MIN+' min · '+(c.key==="prod"?'another idea':'a new company')+' · no notes</span></div>'+
       due.map(function(x){return revRow(g,x);}).join("")+
       (later.length?'<div class="td-rev-later">Coming up: '+later.map(function(x){return lessonN(x.l)+' in '+x.days+'d';}).join(' · ')+'</div>':'')+'</div>':'';
     var foot=where==="az"
-      ?'<div class="td-foot"><span>'+(plan.length?'Picked ≈ '+planned+' min'+(planned>DAILY_MIN+10?' — do ~'+DAILY_MIN+' today; the rest carries over':''):'')+'</span>'+
+      ?'<div class="td-foot"><span>'+(plan.length?'Picked ≈ '+planned+' min'+(planned>T+10?' — do ~'+T+' today; the rest carries over':''):'')+'</span>'+
         '<button class="td-link" data-action="cur-suggest" data-id="'+g.id+'" type="button">Reset to next in line</button></div>'
       :'<button class="td-az" data-action="cv-open" data-id="'+g.id+'" type="button">Change today’s pick<span class="td-az-s">See all '+c.lessons.length+' lessons, A → Z →</span></button>';
     return '<div class="td'+(where==="az"?' td-az-panel':'')+'">'+head+rows+revHtml+foot+'</div>';
@@ -2428,7 +2493,7 @@ button.step-name:hover .step-nm{color:var(--accent)}
     }).join("");
     return '<section class="sec cv">'+back+
       '<h2 class="cv-title">'+esc(c.azTitle)+'</h2>'+
-      '<p class="cv-sub">'+c.lessons.length+' lessons · '+doneN+' done · about '+fmtDur(totalMin*60)+' in all — roughly '+Math.ceil(totalMin/DAILY_MIN/7)+' week'+(Math.ceil(totalMin/DAILY_MIN/7)===1?'':'s')+' at '+DAILY_MIN+' min a day. '+esc(c.blurb)+'</p>'+
+      '<p class="cv-sub">'+c.lessons.length+' lessons · '+doneN+' done · about '+fmtDur(totalMin*60)+' in all — roughly '+azWeeks(totalMin)+'. '+esc(c.blurb)+'</p>'+
       renderToday(g,"az")+'<div class="cv-rungs">'+groups+'</div>'+
     '</section>';
   }
@@ -2608,20 +2673,24 @@ button.step-name:hover .step-nm{color:var(--accent)}
   function backTo(g){return '<button class="cv-back" data-action="goal-open" data-id="'+g.id+'" type="button">'+backSvg()+'<span class="cv-back-t">'+esc(shortName(g.name))+'</span></button>';}
   /* a goal with a daily target in minutes (Read 20 minutes a day): today's minutes, and one button that starts its clock */
   function dailyMinToday(g){return Math.floor(goalStats(treeIds(g)).todaySec/60);}
-  function renderDaily(g){
-    if(!g.dailyMin||currFor(g))return "";
-    var m=dailyMinToday(g),t=g.timer?findTask(g.timer):null,run=!!(t&&state.activeId===t.id),met=m>=g.dailyMin;
+  function renderDaily(g){   // a daily-minutes goal (reading), or one of today's round: its minutes today and one clock
+    if(currFor(g)||!(g.dailyMin||(inRound(g)&&weekdayMin())))return "";
+    var rd=!!g.dailyMin,m=dailyMinToday(g),T=thingTarget(g),t=g.timer?findTask(g.timer):null,met=m>=T,act=state.activeId&&findTask(state.activeId),
+      run=rd?!!(t&&state.activeId===t.id):!!(act&&treeIds(g).indexOf(act.goalId)>=0);
     var btn=run?'<button class="btn btn-stop btn-sm" data-action="stop" type="button">Stop</button>'
-      :'<button class="btn btn-primary btn-sm" data-action="daily-start" data-id="'+g.id+'" type="button">'+(m?'Keep reading':'Start reading')+'</button>';
-    return '<div class="td dly"><div class="td-head"><span class="td-title">Today’s '+g.dailyMin+' minutes</span><span class="td-mins'+(met?' met':'')+'">'+m+' / '+g.dailyMin+' min</span></div>'+
-      '<div class="td-bar"><i style="width:'+Math.min(100,Math.round(m/g.dailyMin*100))+'%"></i></div>'+
-      '<div class="dly-row"><span class="dly-t">'+(run?'The clock is running. Stop it when you put the book down.':(met?'Done for today ✓ Anything more is a bonus.':'Any book counts, audiobooks too. Start the clock when you open one.'))+'</span>'+btn+'</div></div>';
+      :(rd?'<button class="btn btn-primary btn-sm" data-action="daily-start" data-id="'+g.id+'" type="button">'+(m?'Keep reading':'Start reading')+'</button>'
+        :'<button class="btn btn-primary btn-sm" data-action="round-start" data-id="'+g.id+'" type="button">'+(m?'Keep going':'Start')+'</button>');
+    var say=run?(rd?'The clock is running. Stop it when you put the book down.':'The clock is running. Stop it when you’re done.')
+      :(met?'Done for today ✓ Anything more is a bonus.':(rd?'Any book counts, audiobooks too. Start the clock when you open one.':'Anything on '+esc(roundLabel(g))+' counts — a video, a note, a plan. Start the clock when you begin.'));
+    return '<div class="td dly"><div class="td-head"><span class="td-title">Today’s '+T+' minutes</span><span class="td-mins'+(met?' met':'')+'">'+m+' / '+T+' min</span></div>'+
+      '<div class="td-bar"><i style="width:'+Math.min(100,Math.round(m/T*100))+'%"></i></div>'+
+      '<div class="dly-row"><span class="dly-t">'+say+'</span>'+btn+'</div></div>';
   }
-  /* today's ring: minutes of today's lessons against the daily target — or, for a goal without lessons, days active this week */
+  /* today's ring: minutes against today's target (lessons, daily minutes, or the round's) — or, for a goal with none, days active this week */
   function goalRing(g){
-    var c=currFor(g),pct,met,title,n;
-    if(c){var m=curMinToday(g.id);pct=Math.min(m/DAILY_MIN,1);met=m>=DAILY_MIN;title=m+" of "+DAILY_MIN+" min today";n=m;}
-    else if(g.dailyMin){var dm=dailyMinToday(g);pct=Math.min(dm/g.dailyMin,1);met=dm>=g.dailyMin;title=dm+" of "+g.dailyMin+" min today";n=dm;}
+    var c=currFor(g),T=thingTarget(g),pct,met,title,n;
+    if(c){var m=curMinToday(g.id);pct=Math.min(m/T,1);met=m>=T;title=m+" of "+T+" min today";n=m;}
+    else if(T){var dm=thingMinToday(g);pct=Math.min(dm/T,1);met=dm>=T;title=dm+" of "+T+" min today";n=dm;}
     else {var st=goalStats(treeIds(g));pct=st.activeDays/7;met=st.activeDays>=5;title=st.activeDays+" of the last 7 days";n=st.activeDays+"/7";}
     var r=15,cf=2*Math.PI*r,on=(pct*cf).toFixed(1);
     return '<span class="ring'+(met?' met':'')+'" title="'+esc(title)+'"><svg viewBox="0 0 36 36" width="36" height="36" aria-hidden="true">'+
@@ -2634,17 +2703,18 @@ button.step-name:hover .step-nm{color:var(--accent)}
     var c=currFor(g),parts=[];
     if(c){
       var m=curMinToday(g.id),done=currDone(g),dn=c.lessons.filter(function(l){return done[l.id];}).length,cur=currentLesson(g),due=revDue(g).length;
-      parts.push('<b>'+m+'/'+DAILY_MIN+'</b> min today');
+      parts.push('<b>'+m+'/'+thingTarget(g)+'</b> min today');
       if(due)parts.push('<b class="warn">'+due+' revisit'+(due===1?'':'s')+' due</b>');
       else if(cur)parts.push('next: '+esc(lessonN(cur.lesson))+' '+esc(cur.lesson.stage_name));
       parts.push(dn+'/'+c.lessons.length+' lessons');
     } else if(g.dailyMin){
       var wk=goalStats(treeIds(g)).weekSec,sh=shelfOf(g),un=sh?artUnread(sh):[];
-      parts.push('<b>'+dailyMinToday(g)+'/'+g.dailyMin+'</b> min today');
+      parts.push('<b>'+dailyMinToday(g)+'/'+thingTarget(g)+'</b> min today');
       parts.push(wk>=60?fmtDur(wk)+' this week':'nothing this week');
       if(un.length)parts.push('next note: '+esc(un[0].title));
     } else {
       var acts=state.tasks.filter(function(t){return t.goalId===g.id&&t.daily;}),ad=acts.filter(function(t){return t.done;}).length,st=goalStats(treeIds(g));
+      if(inRound(g))parts.push('<b>'+thingMinToday(g)+'/'+thingTarget(g)+'</b> min today');
       parts.push(st.weekSec>=60?'<b>'+fmtDur(st.weekSec)+'</b> this week':'nothing this week');
       var gs=shelfOf(g),gun=gs?artUnread(gs):[];
       if(acts.length)parts.push(ad+'/'+acts.length+' pieces done');
