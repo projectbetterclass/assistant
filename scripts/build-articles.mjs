@@ -25,7 +25,7 @@ function parse(file) {
   if (meta.n == null && !meta.date) throw new Error(file + ": needs a date or an n");
   if (meta.date && !/^\d{4}-\d{2}-\d{2}$/.test(meta.date)) throw new Error(file + ": bad date " + meta.date);
   if (meta.n != null && !/^\d+$/.test(meta.n)) throw new Error(file + ": bad n " + meta.n);
-  if (meta.shelf && !["invest", "business", "books"].includes(meta.shelf)) throw new Error(file + ": unknown shelf " + meta.shelf);
+  if (meta.shelf && !["invest", "business", "books", "ai"].includes(meta.shelf)) throw new Error(file + ": unknown shelf " + meta.shelf);
   const item = {
     id: meta.id,
     channel: meta.channel,
