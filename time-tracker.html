@@ -1119,6 +1119,29 @@ button.step-name:hover .step-nm{color:var(--accent)}
 .fire-inf{margin:0;font-size:13px;line-height:1.55;color:var(--muted)}
 .fire-inf b{color:var(--ink);font-weight:600;font-variant-numeric:tabular-nums}
 .gp-fire{margin-top:14px}
+/* what you spend, under the FIRE number */
+.cs-num{font-family:var(--font-mono);font-size:clamp(24px,7vw,30px);font-weight:500;line-height:1.15;letter-spacing:-.02em;font-variant-numeric:tabular-nums;margin-top:2px}
+.cs-num span{font-family:var(--font-sans);font-size:13px;font-weight:500;letter-spacing:0;color:var(--muted)}
+.cs-m{margin-top:11px}
+.cs-gap{margin-top:8px;font-size:13.5px;line-height:1.45;color:var(--muted)}
+.cs-gap b{color:var(--ink);font-weight:600}
+.cs-cats{display:flex;flex-wrap:wrap;gap:6px;margin-top:11px}
+.cs-cat{padding:3px 9px;border:1px dashed var(--line-strong);border-radius:99px;font-size:12px;color:var(--faint)}
+.cs-cat.on{border-style:solid;border-color:transparent;background:var(--good-soft);color:var(--ink)}
+.cs-cat b{font-family:var(--font-mono);font-weight:500;font-size:11.5px;color:var(--good)}
+.cs-note{margin:9px 0 0;font-size:12.5px;line-height:1.5;color:var(--muted)}
+.cs-two{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.cs-two .field{width:100%;min-width:0}
+.cs-gh{display:flex;justify-content:space-between;gap:10px}
+.cs-gh span:last-child{font-family:var(--font-mono);letter-spacing:0;text-transform:none;color:var(--muted);font-weight:500}
+.cs-row{display:grid;grid-template-columns:auto minmax(0,1fr) auto auto;grid-template-areas:"d w a x" "ev ev pm x";align-items:center;gap:6px 10px;padding:9px 10px 9px 12px;font-size:13.5px}
+.cs-row+.cs-row{border-top:1px solid var(--line)}
+.cs-d{grid-area:d;font-family:var(--font-mono);font-size:11.5px;color:var(--faint);white-space:nowrap}
+.cs-w{grid-area:w;min-width:0;overflow-wrap:anywhere}
+.cs-a{grid-area:a;font-family:var(--font-mono);font-weight:500;font-variant-numeric:tabular-nums;white-space:nowrap}
+.cs-ev{grid-area:ev;justify-self:start;max-width:100%;padding:3px 6px;border:1px solid var(--line-strong);border-radius:7px;background:var(--surface);color:var(--ink);font-family:inherit;font-size:16px}
+.cs-pm{grid-area:pm;font-size:12px;color:var(--muted);white-space:nowrap;text-align:right}
+.cs-row .icon-btn{grid-area:x;width:32px;height:32px;font-size:14px}
 .gp-fire .mg-fire{margin:0}
 .mg-fire{display:flex;align-items:baseline;flex-wrap:wrap;gap:3px 9px;width:100%;margin:2px 0 12px;padding:9px 11px;border:1px solid var(--line);border-left:3px solid var(--good);border-radius:9px;background:var(--surface-2);font-family:inherit;text-align:left;color:var(--ink);cursor:pointer}
 .mg-fire:hover{border-color:var(--line-strong);border-left-color:var(--good)}
@@ -1491,7 +1514,9 @@ button.step-name:hover .step-nm{color:var(--accent)}
   var syncMode="check"; // check|sync|local|error|readonly
   // constants the first render() below already needs (a var further down is still undefined then)
   var HOUR_GOAL=100,HOUR_BASICS=20;   // 20h: roughly what the basics of a new skill take (Josh Kaufman, The First 20 Hours) · 100h: a rule of thumb for getting ahead of most people who start
-  var FIRE_REAL=0.05,FIRE_RATES=[4,3.5],FIRE_STEPS=[500,1000,2000,3000];   // 5% a year after inflation: a stock-heavy portfolio's long-run average, not a promise
+  var FIRE_REAL=0.05,FIRE_RATES=[4,3.5],FIRE_STEPS=[500,1000,2000,3000];
+  var COST_CATS=[["home","Housing"],["food","Food & groceries"],["transport","Transport"],["bills","Bills & insurance"],["health","Health"],["fun","Going out & fun"],["other","Other"]];
+  var COST_EVERY=[["","Not sure yet",0],["once","Once, not again",0],["w1","Every week",7],["w2","Every 2 weeks",14],["m1","Every month",30.4375],["m2","Every 2 months",60.875],["m3","Every 3 months",91.3125],["m6","Every 6 months",182.625],["y1","Every year",365.25]];   // days between buys   // 5% a year after inflation: a stock-heavy portfolio's long-run average, not a promise
   var VIEW_KEY="wmtw_view";
   function loadView(){try{var v=localStorage.getItem(VIEW_KEY);return (v==="goals"||v==="projects"||v==="review"||v==="curriculum"||v==="reading"||v==="goal"||v==="tree")?v:"now";}catch(e){return "now";}}
   var GOAL_KEY="wmtw_goal";   // the goal page you're on — survives the reload after a publish
@@ -1510,7 +1535,7 @@ button.step-name:hover .step-nm{color:var(--accent)}
   function loadSes(){try{var s=JSON.parse(localStorage.getItem(SES_KEY)||"null");if(s&&s.tid&&s.d&&Date.now()-(s.at||0)<2*86400000)return s;}catch(e){}return null;}
   var DEC_KEY="wmtw_dec_draft";   // an unfinished call survives a reload — e.g. you switched apps to look up the price
   function loadDecDraft(){try{var s=JSON.parse(localStorage.getItem(DEC_KEY)||"null");if(s&&s.d&&s.gid&&Date.now()-(s.t0||0)<3*86400000)return s;}catch(e){}return null;}
-  var ui={looseOpen:false, fireOpen:{}, addOpen:false, goalOpen:false, actionOpen:{}, noteOpen:{}, cueOpen:{}, idOpen:{}, repOpen:{}, stepAddOpen:{}, proposal:{}, loading:{}, projectOpen:false, projEdit:{}, projLoading:{}, adviseLoading:{}, currRefs:{}, projCardOpen:{}, goalSecOpen:{}, aswClosed:loadAsw(), aswAll:false, aswOpen:{}, lessonOpen:{}, stepOpen:{}, dec:loadDecDraft(), decRows:{}, decAll:false, armed:null, ses:loadSes(), goalMode:"have", shapeLevel:"new", shapeTopic:"", shapeLoading:false, shapeProposal:null, hoLoading:{}, ideaOpen:{}, view:loadView(), goalId:loadGoalId(), nameOpen:{}, branchOpen:{}, cvGoal:loadCvGoal(), cvMode:loadCvMode(), art:loadArt(), date:dayKey(Date.now())};
+  var ui={looseOpen:false, fireOpen:{}, costOpen:{}, addOpen:false, goalOpen:false, actionOpen:{}, noteOpen:{}, cueOpen:{}, idOpen:{}, repOpen:{}, stepAddOpen:{}, proposal:{}, loading:{}, projectOpen:false, projEdit:{}, projLoading:{}, adviseLoading:{}, currRefs:{}, projCardOpen:{}, goalSecOpen:{}, aswClosed:loadAsw(), aswAll:false, aswOpen:{}, lessonOpen:{}, stepOpen:{}, dec:loadDecDraft(), decRows:{}, decAll:false, armed:null, ses:loadSes(), goalMode:"have", shapeLevel:"new", shapeTopic:"", shapeLoading:false, shapeProposal:null, hoLoading:{}, ideaOpen:{}, view:loadView(), goalId:loadGoalId(), nameOpen:{}, branchOpen:{}, cvGoal:loadCvGoal(), cvMode:loadCvMode(), art:loadArt(), date:dayKey(Date.now())};
   var isTouch=("ontouchstart" in window)||(navigator.maxTouchPoints>0);
   var sampleNS; // undefined=unknown, null=unavailable, function=ready
 
@@ -1525,7 +1550,9 @@ button.step-name:hover .step-nm{color:var(--accent)}
   root.addEventListener("submit",onSubmit);
   root.addEventListener("input",onInput);
   root.addEventListener("change",function(e){   // linking a task's time to a goal, from the overview; the round's weekday minutes
-    var el=e.target;if(el&&el.getAttribute("data-action")==="round-min"){var rv=parseInt(el.value,10);if(rv>0)commit(function(){if(state.dayRound)state.dayRound.weekday=rv;});return;}
+    var el=e.target;
+    if(el&&el.getAttribute("data-action")==="cost-every"){var eg=el.getAttribute("data-id"),ecid=el.getAttribute("data-cid"),ev=el.value;commit(function(){var c=findCost(eg,ecid);if(!c)return;if(ev)c.every=ev;else delete c.every;});return;}
+    if(el&&el.getAttribute("data-action")==="round-min"){var rv=parseInt(el.value,10);if(rv>0)commit(function(){if(state.dayRound)state.dayRound.weekday=rv;});return;}
     if(!el||el.getAttribute("data-action")!=="link-goal"||!el.value)return;
     var tid=el.getAttribute("data-id"),gid=el.value;
     commit(function(){var t=findTask(tid);if(t&&findGoal(gid))t.goalId=gid;});
@@ -1736,6 +1763,7 @@ button.step-name:hover .step-nm{color:var(--accent)}
     else if(a==="idea-add")addIdea(f.getAttribute("data-id"),val("idea-name"));
     else if(a==="add-branch"){var bp=f.getAttribute("data-id");addGoal(val("branch-"+bp),null,"",bp);}
     else if(a==="fire-save"){var fg=f.getAttribute("data-id");saveFire(fg,val("fire-month-"+fg),val("fire-have-"+fg),val("fire-add-"+fg));}
+    else if(a==="cost-save"){var cg=f.getAttribute("data-id");saveCost(cg,val("cost-what-"+cg),val("cost-amt-"+cg),val("cost-d-"+cg),val("cost-cat-"+cg),val("cost-ev-"+cg));}
     else if(a==="goal-name"){var rg=f.getAttribute("data-id"),rn=(val("gname-"+rg)||"").trim();ui.nameOpen[rg]=false;if(rn)commit(function(){var g=findGoal(rg);if(g)g.name=rn.slice(0,140);});else render();}
   }
   function onClick(e){
@@ -1837,6 +1865,9 @@ button.step-name:hover .step-nm{color:var(--accent)}
     else if(a==="rd-done"){var nxA=artNext(id);setArt(nxA?nxA.id:null);commit(function(){state.artRead=state.artRead||{};state.artRead[id]=Date.now();});window.scrollTo(0,0);}
     else if(a==="rd-unread"){commit(function(){if(state.artRead)delete state.artRead[id];});}
     else if(a==="loose-toggle"){ui.looseOpen=!ui.looseOpen;render();}
+    else if(a==="cost-add"){ui.costOpen[id]=true;render();var cf=document.getElementById("cost-what-"+id);if(cf)cf.focus();}
+    else if(a==="cost-cancel"){ui.costOpen[id]=false;render();}
+    else if(a==="cost-del"){if(armed("cost-del:"+id))deleteCost(b.getAttribute("data-gid"),id);}
     else if(a==="fire-edit"){ui.fireOpen[id]=true;render();var ff=document.getElementById("fire-add-"+id);if(ff)ff.focus();}
     else if(a==="fire-cancel"){ui.fireOpen[id]=false;render();}
     else if(a==="fire-rate"){var fr=parseFloat(b.getAttribute("data-rate"));if(FIRE_RATES.indexOf(fr)>=0)commit(function(){var g=findGoal(id);if(g&&g.fire)g.fire.rate=fr;});}
@@ -3447,6 +3478,80 @@ button.step-name:hover .step-nm{color:var(--accent)}
     var tail=have>=target?'reached ✓':(y!=null&&add>0?'about '+Math.round(y)+' yrs at '+moneyShort(add)+'/mo':moneyShort(have)+' invested so far');
     return '<button class="mg-fire" data-action="goal-open" data-id="'+g.id+'" type="button"><span class="mg-fire-k">FIRE number</span><b>'+moneyShort(target)+'</b><span class="mg-fire-t">'+esc(tail)+'</span></button>';
   }
+  /* ---------- what you spend: real costs logged on the FIRE plan, against the month its number assumes ----------
+     A cost with a "how often" counts as that much a month (a box every 3 months is a third of it a month). One without is spread
+     over the days you've been logging, but over at least a month, so the first days don't blow it up. A one-off doesn't count. */
+  function costAmt(s){   // euros and cents: "12,50", "12.50", "€ 1.000" (Dutch thousands) and "1000" all read right
+    var t=String(s||"").replace(/[€\s]/g,"");
+    if(t.indexOf(",")>=0)t=t.replace(/\./g,"").replace(",",".");
+    else if(/^\d{1,3}(\.\d{3})+$/.test(t))t=t.replace(/\./g,"");
+    var n=parseFloat(t);return isNaN(n)||n<=0?0:Math.min(Math.round(n*100)/100,1e8);
+  }
+  function moneyC(n){return "€"+n.toLocaleString("en-US",{minimumFractionDigits:n%1?2:0,maximumFractionDigits:2});}
+  function costEvery(c){return COST_EVERY.filter(function(x){return x[0]===(c.every||"");})[0]||COST_EVERY[0];}
+  function findCost(gid,cid){var g=findGoal(gid);return ((g&&g.fire&&g.fire.costs)||[]).filter(function(c){return c.id===cid;})[0]||null;}
+  function costDays(costs){   // days you've been logging, the first cost's day and today both counted
+    var first=costs.reduce(function(m,c){return c.d<m?c.d:m;},dayKey(Date.now())),p=first.split("-");
+    return Math.max(1,Math.round((startOfToday()-new Date(+p[0],+p[1]-1,+p[2]).getTime())/86400000)+1);
+  }
+  function costMonthly(costs){
+    var out={total:0,cat:{},days:costDays(costs),unsure:0};
+    costs.forEach(function(c){
+      var e=costEvery(c),m=e[2]?c.amt*30.4375/e[2]:0;
+      if(!e[0]){out.unsure++;m=c.amt*30.4375/Math.max(out.days,30.4375);}
+      out.total+=m;out.cat[c.cat]=(out.cat[c.cat]||0)+m;
+    });
+    return out;
+  }
+  function saveCost(gid,what,amt,d,cat,every){
+    var a=costAmt(amt);if(!a){toast("Add what it cost, in euros");return;}
+    if(!/^\d{4}-\d{2}-\d{2}$/.test(d||""))d=dayKey(Date.now());
+    if(!COST_CATS.some(function(k){return k[0]===cat;}))cat="other";
+    var c={id:uid(),d:d,what:String(what||"").trim().slice(0,80)||((COST_CATS.filter(function(k){return k[0]===cat;})[0]||[0,"A cost"])[1]),amt:a,cat:cat};
+    if(every&&COST_EVERY.some(function(x){return x[0]===every;}))c.every=every;
+    ui.costOpen[gid]=false;
+    commit(function(){var g=findGoal(gid);if(!g||!g.fire)return;(g.fire.costs=g.fire.costs||[]).push(c);});
+  }
+  function deleteCost(gid,cid){commit(function(){var g=findGoal(gid);if(g&&g.fire&&g.fire.costs)g.fire.costs=g.fire.costs.filter(function(c){return c.id!==cid;});});}
+  function renderCosts(g){
+    var f=g.fire;if(!f)return "";
+    var costs=(f.costs||[]).slice().sort(function(a,b){return a.d<b.d?1:a.d>b.d?-1:0;}),M=costMonthly(costs),open=!!ui.costOpen[g.id];
+    var head='<div class="fire-top"><span class="fire-eye">What you spend</span>'+(open?'':'<button class="btn btn-primary btn-sm" data-action="cost-add" data-id="'+g.id+'" type="button">+ Add a cost</button>')+'</div>';
+    var body;
+    if(!costs.length)body='<div class="fire-sub">Log what you actually spend, and you’ll see how it compares with the <b>'+money(f.month)+' a month</b> your FIRE number is built on.</div>';
+    else{
+      var real=M.unsure===0||M.days>=28,gap=f.month-M.total,pct=f.month?Math.min(M.total/f.month,1)*100:0;
+      var since=costs[costs.length-1].d;
+      var miss=COST_CATS.filter(function(k){return k[0]!=="other"&&M.cat[k[0]]==null;}).map(function(k){return k[1].toLowerCase();});
+      body='<div class="cs-num">'+money(M.total)+'<span>'+(real?' a month':' so far, counted as one month')+'</span></div>'+
+        '<div class="fire-sub">From '+costs.length+' cost'+(costs.length===1?'':'s')+' logged since '+esc(artDate(since))+'. Your FIRE number is built on <b>'+money(f.month)+' a month</b>.</div>'+
+        '<span class="fm cs-m" role="img" aria-label="'+esc(money(M.total)+' of '+money(f.month)+' a month')+'"><i style="width:'+pct.toFixed(2)+'%"></i></span>'+
+        '<div class="cs-gap">'+(gap>=0?'<b>'+money(gap)+' a month</b> of the '+money(f.month)+' isn’t accounted for yet.':'You spend <b>'+money(-gap)+' a month more</b> than your number assumes. Raise it with Edit above.')+'</div>'+
+        '<div class="cs-cats">'+COST_CATS.map(function(k){var v=M.cat[k[0]];return '<span class="cs-cat'+(v!=null?' on':'')+'">'+esc(k[1])+(v!=null?' <b>'+money(v)+'</b>':'')+'</span>';}).join("")+'</div>'+
+        (miss.length?'<p class="cs-note">Nothing logged yet for '+esc(miss.length>1?miss.slice(0,-1).join(", ")+" and "+miss[miss.length-1]:miss[0])+'. Until those are in, this is only part of the picture.</p>':'')+
+        (M.unsure?'<p class="cs-note">'+M.unsure+' cost'+(M.unsure===1?' has':'s have')+' no “how often” yet, so '+(M.unsure===1?'it’s':'they’re')+' spread over '+(M.days<31?'a month':M.days+' days')+'. Set how often you buy '+(M.unsure===1?'it':'them')+', so a bulk buy counts per month instead of all at once.</p>':'');
+    }
+    var form=open?'<form class="fire-form cs-form" data-action="cost-save" data-id="'+g.id+'" autocomplete="off">'+
+        '<label class="fire-lbl" for="cost-what-'+g.id+'">What<input id="cost-what-'+g.id+'" class="field" maxlength="80" placeholder="e.g. groceries, petrol, rent"></label>'+
+        '<div class="cs-two"><label class="fire-lbl" for="cost-amt-'+g.id+'">Cost (€)<input id="cost-amt-'+g.id+'" class="field" inputmode="decimal" placeholder="e.g. 12,50"></label>'+
+        '<label class="fire-lbl" for="cost-d-'+g.id+'">When<input id="cost-d-'+g.id+'" class="field" type="date" value="'+dayKey(Date.now())+'" max="'+dayKey(Date.now())+'"></label></div>'+
+        '<div class="cs-two"><label class="fire-lbl" for="cost-cat-'+g.id+'">Kind of cost<select id="cost-cat-'+g.id+'" class="field">'+COST_CATS.map(function(k){return '<option value="'+k[0]+'"'+(k[0]===((costs[0]&&costs[0].cat)||"food")?' selected':'')+'>'+esc(k[1])+'</option>';}).join("")+'</select></label>'+
+        '<label class="fire-lbl" for="cost-ev-'+g.id+'">How often<select id="cost-ev-'+g.id+'" class="field">'+COST_EVERY.map(function(x){return '<option value="'+x[0]+'">'+esc(x[1])+'</option>';}).join("")+'</select></label></div>'+
+        '<div class="note-btns"><button class="btn btn-primary btn-sm" type="submit">Save</button><button class="btn btn-ghost btn-sm" data-action="cost-cancel" data-id="'+g.id+'" type="button">Cancel</button></div>'+
+      '</form>':'';
+    var list=costs.length?COST_CATS.map(function(k){
+      var cs=costs.filter(function(c){return c.cat===k[0];});if(!cs.length)return "";
+      return '<div class="cs-g"><div class="fire-h cs-gh"><span>'+esc(k[1])+'</span><span>'+money(M.cat[k[0]])+' a month</span></div><div class="fire-tbl">'+cs.map(function(c){
+        var e=costEvery(c),pm=e[2]?moneyC(Math.round(c.amt*30.4375/e[2]*100)/100)+' a month':(e[0]==="once"?'not monthly':'');
+        return '<div class="cs-row"><span class="cs-d">'+esc(artDate(c.d))+'</span><span class="cs-w">'+esc(c.what)+'</span><span class="cs-a">'+moneyC(c.amt)+'</span>'+
+          '<select class="cs-ev" data-action="cost-every" data-id="'+g.id+'" data-cid="'+esc(c.id)+'" aria-label="How often: '+esc(c.what)+'">'+COST_EVERY.map(function(x){return '<option value="'+x[0]+'"'+(x[0]===e[0]?' selected':'')+'>'+esc(x[1])+'</option>';}).join("")+'</select>'+
+          '<span class="cs-pm">'+pm+'</span>'+xBtn("cost-del",esc(c.id),"Delete this cost",' data-gid="'+g.id+'"')+'</div>';
+      }).join("")+'</div></div>';
+    }).join(""):"";
+    return '<div class="fire cs">'+head+body+form+list+
+      (costs.length?'<p class="fire-note">What you spend now is a floor, not the answer. Your number is for the life you want once you stop working, so it also needs what that life costs: a home of your own, insurance, holidays. After a month of logging, update it with Edit above.</p>':'')+
+    '</div>';
+  }
   function goalCard(g){
     var kids=goalKids(g.id),up=goalParent(g),ids=kids.length?treeIds(g):g.id;
     var st=goalStats(ids);
@@ -3495,7 +3600,7 @@ button.step-name:hover .step-nm{color:var(--accent)}
     return '<div class="card goal-card">'+
       '<div class="goal-top"><div style="min-width:0;flex:1">'+eye+name+meta+'</div>'+
         xBtn("del-goal",g.id,kids.length?"Delete goal (its branches stay)":"Delete goal")+'</div>'+
-      identityBlock+stat+hoursBlock(g,kids)+(g.fire?renderFire(g):(kids.length&&fireHolder(g)?'<div class="gp-fire">'+fireLine(fireHolder(g))+'</div>':''))+branches+
+      identityBlock+stat+hoursBlock(g,kids)+(g.fire?renderFire(g)+renderCosts(g):(kids.length&&fireHolder(g)?'<div class="gp-fire">'+fireLine(fireHolder(g))+'</div>':''))+branches+
       '<div class="gp-cols'+(main?'':' one')+'"><div class="gp-main">'+main+'</div><div class="gp-side">'+side+'</div></div>'+
     '</div>';
   }
