@@ -963,6 +963,47 @@ button.step-name:hover .step-nm{color:var(--accent)}
 .tt-skipn{min-width:0;padding:10px 12px;border:1px dashed var(--line-strong);border-radius:11px;background:var(--surface-2)}
 .tt-skipn .tt-name{display:block;font-size:14px;color:var(--muted);text-decoration:line-through;text-decoration-thickness:1px}
 .tt-why{display:block;margin-top:3px;font-size:12.5px;line-height:1.4;color:var(--muted)}
+/* a lesson track as a tech tree: tiers are columns, lines show what builds on what; it scrolls sideways inside its box on a phone */
+.cv-mode{display:inline-flex;gap:2px;margin:14px 0 2px;padding:3px;border:1px solid var(--line-strong);border-radius:10px;background:var(--surface-2)}
+.cv-mb{padding:7px 14px;border:none;border-radius:7px;background:transparent;color:var(--muted);font-family:inherit;font-size:13px;font-weight:600;cursor:pointer}
+.cv-mb.on{background:var(--surface);color:var(--ink);box-shadow:0 1px 2px rgba(23,32,43,.14)}
+.td-tree{margin-top:8px}
+.lt-how{margin:10px 0 0;font-size:12.5px;line-height:1.45;color:var(--muted)}
+.lt-wrap{overflow-x:auto;margin-top:14px;padding:2px 2px 8px}
+.lt{--g:32px;position:relative;display:grid;grid-template-columns:repeat(var(--n),minmax(150px,1fr));column-gap:var(--g);row-gap:10px;align-items:start;min-width:calc(var(--n) * 150px + (var(--n) - 1) * var(--g))}
+.lt-edges{position:absolute;left:0;top:0;overflow:visible;pointer-events:none}
+.lt-edges path{fill:none;stroke:var(--line-strong);stroke-width:2}
+.lt-edges path.done{stroke:var(--good)}
+.lt-edges path.hot{stroke:var(--accent);stroke-width:2.5}
+.lt-th{position:relative;z-index:1;display:flex;flex-direction:column;gap:3px;min-width:0;padding:42px 0 10px}
+.lt-th::before{content:"";position:absolute;left:16px;right:calc(-1 * var(--g) - 16px);top:15px;height:2px;background:var(--line-strong)}
+.lt-th.is-last::before{display:none}
+.lt-th.is-done::before{background:var(--good)}
+.lt-num{position:absolute;left:0;top:0;z-index:1;width:32px;height:32px;border-radius:50%;display:grid;place-items:center;border:2px solid var(--line-strong);background:var(--surface);color:var(--muted);font-family:var(--font-display);font-size:13px;font-weight:600}
+.lt-th.is-done .lt-num{background:var(--good);border-color:var(--good);color:var(--surface)}
+.lt-th.is-now .lt-num{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.lt-rn{font-family:var(--font-display);font-size:16px;font-weight:600;line-height:1.2}
+.lt-rd{font-size:12px;line-height:1.35;color:var(--muted)}
+.lt-cost{margin-top:3px;font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}
+.lt-cost b{color:var(--ink);font-family:var(--font-mono);font-weight:600}
+.lt-bar{display:block;height:5px;margin-top:3px;border-radius:99px;background:var(--surface-2);box-shadow:inset 0 0 0 1px var(--line);overflow:hidden}
+.lt-bar i{display:block;height:100%;border-radius:99px;background:var(--good)}
+.lt-ps{font-size:11px;color:var(--faint)}
+.lt-n{position:relative;z-index:1;display:flex;flex-direction:column;gap:3px;min-width:0;padding:9px 10px 10px;border:1px solid var(--line);border-radius:10px;background:var(--surface);color:var(--ink);font-family:inherit;text-align:left;cursor:pointer}
+.lt-n:hover{border-color:var(--accent)}
+.lt-top{display:flex;align-items:center;gap:6px;font-family:var(--font-mono);font-size:11px;color:var(--faint)}
+.lt-id{font-weight:600;color:var(--accent)}
+.lt-min{margin-left:auto;font-variant-numeric:tabular-nums}
+.lt-tag{padding:1px 6px;border-radius:99px;background:var(--surface-2);color:var(--muted);font-family:var(--font-sans);font-size:10px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;white-space:nowrap}
+.lt-t{font-size:13.5px;font-weight:600;line-height:1.25}
+.lt-c{font-size:12px;line-height:1.35;color:var(--muted)}
+.lt-n.is-done{border-color:var(--good);background:var(--good-soft)}
+.lt-n.is-done .lt-tag{background:var(--good);color:var(--surface)}
+.lt-n.is-today .lt-tag{background:var(--accent-soft);color:var(--accent)}
+.lt-n.is-next{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+.lt-n.is-next .lt-tag{background:var(--accent);color:var(--accent-ink)}
+.lt-n.is-run{border-color:var(--accent);background:var(--accent-soft)}
+@media (min-width:1000px){.lt{--g:40px;grid-template-columns:repeat(var(--n),minmax(168px,1fr));min-width:calc(var(--n) * 168px + (var(--n) - 1) * var(--g))}}
 @media (min-width:1200px){
   .tt{flex-direction:row;align-items:flex-start;gap:0;max-width:none;overflow-x:auto;padding-bottom:4px}
   .tt-col{flex:1 1 0;min-width:190px;padding:46px 8px 0}
@@ -1458,6 +1499,9 @@ button.step-name:hover .step-nm{color:var(--accent)}
   var CV_KEY="wmtw_cv_goal";   // which track's A → Z you opened — survives the reload after a publish
   function loadCvGoal(){try{return localStorage.getItem(CV_KEY)||null;}catch(e){return null;}}
   function setCvGoal(id){ui.cvGoal=id||null;try{if(id)localStorage.setItem(CV_KEY,id);else localStorage.removeItem(CV_KEY);}catch(e){}}
+  var CV_MODE_KEY="wmtw_cv_mode";   // a track's lessons as a list or as a tech tree
+  function loadCvMode(){try{return localStorage.getItem(CV_MODE_KEY)==="tree"?"tree":"list";}catch(e){return "list";}}
+  function setCvMode(m){ui.cvMode=m==="tree"?"tree":"list";try{localStorage.setItem(CV_MODE_KEY,ui.cvMode);}catch(e){}}
   var ART_KEY="wmtw_art";   // the article you're on + the list filter — publishing reloads the page, this brings you back
   function loadArt(){try{var s=JSON.parse(localStorage.getItem(ART_KEY)||"null");if(s&&typeof s==="object")return {id:s.id||null,f:s.f||"all",s:SHELVES[s.s]?s.s:"invest"};}catch(e){}return {id:null,f:"all",s:"invest"};}
   var ASW_KEY="wmtw_asw_closed";
@@ -1466,7 +1510,7 @@ button.step-name:hover .step-nm{color:var(--accent)}
   function loadSes(){try{var s=JSON.parse(localStorage.getItem(SES_KEY)||"null");if(s&&s.tid&&s.d&&Date.now()-(s.at||0)<2*86400000)return s;}catch(e){}return null;}
   var DEC_KEY="wmtw_dec_draft";   // an unfinished call survives a reload — e.g. you switched apps to look up the price
   function loadDecDraft(){try{var s=JSON.parse(localStorage.getItem(DEC_KEY)||"null");if(s&&s.d&&s.gid&&Date.now()-(s.t0||0)<3*86400000)return s;}catch(e){}return null;}
-  var ui={looseOpen:false, fireOpen:{}, addOpen:false, goalOpen:false, actionOpen:{}, noteOpen:{}, cueOpen:{}, idOpen:{}, repOpen:{}, stepAddOpen:{}, proposal:{}, loading:{}, projectOpen:false, projEdit:{}, projLoading:{}, adviseLoading:{}, currRefs:{}, projCardOpen:{}, goalSecOpen:{}, aswClosed:loadAsw(), aswAll:false, aswOpen:{}, lessonOpen:{}, stepOpen:{}, dec:loadDecDraft(), decRows:{}, decAll:false, armed:null, ses:loadSes(), goalMode:"have", shapeLevel:"new", shapeTopic:"", shapeLoading:false, shapeProposal:null, hoLoading:{}, ideaOpen:{}, view:loadView(), goalId:loadGoalId(), nameOpen:{}, branchOpen:{}, cvGoal:loadCvGoal(), art:loadArt(), date:dayKey(Date.now())};
+  var ui={looseOpen:false, fireOpen:{}, addOpen:false, goalOpen:false, actionOpen:{}, noteOpen:{}, cueOpen:{}, idOpen:{}, repOpen:{}, stepAddOpen:{}, proposal:{}, loading:{}, projectOpen:false, projEdit:{}, projLoading:{}, adviseLoading:{}, currRefs:{}, projCardOpen:{}, goalSecOpen:{}, aswClosed:loadAsw(), aswAll:false, aswOpen:{}, lessonOpen:{}, stepOpen:{}, dec:loadDecDraft(), decRows:{}, decAll:false, armed:null, ses:loadSes(), goalMode:"have", shapeLevel:"new", shapeTopic:"", shapeLoading:false, shapeProposal:null, hoLoading:{}, ideaOpen:{}, view:loadView(), goalId:loadGoalId(), nameOpen:{}, branchOpen:{}, cvGoal:loadCvGoal(), cvMode:loadCvMode(), art:loadArt(), date:dayKey(Date.now())};
   var isTouch=("ontouchstart" in window)||(navigator.maxTouchPoints>0);
   var sampleNS; // undefined=unknown, null=unavailable, function=ready
 
@@ -1805,8 +1849,10 @@ button.step-name:hover .step-nm{color:var(--accent)}
     else if(a==="idea-talk"){var tiid=b.getAttribute("data-iid");commit(function(){var it=findIdea(findGoal(id),tiid);if(it)it.talked=(it.talked||0)+1;});toast("Logged — a conversation about their life, not your idea");}
     else if(a==="idea-focus"){var fiid=b.getAttribute("data-iid");commit(function(){var g=findGoal(id);if(g&&findIdea(g,fiid))g.ideaFocus=fiid;});toast("Lessons now run on this idea");}
     else if(a==="idea-del"){var diid=b.getAttribute("data-iid");if(armed("idea-del:"+diid))commit(function(){var g=findGoal(id);if(!g)return;g.ideas=(g.ideas||[]).filter(function(x){return x.id!==diid;});if(g.ideaFocus===diid)g.ideaFocus=(g.ideas[0]||{}).id||null;});}
-    else if(a==="cv-open"){setCvGoal(id);ui.view="curriculum";try{localStorage.setItem(VIEW_KEY,"curriculum");}catch(e){}render();window.scrollTo(0,0);}
-    else if(a==="rd-lesson"){var rlid=b.getAttribute("data-lid"),rlg=currGoals().filter(function(x){return inCurr(x,rlid);})[0];if(rlg)setCvGoal(rlg.id);ui.lessonOpen[rlid]=true;ui.view="curriculum";try{localStorage.setItem(VIEW_KEY,"curriculum");}catch(e){}render();var rle=document.querySelector('.ls-main[data-id="'+rlid+'"]');if(rle&&rle.scrollIntoView)rle.scrollIntoView({block:"start"});}
+    else if(a==="cv-tree"){setCvGoal(id);setCvMode("tree");ui.view="curriculum";try{localStorage.setItem(VIEW_KEY,"curriculum");}catch(e){}render();window.scrollTo(0,0);}
+    else if(a==="cv-mode"){setCvMode(b.getAttribute("data-m"));render();}
+    else if(a==="cv-open"){setCvMode("list");setCvGoal(id);ui.view="curriculum";try{localStorage.setItem(VIEW_KEY,"curriculum");}catch(e){}render();window.scrollTo(0,0);}
+    else if(a==="rd-lesson"){setCvMode("list");var rlid=b.getAttribute("data-lid"),rlg=currGoals().filter(function(x){return inCurr(x,rlid);})[0];if(rlg)setCvGoal(rlg.id);ui.lessonOpen[rlid]=true;ui.view="curriculum";try{localStorage.setItem(VIEW_KEY,"curriculum");}catch(e){}render();var rle=document.querySelector('.ls-main[data-id="'+rlid+'"]');if(rle&&rle.scrollIntoView)rle.scrollIntoView({block:"start"});}
     else if(a==="toggle-gsec"){var gk=id+':'+b.getAttribute("data-key");ui.goalSecOpen[gk]=!ui.goalSecOpen[gk];render();}
     else if(a==="asw-toggle"){ui.aswClosed=!ui.aswClosed;try{localStorage.setItem(ASW_KEY,ui.aswClosed?"1":"0");}catch(e){}render();}
     else if(a==="asw-all"){ui.aswAll=!ui.aswAll;render();}
@@ -1905,6 +1951,7 @@ button.step-name:hover .step-nm{color:var(--accent)}
     else                         html+=renderHome();
     html+=tabBar();
     root.innerHTML=html;
+    if(ui.view==="curriculum"&&ui.cvMode==="tree")ltEdges();
   }
 
   /* ---------- home: the single "what now?" screen ---------- */
@@ -2403,7 +2450,8 @@ button.step-name:hover .step-nm{color:var(--accent)}
     var foot=where==="az"
       ?'<div class="td-foot"><span>'+(plan.length?'Picked ≈ '+planned+' min'+(planned>T+10?' — do ~'+T+' today; the rest carries over':''):'')+'</span>'+
         '<button class="td-link" data-action="cur-suggest" data-id="'+g.id+'" type="button">Reset to next in line</button></div>'
-      :'<button class="td-az" data-action="cv-open" data-id="'+g.id+'" type="button">Change today’s pick<span class="td-az-s">See all '+c.lessons.length+' lessons, A → Z →</span></button>';
+      :'<button class="td-az" data-action="cv-open" data-id="'+g.id+'" type="button">Change today’s pick<span class="td-az-s">See all '+c.lessons.length+' lessons, A → Z →</span></button>'+
+       '<button class="td-az td-tree" data-action="cv-tree" data-id="'+g.id+'" type="button">The tech tree<span class="td-az-s">'+c.rungs.length+' tiers: what each lesson teaches and what each tier costs →</span></button>';
     return '<div class="td'+(where==="az"?' td-az-panel':'')+'">'+head+rows+revHtml+foot+'</div>';
   }
   function lessonRow(g,l,ctx,plan){
@@ -2679,12 +2727,84 @@ button.step-name:hover .step-nm{color:var(--accent)}
         '<div class="cv-rh"><span class="cv-rn">'+(ri+1)+'</span><span class="cv-rt">'+esc(r)+'</span><span class="cv-rd">'+esc(c.rungDesc[ri])+'</span><span class="cv-rp">'+dn+'/'+ls.length+' · '+fmtDur(mm*60)+'</span></div>'+
         '<div class="cv-list">'+ls.map(function(l){return lessonRow(g,l,"az",plan);}).join("")+'</div></div>';
     }).join("");
-    return '<section class="sec cv">'+back+
-      '<h2 class="cv-title">'+esc(c.azTitle)+'</h2>'+
-      '<p class="cv-sub">'+c.lessons.length+' lessons · '+doneN+' done · about '+fmtDur(totalMin*60)+' in all — roughly '+azWeeks(totalMin)+'. '+esc(c.blurb)+'</p>'+
-      renderToday(g,"az")+'<div class="cv-rungs">'+groups+'</div>'+
+    var tree=ui.cvMode==="tree";
+    var modes='<div class="cv-mode" role="group" aria-label="Show the lessons as">'+[["list","List"],["tree","Tech tree"]].map(function(m){return '<button class="cv-mb'+((m[0]==="tree")===tree?' on':'')+'" data-action="cv-mode" data-m="'+m[0]+'" type="button" aria-pressed="'+((m[0]==="tree")===tree?'true':'false')+'">'+m[1]+'</button>';}).join("")+'</div>';
+    return '<section class="sec cv'+(tree?' cv-is-tree':'')+'">'+back+
+      '<h2 class="cv-title">'+esc(tree?c.azTitle.replace(/,?\s*A → Z$/,"")+': the tech tree':c.azTitle)+'</h2>'+
+      '<p class="cv-sub">'+c.lessons.length+' lessons · '+doneN+' done · about '+fmtDur(totalMin*60)+' in all — roughly '+azWeeks(totalMin)+'. '+esc(c.blurb)+'</p>'+modes+
+      (tree?renderLessonTree(g,c):renderToday(g,"az")+'<div class="cv-rungs">'+groups+'</div>')+
     '</section>';
   }
+  /* ---------- the tech tree: a track's rungs as tiers, every lesson with what it teaches and what it costs, lines for what builds on what ---------- */
+  function roman(i){return ["I","II","III","IV","V","VI","VII","VIII","IX","X"][i]||String(i+1);}   // a function, not a var: the first render can come before this line runs
+  /* what a lesson builds on: the lessons one tier down that share a doctrine point with it, else that tier's last lesson */
+  function lessonFrom(c,l){
+    var ri=c.rungs.indexOf(l.rung);if(ri<=0)return [];
+    var prev=c.lessons.filter(function(x){return x.rung===c.rungs[ri-1];});if(!prev.length)return [];
+    var refs=l.doctrine_ref||[],hit=prev.filter(function(x){return (x.doctrine_ref||[]).some(function(d){return refs.indexOf(d)>=0;});});
+    return (hit.length?hit:[prev[prev.length-1]]).map(function(x){return x.id;});
+  }
+  /* rows: tier I in order; every later lesson sits level with what it builds on, pushed down if the row is taken */
+  function lessonRows(c){
+    var row={},from={};
+    c.rungs.forEach(function(r,ri){
+      var want=c.lessons.filter(function(l){return l.rung===r;}).map(function(l,k){
+        var f=from[l.id]=lessonFrom(c,l),ps=f.map(function(id){return row[id];}).filter(function(v){return v!=null;});
+        return {l:l,k:k,w:ps.length?Math.round(ps.reduce(function(a,b){return a+b;},0)/ps.length):k};
+      });
+      want.sort(function(a,b){return a.w-b.w||a.k-b.k;});
+      var last=-1;want.forEach(function(x){row[x.l.id]=last=Math.max(x.w,last+1);});
+    });
+    return {row:row,from:from};
+  }
+  function paceWeeks(min){var wd=weekdayMin(),w=min/(wd?5*wd+2*DAILY_MIN:7*DAILY_MIN),n=Math.round(w);return w<1?"under a week":"~"+n+" week"+(n===1?"":"s");}
+  function renderLessonTree(g,c){
+    var done=currDone(g),cur=currentLesson(g),plan=todayPlan(g),L=lessonRows(c),run=state.activeId,before=0;
+    var heads=c.rungs.map(function(r,ri){
+      var ls=c.lessons.filter(function(l){return l.rung===r;}),mm=0,dn=0,dm=0;
+      ls.forEach(function(l){var m=l.estimateMin||15;mm+=m;if(done[l.id]){dn++;dm+=m;}});
+      var st=dn===ls.length?"done":(cur&&cur.lesson.rung===r?"now":""),from=before;before+=mm;
+      return '<div class="lt-th'+(st?' is-'+st:'')+(ri===c.rungs.length-1?' is-last':'')+'" style="grid-column:'+(ri+1)+';grid-row:1">'+
+        '<span class="lt-num" aria-hidden="true">'+roman(ri)+'</span>'+
+        '<span class="lt-rn"><span class="tt-sr">Tier '+roman(ri)+': </span>'+esc(r)+'</span>'+
+        '<span class="lt-rd">'+esc(c.rungDesc[ri])+'</span>'+
+        '<span class="lt-cost"><b>'+fmtDur(mm*60)+'</b> · '+ls.length+' lesson'+(ls.length===1?'':'s')+' · '+paceWeeks(mm)+'</span>'+
+        '<span class="lt-bar" aria-hidden="true"><i style="width:'+(mm?Math.round(dm/mm*100):0)+'%"></i></span>'+
+        '<span class="lt-ps">'+dn+'/'+ls.length+' done'+(ri?' · after '+fmtDur(from*60)+' of lessons':' · start here')+'</span>'+
+      '</div>';
+    }).join("");
+    var nodes=c.lessons.map(function(l){
+      var ri=c.rungs.indexOf(l.rung),isDone=!!done[l.id],rv=revFor(g,l.id),logged=lessonLoggedMin(g.id,l.id),m=l.estimateMin||15;
+      var running=run===lessonTid(g.id,l.id),next=!!(cur&&cur.lesson.id===l.id),today=plan.indexOf(l.id)>=0;
+      var tag=running?'Running':rv?(revDays(rv)<=0?'Revisit due':'Revisit '+revDays(rv)+'d'):isDone?'Done ✓':next?'Next':today?'Today':logged?logged+' of '+m+'m':'';
+      var cls=(isDone?' is-done':'')+(next&&!isDone?' is-next':'')+(running?' is-run':'')+(today&&!isDone?' is-today':'');
+      return '<button class="lt-n'+cls+'" data-action="rd-lesson" data-lid="'+l.id+'" data-from="'+L.from[l.id].join(" ")+'" type="button" style="grid-column:'+(ri+1)+';grid-row:'+(L.row[l.id]+2)+'">'+
+        '<span class="lt-top"><span class="lt-id">'+l.id+'</span>'+(tag?'<span class="lt-tag">'+tag+'</span>':'')+'<span class="lt-min">'+m+'m</span></span>'+
+        '<span class="lt-t">'+esc(l.stage_name)+'</span>'+
+        '<span class="lt-c">'+esc(l.concept)+'</span>'+
+      '</button>';
+    }).join("");
+    return '<p class="lt-how">Each column is a tier. Lines show which lessons build on which. Tap a lesson to open it. The order is a suggestion, not a lock.</p>'+
+      '<div class="lt-wrap"><div class="lt" style="--n:'+c.rungs.length+'"><svg class="lt-edges" aria-hidden="true"></svg>'+heads+nodes+'</div></div>';
+  }
+  /* the lines need the boxes on screen: drawn after each render, and again when the width changes */
+  function ltEdges(){
+    var box=document.querySelector(".lt");if(!box)return;
+    var svg=box.querySelector(".lt-edges"),gap=parseFloat(getComputedStyle(box).columnGap)||32,out={"":[],done:[],hot:[]};
+    box.querySelectorAll(".lt-n").forEach(function(n){   // offsets within the tree: whole pixels, and blind to the view's fade-in transform
+      var f=n.getAttribute("data-from");if(!f)return;
+      var x2=n.offsetLeft,y2=n.offsetTop+19,xm=Math.round(x2-gap/2);
+      f.split(" ").forEach(function(pid){
+        var p=box.querySelector('.lt-n[data-lid="'+pid+'"]');if(!p)return;
+        var k=n.classList.contains("is-next")?"hot":(p.classList.contains("is-done")&&n.classList.contains("is-done")?"done":"");
+        out[k].push('<path'+(k?' class="'+k+'"':'')+' d="M'+(p.offsetLeft+p.offsetWidth)+' '+(p.offsetTop+19)+'H'+xm+'V'+y2+'H'+x2+'"/>');
+      });
+    });
+    svg.setAttribute("width",box.offsetWidth);svg.setAttribute("height",box.offsetHeight);
+    svg.innerHTML=out[""].join("")+out.done.join("")+out.hot.join("");   // the way to your next lesson drawn last, on top
+  }
+  var ltTimer;window.addEventListener("resize",function(){clearTimeout(ltTimer);ltTimer=setTimeout(ltEdges,80);});   // registered when the script gets here; ltEdges itself is hoisted
+  if(document.fonts&&document.fonts.ready)document.fonts.ready.then(function(){ltEdges();});   // the real fonts change the boxes
   /* ---------- Aswath's method: his rule + his real calls, right where you decide ---------- */
   function renderAswath(g){
     if(!valCurrFor(g))return "";
