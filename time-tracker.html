@@ -906,6 +906,74 @@ button.step-name:hover .step-nm{color:var(--accent)}
 .rd-link{border:none;background:none;padding:0;color:var(--muted);font-family:inherit;font-size:13px;font-weight:500;text-decoration:underline;cursor:pointer}
 .rd-btns{display:flex;flex-wrap:wrap;gap:8px}
 .rd-note{margin-top:12px;font-size:11.5px;color:var(--faint)}
+/* the tech tree: tiers down a spine on a phone, left to right on a wide screen */
+.tt-view .cv-sub{max-width:70ch}
+.tt-sum{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:14px 0 4px;max-width:760px}
+.tt-sum>div{min-width:0;padding:10px 12px;border:1px solid var(--line);border-radius:11px;background:var(--surface)}
+.tt-sum b{display:block;margin-top:2px;font-family:var(--font-mono);font-size:20px;font-weight:500;font-variant-numeric:tabular-nums}
+.tt-k{display:block;font-size:10.5px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--faint)}
+.tt-m{display:block;margin-top:1px;font-size:11.5px;line-height:1.35;color:var(--muted)}
+.tt{display:flex;flex-direction:column;gap:18px;margin-top:18px;max-width:760px}
+.tt-col{position:relative;display:flex;flex-direction:column;gap:8px;min-width:0;padding-left:44px}
+.tt-col::before{content:"";position:absolute;left:15px;top:16px;bottom:-34px;width:2px;background:var(--line-strong)}
+.tt-col:last-child::before{display:none}
+.tt-col.is-done::before{background:var(--good)}
+.tt-num{position:absolute;left:0;top:0;z-index:1;width:32px;height:32px;border-radius:50%;display:grid;place-items:center;border:2px solid var(--line-strong);background:var(--surface);color:var(--muted);font-family:var(--font-display);font-size:13px;font-weight:600}
+.is-done>.tt-num{background:var(--good);border-color:var(--good);color:var(--surface)}
+.is-now>.tt-num{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.is-next>.tt-num{border-color:var(--accent);color:var(--accent)}
+.tt-node,.tt-side{min-width:0;border:1px solid var(--line);border-radius:12px;background:var(--surface);padding:12px 13px 13px}
+.tt-node.is-now{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+.tt-node.is-done{border-color:var(--good)}
+.tt-node.is-locked,.tt-node.is-next,.tt-side.is-locked{background:var(--surface-2)}
+.tt-h{display:flex;align-items:baseline;justify-content:space-between;gap:8px}
+.tt-name{min-width:0;font-family:var(--font-display);font-size:16px;font-weight:600;line-height:1.25}
+.tt-node.is-locked .tt-name{color:var(--muted)}
+.tt-st{flex:none;padding:2px 8px;border:1px solid var(--line);border-radius:99px;background:var(--surface-2);color:var(--muted);font-size:10.5px;font-weight:700;letter-spacing:.04em;text-transform:uppercase}
+.tt-node.is-now>.tt-h .tt-st{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.tt-node.is-next>.tt-h .tt-st{background:var(--accent-soft);border-color:transparent;color:var(--accent)}
+.tt-node.is-done>.tt-h .tt-st{background:var(--good-soft);border-color:transparent;color:var(--good)}
+.tt-when{margin-top:1px;font-size:12px;color:var(--muted)}
+.tt-cost{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:10px;padding:8px 10px;border-radius:9px;background:var(--surface-2)}
+.tt-node.is-locked .tt-cost,.tt-node.is-next .tt-cost,.tt-side.is-locked .tt-cost{background:var(--surface)}
+.tt-cost>div{min-width:0}
+.tt-cost b{display:block;font-size:13.5px;font-weight:600;line-height:1.3;font-variant-numeric:tabular-nums}
+.tt-cost i{font-weight:400;color:var(--muted)}
+.tt-xp{height:6px;margin-top:10px;border-radius:99px;background:var(--surface-2);box-shadow:inset 0 0 0 1px var(--line);overflow:hidden}
+.tt-xp i{display:block;height:100%;border-radius:99px;background:var(--accent)}
+.is-done .tt-xp i{background:var(--good)}
+.tt-xps{margin-top:4px;font-family:var(--font-mono);font-size:11px;color:var(--muted);font-variant-numeric:tabular-nums}
+.tt-lbl{margin:11px 0 4px;font-size:10.5px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--faint)}
+.tt-teach{margin:0;padding-left:17px;font-size:13px;line-height:1.4}
+.tt-teach li{margin:0 0 3px}
+.tt-side .tt-teach{margin-top:8px;font-size:12.5px}
+.tt-gate{margin-top:9px;padding:7px 9px;border-left:3px solid var(--accent);border-radius:0 8px 8px 0;background:var(--accent-soft);font-size:12.5px;line-height:1.4}
+.tt-gate b{display:block;font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--accent)}
+.tt-earn{margin-top:8px;font-size:12.5px;line-height:1.4}
+.tt-earn b{margin-right:4px;font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--good)}
+.tt-note{margin-top:7px;font-size:12px;font-style:italic;line-height:1.4;color:var(--muted)}
+.tt-go{margin-top:10px;padding:0;border:none;background:transparent;color:var(--accent);font-family:inherit;font-size:13px;font-weight:600;cursor:pointer}
+.tt-side{position:relative;margin-left:18px;border-style:dashed;border-color:var(--line-strong);padding:10px 12px 11px}
+.tt-side::before{content:"";position:absolute;left:-20px;top:-10px;width:14px;height:26px;border-left:2px solid var(--line-strong);border-bottom:2px solid var(--line-strong);border-bottom-left-radius:8px}
+.tt-side .tt-name{font-size:14.5px}
+.tt-side .tt-cost{margin-top:8px}
+.tt-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.tt-skiph{margin:26px 0 8px;font-family:var(--font-sans);font-size:11px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--faint)}
+.tt-skip{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:8px;max-width:760px}
+.tt-skipn{min-width:0;padding:10px 12px;border:1px dashed var(--line-strong);border-radius:11px;background:var(--surface-2)}
+.tt-skipn .tt-name{display:block;font-size:14px;color:var(--muted);text-decoration:line-through;text-decoration-thickness:1px}
+.tt-why{display:block;margin-top:3px;font-size:12.5px;line-height:1.4;color:var(--muted)}
+@media (min-width:1200px){
+  .tt{flex-direction:row;align-items:flex-start;gap:0;max-width:none;overflow-x:auto;padding-bottom:4px}
+  .tt-col{flex:1 1 0;min-width:190px;padding:46px 8px 0}
+  .tt-col::before{left:0;right:0;top:15px;bottom:auto;width:auto;height:2px}
+  .tt-col:first-child::before{left:24px}
+  .tt-col:last-child::before{display:block;right:calc(100% - 24px)}
+  .tt-num{left:8px}
+  .tt-cost{grid-template-columns:1fr}
+  .tt-side{margin-left:0;margin-top:4px}
+  .tt-side::before{left:50%;top:-14px;width:0;height:12px;border-bottom:none;border-radius:0}
+}
 /* a goal with a daily target: today's minutes and the clock */
 .dly-row{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
 .dly-t{flex:1 1 200px;min-width:0;font-size:13px;line-height:1.45;color:var(--muted)}
@@ -1337,6 +1405,41 @@ button.step-name:hover .step-nm{color:var(--accent)}
     ai:{goal:"goal_ai",title:"Making money with AI",entry:"The research: making money with AI",kind:"report",
       lead:"The research on making money with AI from the Netherlands, in twelve short parts: what Hormozi and 187 founders show, the Dutch market and its rules, your options scored, three worked offers, the money, your time and the path. Your first 30 days are the pieces on this branch."}
   };
+  /* a branch's whole journey as a tech tree: each tier is one of its steps (a tier without a step is for later), with what it teaches,
+     what it costs in hours and euros, the gate to the next tier and what it earns. Hours logged on a tier's pieces fill it, like XP.
+     h: [low, high] hours, mid: the base case when the range is wide, guess: my estimate rather than the research's numbers */
+  var TREES={
+    goal_ai:{reach:"IV",reachEur:"about €325",lead:"Making money with AI, from your first interview to buying a firm: what each tier teaches, costs and earns. Hours you log on a tier's pieces fill its bar. The costs come from the research (part 9 and part 10); tier IV's hours are my guess.",
+      tiers:[
+        {n:"I",step:"ai_disc",name:"Discover",when:"Months 1–2",h:[20,25],month:11,eur:"€0",
+          teaches:["Interviewing owners without pitching (The Mom Test)","Choosing a niche by numbers: customers × profit × ease","Who you may phone in the Netherlands","Spotting one weekly task that costs hours"],
+          gate:"6 of 10 owners name the same weekly task, with hours",earns:"€0, but a proven problem and 20 contacts",
+          note:"20 interviews don't fit in 14 minutes a day: use your graduation project or weekend blocks."},
+        {n:"II",step:"ai_pilot",name:"Pilot",when:"Months 2–4",h:[40,45],month:22,eur:"about €325",eurWhy:"KVK €85, AI tools €40 a firm a month",
+          teaches:["Setting up AI tools on a real workflow (Zapier, Make or n8n)","Privacy by design: a processing agreement, an AI policy","Delivering by hand and logging every edge case","Asking for a testimonial and a referral"],
+          gate:"A pilot client pays €300 or more a month",earns:"€0 during the pilots, then your first €300–900 a month",
+          note:"Each new client takes about 8 hours to set up: one weekend each."},
+        {n:"III",step:"ai_paid",name:"Paid service",when:"Months 4–12",h:[130,280],mid:190,month:21,eur:"€40 a client a month",eurWhy:"paid from their fees",
+          teaches:["Writing an offer: a named result, a price, a guarantee","Selling without cold email: calls, visits, LinkedIn","Automating delivery one step at a time","Unit economics: cost per client, churn"],
+          gate:"About 10 clients on the same steps, under 1.5 hours each",earns:"About €6,500 a month by month 12 in the base case (€3,900–11,300)",
+          note:"From about month 9 this needs more than two daily slots."},
+        {n:"IV",step:"ai_soft",name:"Software",when:"Year 2 onward",h:[150,300],guess:true,eur:"AI costs ~50% of revenue",eurWhy:"spend at most €92 to win a €29 customer",
+          teaches:["Building a product on a workflow you've proven","SaaS maths: a €29 customer is worth ~€277","Pricing software for one industry (€99–299 a month)","Selling software through the service's sales"],
+          gate:"Capital and a few years of running clients",earns:"€99–299 a month per customer; sells for 2.5–4× a year's revenue"},
+        {n:"V",name:"Buy a firm",when:"Years 3–5",eur:"capital, not costed yet",
+          teaches:["Buying from an owner who already trusts you","Running a firm with AI: redesign the work, double the margin","Financing a deal"],
+          earns:"The firm's profit. Over 500,000 small Dutch firms are for sale or soon will be"}
+      ],
+      side:[
+        {from:0,name:"Content about your niche",kind:"Alongside",time:"~15 min a day",eur:"€0",teaches:["Posting proof: what you did, what it saved","A brand in your niche, Hormozi's moat"],earns:"Late: after 6–12 months"},
+        {from:1,name:"AI training workshops",kind:"Add-on",time:"half a day each, in office hours",eur:"€0",teaches:["Teaching AI literacy, a legal duty since 2025","The SLIM subsidy: clients get 60% back"],earns:"One-off fees, and a door into the monthly service"},
+        {from:2,name:"AI implementer job",kind:"Career",goal:"goal_career",time:"nothing extra: tiers I–III",eur:"€0",teaches:["Finding work worth automating inside a company","Rolling it out in the systems they already use"],earns:"A 56% wage premium for AI skills (PwC)"}
+      ],
+      skip:[
+        {name:"Freelance AI projects",why:"€3,000–15,000 an agent, but every month starts at zero. A fallback only."},
+        {name:"Consumer AI apps",why:"They grow through influencers and paid ads: a lottery without a budget."}
+      ]}
+  };
   function artShelf(a){return SHELVES[a.shelf]?a.shelf:"invest";}
   function shelfArts(s){return ARTICLES.filter(function(a){return artShelf(a)===s;});}
   function shelfOf(g){for(var k in SHELVES)if(g&&SHELVES[k].goal===g.id)return k;return null;}
@@ -1349,7 +1452,7 @@ button.step-name:hover .step-nm{color:var(--accent)}
   var HOUR_GOAL=100,HOUR_BASICS=20;   // 20h: roughly what the basics of a new skill take (Josh Kaufman, The First 20 Hours) · 100h: a rule of thumb for getting ahead of most people who start
   var FIRE_REAL=0.05,FIRE_RATES=[4,3.5],FIRE_STEPS=[500,1000,2000,3000];   // 5% a year after inflation: a stock-heavy portfolio's long-run average, not a promise
   var VIEW_KEY="wmtw_view";
-  function loadView(){try{var v=localStorage.getItem(VIEW_KEY);return (v==="goals"||v==="projects"||v==="review"||v==="curriculum"||v==="reading"||v==="goal")?v:"now";}catch(e){return "now";}}
+  function loadView(){try{var v=localStorage.getItem(VIEW_KEY);return (v==="goals"||v==="projects"||v==="review"||v==="curriculum"||v==="reading"||v==="goal"||v==="tree")?v:"now";}catch(e){return "now";}}
   var GOAL_KEY="wmtw_goal";   // the goal page you're on — survives the reload after a publish
   function loadGoalId(){try{return localStorage.getItem(GOAL_KEY)||null;}catch(e){return null;}}
   var CV_KEY="wmtw_cv_goal";   // which track's A → Z you opened — survives the reload after a publish
@@ -1682,6 +1785,8 @@ button.step-name:hover .step-nm{color:var(--accent)}
     else if(a==="dec-del"){var ddid=b.getAttribute("data-did");if(armed("dec-del:"+ddid))deleteDecision(id,ddid);}
     else if(a==="retry"){syncMode="check";renderChip();persist();}
     else if(a==="set-view"){var v=b.getAttribute("data-view");if(v&&v!==ui.view){ui.view=v;try{localStorage.setItem(VIEW_KEY,v);}catch(e){}render();window.scrollTo(0,0);}}
+    else if(a==="tt-open"){openGoalPage(id);ui.view="tree";try{localStorage.setItem(VIEW_KEY,"tree");}catch(e){}render();window.scrollTo(0,0);}
+    else if(a==="tt-step"){openGoalPage(b.getAttribute("data-gid"));ui.stepOpen[id]=true;render();var se=document.querySelector('[data-action="toggle-step-open"][data-id="'+id+'"]');if(se&&se.scrollIntoView)se.scrollIntoView({block:"start"});else window.scrollTo(0,0);}
     else if(a==="rd-list"){var rs=b.getAttribute("data-s");if(rs&&SHELVES[rs]&&rs!==ui.art.s){ui.art.s=rs;ui.art.f="all";}setArt(null);if(ui.view!=="reading"){ui.view="reading";try{localStorage.setItem(VIEW_KEY,"reading");}catch(e){}}render();window.scrollTo(0,0);}
     else if(a==="rd-open"){setArt(id);render();window.scrollTo(0,0);}
     else if(a==="rd-filter"){ui.art.f=b.getAttribute("data-f")||"all";saveArt();render();}
@@ -1779,7 +1884,7 @@ button.step-name:hover .step-nm{color:var(--accent)}
     var tabs=[["now","Now",clockSvg()],["goals","Goals",goalIcon()],["projects","Projects",projIcon()],["review","Review",reviewIcon()]];
     return '<div class="rail-brand" aria-hidden="true">'+clockSvg()+'<span>Where My Time Went</span></div>'+   // shown with the side rail on wide screens
       '<nav class="tabbar" role="tablist" aria-label="Sections">'+tabs.map(function(t){
-      var on=ui.view===t[0]||(t[0]==="goals"&&(ui.view==="curriculum"||ui.view==="reading"||ui.view==="goal"));
+      var on=ui.view===t[0]||(t[0]==="goals"&&(ui.view==="curriculum"||ui.view==="reading"||ui.view==="goal"||ui.view==="tree"));
       var live=t[0]!=="now"?"":(state.activeId?'<span class="tab-live" aria-hidden="true"></span>':(pausedTask()?'<span class="tab-live is-paused" aria-hidden="true"></span>':""));
       return '<button class="tab'+(on?' active':'')+'" role="tab" aria-selected="'+(on?'true':'false')+'" data-action="set-view" data-view="'+t[0]+'" type="button">'+live+t[2]+'<span class="tab-lbl">'+t[1]+'</span></button>';
     }).join("")+'</nav>';
@@ -1794,6 +1899,7 @@ button.step-name:hover .step-nm{color:var(--accent)}
     else if(ui.view==="goal")    html+='<div class="view">'+renderGoalPage()+'</div>';
     else if(ui.view==="curriculum")html+='<div class="view">'+renderCurriculumView()+'</div>';
     else if(ui.view==="reading")html+='<div class="view">'+renderReadingView()+'</div>';
+    else if(ui.view==="tree")   html+='<div class="view">'+renderTreeView()+'</div>';
     else if(ui.view==="projects")html+='<div class="view">'+renderProjects()+'</div>';
     else if(ui.view==="review")  html+='<div class="view">'+renderReview()+renderPlanned()+'</div>';
     else                         html+=renderHome();
@@ -2451,6 +2557,78 @@ button.step-name:hover .step-nm{color:var(--accent)}
           :sh==="invest"?'Written from the video’s transcript'+(a.charts?' and on-screen charts':'')+(a.checked?'. Prices checked '+esc(artDate(a.checked)):'')+'. A study aid, not a tip.'
           :'Written from the video’s transcript, in my words. Watch it for the full argument and the examples.')+'</div></div>'+
     '</article>';
+  }
+  /* ---------- the tech tree: a branch's journey, tier by tier ---------- */
+  function ttStep(g,x){return x.step?((g.steps||[]).filter(function(s){return s.id===x.step;})[0]||null):null;}
+  function ttHours(x){return x.h?(x.h[0]===x.h[1]?x.h[0]:x.h[0]+"–"+x.h[1])+" h":"not costed yet";}
+  function ttMid(x){return x.h?(x.mid||Math.round((x.h[0]+x.h[1])/2)):0;}
+  /* where you are: done = the step is ticked or all its pieces are (as the branch page reads it); now = the first tier that isn't */
+  function ttTiers(g,T){
+    var now=-1;
+    var L=T.tiers.map(function(x,i){
+      var st=ttStep(g,x),acts=st?stepActions(g.id,st.id):[],sec=0,t=Date.now();
+      acts.forEach(function(a){(a.sessions||[]).forEach(function(se){sec+=Math.max(0,((se.end==null?t:se.end)-se.start)/1000);});});
+      var done=!!st&&(st.done||(acts.length>0&&acts.every(function(a){return a.done;})));
+      if(!done&&now<0)now=i;
+      return {x:x,st:st,acts:acts,dn:acts.filter(function(a){return a.done;}).length,sec:sec,done:done};
+    });
+    L.forEach(function(r,i){r.status=r.done?"done":i===now?"now":i===now+1?"next":"locked";});
+    return L;
+  }
+  function renderTreeEntry(g){
+    var T=TREES[g&&g.id];if(!T)return "";
+    var L=ttTiers(g,T),cur=L.filter(function(r){return r.status==="now";})[0];
+    var sub=cur?'Now: tier '+cur.x.n+', '+esc(cur.x.name)+' · '+ttHours(cur.x)+(cur.x.gate?' · go on when '+esc(cur.x.gate.charAt(0).toLowerCase()+cur.x.gate.slice(1)):''):'Every tier done';
+    return '<button class="rd-entry tt-entry" data-action="tt-open" data-id="'+g.id+'" type="button">'+
+      '<span class="rd-entry-t">The journey, tier by tier'+(cur?'<span class="rd-badge">Tier '+cur.x.n+' of '+T.tiers[T.tiers.length-1].n+'</span>':'')+'</span>'+
+      '<span class="rd-entry-s">'+sub+'</span></button>';
+  }
+  function renderTreeView(){
+    var g=findGoal(ui.goalId),T=TREES[g&&g.id];
+    if(!T)return renderGoalPage();
+    var L=ttTiers(g,T),lo=0,hi=0,mid=0,spent=0,reach=-1;
+    T.tiers.forEach(function(x,i){if(x.n===T.reach)reach=i;});
+    L.forEach(function(r,i){if(r.x.h&&i<reach){lo+=r.x.h[0];hi+=r.x.h[1];mid+=ttMid(r.x);}spent+=r.sec;});   // what it takes to get to the reach tier
+    var chip={done:"Done ✓",now:"Now",next:"Next",locked:"Locked"};
+    var cols=L.map(function(r,i){
+      var x=r.x,m=ttMid(x),pct=m?Math.min(100,Math.round(r.sec/36/m)):0;
+      var xp=r.st?'<div class="tt-xp" role="img" aria-label="'+fmtDur(r.sec)+' of about '+m+' hours"><i style="width:'+pct+'%"></i></div>'+
+        '<div class="tt-xps">'+fmtDur(r.sec)+' of ~'+m+' h · '+r.dn+'/'+r.acts.length+' pieces</div>':'';
+      var sides=T.side.filter(function(s){return s.from===i;}).map(function(s){
+        var open=r.status==="done"||r.status==="now";
+        return '<div class="tt-side'+(open?'':' is-locked')+'">'+
+          '<div class="tt-h"><span class="tt-name">'+esc(s.name)+'</span><span class="tt-st">'+esc(s.kind)+'</span></div>'+
+          '<div class="tt-cost"><div><span class="tt-k">Time</span><b>'+esc(s.time)+'</b></div><div><span class="tt-k">Money</span><b>'+esc(s.eur)+'</b></div></div>'+
+          '<ul class="tt-teach">'+s.teaches.map(function(t){return '<li>'+esc(t)+'</li>';}).join("")+'</ul>'+
+          '<div class="tt-earn"><b>Earns</b> '+esc(s.earns)+'</div>'+
+          (s.goal&&findGoal(s.goal)?'<button class="tt-go" data-action="goal-open" data-id="'+s.goal+'" type="button">'+esc(shortName(findGoal(s.goal).name))+' →</button>':'')+
+        '</div>';
+      }).join("");
+      return '<div class="tt-col is-'+r.status+'">'+
+        '<span class="tt-num" aria-hidden="true">'+x.n+'</span>'+
+        '<div class="tt-node is-'+r.status+'">'+
+          '<div class="tt-h"><span class="tt-name"><span class="tt-sr">Tier '+x.n+': </span>'+esc(x.name)+'</span><span class="tt-st">'+chip[r.status]+'</span></div>'+
+          '<div class="tt-when">'+esc(x.when)+'</div>'+
+          '<div class="tt-cost"><div><span class="tt-k">Time</span><b>'+ttHours(x)+(x.guess?' <i>(a guess)</i>':'')+'</b>'+(x.month?'<span class="tt-m">~'+x.month+' h a month</span>':'')+'</div>'+
+            '<div><span class="tt-k">Money</span><b>'+esc(x.eur)+'</b>'+(x.eurWhy?'<span class="tt-m">'+esc(x.eurWhy)+'</span>':'')+'</div></div>'+
+          xp+
+          '<div class="tt-lbl">Teaches you</div><ul class="tt-teach">'+x.teaches.map(function(t){return '<li>'+esc(t)+'</li>';}).join("")+'</ul>'+
+          (x.gate&&i<L.length-1?'<div class="tt-gate"><b>Unlocks tier '+L[i+1].x.n+' when</b> '+esc(x.gate)+'</div>':'')+
+          '<div class="tt-earn"><b>Earns</b> '+esc(x.earns)+'</div>'+
+          (x.note?'<div class="tt-note">'+esc(x.note)+'</div>':'')+
+          (r.st?'<button class="tt-go" data-action="tt-step" data-gid="'+g.id+'" data-id="'+r.st.id+'" type="button">'+(r.acts.length?'Its '+r.acts.length+' piece'+(r.acts.length===1?'':'s'):'Open it')+' →</button>':'')+
+        '</div>'+sides+
+      '</div>';
+    }).join("");
+    var skip=T.skip.map(function(s){return '<div class="tt-skipn"><span class="tt-name">'+esc(s.name)+'</span><span class="tt-why">'+esc(s.why)+'</span></div>';}).join("");
+    return '<section class="sec cv tt-view">'+backTo(g)+
+      '<h2 class="cv-title">The journey, tier by tier</h2>'+
+      '<p class="cv-sub">'+esc(T.lead)+'</p>'+
+      (reach>0?'<div class="tt-sum"><div><span class="tt-k">To reach tier '+esc(T.reach)+'</span><b>~'+Math.round(mid/5)*5+' h</b><span class="tt-m">'+lo+'–'+hi+' h'+(T.reachEur?', and '+esc(T.reachEur):'')+'</span></div>'+
+        '<div><span class="tt-k">Put in so far</span><b>'+fmtDur(spent)+'</b><span class="tt-m">one 14-minute slot a day ≈ 7 h a month</span></div></div>':'')+
+      '<div class="tt">'+cols+'</div>'+
+      '<h3 class="tt-skiph">Paths not taken</h3><div class="tt-skip">'+skip+'</div>'+
+    '</section>';
   }
   /* ---------- the idea board: every product idea you're weighing, scored on Thiel's seven questions; lessons run on the starred one ---------- */
   function prodGoal(){return findGoal(PROD_CURRICULUM.goal_id);}
@@ -3192,7 +3370,7 @@ button.step-name:hover .step-nm{color:var(--accent)}
     var ladder=(kids.length&&!g.progression)?'':renderProgression(g);
     var addB=(!kids.length&&!up&&!currFor(g))?'<div class="gp-addb">'+branchAdd(g)+'</div>':'';
     // two columns on a wide screen: the doing (today, ideas, calls) on the left, the plan and notes on the right; one column on a phone, same order
-    var main=renderToday(g,"card")+renderDaily(g)+renderIdeas(g)+renderAswath(g)+renderReadingEntry(g)+renderDecisions(g),side=ladder+addB+noteBlock;
+    var main=renderToday(g,"card")+renderDaily(g)+renderIdeas(g)+renderAswath(g)+renderTreeEntry(g)+renderReadingEntry(g)+renderDecisions(g),side=ladder+addB+noteBlock;
     if(main)side=steps+side;else main=steps;
     return '<div class="card goal-card">'+
       '<div class="goal-top"><div style="min-width:0;flex:1">'+eye+name+meta+'</div>'+
