@@ -1121,6 +1121,18 @@ button.step-name:hover .step-nm{color:var(--accent)}
 .gp-fire{margin-top:14px}
 /* filing a jotted thought under the goal it belongs to */
 .task-row.has-file{flex-wrap:wrap}
+/* an inbox line in a narrow box (a phone, or the right-hand column on a laptop): the words get the whole width,
+   the buttons go underneath, and the three small ones drop to their own line when the pair and they don't fit side by side */
+.cap-list{container-type:inline-size}
+.tr-icons{display:flex;align-items:center;gap:7px}
+.tr-actions .icon-btn.armed{visibility:visible}   /* the armed × sits inside .tr-icons, which the armed row hides */
+@container (max-width:640px){
+  .cap-row{flex-wrap:wrap;row-gap:12px}
+  .cap-row .tr-main{flex:1 1 100%}
+  .cap-row .tr-actions{flex:1 1 100%;min-width:0;flex-wrap:wrap;row-gap:8px}
+  .cap-row .tr-actions>.btn{flex:1 1 0}
+  .cap-row .tr-icons{margin-left:auto}
+}
 .file-p{flex:1 1 100%;display:flex;flex-direction:column;gap:10px;min-width:0;padding-top:12px;border-top:1px solid var(--line)}
 .file-sug{font-size:13.5px;line-height:1.45;color:var(--muted)}
 .file-sug b{color:var(--ink);font-weight:600}
@@ -1551,7 +1563,7 @@ button.step-name:hover .step-nm{color:var(--accent)}
     invest:"stock stocks share shares valuation dcf damodaran aswath etf dividend company earnings portfolio",
     career:"cv resume job jobs internship linkedin salary interview graduation graduate employer",
     bhudda:"buddha buddhism meditation meditate dharma sutta mindful mindfulness",buddha:"buddha buddhism meditation meditate dharma sutta mindful mindfulness",
-    read:"book books chapter author novel reading",product:"app apps saas startup users build mvp",products:"app apps saas startup users build mvp",
+    read:"book books chapter author novel reading",product:"app apps saas startup users build mvp beta testflight publish launch release ship appstore playstore software website",products:"app apps saas startup users build mvp beta testflight publish launch release ship appstore playstore software website",
     business:"offer offers sales selling client clients customer customers pricing marketing hormozi",ai:"ai agent agents automation automate chatgpt claude llm prompt",
     forex:"forex eur usd pip pips currency currencies",trading:"trade trades trading journal chart"};   // a goal whose name has the key gets the words
   var FILE_STOP=" the and for with from that this into make making money want someone who has have opportunity hourly rate plan my your achieve better understanding become becoming long term minutes minute day days daily week weekly ";
@@ -1734,7 +1746,7 @@ button.step-name:hover .step-nm{color:var(--accent)}
   function continueTask(){var t=pausedTask();if(!t)return;var other=state.activeId&&findTask(state.activeId);startTask(t.id);if(other)toast("Stopped ‘"+other.name+"’ · back to ‘"+t.name+"’");}
   function quickStart(name,cat){name=(name||"").trim();if(!name)return;commit(function(){var a=findTask(state.activeId);if(a)closeRunning(a);var t={id:uid(),name:name,category:(cat||"").trim(),estimateMin:null,planned:false,done:false,createdAt:Date.now(),sessions:[{start:Date.now(),end:null}]};state.tasks.push(t);state.activeId=t.id;});}
   function addPlanned(name,cat,est){name=(name||"").trim();if(!name)return;ui.addOpen=false;commit(function(){state.tasks.push({id:uid(),name:name,category:(cat||"").trim(),estimateMin:est>0?est:null,planned:true,done:false,createdAt:Date.now(),sessions:[]});});}
-  function addLater(name){name=(name||"").trim();if(!name)return;commit(function(){state.tasks.push({id:uid(),name:name,category:"",estimateMin:null,planned:false,later:true,done:false,createdAt:Date.now(),sessions:[]});});}
+  function addLater(name){name=(name||"").trim();if(!name)return;commit(function(){state.tasks.push({id:uid(),name:name,category:"",estimateMin:null,planned:false,later:true,done:false,createdAt:Date.now(),sessions:[]});});toast("Jotted. Tap File when you know where it goes");}
   function addGoal(name,deadline,identity,parentId){name=(name||"").trim();if(!name)return;ui.goalOpen=false;if(parentId)ui.branchOpen[parentId]=false;commit(function(){state.goals=state.goals||[];var g={id:uid(),name:name,deadline:deadline||null,identity:(identity||"").trim(),createdAt:Date.now()};if(parentId&&findGoal(parentId))g.parentId=parentId;state.goals.push(g);});}
   function deleteGoal(id){if(ui.goalId===id)openGoalPage(null);commit(function(){var gone=findGoal(id),up=gone&&gone.parentId;state.goals=(state.goals||[]).filter(function(g){return g.id!==id;});state.goals.forEach(function(g){if(g.parentId===id){if(up)g.parentId=up;else delete g.parentId;}});/* its branches move up a level */state.tasks.forEach(function(t){if(t.goalId===id){t.goalId=null;t.daily=false;}});});}
   function addAction(gid,sid,text,cue){text=(text||"").trim();if(!text)return;ui.actionOpen[sid||gid]=false;commit(function(){state.tasks.push({id:uid(),name:text,category:"",estimateMin:null,planned:false,daily:true,goalId:gid,stepId:sid||null,depth:null,cue:(cue||"").trim(),done:false,createdAt:Date.now(),sessions:[]});});}
@@ -2089,7 +2101,7 @@ button.step-name:hover .step-nm{color:var(--accent)}
   function renderCaptureHome(){
     var items=state.tasks.filter(function(t){return t.later&&!t.done;});
     items.sort(function(a,b){return b.createdAt-a.createdAt;});
-    var list=items.length?('<div class="task-list" style="margin-top:12px">'+items.map(captureRow).join("")+'</div>'):"";
+    var list=items.length?('<div class="task-list cap-list" style="margin-top:12px">'+items.map(captureRow).join("")+'</div>'):"";
     return '<div class="home-capture">'+
       '<form class="card capture-form" data-action="add-later" autocomplete="off">'+
         '<input id="l-name" class="field" placeholder="An idea or a to-do? Jot it here, file it later…" aria-label="Jot an idea or a to-do">'+
@@ -3994,7 +4006,7 @@ button.step-name:hover .step-nm{color:var(--accent)}
   function renderCapture(){
     var items=state.tasks.filter(function(t){return t.later&&!t.done;});
     items.sort(function(a,b){return b.createdAt-a.createdAt;});
-    var list=items.length?'<div class="task-list">'+items.map(captureRow).join("")+'</div>'
+    var list=items.length?'<div class="task-list cap-list">'+items.map(captureRow).join("")+'</div>'
       :'<div class="card empty">Nothing here yet — jot down anything you don’t want to forget, then start a timer on it whenever you’re ready.</div>';
     return '<section class="sec">'+
       '<div class="sec-head"><h2>On my mind</h2></div>'+
@@ -4007,19 +4019,24 @@ button.step-name:hover .step-nm{color:var(--accent)}
   /* filing a jotted thought: which goal it belongs to (the words in it against each goal's name and FILE_SYN), and what it is */
   function fileWords(s){return String(s||"").toLowerCase().replace(/[^a-z0-9à-ÿ\s-]/g," ").split(/[\s-]+/).filter(function(w){return w&&(w.length>2||w==="ai"||w==="cv");});}
   function fileSuggest(text){
-    var words=fileWords(text),best=null,bestScore=0;
+    var words=fileWords(text),best=null,bestScore=0,t=String(text||"").trim().toLowerCase(),pg=prodGoal();
+    var proj=(state.projects||[]).filter(function(p){var n=String(p.name||"").trim().toLowerCase();return n.length>=4&&t.indexOf(n)>=0;})[0]||null;   // one of your projects by name: that's building a product
     (state.goals||[]).forEach(function(g){
       var own=fileWords(g.name).filter(function(w){return FILE_STOP.indexOf(" "+w+" ")<0;}),syn=[];
       own.forEach(function(w){Object.keys(FILE_SYN).forEach(function(k){if(w===k||(k.length>3&&w.indexOf(k)===0))syn=syn.concat(FILE_SYN[k].split(" "));});});
       var score=0;words.forEach(function(w){if(own.indexOf(w)>=0)score+=2;else if(syn.indexOf(w)>=0)score+=2;else if(w.length>4&&own.some(function(o){return o.length>4&&(o.indexOf(w.slice(0,5))===0);}))score+=1;});
+      if(proj&&pg&&g.id===pg.id)score+=3;
       if(goalKids(g.id).length)score*=0.5;   // a main goal only wins when nothing narrower does
       if(score>bestScore){best=g;bestScore=score;}
     });
-    var t=String(text||"").trim().toLowerCase(),kind;
-    if(/\b(app|apps|saas|startup|product idea|business idea|what if|how about)\b/.test(t)||(best&&prodGoal()&&best.id===prodGoal().id))kind="idea";
-    else if(/\?$/.test(t)||/^(should|why|how|what|maybe|is|does|do|could|would|can)\b/.test(t))kind="note";
-    else kind="piece";
-    return {gid:best?best.id:"",kind:kind};
+    var kind;   // what it is: an idea, a question to keep, or something to do
+    if(/\b(what if|how about|product idea|business idea|app idea)\b/.test(t))kind="idea";
+    else if(/\?$/.test(t))kind="note";
+    else if(/^(i need to|i have to|i must|i should|i want to|need to|have to|must|remember to|don.?t forget|todo|to do|publish|send|call|email|mail|text|buy|book|pay|fix|finish|submit|ship|launch|release|upload|post|write|ask|tell|check|update|order|cancel|renew|sign|apply|schedule|make|get|go|pick|clean|start|read|watch|learn|try|test|set up|setup)\b/.test(t))kind="piece";
+    else if(/\b(app|apps|saas|startup|could build|could make|could sell)\b/.test(t))kind="idea";
+    else if(/^(should|why|how|what|maybe|is|does|could|would|can)\b/.test(t))kind="note";
+    else kind=best&&pg&&best.id===pg.id?"idea":"piece";
+    return {gid:best?best.id:"",kind:kind,proj:proj&&best&&pg&&best.id===pg.id?proj.name:""};
   }
   function fileTask(tid,gid,kind){
     var t=findTask(tid);if(!t)return;
@@ -4043,7 +4060,7 @@ button.step-name:hover .step-nm{color:var(--accent)}
     var kinds=[["piece","A piece to do"],["note","A note on the goal"]];if(prodGoal())kinds.push(["idea","On the idea board"]);
     var sg=sug.gid&&findGoal(sug.gid);
     return '<div class="file-p">'+
-      '<div class="file-sug">'+(sg?'Looks like <b>'+esc(shortName(sg.name))+'</b>, '+(sug.kind==="idea"?'a product idea':sug.kind==="note"?'a note':'a piece to do')+'. Change it if not.':(sug.kind==="idea"?'Looks like a product idea.':'Which goal does it belong to?'))+'</div>'+
+      '<div class="file-sug">'+(sg?'Looks like <b>'+esc(shortName(sg.name))+'</b>'+(sug.proj?' (it mentions '+esc(sug.proj)+')':'')+', '+(sug.kind==="idea"?'a product idea':sug.kind==="note"?'a note':'a piece to do')+'. Change it if not.':(sug.kind==="idea"?'Looks like a product idea.':'Which goal does it belong to?'))+'</div>'+
       '<label class="fire-lbl" for="file-g-'+t.id+'">Belongs to<select id="file-g-'+t.id+'" class="field">'+o+'</select></label>'+
       '<div class="file-btns">'+kinds.map(function(k){return '<button class="btn '+(k[0]===sug.kind?'btn-primary':'btn-ghost')+' btn-sm" data-action="file-as" data-id="'+t.id+'" data-kind="'+k[0]+'" type="button">'+k[1]+'</button>';}).join("")+
         '<button class="btn btn-ghost btn-sm" data-action="file-close" data-id="'+t.id+'" type="button">Keep as a to-do</button></div>'+
@@ -4055,14 +4072,15 @@ button.step-name:hover .step-nm{color:var(--accent)}
     var sub=sec>=1?fmtDur(sec)+" logged so far":"Not started yet";
     var btn=running?'<button class="btn btn-stop btn-sm" data-action="stop">Stop</button>':'<button class="btn btn-primary btn-sm" data-action="start" data-id="'+t.id+'">'+(sec>0?"Resume":"Start")+'</button>';
     var filing=!!ui.fileOpen[t.id];
-    return '<div class="card task-row'+(filing?' has-file':'')+'">'+
+    return '<div class="card task-row cap-row'+(filing?' has-file':'')+'">'+
       '<div class="tr-main">'+
         '<div class="tr-name">'+esc(t.name)+(running?'<span class="mini-run">running</span>':"")+'</div>'+
         '<div class="tr-sub">'+esc(sub)+'</div>'+
       '</div>'+
-      '<div class="tr-actions">'+btn+(filing?'':'<button class="btn btn-ghost btn-sm" data-action="file-open" data-id="'+t.id+'" type="button" title="File it under a goal">File</button>')+pinBtn(t)+
+      '<div class="tr-actions">'+btn+(filing?'':'<button class="btn btn-ghost btn-sm" data-action="file-open" data-id="'+t.id+'" type="button" title="File it under a goal">File</button>')+
+        '<span class="tr-icons">'+pinBtn(t)+
         '<button class="icon-btn" data-action="done" data-id="'+t.id+'" title="Mark done" aria-label="Mark done">&#10003;</button>'+
-        xBtn("delete",t.id,"Delete")+
+        xBtn("delete",t.id,"Delete")+'</span>'+
       '</div>'+(filing?filePanel(t):'')+
     '</div>';
   }
