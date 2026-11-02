@@ -1119,6 +1119,14 @@ button.step-name:hover .step-nm{color:var(--accent)}
 .fire-inf{margin:0;font-size:13px;line-height:1.55;color:var(--muted)}
 .fire-inf b{color:var(--ink);font-weight:600;font-variant-numeric:tabular-nums}
 .gp-fire{margin-top:14px}
+/* filing a jotted thought under the goal it belongs to */
+.task-row.has-file{flex-wrap:wrap}
+.file-p{flex:1 1 100%;display:flex;flex-direction:column;gap:10px;min-width:0;padding-top:12px;border-top:1px solid var(--line)}
+.file-sug{font-size:13.5px;line-height:1.45;color:var(--muted)}
+.file-sug b{color:var(--ink);font-weight:600}
+.file-p .fire-lbl{max-width:420px}
+.file-btns{display:flex;flex-wrap:wrap;gap:8px}
+.file-note{margin:0;font-size:11.5px;line-height:1.45;color:var(--faint)}
 /* what you spend, under the FIRE number */
 .cs-num{font-family:var(--font-mono);font-size:clamp(24px,7vw,30px);font-weight:500;line-height:1.15;letter-spacing:-.02em;font-variant-numeric:tabular-nums;margin-top:2px}
 .cs-num span{font-family:var(--font-sans);font-size:13px;font-weight:500;letter-spacing:0;color:var(--muted)}
@@ -1538,6 +1546,15 @@ button.step-name:hover .step-nm{color:var(--accent)}
   var HOUR_GOAL=100,HOUR_BASICS=20;   // 20h: roughly what the basics of a new skill take (Josh Kaufman, The First 20 Hours) · 100h: a rule of thumb for getting ahead of most people who start
   var FIRE_REAL=0.05,FIRE_RATES=[4,3.5],FIRE_STEPS=[500,1000,2000,3000];
   var COST_CATS=[["home","Housing"],["food","Food & groceries"],["transport","Transport"],["bills","Bills & insurance"],["health","Health"],["fun","Going out & fun"],["other","Other"]];
+  var FILE_SYN={option:"option options call calls put puts wheel leaps theta delta strike premium spread condor assigned assignment expiry",
+    fire:"fire spend spending spent cost costs budget retire retirement savings expenses",
+    invest:"stock stocks share shares valuation dcf damodaran aswath etf dividend company earnings portfolio",
+    career:"cv resume job jobs internship linkedin salary interview graduation graduate employer",
+    bhudda:"buddha buddhism meditation meditate dharma sutta mindful mindfulness",buddha:"buddha buddhism meditation meditate dharma sutta mindful mindfulness",
+    read:"book books chapter author novel reading",product:"app apps saas startup users build mvp",products:"app apps saas startup users build mvp",
+    business:"offer offers sales selling client clients customer customers pricing marketing hormozi",ai:"ai agent agents automation automate chatgpt claude llm prompt",
+    forex:"forex eur usd pip pips currency currencies",trading:"trade trades trading journal chart"};   // a goal whose name has the key gets the words
+  var FILE_STOP=" the and for with from that this into make making money want someone who has have opportunity hourly rate plan my your achieve better understanding become becoming long term minutes minute day days daily week weekly ";
   var COST_EVERY=[["","Not sure yet",0],["once","Once, not again",0],["w1","Every week",7],["w2","Every 2 weeks",14],["m1","Every month",30.4375],["m2","Every 2 months",60.875],["m3","Every 3 months",91.3125],["m6","Every 6 months",182.625],["y1","Every year",365.25]];   // days between buys   // 5% a year after inflation: a stock-heavy portfolio's long-run average, not a promise
   var VIEW_KEY="wmtw_view";
   function loadView(){try{var v=localStorage.getItem(VIEW_KEY);return (v==="goals"||v==="projects"||v==="review"||v==="curriculum"||v==="reading"||v==="goal"||v==="tree")?v:"now";}catch(e){return "now";}}
@@ -1557,7 +1574,7 @@ button.step-name:hover .step-nm{color:var(--accent)}
   function loadSes(){try{var s=JSON.parse(localStorage.getItem(SES_KEY)||"null");if(s&&s.tid&&s.d&&Date.now()-(s.at||0)<2*86400000)return s;}catch(e){}return null;}
   var DEC_KEY="wmtw_dec_draft";   // an unfinished call survives a reload — e.g. you switched apps to look up the price
   function loadDecDraft(){try{var s=JSON.parse(localStorage.getItem(DEC_KEY)||"null");if(s&&s.d&&s.gid&&Date.now()-(s.t0||0)<3*86400000)return s;}catch(e){}return null;}
-  var ui={looseOpen:false, fireOpen:{}, costOpen:{}, addOpen:false, goalOpen:false, actionOpen:{}, noteOpen:{}, cueOpen:{}, idOpen:{}, repOpen:{}, stepAddOpen:{}, proposal:{}, loading:{}, projectOpen:false, projEdit:{}, projLoading:{}, adviseLoading:{}, currRefs:{}, projCardOpen:{}, goalSecOpen:{}, aswClosed:loadAsw(), aswAll:false, aswOpen:{}, lessonOpen:{}, stepOpen:{}, dec:loadDecDraft(), decRows:{}, decAll:false, armed:null, ses:loadSes(), goalMode:"have", shapeLevel:"new", shapeTopic:"", shapeLoading:false, shapeProposal:null, hoLoading:{}, ideaOpen:{}, view:loadView(), goalId:loadGoalId(), nameOpen:{}, branchOpen:{}, cvGoal:loadCvGoal(), cvMode:loadCvMode(), art:loadArt(), date:dayKey(Date.now())};
+  var ui={looseOpen:false, fireOpen:{}, costOpen:{}, fileOpen:{}, addOpen:false, goalOpen:false, actionOpen:{}, noteOpen:{}, cueOpen:{}, idOpen:{}, repOpen:{}, stepAddOpen:{}, proposal:{}, loading:{}, projectOpen:false, projEdit:{}, projLoading:{}, adviseLoading:{}, currRefs:{}, projCardOpen:{}, goalSecOpen:{}, aswClosed:loadAsw(), aswAll:false, aswOpen:{}, lessonOpen:{}, stepOpen:{}, dec:loadDecDraft(), decRows:{}, decAll:false, armed:null, ses:loadSes(), goalMode:"have", shapeLevel:"new", shapeTopic:"", shapeLoading:false, shapeProposal:null, hoLoading:{}, ideaOpen:{}, view:loadView(), goalId:loadGoalId(), nameOpen:{}, branchOpen:{}, cvGoal:loadCvGoal(), cvMode:loadCvMode(), art:loadArt(), date:dayKey(Date.now())};
   var isTouch=("ontouchstart" in window)||(navigator.maxTouchPoints>0);
   var sampleNS; // undefined=unknown, null=unavailable, function=ready
 
@@ -1887,6 +1904,9 @@ button.step-name:hover .step-nm{color:var(--accent)}
     else if(a==="rd-done"){var nxA=artNext(id);setArt(nxA?nxA.id:null);commit(function(){state.artRead=state.artRead||{};state.artRead[id]=Date.now();});window.scrollTo(0,0);}
     else if(a==="rd-unread"){commit(function(){if(state.artRead)delete state.artRead[id];});}
     else if(a==="loose-toggle"){ui.looseOpen=!ui.looseOpen;render();}
+    else if(a==="file-open"){ui.fileOpen[id]=true;render();}
+    else if(a==="file-close"){ui.fileOpen[id]=false;render();}
+    else if(a==="file-as"){fileTask(id,val("file-g-"+id),b.getAttribute("data-kind"));}
     else if(a==="cost-add"){ui.costOpen[id]=true;render();var cf=document.getElementById("cost-what-"+id);if(cf)cf.focus();}
     else if(a==="cost-cancel"){ui.costOpen[id]=false;render();}
     else if(a==="cost-del"){if(armed("cost-del:"+id))deleteCost(b.getAttribute("data-gid"),id);}
@@ -2072,7 +2092,7 @@ button.step-name:hover .step-nm{color:var(--accent)}
     var list=items.length?('<div class="task-list" style="margin-top:12px">'+items.map(captureRow).join("")+'</div>'):"";
     return '<div class="home-capture">'+
       '<form class="card capture-form" data-action="add-later" autocomplete="off">'+
-        '<input id="l-name" class="field" placeholder="On your mind? Jot it for later…" aria-label="Something to do later">'+
+        '<input id="l-name" class="field" placeholder="An idea or a to-do? Jot it here, file it later…" aria-label="Jot an idea or a to-do">'+
         '<button class="btn btn-primary" type="submit">Add</button>'+
       '</form>'+list+
     '</div>';
@@ -3984,19 +4004,66 @@ button.step-name:hover .step-nm{color:var(--accent)}
       '</form>'+list+
     '</section>';
   }
+  /* filing a jotted thought: which goal it belongs to (the words in it against each goal's name and FILE_SYN), and what it is */
+  function fileWords(s){return String(s||"").toLowerCase().replace(/[^a-z0-9à-ÿ\s-]/g," ").split(/[\s-]+/).filter(function(w){return w&&(w.length>2||w==="ai"||w==="cv");});}
+  function fileSuggest(text){
+    var words=fileWords(text),best=null,bestScore=0;
+    (state.goals||[]).forEach(function(g){
+      var own=fileWords(g.name).filter(function(w){return FILE_STOP.indexOf(" "+w+" ")<0;}),syn=[];
+      own.forEach(function(w){Object.keys(FILE_SYN).forEach(function(k){if(w===k||(k.length>3&&w.indexOf(k)===0))syn=syn.concat(FILE_SYN[k].split(" "));});});
+      var score=0;words.forEach(function(w){if(own.indexOf(w)>=0)score+=2;else if(syn.indexOf(w)>=0)score+=2;else if(w.length>4&&own.some(function(o){return o.length>4&&(o.indexOf(w.slice(0,5))===0);}))score+=1;});
+      if(goalKids(g.id).length)score*=0.5;   // a main goal only wins when nothing narrower does
+      if(score>bestScore){best=g;bestScore=score;}
+    });
+    var t=String(text||"").trim().toLowerCase(),kind;
+    if(/\b(app|apps|saas|startup|product idea|business idea|what if|how about)\b/.test(t)||(best&&prodGoal()&&best.id===prodGoal().id))kind="idea";
+    else if(/\?$/.test(t)||/^(should|why|how|what|maybe|is|does|do|could|would|can)\b/.test(t))kind="note";
+    else kind="piece";
+    return {gid:best?best.id:"",kind:kind};
+  }
+  function fileTask(tid,gid,kind){
+    var t=findTask(tid);if(!t)return;
+    var g=kind==="idea"?prodGoal():findGoal(gid);
+    if(!g){toast(kind==="idea"?"The idea board lives on Building products, which isn’t here":"Pick the goal it belongs to");return;}
+    ui.fileOpen[tid]=false;
+    commit(function(){
+      var x=findTask(tid);if(!x)return;
+      if(kind==="piece"){x.goalId=g.id;x.stepId=null;x.daily=true;x.depth=null;x.cue=x.cue||"";delete x.later;return;}
+      var gg=findGoal(g.id);
+      if(kind==="note")gg.notes=(gg.notes?gg.notes.replace(/[ \t\r\n]+$/,"")+"\n":"")+"• "+x.name+" ("+new Date().toLocaleDateString(undefined,{day:"numeric",month:"short"})+")";
+      else{gg.ideas=gg.ideas||[];var it={id:uid(),name:x.name.slice(0,80),at:Date.now(),q:{},talked:0};gg.ideas.push(it);if(!gg.ideaFocus)gg.ideaFocus=it.id;}
+      if((x.sessions||[]).length){x.done=true;delete x.later;}   // time already logged on it stays in your history
+      else state.tasks=state.tasks.filter(function(y){return y.id!==tid;});
+    });
+    toast(kind==="piece"?"Filed under "+shortName(g.name)+" as a piece":kind==="note"?"Added to "+shortName(g.name)+"’s notes":"On the idea board");
+  }
+  function filePanel(t){
+    var sug=fileSuggest(t.name),o='<option value="">Pick a goal…</option>';
+    (function walk(list,d){list.forEach(function(g){o+='<option value="'+g.id+'"'+(g.id===sug.gid?' selected':'')+'>'+(d?new Array(d+1).join("\u2003")+'↳ ':'')+esc(shortName(g.name))+'</option>';walk(goalKids(g.id),d+1);});})(topGoals(),0);
+    var kinds=[["piece","A piece to do"],["note","A note on the goal"]];if(prodGoal())kinds.push(["idea","On the idea board"]);
+    var sg=sug.gid&&findGoal(sug.gid);
+    return '<div class="file-p">'+
+      '<div class="file-sug">'+(sg?'Looks like <b>'+esc(shortName(sg.name))+'</b>, '+(sug.kind==="idea"?'a product idea':sug.kind==="note"?'a note':'a piece to do')+'. Change it if not.':(sug.kind==="idea"?'Looks like a product idea.':'Which goal does it belong to?'))+'</div>'+
+      '<label class="fire-lbl" for="file-g-'+t.id+'">Belongs to<select id="file-g-'+t.id+'" class="field">'+o+'</select></label>'+
+      '<div class="file-btns">'+kinds.map(function(k){return '<button class="btn '+(k[0]===sug.kind?'btn-primary':'btn-ghost')+' btn-sm" data-action="file-as" data-id="'+t.id+'" data-kind="'+k[0]+'" type="button">'+k[1]+'</button>';}).join("")+
+        '<button class="btn btn-ghost btn-sm" data-action="file-close" data-id="'+t.id+'" type="button">Keep as a to-do</button></div>'+
+      '<p class="file-note">A piece shows up on that goal’s page to start and time; a note joins its Notes &amp; open questions; an idea goes on the idea board under Building products.</p>'+
+    '</div>';
+  }
   function captureRow(t){
     var running=state.activeId===t.id, sec=taskSec(t);
     var sub=sec>=1?fmtDur(sec)+" logged so far":"Not started yet";
     var btn=running?'<button class="btn btn-stop btn-sm" data-action="stop">Stop</button>':'<button class="btn btn-primary btn-sm" data-action="start" data-id="'+t.id+'">'+(sec>0?"Resume":"Start")+'</button>';
-    return '<div class="card task-row">'+
+    var filing=!!ui.fileOpen[t.id];
+    return '<div class="card task-row'+(filing?' has-file':'')+'">'+
       '<div class="tr-main">'+
         '<div class="tr-name">'+esc(t.name)+(running?'<span class="mini-run">running</span>':"")+'</div>'+
         '<div class="tr-sub">'+esc(sub)+'</div>'+
       '</div>'+
-      '<div class="tr-actions">'+btn+pinBtn(t)+
+      '<div class="tr-actions">'+btn+(filing?'':'<button class="btn btn-ghost btn-sm" data-action="file-open" data-id="'+t.id+'" type="button" title="File it under a goal">File</button>')+pinBtn(t)+
         '<button class="icon-btn" data-action="done" data-id="'+t.id+'" title="Mark done" aria-label="Mark done">&#10003;</button>'+
         xBtn("delete",t.id,"Delete")+
-      '</div>'+
+      '</div>'+(filing?filePanel(t):'')+
     '</div>';
   }
 
