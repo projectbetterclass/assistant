@@ -3623,7 +3623,7 @@ button.step-name:hover .step-nm{color:var(--accent)}
         xBtn("del-step",st.id,"Remove step",' data-gid="'+g.id+'"')+
       '</div>'+
       (open?'<div class="step-actions">'+
-        (acts.length?acts.map(actionRow).join(""):'<div class="action-empty">No pieces yet.</div>')+
+        (acts.length?acts.map(actionRow).join(""):'<div class="action-empty">'+(currFor(g)||branchCourses(g).length?'The lessons cover this step. Add a piece for anything else you want to do here.':'No pieces yet.')+'</div>')+
         (ui.actionOpen[st.id]?stepActionForm(g,st):'<button class="btn btn-ghost btn-sm act-add-btn" data-action="toggle-action" data-id="'+st.id+'" type="button">+ Add a piece</button>')+
       '</div>':'')+
     '</div>';
