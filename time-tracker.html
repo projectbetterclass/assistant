@@ -520,6 +520,43 @@ h1,h2,h3{margin:0;font-family:var(--font-display);font-weight:600;text-wrap:bala
 .rt.is-done{border-color:var(--good);background:var(--good-soft)}
 .rt.is-done .rt-m{color:var(--good);font-weight:600}
 .rt.is-done .rt-bar i{background:var(--good)}
+/* start here: one thing, two minutes (the round's first card when nothing is running) */
+.go1{padding:18px 18px 16px;border-left:3px solid var(--accent);background:linear-gradient(180deg,var(--accent-soft),transparent 140px),var(--surface)}
+.go1-eye{font-size:11px;text-transform:uppercase;letter-spacing:.07em;color:var(--accent);font-weight:600}
+.go1-name{font-family:var(--font-display);font-size:clamp(22px,6vw,27px);font-weight:600;line-height:1.15;margin:6px 0 2px;text-wrap:balance}
+.go1-what{font-size:14.5px;line-height:1.45;color:var(--ink)}
+.go1-why{margin:10px 0 0;padding:8px 11px;border-radius:9px;background:var(--surface-2);border:1px solid var(--line);font-size:13px;line-height:1.45;color:var(--ink)}
+.go1-id{margin:9px 0 0;font-family:var(--font-display);font-style:italic;font-size:14.5px;line-height:1.4;color:var(--muted)}
+.go1-when{margin:6px 0 0;font-size:12.5px;color:var(--muted)}
+.go1-ramp{list-style:none;counter-reset:ramp;display:flex;flex-wrap:wrap;gap:6px;margin:13px 0 0;padding:0}
+.go1-ramp li{counter-increment:ramp;display:inline-flex;align-items:center;gap:6px;font-size:12.5px;color:var(--muted);background:var(--surface);border:1px solid var(--line);border-radius:99px;padding:4px 10px 4px 5px;line-height:1.2}
+.go1-ramp li::before{content:counter(ramp);display:inline-grid;place-items:center;width:18px;height:18px;border-radius:50%;background:var(--accent-soft);color:var(--accent);font-family:var(--font-mono);font-size:10.5px;font-weight:600}
+.go1-btns{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+.go1-go{flex:1 1 150px}
+.go1-skip{flex:0 0 auto;min-height:54px}
+.go1-note{margin:10px 0 0;font-size:12.5px;line-height:1.45;color:var(--muted)}
+.go1-tip{margin:10px 0 0;padding-top:10px;border-top:1px dashed var(--line);font-size:12px;line-height:1.45;color:var(--faint)}
+.go1-tip i{font-style:normal;color:var(--muted)}
+.go1.is-done{border-left-color:var(--good);background:linear-gradient(180deg,var(--good-soft),transparent 140px),var(--surface)}
+.go1.is-done .go1-eye{color:var(--good)}
+.go1-say{margin:6px 0 0;font-size:14px;color:var(--muted)}
+/* the round folded to one line: a dot per thing — half for started, full for done */
+.round-tog{width:100%;border:none;background:transparent;padding:0;margin:0;font-family:inherit;text-align:left;cursor:pointer;color:inherit;align-items:center}
+.rd-dots{display:inline-flex;flex-wrap:wrap;gap:5px;min-width:0}
+.rd-d{width:11px;height:11px;border-radius:50%;border:1.5px solid var(--line-strong);background:var(--surface);display:block}
+.rd-d.is-part{border-color:var(--accent);background:linear-gradient(90deg,var(--accent) 50%,transparent 50%)}
+.rd-d.is-on{border-color:var(--accent);background:var(--accent);animation:pulse 1.5s ease-in-out infinite}
+.rd-d.is-done{border-color:var(--good);background:var(--good)}
+.round-more{margin-left:auto;flex:none;display:inline-flex;align-items:center;gap:4px;font-size:12.5px;font-weight:600;color:var(--accent);white-space:nowrap}
+.round-chev{display:inline-flex}
+.round-chev svg{transition:transform .15s}
+.round-chev.open svg{transform:rotate(90deg)}
+.round-say{margin:6px 0 0;font-size:13px;line-height:1.45;color:var(--muted)}
+.round:not(.is-folded) .round-say{margin-bottom:10px}
+.round.is-folded{padding:13px 15px}
+.now-two{margin:4px 0 10px;font-size:13px;line-height:1.4;color:var(--muted)}
+.now-two b{font-family:var(--font-mono);font-weight:600;color:var(--ink);font-variant-numeric:tabular-nums}
+.now-two.is-met{color:var(--good);font-weight:600}
 @media (max-width:360px){.rt{grid-template-areas:"n n" "m go" "bar bar";padding:8px 7px 9px 10px;gap:6px}.rt-n{grid-area:n}.rt-go{grid-area:go;width:32px;height:32px}.rt-m{grid-area:m}.rt-bar{grid-area:bar}.rt-u{display:none}}   /* a small phone: the name gets the whole width */
 .tabbar{position:fixed;left:0;right:0;bottom:0;z-index:40;display:flex;justify-content:center;gap:2px;
   background:var(--surface);border-top:1px solid var(--line);
@@ -1338,6 +1375,13 @@ button.step-name:hover .step-nm{color:var(--accent)}
   var CAT_COLORS=["#4c5fd5","#12a594","#d98207","#dc4a4f","#8b5cf6","#0ea5e9","#d6409f","#65a30d"];
   var DEFAULT_CATS=["Work","Focus","Meetings","Admin","Breaks","Personal","Errands"];
   var DEEP_TARGET_MIN=120;
+  var ROUND_KEY="wmtw_round";   // this viewer's choice: the round folded to a line (default) or every tile open
+  var ROUND_TIPS=[
+    ["Two minutes is the whole promise. Master showing up first; getting better comes after.","James Clear, the two-minute rule"],
+    ["Each start is a vote for who you’re becoming. You don’t need every vote, just most of them.","James Clear"],
+    ["You’re not starting late, you’re starting now. One bit of progress beats a perfect plan.","Justin Sung"],
+    ["Make the first step so small it needs almost no motivation, and give yourself a real way out after it.","Justin Sung, minimum viable goals"],
+    ["Pair it with something you like: the drink, the music, the spot. Wanting it makes starting easier.","James Clear, temptation bundling"]];
   var DAILY_MIN=30;   // your ~30 min a day of curriculum (declared up here: the first render runs before later code)
   var SES_STAGES=[["prime","Prime",3],["encode","Encode",17],["retrieve","Retrieve",6],["reflect","Reflect",4]];   // one sitting, in Justin Sung's order — adds up to DAILY_MIN
   /* the daily round: on weekdays every daily thing gets the same short target (state.dayRound.weekday, the user's 14 minutes); weekends keep the longer ones */
@@ -1835,7 +1879,12 @@ button.step-name:hover .step-nm{color:var(--accent)}
   /* ---------- mutations ---------- */
   function closeRunning(t){(t.sessions||[]).forEach(function(se){if(se.end==null)se.end=Date.now();});}
   function startTask(id){commit(function(){var a=findTask(state.activeId);if(a)closeRunning(a);var t=findTask(id);if(!t)return;t.sessions=t.sessions||[];t.sessions.push({start:Date.now(),end:null});t.done=false;state.activeId=id;});}
-  function stopTask(){commit(function(){var t=findTask(state.activeId);if(t)closeRunning(t);state.activeId=null;});}
+  function stopTask(){
+    var rg=roundThings().length&&weekdayMin()?roundGoalOf(findTask(state.activeId)):null;
+    commit(function(){var t=findTask(state.activeId);if(t)closeRunning(t);state.activeId=null;});
+    if(rg){var T=thingTarget(rg),m=thingMinToday(rg),nx=roundPick();   // satisfying: say it counted, and stack the next one on it
+      toast("✓ "+roundLabel(rg)+": "+m+" of "+T+" min today. That counts."+(m>=T&&nx?" Next: "+roundLabel(nx.g)+".":""));}
+  }
   /* pause: the stretch ends (marked "pause"), the task stays on the Now card with Continue; anything started meanwhile is the in-between */
   function lastSession(t){var l=null;(t.sessions||[]).forEach(function(se){if(!l||se.start>l.start)l=se;});return l;}
   function pausedTask(){var p=state.paused;if(!p)return null;var t=findTask(p.id);return (t&&!t.done&&state.activeId!==t.id)?t:null;}
@@ -1929,6 +1978,8 @@ button.step-name:hover .step-nm{color:var(--accent)}
       else{if(!(rg.timer&&findTask(rg.timer))){var rk={id:"act_"+uid(),name:"⏱ "+roundLabel(rg),category:"",estimateMin:null,planned:false,daily:false,goalId:rg.id,depth:null,cue:"",done:false,createdAt:Date.now(),sessions:[]};state.tasks.push(rk);rg.timer=rk.id;}
         startTask(rg.timer);}}}
     else if(a==="stop")stopTask();
+    else if(a==="round-skip"){ui.roundSkip=(ui.roundSkip||[]).concat([id]);render();}
+    else if(a==="round-open"){try{localStorage.setItem(ROUND_KEY,roundOpen()?"folded":"open");}catch(e){}render();}
     else if(a==="pause")pauseTask();
     else if(a==="continue")continueTask();
     else if(a==="stop-paused")commit(clearPause);
@@ -2071,6 +2122,7 @@ button.step-name:hover .step-nm{color:var(--accent)}
       var sec=base+Math.max(0,(now-start)/1000);
       el.textContent=el.getAttribute("data-run-fmt")==="clock"?fmtClock(sec):fmtDur(sec);
     });
+    document.querySelectorAll("[data-two-start]").forEach(function(el){var sec=(now-(+el.getAttribute("data-two-start")))/1000,h=twoText(sec);if(el.innerHTML!==h)el.innerHTML=h;el.classList.toggle("is-met",sec>=120);});
     var sb=document.getElementById("ses-bar"),st=state.activeId&&findTask(state.activeId);
     if(sb&&isLessonTask(st)&&ui.ses){var sgid=st.goalId,ssec=lessonSecToday(st),si=sesStageAt(ssec,sgid),mk=document.getElementById("ses-mark"),sg=document.getElementById("ses-sug");
       if(mk)mk.style.left=Math.min(ssec/60/curTarget(sgid)*100,100).toFixed(1)+"%";
@@ -2122,7 +2174,12 @@ button.step-name:hover .step-nm{color:var(--accent)}
   }
   function renderHome(){
     // a phone gets one column; a wide screen puts what to do now on the left and the day + inbox on the right
-    return '<div class="view home"><div class="home-a">'+renderNow()+homeRound()+homeNext()+homeRevisit()+homePrime()+'</div><div class="home-b">'+homeGlance()+renderCaptureHome()+'</div></div>';
+    var a;
+    if(roundThings().length&&weekdayMin()){   // with a round: one thing to start, the round folded to a line, then the rest
+      var run=state.activeId&&findTask(state.activeId),pz=pausedTask();
+      a=(run||pz?renderNow(true):"")+homeStart()+homeRound()+homeRevisit()+homePrime()+(run?"":idleCard(!!pz,true));
+    }else a=renderNow()+homeRound()+homeNext()+homeRevisit()+homePrime();
+    return '<div class="view home"><div class="home-a">'+a+'</div><div class="home-b">'+homeGlance()+renderCaptureHome()+'</div></div>';
   }
   function render(){
     var html=topBar();
@@ -2141,18 +2198,77 @@ button.step-name:hover .step-nm{color:var(--accent)}
 
   /* ---------- home: the single "what now?" screen ---------- */
   /* today's round: every daily thing, its minutes today against today's target, and one button to start it */
+  /* The round, built so starting is the easy part (Atomic Habits' four laws, Justin Sung's minimum viable goals):
+     obvious — one thing at the top, not eight; easy — the promise is two minutes, with a real way out after them;
+     attractive — the goal's identity line, each start a vote for it; satisfying — the dots fill as you go, a toast when it counts.
+     The targets don't change: two minutes is only the start, every minute after still counts towards today's. */
+  function roundOpen(){try{return localStorage.getItem(ROUND_KEY)==="open";}catch(e){return false;}}
+  function roundGoalOf(t){   // the round thing a task counts towards: its own goal, or the round goal whose branches hold it
+    if(!t||!t.goalId)return null;var L=roundThings();
+    for(var i=0;i<L.length;i++)if(treeIds(L[i]).indexOf(t.goalId)>=0)return L[i];
+    return null;
+  }
+  function roundDays(g){var ids=treeIds(g),set={};state.tasks.forEach(function(t){if(ids.indexOf(t.goalId)<0)return;(t.sessions||[]).forEach(function(se){set[dayKey(se.start)]=1;});});return set;}
+  function missedYesterday(g){   // done the day before, missed yesterday, nothing yet today: "never miss twice" — and only then, never for things you haven't started
+    var d=roundDays(g),t0=startOfToday();return !d[dayKey(t0)]&&!d[dayKey(t0-86400000)]&&!!d[dayKey(t0-2*86400000)];
+  }
+  function roundState(){var run=state.activeId&&findTask(state.activeId);return roundThings().map(function(g){var T=thingTarget(g),m=thingMinToday(g);return {g:g,T:T,m:m,ok:m>=T,on:!!(run&&treeIds(g).indexOf(run.goalId)>=0)};});}
+  function roundPick(){   // the one thing to start: one you missed yesterday, else one you've begun today, else the next in your order; "Not this one" skips
+    var R=roundState().filter(function(x){return !x.ok&&!x.on;});if(!R.length)return null;
+    var skip=ui.roundSkip||[],live=R.filter(function(x){return skip.indexOf(x.g.id)<0;});if(!live.length){ui.roundSkip=[];live=R;}
+    var miss=live.filter(function(x){return x.m===0&&missedYesterday(x.g);})[0],part=live.filter(function(x){return x.m>0;})[0],x=miss||part||live[0];
+    x.why=x===miss?"miss":(x===part?"part":"");return x;
+  }
+  function roundLast(){   // the round thing you finished most recently today: the next one stacks on it
+    var key=dayKey(Date.now()),best=null,at=0;
+    state.tasks.forEach(function(t){(t.sessions||[]).forEach(function(se){if(se.end!=null&&dayKey(se.start)===key&&se.end>at){var rg=roundGoalOf(t);if(rg){best=rg;at=se.end;}}});});
+    return best;
+  }
+  function homeStart(){
+    if(state.activeId||pausedTask())return "";
+    var L=roundThings();if(!L.length||!weekdayMin())return "";
+    var x=roundPick();
+    if(!x)return '<section class="card go1 is-done"><div class="go1-eye">Today’s round ✓</div><div class="go1-name">All '+L.length+' done</div>'+
+      '<p class="go1-say">That’s the whole round. Anything more today is a bonus.</p></section>';
+    var g=x.g,lbl=roundLabel(g),cg=roundCourseGoal(g),cur=cg&&currentLesson(cg),l=cur&&cur.lesson,last=roundLast();
+    var what=l?lessonN(l)+' · '+esc(l.concept):'Anything on '+esc(lbl)+' counts: a video, a note, a plan.';
+    var eye=(last&&last.id!==g.id?'Next, after '+esc(roundLabel(last)):'Start here')+' · just 2 minutes';
+    var why=x.why==="miss"?'<p class="go1-why">Missed yesterday, and that’s fine. Never miss twice: two minutes today keeps it going.</p>'
+      :(x.why==="part"?'<p class="go1-why">You’ve done '+x.m+' of '+x.T+' minutes already. Picking it back up is the easiest start.</p>':'');
+    var idn=g.identity?'<p class="go1-id">“'+esc(g.identity)+'” Two minutes is a vote for that.</p>':'';
+    var when=cg&&cg.curr&&cg.curr.when?'<p class="go1-when">Your cue: '+esc(cg.curr.when)+'</p>':'';
+    var tip=ROUND_TIPS[Math.floor(startOfToday()/86400000)%ROUND_TIPS.length];
+    return '<section class="card go1" aria-label="Start here">'+
+      '<div class="go1-eye">'+eye+'</div>'+
+      '<div class="go1-name">'+esc(lbl)+'</div><div class="go1-what">'+what+'</div>'+why+idn+when+
+      '<ol class="go1-ramp" aria-label="How it goes"><li>Tap start</li><li>Do two minutes</li><li>Then decide: stop, or keep going</li></ol>'+
+      '<div class="go1-btns"><button class="btn btn-primary btn-lg go1-go" data-action="round-start" data-id="'+g.id+'" type="button">'+playSvg()+'Start · 2 minutes</button>'+
+        '<button class="btn btn-ghost go1-skip" data-action="round-skip" data-id="'+g.id+'" type="button">Not this one</button></div>'+
+      '<p class="go1-note">Stopping after two still counts. Today’s '+x.T+' minutes stay the same; every minute after two adds to them.</p>'+
+      '<p class="go1-tip">'+esc(tip[0])+' <i>'+esc(tip[1])+'</i></p>'+
+    '</section>';
+  }
   function homeRound(){
     var L=roundThings(),wd=weekdayMin();if(!L.length||!wd)return "";
-    var run=state.activeId&&findTask(state.activeId),done=0;
-    var tiles=L.map(function(g){
-      var T=thingTarget(g),m=thingMinToday(g),ok=m>=T,on=!!(run&&treeIds(g).indexOf(run.goalId)>=0);if(ok)done++;
+    var R=roundState(),done=0,started=0,open=roundOpen();
+    R.forEach(function(x){if(x.ok)done++;if(x.m>0||x.on)started++;});
+    var dots=R.map(function(x){return '<i class="rd-d'+(x.ok?' is-done':(x.on?' is-on':(x.m>0?' is-part':'')))+'" title="'+esc(roundLabel(x.g)+': '+x.m+' / '+x.T+' min')+'"></i>';}).join("");
+    var say=done===L.length?'All '+L.length+' done ✓'
+      :(!started?'Nothing yet today. You’re not starting late, you’re starting now.'
+        :done+' done'+(started>done?', '+(started-done)+' started':'')+'. Every start is progress.');
+    var head='<button class="round-head round-tog" data-action="round-open" type="button" aria-expanded="'+(open?'true':'false')+'">'+
+      '<span class="round-eye">Today’s round</span><span class="rd-dots" role="img" aria-label="'+esc(done+' of '+L.length+' done, '+started+' started')+'">'+dots+'</span>'+
+      '<span class="round-more">'+(open?'Fold':'See all '+L.length)+'<span class="round-chev'+(open?' open':'')+'">'+chevronSvg()+'</span></span></button>'+
+      '<div class="round-say">'+say+'</div>';
+    if(!open)return '<section class="card round is-folded">'+head+'</section>';
+    var tiles=R.map(function(x){var g=x.g,T=x.T,m=x.m,ok=x.ok,on=x.on;
       return '<div class="rt'+(ok?' is-done':'')+(on?' is-on':'')+'"><button class="rt-n" data-action="goal-open" data-id="'+g.id+'" type="button">'+esc(roundLabel(g))+'</button>'+
         (on?'<button class="rt-go is-stop" data-action="stop" type="button" aria-label="'+esc('Stop '+roundLabel(g))+'">■</button>'
           :'<button class="rt-go" data-action="round-start" data-id="'+g.id+'" type="button" aria-label="'+esc('Start '+roundLabel(g))+'">▶</button>')+
         '<span class="rt-m">'+(ok?'✓ ':'')+m+' / '+T+'<span class="rt-u"> min</span></span><span class="rt-bar"><i style="width:'+Math.min(100,Math.round(m/T*100))+'%"></i></span></div>';}).join("");
     var opts=[10,14,15,20,25,30].map(function(v){return '<option value="'+v+'"'+(v===wd?' selected':'')+'>'+v+'</option>';}).join(""),
       sel='<select class="round-sel" data-action="round-min" aria-label="Minutes on each thing, on weekdays">'+opts+'</select>';
-    return '<section class="card round"><div class="round-head"><span class="round-eye">Today’s round</span><span class="round-n"><b>'+done+'</b> of '+L.length+' done</span></div>'+
+    return '<section class="card round">'+head+
       '<div class="round-sub">'+(isWeekday()?'Weekdays: '+sel+' min on each.':'Weekend: '+DAILY_MIN+' min for lessons, the usual for reading, '+sel+' for the rest.')+'</div>'+
       '<div class="round-grid">'+tiles+'</div></section>';
   }
@@ -2235,7 +2351,12 @@ button.step-name:hover .step-nm{color:var(--accent)}
     return pins.concat(rest).slice(0,8);
   }
 
-  function renderNow(){
+  function twoText(sec){   // the two-minute promise on the running card, live
+    var r=Math.max(0,Math.ceil(120-sec));
+    return sec<120?'Two minutes, then decide · <b>'+Math.floor(r/60)+':'+pad(r%60)+'</b> to go'
+      :'✓ Two minutes. You showed up. Keep going, or stop: it counts.';
+  }
+  function renderNow(noIdle){
     var t=state.activeId?findTask(state.activeId):null, pz=pausedTask();
     if(t){
       var est=t.estimateMin;
@@ -2247,6 +2368,7 @@ button.step-name:hover .step-nm{color:var(--accent)}
         '</div>'+
         '<div class="now-name">'+esc(t.name)+'</div>'+
         '<div class="now-clock" data-run-start="'+runningStart(t)+'" data-run-base="'+closedSec(t)+'" data-run-fmt="clock">'+fmtClock(taskSec(t))+'</div>'+
+        (roundGoalOf(t)&&roundThings().length&&weekdayMin()?'<div class="now-two" data-two-start="'+runningStart(t)+'">'+twoText((Date.now()-runningStart(t))/1000)+'</div>':'')+
         estLine+
         (isLessonTask(t)?renderSession(t):'<div class="depth-tog"><span class="depth-lbl">Focus level:</span>'+
           '<button class="dbtn'+(t.depth==="deep"?" on":"")+'" data-action="set-depth" data-id="'+t.id+'" data-val="deep" type="button">Deep</button>'+
@@ -2257,8 +2379,8 @@ button.step-name:hover .step-nm{color:var(--accent)}
         (isTouch?'<div class="now-swipe-hint">Swipe the card sideways to stop</div>':"")+
       '</div>';
     }
-    if(pz)return pausedCard(pz)+idleCard(true);
-    return idleCard(false);
+    if(pz)return pausedCard(pz)+(noIdle?"":idleCard(true));
+    return noIdle?"":idleCard(false);
   }
   function pausedSince(){return '<span data-run-start="'+state.paused.at+'" data-run-base="1" data-run-fmt="dur">'+fmtDur(1+(Date.now()-state.paused.at)/1000)+'</span>';}   // +1s: reads "<1m", never "0m"
   function pausedCard(t){
@@ -2275,7 +2397,8 @@ button.step-name:hover .step-nm{color:var(--accent)}
     return '<div class="pause-strip"><span class="pause-strip-t"><b>'+esc(t.name)+'</b> is paused · '+pausedSince()+'</span>'+
       '<button class="btn btn-ghost btn-sm" data-action="continue" type="button">'+playSvg()+'Back to it</button></div>';
   }
-  function idleCard(paused){
+  function idleCard(paused,below){   // below: under the round, as the place for unplanned things
+
     var opts=usedCats().map(function(c){return '<option value="'+esc(c)+'">';}).join("");
     var rec=recentQuick();
     var recentsHtml=rec.length?('<div class="recents"><span class="recents-lbl">Again</span>'+rec.map(function(t){
@@ -2288,7 +2411,7 @@ button.step-name:hover .step-nm{color:var(--accent)}
       '</span>';
     }).join("")+'</div>'):'';
     return '<div class="card now now-idle">'+
-      '<div class="now-idle-label">'+(paused?'Something else in between?':'What are you working on?')+'</div>'+
+      '<div class="now-idle-label">'+(paused?'Something else in between?':(below?'Something else? Start a clock for it':'What are you working on?'))+'</div>'+
       '<form class="quick" data-action="quick-start" autocomplete="off">'+
         '<input id="q-name" class="field" placeholder="Name it — e.g. Emails, a break, a call" aria-label="Activity name">'+
         '<input id="q-cat" class="field field-cat" placeholder="Category (optional)" list="cats" aria-label="Category">'+
@@ -2620,6 +2743,8 @@ button.step-name:hover .step-nm{color:var(--accent)}
     if(isLessonTask(state.activeId&&findTask(state.activeId)))return "";     // not while a lesson runs
     var l=primeTarget(g);if(!l)return "";
     var pr=g.curr&&g.curr.prime,hit=!!(pr&&pr.lid===l.id&&pr.guess),cy=g.curr&&g.curr.carry;
+    if(!hit&&!state.activeId&&roundThings().length&&weekdayMin()){   // the Start card already opens this lesson, and its sitting begins with Prime: one card, not two
+      var sx=roundPick(),scg=sx&&roundCourseGoal(sx.g),scl=scg&&currentLesson(scg);if(scg&&scg.id===g.id&&scl&&scl.lesson.id===l.id)return "";}
     var carry=(cy&&cy.q)?'<div class="prime-carry">Still open from last time: “'+esc(cy.q)+'”</div>':'';
     var q='<div class="prime-q"><b>'+lessonN(l)+' · '+esc(l.concept)+'</b><span class="ses-co">on '+esc(lessonCo(l))+'</span><div class="ses-task">'+esc(lessonTask(l))+'</div></div>';
     if(hit)return '<div class="prime is-primed"><div class="home-next-eye">Primed ✓ · your guess is waiting</div>'+q+'<div class="prime-guess">“'+esc(pr.guess)+'”</div>'+carry+'</div>';
