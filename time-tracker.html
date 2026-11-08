@@ -742,6 +742,31 @@ h1,h2,h3{margin:0;font-family:var(--font-display);font-weight:600;text-wrap:bala
 .ses-why{font-size:11.5px;color:var(--faint);line-height:1.45;margin-top:7px;font-style:italic}
 .ses-why i{font-style:normal;color:var(--muted)}
 .ses-area{min-height:88px}
+/* the sitting's brief: what to do, the question, when it's done — always on top */
+.ses-brief{margin:0 0 12px;padding:11px 12px;border-radius:10px;background:var(--surface-2);border:1px solid var(--line)}
+.ses-plan{margin:8px 0 0;display:flex;flex-direction:column;gap:7px}
+.ses-plan>div{display:grid;grid-template-columns:78px minmax(0,1fr);gap:10px;align-items:baseline}
+.ses-plan dt{font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;color:var(--faint);font-weight:700}
+.ses-plan dd{margin:0;font-size:13.5px;line-height:1.5;color:var(--ink)}
+.ses-plan dd.ses-ask{font-weight:600}
+.ses-plan>div:last-child dd{color:var(--muted);font-size:12.5px}
+@media (max-width:460px){.ses-plan>div{grid-template-columns:minmax(0,1fr);gap:1px}}
+.ses-step{margin:2px 0 8px}
+.ses-step-n{display:block;font-size:11px;text-transform:uppercase;letter-spacing:.07em;color:var(--accent);font-weight:700}
+.ses-do{margin:3px 0 0;font-size:14px;line-height:1.5;color:var(--ink)}
+.ses-more{margin:8px 0 4px;border:1px solid var(--line);border-radius:10px;background:var(--surface-2);padding:0 11px}
+.ses-more>summary{cursor:pointer;padding:9px 0;font-size:13px;font-weight:600;color:var(--accent)}
+.ses-more[open]>summary{border-bottom:1px solid var(--line);margin-bottom:8px}
+.ses-more .curr-refs{background:transparent;border:0;padding:0 0 10px}
+.ses-cmp{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:4px 0 8px}
+@media (max-width:460px){.ses-cmp{grid-template-columns:minmax(0,1fr)}}
+.ses-mine{padding:9px 11px;border:1px solid var(--line);border-radius:9px;background:var(--surface-2);min-width:0}
+.ses-mine-l{display:block;font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;color:var(--faint);font-weight:700;margin-bottom:3px}
+.ses-mine-v{font-size:13.5px;line-height:1.5;color:var(--ink);white-space:pre-wrap;word-break:break-word}
+.ses-mine-v.is-empty{color:var(--faint);font-style:italic}
+.ses-key{border-left-color:var(--good)}
+.ses-chk{margin:4px 0 6px}
+.now-today{margin:-2px 0 4px;font-size:12px;color:var(--muted)}
 .ses .curr-refs{margin-top:0}
 .ses .dec-nav{margin-top:10px}
 /* priming card on Home */
@@ -1389,7 +1414,7 @@ button.step-name:hover .step-nm{color:var(--accent)}
     ["home","After class or work","17:30"],["dinner","After dinner","19:00"],["bed","Before bed","22:30"]];   // the moments you can stack your round on, until you rename them
   var DAY_STARTER={goal_invest:"breakfast",goal_build:"breakfast",goal_biz:"lunch",goal_fire:"lunch",goal_career:"home",goal_trade:"home",goal_read:"bed",muyi5ymrd1huk:"bed"};   // one tap to begin with, then change it: two things per moment
   var DAILY_MIN=30;   // your ~30 min a day of curriculum (declared up here: the first render runs before later code)
-  var SES_STAGES=[["prime","Prime",3],["encode","Encode",17],["retrieve","Retrieve",6],["reflect","Reflect",4]];   // one sitting, in Justin Sung's order — adds up to DAILY_MIN
+  var SES_STAGES=[["prime","Guess",3],["encode","Learn",17],["retrieve","Write",6],["reflect","Check",4]];   // one sitting, in Justin Sung's order (prime, encode, retrieve, reflect) in plain words — adds up to DAILY_MIN
   /* the daily round: on weekdays every daily thing gets the same short target (state.dayRound.weekday, the user's 14 minutes); weekends keep the longer ones */
   function isWeekday(ms){var d=new Date(ms==null?Date.now():ms).getDay();return d>=1&&d<=5;}
   function weekdayMin(){var r=state.dayRound;return r&&r.weekday>0?r.weekday:0;}
@@ -1872,6 +1897,7 @@ button.step-name:hover .step-nm{color:var(--accent)}
   function pad(n){return (n<10?"0":"")+n;}
   function findTask(id){for(var i=0;i<state.tasks.length;i++)if(state.tasks[i].id===id)return state.tasks[i];return null;}
   function runningStart(t){var r=null;(t.sessions||[]).forEach(function(se){if(se.end==null)r=se.start;});return r;}
+  function closedSecToday(t){var key=dayKey(Date.now()),s=0;(t.sessions||[]).forEach(function(se){if(se.end!=null&&dayKey(se.start)===key)s+=(se.end-se.start)/1000;});return s;}   // a lesson's clock counts today's sitting
   function closedSec(t){var s=0;(t.sessions||[]).forEach(function(se){if(se.end!=null)s+=(se.end-se.start)/1000;});return s;}
   function taskSec(t){var n=Date.now(),s=0;(t.sessions||[]).forEach(function(se){s+=((se.end||n)-se.start)/1000;});return s;}
   function fmtClock(sec){sec=Math.max(0,Math.floor(sec));var h=Math.floor(sec/3600),m=Math.floor(sec%3600/60),s=sec%60;return h>0?h+":"+pad(m)+":"+pad(s):pad(m)+":"+pad(s);}
@@ -2371,15 +2397,16 @@ button.step-name:hover .step-nm{color:var(--accent)}
   function renderNow(noIdle){
     var t=state.activeId?findTask(state.activeId):null, pz=pausedTask();
     if(t){
-      var est=t.estimateMin;
+      var est=t.estimateMin,les=isLessonTask(t);
       var estLine="";
-      if(est&&!revRunning(t.goalId,null)){var diff=taskSec(t)-est*60;estLine='<div class="now-est">Estimate <b>'+esc(fmtDur(est*60))+'</b> · <span id="live-diff" class="diff '+(diff>0?"is-over":"is-under")+'">'+(diff>=0?"over by "+esc(fmtDur(diff)):esc(fmtDur(-diff))+" left")+'</span></div>';}
+      if(est&&!les&&!revRunning(t.goalId,null)){var diff=taskSec(t)-est*60;estLine='<div class="now-est">Estimate <b>'+esc(fmtDur(est*60))+'</b> · <span id="live-diff" class="diff '+(diff>0?"is-over":"is-under")+'">'+(diff>=0?"over by "+esc(fmtDur(diff)):esc(fmtDur(-diff))+" left")+'</span></div>';}
       return '<div class="card now now-active">'+
         '<div class="now-head"><span class="live-pill"><span class="bl"></span>Running</span>'+chip(t.category)+(t.goalId?'<span class="chip chip-goal">'+esc(goalName(t.goalId))+'</span>':"")+
           '<button class="now-pin'+(t.pinned?" is-on":"")+'" type="button" data-action="toggle-pin" data-id="'+t.id+'" aria-pressed="'+(t.pinned?"true":"false")+'" title="'+(t.pinned?"Pinned to quick-start — tap to unpin":"Pin to quick-start")+'">'+(t.pinned?"★ Pinned":"☆ Pin")+'</button>'+
         '</div>'+
         '<div class="now-name">'+esc(t.name)+'</div>'+
-        '<div class="now-clock" data-run-start="'+runningStart(t)+'" data-run-base="'+closedSec(t)+'" data-run-fmt="clock">'+fmtClock(taskSec(t))+'</div>'+
+        '<div class="now-clock" data-run-start="'+runningStart(t)+'" data-run-base="'+(les?closedSecToday(t):closedSec(t))+'" data-run-fmt="clock">'+fmtClock(les?lessonSecToday(t):taskSec(t))+'</div>'+
+        (les?'<div class="now-today">today’s sitting</div>':'')+
         (roundGoalOf(t)&&roundThings().length&&weekdayMin()?'<div class="now-two" data-two-start="'+runningStart(t)+'">'+twoText((Date.now()-runningStart(t))/1000)+'</div>':'')+
         estLine+
         (isLessonTask(t)?renderSession(t):'<div class="depth-tog"><span class="depth-lbl">Focus level:</span>'+
@@ -2674,40 +2701,56 @@ button.step-name:hover .step-nm{color:var(--accent)}
   }
   function lessonSecToday(t){var key=dayKey(Date.now()),now=Date.now(),s=0;(t.sessions||[]).forEach(function(se){if(dayKey(se.start)===key)s+=((se.end||now)-se.start)/1000;});return s;}
   function sesStageAt(sec,g){var m=sec/60,acc=0,S=sesStages(g);for(var i=0;i<S.length;i++){acc+=S[i][2];if(m<acc)return i;}return S.length-1;}
+  function taskParts(l){   // a task in three plain parts: what to do, the question to answer at the end, and what to check it against
+    var s=lessonTask(l),all=s,chk="",ask="",m=/\s*(?:Only then check|Then check|Check)\s+(D-[^.]*?)\.?\s*$/.exec(s);
+    if(m){chk=m[1];s=s.slice(0,m.index);}
+    var j=/\s*(?:Then judge|Judge)\s*:\s*/.exec(s);if(j){ask=s.slice(j.index+j[0].length).trim();s=s.slice(0,j.index);}
+    var seen={},refs=(all.match(/D-\d\d/g)||[]).filter(function(k){if(seen[k]||!docEntry(k))return false;seen[k]=1;return true;});
+    return {act:s.trim(),ask:ask?ask.charAt(0).toUpperCase()+ask.slice(1):"",chk:chk,refs:currOfLesson(l)===VAL_CURRICULUM?refs:[]};
+  }
   function renderSession(t){
     var info=lessonOfTask(t);if(!info)return "";var g=info.g,l=info.l,s=sesFor(t),d=s.d,co=lessonCo(l),st=s.stage;
     if(s.rev)return renderRevisit(t,g,l,s);
-    var sec=lessonSecToday(t),now=sesStageAt(sec,g),S=sesStages(g),T=curTarget(g);
+    var sec=lessonSecToday(t),now=sesStageAt(sec,g),S=sesStages(g),T=curTarget(g),P=taskParts(l);
     var pills=S.map(function(x,i){return '<button class="ses-pill'+(i===st?' on':(i<st?' done':''))+'" data-action="ses-stage" data-i="'+i+'" type="button" aria-pressed="'+(i===st?'true':'false')+'">'+(i+1)+' '+x[1]+'<span>'+x[2]+'m</span></button>';}).join("");
     var segs=S.map(function(x,i){return '<i class="ses-seg'+(i===now?' is-now':'')+'" style="width:'+(x[2]/T*100).toFixed(1)+'%"></i>';}).join("");   // not "now": that's the running card's class
     var bar='<div class="ses-bar" id="ses-bar">'+segs+'<b id="ses-mark" style="left:'+Math.min(sec/60/T*100,100).toFixed(1)+'%"></b></div>'+
       '<div class="ses-sug" id="ses-sug">'+(now!==st?'Suggested now: '+S[now][1]:'')+'</div>';
-    var call=l.call?'<button class="curr-call" data-action="asw-go" data-id="'+l.call+'" type="button">In his '+esc(l.call)+' call →</button>':'';
-    var ask='<div class="ses-q"><b>'+lessonN(l)+' · '+esc(l.concept)+'</b><span class="ses-co">on '+esc(co)+'</span></div><div class="ses-task">'+esc(lessonTask(l))+'</div>';
+    var call=l.call?'<button class="curr-call" data-action="asw-go" data-id="'+l.call+'" type="button">See it in his '+esc(l.call)+' call →</button>':'';
+    // the brief: always on top, so you never have to work out what this sitting is for
+    var brief='<div class="ses-brief"><div class="ses-q"><b>Today’s sitting</b><span class="ses-co">on '+esc(co)+'</span></div>'+
+      '<dl class="ses-plan"><div><dt>Do</dt><dd class="ses-act">'+esc(P.act)+'</dd></div>'+
+      (P.ask?'<div><dt>Answer</dt><dd class="ses-ask">'+esc(P.ask)+'</dd></div>':'')+
+      '<div><dt>Done when</dt><dd>you’ve written it from memory (step 3) and checked it against the idea (step 4). About '+T+' minutes.</dd></div></dl></div>';
+    var head=function(i,txt){return '<div class="ses-step"><span class="ses-step-n">Step '+(i+1)+' of 4 · '+S[i][1]+' · '+S[i][2]+' min</span><p class="ses-do">'+txt+'</p></div>';};
     var nav=function(i){return '<div class="dec-nav"><span></span><button class="btn btn-primary btn-sm" data-action="ses-stage" data-i="'+i+'" type="button">Next: '+S[i][1]+' →</button></div>';};
     var body;
-    if(st===0)body=ask+call+
-      '<label class="ses-lbl" for="ses-guess">Your guess, one line — before any reading'+(s.primed?' · <span class="ses-ok">you primed this ✓</span>':'')+'</label>'+
-      '<input id="ses-guess" class="field" value="'+esc(d.guess)+'" placeholder="What do you think the answer is?">'+
-      '<div class="ses-why">Generate first, check later — recognising isn’t recalling. <i>Justin Sung</i></div>'+nav(1);
+    if(st===0)body=head(0,'Before you read anything, write your best guess at the answer. One line is enough. Being wrong is fine: it makes the reading stick.')+
+      (s.primed?'<div class="ses-lbl"><span class="ses-ok">You guessed this ahead ✓</span></div>':'')+
+      '<input id="ses-guess" class="field" value="'+esc(d.guess)+'" placeholder="Your guess…" aria-label="Your guess, before any reading">'+
+      '<div class="ses-why">Generate first, check later: recognising isn’t recalling. <i>Justin Sung</i></div>'+nav(1);
     else if(st===1){
-      body=ask+(l.teach?'<div class="ses-teach"><b>The idea.</b> '+esc(l.teach)+'</div>':'')+
-      '<div class="ses-rule"><b>One priority: compare and judge.</b> How is this like or unlike what you already know? Which matters more for '+esc(co)+'? Never more than two paragraphs without a question. Draw it on your map as you go — grouped, connected, with arrows.</div>'+
-      lessonRefs(l,"ses")+
-      '<label class="ses-lbl" for="ses-qs">Confused? Good — write it as a question</label>'+
+      var openDoc=Object.keys(ui.docOpen).some(function(k){return ui.docOpen[k]&&k.indexOf("ses:"+l.id+":")===0;}),refs=lessonRefs(l,"ses");
+      body=head(1,'Read the idea with the task in mind. Stop when you could explain it to a friend.')+
+      (l.teach?'<div class="ses-teach"><b>The idea.</b> '+esc(l.teach)+'</div>':'')+call+
+      (refs?'<details class="ses-more"'+(openDoc?' open':'')+'><summary>Want more? The full notes and videos</summary>'+refs+'</details>':'')+
+      '<label class="ses-lbl" for="ses-qs">Anything unclear? Write it as a question (optional)</label>'+
       '<textarea id="ses-qs" class="field note-area ses-area" placeholder="Questions as they come up…">'+esc(d.qs)+'</textarea>'+nav(2);}
-    else if(st===2)body=ask+'<div class="ses-rule"><b>Close the reading.</b> Answer the question for '+esc(co)+' in three lines, from memory — or redraw the backbone of your map.</div>'+
-      '<textarea id="ses-answer" class="field note-area ses-area" placeholder="Your answer, without the notes…">'+esc(d.answer)+'</textarea>'+
-      '<div class="ses-why">Then open the reading and check yourself. What you got wrong is the part worth your time.</div>'+nav(3);
-    else{var olds=[["read","just read it"],["hl","highlighted"],["lin","linear notes"]];
-      body='<label class="ses-lbl" for="ses-confuse">What’s still confusing? One question — it primes tomorrow</label>'+
-      '<input id="ses-confuse" class="field" value="'+esc(d.confuse)+'" placeholder="e.g. why does the riskfree rate cancel against…">'+
-      '<div class="ses-lbl">Did the old habit show up?</div><div class="dec-pills">'+olds.map(function(o){var on=d.old.indexOf(o[0])>=0;return '<button class="dec-pill'+(on?' on':'')+'" data-action="ses-old" data-v="'+o[0]+'" type="button" aria-pressed="'+(on?'true':'false')+'">'+o[1]+'</button>';}).join("")+'</div>'+
-      '<div class="ses-lbl">Could you do it on '+esc(co)+' without the notes?</div>'+
+    else if(st===2)body=head(2,'Close the idea. From memory, write your answer to the task above'+(P.ask?' and the question':'')+'. It doesn’t need to be neat: the gaps are what step 4 is for.')+
+      '<textarea id="ses-answer" class="field note-area ses-area ses-answer" placeholder="Your answer, without looking…" aria-label="Your answer, from memory">'+esc(d.answer)+'</textarea>'+nav(3);
+    else{
+      var mine=function(lbl,v){return '<div class="ses-mine"><span class="ses-mine-l">'+lbl+'</span>'+((v||"").trim()?'<div class="ses-mine-v">'+esc(v)+'</div>':'<div class="ses-mine-v is-empty">Nothing written</div>')+'</div>';};
+      var chk=P.refs.length?'<div class="ses-chk"><span class="ses-mine-l">Check it against</span><div class="doc-list">'+P.refs.map(function(k){return docRow(l,k,"chk");}).join("")+'</div></div>':'';
+      body=head(3,'Put your answer next to the idea. What you missed is the part worth your time.')+
+      '<div class="ses-cmp">'+mine("You guessed",d.guess)+mine("You wrote",d.answer)+'</div>'+
+      (l.teach?'<div class="ses-teach ses-key"><b>The idea.</b> '+esc(l.teach)+'</div>':'')+chk+
+      '<label class="ses-lbl" for="ses-confuse">What did you miss, or what’s still unclear? One line: it comes back as a question next time</label>'+
+      '<input id="ses-confuse" class="field" value="'+esc(d.confuse)+'" placeholder="e.g. why a bank is valued on its equity…">'+
+      '<div class="ses-lbl">Could you answer it without looking?</div>'+
       '<div class="curr-btns"><button class="btn btn-primary btn-sm" data-action="cur-nailed" data-id="'+g.id+'" data-lid="'+l.id+'" type="button">Yes — nailed ✓</button>'+
-      '<button class="btn btn-ghost btn-sm" data-action="cur-shaky" data-id="'+g.id+'" data-lid="'+l.id+'" type="button">Only with the notes — shaky</button>'+
+      '<button class="btn btn-ghost btn-sm" data-action="cur-shaky" data-id="'+g.id+'" data-lid="'+l.id+'" type="button">Partly — shaky</button>'+
       '<button class="btn btn-ghost btn-sm" data-action="ses-stop" type="button">Not yet — stop for today</button></div>';}
-    return '<div class="ses"><div class="ses-pills">'+pills+'</div>'+bar+body+'</div>';
+    return '<div class="ses">'+brief+'<div class="ses-pills">'+pills+'</div>'+bar+body+'</div>';
   }
   /* the 5-minute revisit on the running card: same question, new company, nothing open */
   function renderRevisit(t,g,l,s){
