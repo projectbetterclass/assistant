@@ -1798,6 +1798,7 @@ button.step-name:hover .step-nm{color:var(--accent)}
   root.addEventListener("click",onClick);
   root.addEventListener("submit",onSubmit);
   root.addEventListener("input",onInput);
+  root.addEventListener("toggle",function(e){var d=e.target;if(d&&d.classList&&d.classList.contains("ses-more"))ui.sesMore=d.open?d.getAttribute("data-lid"):null;},true);   // "Want more" stays open while you open and close its cards
   root.addEventListener("change",function(e){   // linking a task's time to a goal, from the overview; the round's weekday minutes
     var el=e.target;
     if(el&&el.getAttribute("data-action")==="shot-file"){var sf=el.files&&el.files[0];if(sf)shotTake(sf);return;}
@@ -2924,7 +2925,7 @@ button.step-name:hover .step-nm{color:var(--accent)}
       var openDoc=Object.keys(ui.docOpen).some(function(k){return ui.docOpen[k]&&k.indexOf("ses:"+l.id+":")===0;}),refs=lessonRefs(l,"ses");
       body=head(1,'Read the idea with the task in mind. Stop when you could explain it to a friend.')+
       (l.teach?'<div class="ses-teach"><b>The idea.</b> '+esc(l.teach)+'</div>':'')+call+
-      (refs?'<details class="ses-more"'+(openDoc?' open':'')+'><summary>Want more? The full notes and videos</summary>'+refs+'</details>':'')+
+      (refs?'<details class="ses-more" data-lid="'+l.id+'"'+(openDoc||ui.sesMore===l.id?' open':'')+'><summary>Want more? The full notes and videos</summary>'+refs+'</details>':'')+
       '<label class="ses-lbl" for="ses-qs">Anything unclear? Write it as a question (optional)</label>'+
       '<textarea id="ses-qs" class="field note-area ses-area" placeholder="Questions as they come up…">'+esc(d.qs)+'</textarea>'+nav(2);}
     else if(st===2)body=head(2,'Close the idea. From memory, write your answer to the task above'+(P.ask?' and the question':'')+'. It doesn’t need to be neat: the gaps are what step 4 is for.')+
@@ -2943,6 +2944,7 @@ button.step-name:hover .step-nm{color:var(--accent)}
       '<button class="btn btn-ghost btn-sm" data-action="ses-stop" type="button">Not yet — stop for today</button></div>';}
     return '<div class="ses">'+brief+'<div class="ses-pills">'+pills+'</div>'+bar+body+'</div>';
   }
+  function revTask(l,co){var t=lessonTask(l),c0=lessonCo(l);return co&&c0&&co!==c0&&/^[A-Z]{1,5}$/.test(c0)?t.replace(new RegExp("\\b"+c0+"\\b","g"),co):t;}   // the revisit's company in the task itself, not the lesson's ("Tell PEP’s story…")
   /* the 5-minute revisit on the running card: same question, new company, nothing open */
   function renderRevisit(t,g,l,s){
     var sec=Math.max(0,(Date.now()-(runningStart(t)||Date.now()))/1000),pct=Math.min(sec/(REV_MIN*60)*100,100),r=revFor(g,l.id);
@@ -2951,7 +2953,7 @@ button.step-name:hover .step-nm{color:var(--accent)}
       '<div class="ses-rev-head"><span class="ses-rev-t">Revisit · '+REV_MIN+' min · no notes</span><span class="ses-rev-left" id="rev-left">'+(sec>=REV_MIN*60?'time’s up — grade it':fmtClock(REV_MIN*60-sec)+' left')+'</span></div>'+
       '<div class="ses-bar"><i class="ses-seg is-now" style="width:100%"></i><b id="rev-mark" style="left:'+pct.toFixed(1)+'%"></b></div>'+
       '<div class="ses-q"><b>'+lessonN(l)+' · '+esc(l.concept)+'</b><span class="ses-co">now on '+esc(s.co)+'</span></div>'+
-      '<div class="ses-task">'+esc(lessonTask(l))+'</div>'+
+      '<div class="ses-task">'+esc(revTask(l,s.co))+'</div>'+
       '<div class="ses-rule"><b>Same question, '+(isProd(l)?'another idea':(currOfLesson(l).revWord||'new company'))+'.</b> Do it for '+esc(s.co)+' from memory, then check it against your map. '+esc(why)+'</div>'+
       '<label class="ses-lbl" for="ses-answer">Your answer for '+esc(s.co)+', without the notes</label>'+
       '<textarea id="ses-answer" class="field note-area ses-area" placeholder="Three lines from memory, or the backbone of the map…">'+esc(s.d.answer)+'</textarea>'+
@@ -3069,6 +3071,7 @@ button.step-name:hover .step-nm{color:var(--accent)}
   function docInline(s){   // links, `code`, **bold** (with *italics* inside it) and *italics*
     var keep=[],put=function(h){keep.push(h);return "\u0000"+(keep.length-1)+"\u0000";};
     s=String(s==null?"":s).replace(/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g,function(m,t,u){return put('<a href="'+esc(u)+'" target="_blank" rel="noopener">'+esc(t)+'</a>');})
+      .replace(/\[([^\]]+)\]\((?!https?:)[^\s)]+\)/g,function(m,t){return put('<b>'+esc(t)+'</b>');})   // a link to another card's file ("[D-04](D-04-….md)"): just its name
       .replace(/`([^`]+)`/g,function(m,c){return put('<code class="doc-c">'+esc(c)+'</code>');});
     var it=function(x){return x.replace(/\*([^*\s][^*]*)\*/g,"<i>$1</i>");};
     return it(esc(s).replace(/\*\*((?:[^*]|\*(?!\*))+?)\*\*(?!\*)/g,function(m,x){return "<b>"+it(x)+"</b>";}))
