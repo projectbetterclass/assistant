@@ -793,6 +793,26 @@ h1,h2,h3{margin:0;font-family:var(--font-display);font-weight:600;text-wrap:bala
 .shot-fix .field{flex:1 1 100%;background:var(--surface)}
 .shot-fix .loose-sel{flex:1 1 100%;width:auto}
 .shot-fix .btn{flex:1 1 40%}
+/* a lesson's inputs (What you need) and its worked answer (Check your answer) */
+.need,.hkey{margin:12px 0;padding:11px 12px;border:1px solid var(--line);border-left:3px solid var(--accent);border-radius:11px;background:var(--surface)}
+.hkey{border-left-color:var(--good)}
+.need-h{font-size:11px;text-transform:uppercase;letter-spacing:.07em;font-weight:700;color:var(--accent);margin-bottom:6px}
+.hkey .need-h{color:var(--good)}
+.need-l{margin:0;display:flex;flex-direction:column;gap:8px}
+.need-r{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:2px 12px;align-items:baseline;min-width:0}
+.need-r dt{font-size:13px;color:var(--ink);min-width:0}
+.need-r dd{margin:0;display:contents}
+.need-v{font-family:var(--font-mono);font-size:13.5px;font-weight:600;color:var(--ink);text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
+.need-n,.need-s{grid-column:1/-1;font-size:12px;line-height:1.45;color:var(--muted);min-width:0;overflow-wrap:anywhere}
+.need-s a{color:var(--accent);text-decoration:none}
+.need-s a:hover{text-decoration:underline}
+.need-sm .need-l{gap:4px}
+.need-sm .need-r dt{font-size:12.5px;color:var(--muted)}
+.need-note{margin:9px 0 0;font-size:12px;color:var(--faint);line-height:1.45}
+.hkey-b+.hkey-b{margin-top:10px;padding-top:10px;border-top:1px dashed var(--line)}
+.hkey-t{font-size:13px;font-weight:600;color:var(--ink);margin-bottom:4px}
+.hkey-l{margin:0 0 4px;padding-left:18px;display:flex;flex-direction:column;gap:4px;font-size:13px;line-height:1.5;color:var(--ink)}
+.hkey-l li{overflow-wrap:anywhere;font-variant-numeric:tabular-nums}
 .ses .curr-refs{margin-top:0}
 .ses .dec-nav{margin-top:10px}
 /* priming card on Home */
@@ -1655,6 +1675,11 @@ button.step-name:hover .step-nm{color:var(--accent)}
     "L34":{"teach":"A valuation counts only if someone else can follow it and challenge it. Write a memo of a page or two: the story in a paragraph; the key judgments, each with its doctrine rule and its sensitivity; a range from a simulation, not just a point; and the verdict, value against price, the assumptions it rests on and what would make the market right. Short sentences, real numbers. Then map the whole method once more from memory, the 13 stages and the rules that govern each, so it sticks.","watch":[{"t":"Aswath Damodaran · Narrative and Numbers: Light in the Darkness","u":"https://www.youtube.com/watch?v=f4skDr1Lqjc","w":"testing a story: possible, plausible, probable"},{"t":"Aswath Damodaran · Session 6B: Monte Carlo Simulations in Finance & Investing","u":"https://www.youtube.com/watch?v=eXhCXobViJc","w":"turning point estimates into distributions"}]}
   };
   VAL_CURRICULUM.lessons.forEach(function(l){var x=VAL_TEACH[l.id];if(!x)return;l.teach=x.teach;l.watch=x.watch;if(x.docs)l.docs=x.docs;});
+  /* VAL_KO:start — the KO lessons' inputs and worked answers, from KO's 2025 10-K, Damodaran's January 2026 data and his lectures
+     in the youtube-digest library. Written by scripts/build-invest-ko.py; edit there, not here. */
+  var VAL_KO={"L03":{"teach":"Currency is a unit of measurement, not a bet. Value a company in dollars or in euros and, done consistently, you get the same answer, because inflation enters both the cash flows and the discount rate. So pick the currency you have clean data for and stay in it. A riskfree rate needs two things: no default risk and no reinvestment risk, with a duration that fits the cash flows. For a going concern in dollars that is today’s 10-year Treasury rate, not an average or a ‘normal’ rate. Since Moody’s cut the US to Aa1 in 2025, he nets the US default spread out too: at the start of 2026, 4.18% less 0.23%, which leaves 3.95%. When the government can default, its bond rate is not riskfree: subtract the sovereign default spread, taken from a dollar bond, the credit default swap or the rating. Aswath’s Brazil example: a 12.3% government bond less a 2.82% spread leaves 9.48%.","task":"KO reports in dollars and sells in about 200 countries. Using the numbers in What you need, pick the currency and the riskfree rate for a KO valuation, and say what you’d do in a currency whose government isn’t default-free. Then judge: which choice could move the value more — the currency or the rate? Check D-02–D-04.","need":[{"k":"The currency KO reports in","v":"US dollars","n":"Its 2025 annual report is in dollars, so its cash flows are.","s":"KO annual report 2025 (10-K)","u":"https://www.sec.gov/Archives/edgar/data/21344/000162828026010047/ko-20251231.htm"},{"k":"10-year US Treasury rate, 1 Jan 2026","v":"4.18%","s":"Damodaran · Data Update 2 for 2026","u":"https://www.youtube.com/watch?v=BzG8M74BfrY"},{"k":"Default spread of the US (Moody’s Aa1)","v":"0.23%","n":"Moody’s took the US’s last AAA away in 2025.","s":"Damodaran · Data Update 2 for 2026","u":"https://www.youtube.com/watch?v=BzG8M74BfrY"},{"k":"Riskfree rate in dollars, spread netted out","v":"3.95%","n":"4.18% − 0.23%. His choice for 2026.","s":"Damodaran · Data Update 2 for 2026","u":"https://www.youtube.com/watch?v=BzG8M74BfrY"}],"needNote":"Every KO lesson uses these same numbers, so each answer can be checked.","key":[{"t":"Worked answer: his method, KO’s numbers","l":["Currency: US dollars, the currency KO reports in. Inflation is then the same in the cash flows and the discount rate.","Riskfree rate: 3.95%, the 4.18% Treasury rate less the US’s 0.23% default spread, as he did for 2026. If you use 4.18% instead, that’s defensible too, but pair it with his 4.23% risk premium, not 4.46% (lesson L04).","Today’s rate, not an average: the valuation is as of today.","A currency whose government can default: take its local 10-year bond rate and subtract the sovereign default spread (Brazil in his example: 12.3% − 2.82% = 9.48%).","Which moves value more: the rate. A consistent currency choice cancels out; a wrong riskfree rate doesn’t."],"s":"Damodaran · Data Update 2 for 2026","u":"https://www.youtube.com/watch?v=BzG8M74BfrY"},{"t":"His own test question (Session 12)","l":["Q: One company borrows for the same project in two currencies at different rates. What is the biggest reason the rates differ?","His answer: expected inflation. Same company, same project, same risk, so inflation is all that’s left. That is why the currency doesn’t change the value."],"s":"Damodaran · Session 12: Cracking the Currency Code!","u":"https://www.youtube.com/watch?v=FXbXksS4kNs"}]},"L05":{"task":"Using the numbers in What you need, build KO’s bottom-up beta: its business, that industry’s unlevered beta, KO’s debt-to-equity and the tax rate. Then set it beside KO’s regression beta, decide which you’d trust, and name the one situation where the regression would be defensible. Check D-09–D-12.","need":[{"k":"KO’s business","v":"Soft drinks","n":"One business: Damodaran’s ‘Beverage (Soft)’ industry.","s":"KO annual report 2025 (10-K)","u":"https://www.sec.gov/Archives/edgar/data/21344/000162828026010047/ko-20251231.htm"},{"k":"Unlevered beta, soft drinks (corrected for cash)","v":"0.58","n":"27 US companies; their average levered beta is 0.64. Data as of January 2026.","s":"Damodaran · Betas by sector, January 2026","u":"https://pages.stern.nyu.edu/~adamodar/New_Home_Page/datafile/Betas.html"},{"k":"KO’s equity, market value (31 Dec 2025)","v":"$300.7 billion","n":"4,300.7 million shares × $69.91.","s":"KO 10-K cover (shares) · closing price 31 Dec 2025","u":"https://www.sec.gov/Archives/edgar/data/21344/000162828026010047/ko-20251231.htm"},{"k":"KO’s debt, leases included","v":"$47.2 billion","n":"Loans and notes $1,551 M + long-term debt $43,941 M + operating leases $1,722 M. (The bonds’ market value is $39,385 M.)","s":"KO annual report 2025 (10-K)","u":"https://www.sec.gov/Archives/edgar/data/21344/000162828026010047/ko-20251231.htm"},{"k":"Marginal tax rate, US","v":"25%","s":"Damodaran · Data Update 7 for 2026: Debt and Taxes","u":"https://www.youtube.com/watch?v=3X6rah8r4Do"},{"k":"KO’s regression beta (5 years, monthly)","v":"0.39","n":"Against the S&P 500, 2021–2025. Standard error 0.14.","s":"Computed from Yahoo Finance prices","u":"https://finance.yahoo.com/quote/KO/history/"}],"key":[{"t":"Worked answer: his method, KO’s numbers","l":["Business: soft drinks, so start from the industry’s unlevered beta, 0.58.","Debt-to-equity: $47.2 billion ÷ $300.7 billion = 15.7%.","Relever: 0.58 × (1 + (1 − 0.25) × 0.157) = 0.65.","Regression beta: 0.39, but with a standard error of 0.14 the true value could be anywhere from about 0.12 to 0.66. Use the bottom-up 0.65.","When a regression is defensible: a company with no comparable firms to average and a long, stable history in one business, and even then check it against a bottom-up beta."],"s":"His method: Damodaran · Session 6: Bottom Up Betas","u":"https://www.youtube.com/watch?v=AtWeS8b9Igw"},{"t":"His own example (movie studios)","l":["Average regression beta of movie companies: 1.24. Median debt-to-equity: 27% (the average, 129%, was skewed by one firm near bankruptcy).","Unlevered: 1.03. Movie companies hold about 3% cash, so 1.03 ÷ 0.97 ≈ 1.06 for the movie business alone."],"s":"Damodaran · Session 6: Bottom Up Betas","u":"https://www.youtube.com/watch?v=AtWeS8b9Igw"}]}};
+  /* VAL_KO:end */
+  VAL_CURRICULUM.lessons.forEach(function(l){var x=VAL_KO[l.id];if(!x)return;["teach","task","need","needNote","key","co"].forEach(function(f){if(x[f]!=null)l[f]=x[f];});});
   /* Your FIRE plan — 12 sittings on your own numbers (the €5,000 a month your FIRE page holds, the costs you log), with the
      Dutch rules of 2026: box 3 at 36% on an assumed 6.00% above €59,357 (Belastingdienst; a new system is planned for 2028
      but not settled), AOW at 67 years and 3 months for 2028–2031. Built by scripts/build-fire-course.py, which checks every figure. */
@@ -2924,18 +2949,19 @@ button.step-name:hover .step-nm{color:var(--accent)}
     else if(st===1){
       var openDoc=Object.keys(ui.docOpen).some(function(k){return ui.docOpen[k]&&k.indexOf("ses:"+l.id+":")===0;}),refs=lessonRefs(l,"ses");
       body=head(1,'Read the idea with the task in mind. Stop when you could explain it to a friend.')+
-      (l.teach?'<div class="ses-teach"><b>The idea.</b> '+esc(l.teach)+'</div>':'')+call+
+      (l.teach?'<div class="ses-teach"><b>The idea.</b> '+esc(l.teach)+'</div>':'')+needBox(l,"learn")+call+
       (refs?'<details class="ses-more" data-lid="'+l.id+'"'+(openDoc||ui.sesMore===l.id?' open':'')+'><summary>Want more? The full notes and videos</summary>'+refs+'</details>':'')+
       '<label class="ses-lbl" for="ses-qs">Anything unclear? Write it as a question (optional)</label>'+
       '<textarea id="ses-qs" class="field note-area ses-area" placeholder="Questions as they come up…">'+esc(d.qs)+'</textarea>'+nav(2);}
     else if(st===2)body=head(2,'Close the idea. From memory, write your answer to the task above'+(P.ask?' and the question':'')+'. It doesn’t need to be neat: the gaps are what step 4 is for.')+
+      needBox(l,"write")+
       '<textarea id="ses-answer" class="field note-area ses-area ses-answer" placeholder="Your answer, without looking…" aria-label="Your answer, from memory">'+esc(d.answer)+'</textarea>'+nav(3);
     else{
       var mine=function(lbl,v){return '<div class="ses-mine"><span class="ses-mine-l">'+lbl+'</span>'+((v||"").trim()?'<div class="ses-mine-v">'+esc(v)+'</div>':'<div class="ses-mine-v is-empty">Nothing written</div>')+'</div>';};
       var chk=P.refs.length?'<div class="ses-chk"><span class="ses-mine-l">Check it against</span><div class="doc-list">'+P.refs.map(function(k){return docRow(l,k,"chk");}).join("")+'</div></div>':'';
       body=head(3,'Put your answer next to the idea. What you missed is the part worth your time.')+
       '<div class="ses-cmp">'+mine("You guessed",d.guess)+mine("You wrote",d.answer)+'</div>'+
-      (l.teach?'<div class="ses-teach ses-key"><b>The idea.</b> '+esc(l.teach)+'</div>':'')+chk+
+      keyBox(l)+(l.teach?'<div class="ses-teach ses-key"><b>The idea.</b> '+esc(l.teach)+'</div>':'')+chk+
       '<label class="ses-lbl" for="ses-confuse">What did you miss, or what’s still unclear? One line: it comes back as a question next time</label>'+
       '<input id="ses-confuse" class="field" value="'+esc(d.confuse)+'" placeholder="e.g. why a bank is valued on its equity…">'+
       '<div class="ses-lbl">Could you answer it without looking?</div>'+
@@ -2943,6 +2969,19 @@ button.step-name:hover .step-nm{color:var(--accent)}
       '<button class="btn btn-ghost btn-sm" data-action="cur-shaky" data-id="'+g.id+'" data-lid="'+l.id+'" type="button">Partly — shaky</button>'+
       '<button class="btn btn-ghost btn-sm" data-action="ses-stop" type="button">Not yet — stop for today</button></div>';}
     return '<div class="ses">'+brief+'<div class="ses-pills">'+pills+'</div>'+bar+body+'</div>';
+  }
+  /* what a lesson's task needs (the numbers, each with where it comes from) and a worked answer to check against */
+  function srcLink(n){return n.u?'<a href="'+esc(n.u)+'" target="_blank" rel="noopener">'+esc(n.s)+' ↗</a>':esc(n.s||"");}
+  function needBox(l,where){
+    if(!l.need||!l.need.length)return "";var sm=where==="write";
+    return '<div class="need'+(sm?' need-sm':'')+'"><div class="need-h">'+(sm?'Your inputs':'What you need')+'</div><dl class="need-l">'+l.need.map(function(n){
+      return '<div class="need-r"><dt>'+esc(n.k)+'</dt><dd><b class="need-v">'+esc(n.v)+'</b>'+(n.n&&!sm?'<span class="need-n">'+esc(n.n)+'</span>':'')+(n.s&&!sm?'<span class="need-s">'+srcLink(n)+'</span>':'')+'</dd></div>';}).join("")+'</dl>'+
+      (sm?'':(l.needNote?'<p class="need-note">'+esc(l.needNote)+'</p>':''))+'</div>';
+  }
+  function keyBox(l){
+    if(!l.key||!l.key.length)return "";
+    return '<div class="hkey"><div class="need-h">Check your answer</div>'+l.key.map(function(b){
+      return '<div class="hkey-b">'+(b.t?'<div class="hkey-t">'+esc(b.t)+'</div>':'')+'<ul class="hkey-l">'+(b.l||[]).map(function(x){return '<li>'+esc(x)+'</li>';}).join("")+'</ul>'+(b.s?'<div class="need-s">'+srcLink(b)+'</div>':'')+'</div>';}).join("")+'</div>';
   }
   function revTask(l,co){var t=lessonTask(l),c0=lessonCo(l);return co&&c0&&co!==c0&&/^[A-Z]{1,5}$/.test(c0)?t.replace(new RegExp("\\b"+c0+"\\b","g"),co):t;}   // the revisit's company in the task itself, not the lesson's ("Tell PEP’s story…")
   /* the 5-minute revisit on the running card: same question, new company, nothing open */
@@ -3130,7 +3169,7 @@ button.step-name:hover .step-nm{color:var(--accent)}
       '<button class="btn btn-ghost btn-sm" data-action="cur-shaky" data-id="'+g.id+'" data-lid="'+l.id+'" type="button">Shaky — needed the notes</button>';
     var call=l.call?'<button class="curr-call" data-action="asw-go" data-id="'+l.call+'" type="button">In his '+esc(l.call)+' call →</button>':'';
     return '<div class="ls-det"><div class="ls-meta"><span class="curr-badge">'+esc(l.rung)+'</span>'+(tags?'<span class="curr-tags">'+tags+'</span>':'')+'</div>'+
-      '<div class="curr-task">'+esc(lessonTask(l))+'</div>'+call+refs+
+      '<div class="curr-task">'+esc(lessonTask(l))+'</div>'+needBox(l,"detail")+call+refs+
       ((go||grade)?'<div class="curr-btns">'+go+grade+'</div>':'')+
     '</div>';
   }
