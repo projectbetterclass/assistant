@@ -644,6 +644,31 @@ L["L01"] = {
          **src(BANKS)},
     ],
 }
+# the Learn step of the first lesson: what a valuation is, before what kind of company changes it
+L["L01"]["walk"] = [
+    {"h": "First, what a valuation is",
+     "p": ["A company is worth the cash it will make for its owners over its whole life, counted in today’s money. Damodaran builds that from four parts, and L03–L14 build each one for KO:"],
+     "l": [["Cash from the business today.", "Operating income: what it earns from its products after the costs of running it, before interest and tax. You clean it and tax it in L08–L09."],
+           ["Reinvestment.", "What it must spend on factories, equipment, research and acquisitions to keep growing (L10). Growth is never free."],
+           ["Growth.", "How fast that cash grows: for ten years, then forever at a modest rate (L11–L12)."],
+           ["The discount rate.", "The return investors want for the risk they take. It turns cash in year 10 into its value today: the riskier the cash, the less it is worth now (L03–L07)."]],
+     "p2": ["Added up year by year, that is a discounted cash flow valuation, a DCF. Some companies need a fifth part: the chance they fail before the cash arrives."]},
+    {"h": "Four kinds of company, and what each changes",
+     "p": ["The parts stay. What changes is where the value comes from, and which numbers you can trust."],
+     "l": [["Mature.", "The default. Today’s operating income is a fair starting point, growth is slow and reinvestment modest. This is the route you’ll build on KO."],
+           ["Financial: banks and insurers.", "Borrowing is what a bank sells, not how it pays for itself: it takes in deposits and lends them out at a higher rate. So its debt can’t be split off from the business. You value only the owners’ share: the profit left for them, net income, minus the capital the regulator makes the bank keep as a cushion, discounted at the return owners want, the cost of equity (L05–L07)."],
+           ["High growth.", "Last year’s operating income says little about year 5. Start from revenue instead: how big can it get, at what margin, and how much must it reinvest for each extra dollar of sales (sales-to-capital, L10 and L19)."],
+           ["Declining.", "The default run backward. Revenue can shrink, reinvestment can turn negative as assets are sold, the margin can improve as the worst parts close, and the chance of failure becomes its own input. Keep that chance separate rather than raising the discount rate: a discount rate measures how uncertain the cash is, not whether the company will be there to pay it."]]},
+    {"h": "How to tell the kind from the numbers",
+     "p": ["Don’t go by the industry’s name. Look at four signals:"],
+     "l": [["Growth.", "A few percent a year, around the pace of the economy, is mature. Several times bigger in a few years is high growth. Shrinking several years running is decline."],
+           ["Profit.", "A steady margin, or one that swings and turns into losses? Losses on falling revenue are the mark of decline."],
+           ["Who pays for its assets.", "Most companies are funded mainly by their owners and long-term lenders. A bank’s owners put up less than a tenth of its assets, and depositors fund the rest. That, not the name, makes it a financial."],
+           ["What it spends to grow.", "Capital spending, against its size and against depreciation, the yearly wear on what it already owns. Heavy spending means it is still building; spending below depreciation means it is letting its base shrink."]]},
+    {"h": "Worked: KO",
+     "p": ["Revenue of %s in 2025, up %s. An operating margin of %s before one-off charges (L08). Capital spending of %s, about %s of revenue. Slow, steady, very profitable, and spending little to grow: mature, the default route." % (B(REV), pct(gr(REV, KO_REV_2024), 1), pct(CLEAN_MARGIN, 1), B(CAPEX), pct(CAPEX / REV * 100, 0)),
+           "Now read JPMorgan, NVIDIA and Intel the same way, with the numbers below. One of them sends mixed signals: that is where the judgement is."]},
+]
 L["L02"] = {
     "task": "Tell KO’s story in two sentences, using What you need: what it sells, to whom, where it’s heading. Run it through his 3P test: possible, plausible, probable? Then judge: which one number in a KO valuation does this story pin down most? Check D-01.",
     "need": [
@@ -719,7 +744,7 @@ L["L16"] = {
     ],
 }
 L["L17"] = {
-    "task": "Value KO in dollars, then in euros, using What you need. Which inputs move together and cancel (currency, default spread, riskfree vs terminal growth)? Defend the claim that choosing inconsistently is the only real error — and find the one pair that does not cancel, and why it’s surfaced. Check the README table.",
+    "task": "Value KO in dollars, then in euros, using What you need. Which inputs move together and cancel (currency, default spread, riskfree vs terminal growth)? Defend the claim that choosing inconsistently is the only real error — and find the one pair that does not cancel, and why it’s surfaced. Then check the note on inputs that cancel out, under Want more.",
     "need": [
         {"k": "KO’s cost of capital in dollars (L07)", "v": pct(WACC, 2)},
         {"k": "KO’s growth in dollars (L11)", "v": pct(G * 100, 2)},
@@ -1553,6 +1578,150 @@ REV["L34"] = {"rev": "your next company",
 for lid, r in REV.items():
     L.setdefault(lid, {}).update(r)
 
+# ---- the thread: what each lesson builds on (with the number it carries in) and where its result goes --
+# Shown at the top of the Learn step. "b" never states today's answer: only numbers from lessons already done.
+THREAD = {
+    "L01": {"n": "L02 · KO’s story. Then L03–L14 build KO’s valuation on the route you pick here, one part per lesson; L28 comes back to routing once you’ve built one"},
+    "L02": {"b": "L01 · KO routes as mature: today’s operating income is a fair start",
+            "n": "L03–L14 · every number in KO’s valuation has to agree with this story"},
+    "L03": {"b": "L02 · KO sells in about 200 countries and reports in dollars",
+            "n": "L04–L07 · the riskfree rate is the floor under every return in KO’s cost of capital"},
+    "L04": {"b": "L03 · KO’s riskfree rate, %s after the US default spread" % pct(RF_NET, 2),
+            "n": "L05 · beta scales this premium to KO; L07 · the cost of capital; L15 · you defend it"},
+    "L05": {"b": "L03–L04 · riskfree rate %s; KO’s premium %s, weighted by where it sells" % (pct(RF_NET, 2), pct(KO_ERP, 2)),
+            "n": "L07 · cost of equity = %s + beta × %s; L16 · you defend bottom-up against regression" % (pct(RF_NET, 2), pct(KO_ERP, 2))},
+    "L06": {"b": "L03 · riskfree rate %s; L05 · KO’s debt %s, a debt-to-equity of %s" % (pct(RF_NET, 2), B(D_M), pct(DE * 100, 1)),
+            "n": "L07 · the debt side of KO’s cost of capital"},
+    "L07": {"b": "L05 · cost of equity %s (%s + %.2f × %s); L06 · after-tax cost of debt %s" % (pct(COE, 2), pct(RF_NET, 2), BETA_L, pct(KO_ERP, 2), pct(KD_AT, 2)),
+            "n": "L12–L14 · the rate that turns KO’s future cash into today’s value"},
+    "L08": {"b": "L02 · the story says KO’s margin is its key number",
+            "n": "L09 · you tax it; L10–L11 · KO reinvests and grows from it"},
+    "L09": {"b": "L08 · KO’s clean operating income, %s" % B(EBIT_CLEAN),
+            "n": "L10–L12 · KO reinvests and grows from its after-tax operating income"},
+    "L10": {"b": "L09 · KO’s after-tax operating income, %s at a %s effective tax rate" % (B(EBIT_AT), pct(EFF, 1)),
+            "n": "L11 · growth = reinvestment rate × return on capital"},
+    "L11": {"b": "L10 · KO reinvests %s of its after-tax operating income" % pct(RR * 100, 1),
+            "n": "L12 · growth fades to growth forever; L20 · you defend earned growth"},
+    "L12": {"b": "L07 · cost of capital %s; L11 · growth %s, from %s reinvested at a %s return on capital" % (pct(WACC, 2), pct(G * 100, 1), pct(RR * 100, 1), pct(ROC * 100, 1)),
+            "n": "L13 · from operating value to equity; L21 · you defend the caps"},
+    "L13": {"b": "L12 · KO’s operating value, %s with a moat" % B(OPS_MOAT),
+            "n": "L14 · value per share, against the price"},
+    "L14": {"b": "L12–L13 · KO’s operating value, then cash, stakes, debt and options",
+            "n": "L22 · value and price as two games; L30–L32 · what moves it, and your verdict"},
+    "L15": {"b": "L04 · his implied premium: %s over the riskfree rate, %s once the US default spread is out" % (pct(ERP_NET, 2), pct(MATURE_ERP, 2)),
+            "n": "L24 · you rebuild KO’s cost of capital in one go"},
+    "L16": {"b": "L05 · KO’s bottom-up beta %.2f, against its regression beta %.2f" % (BETA_L, REG_BETA),
+            "n": "L24 · KO’s cost of capital end to end"},
+    "L17": {"b": "L03 · currency and riskfree rate; L12 · growth forever capped at the riskfree rate",
+            "n": "L24 · one consistent set of inputs"},
+    "L18": {"b": "L03–L14 · KO’s inputs: the discount rate (L03–L07) and the cash flows (L08–L12)",
+            "n": "L25 · where your hour goes on KO; L30 · you test the claim on KO"},
+    "L19": {"b": "L10 · KO’s reinvestment from net capex, %s" % B(NETCAPEX),
+            "n": "L25–L26 · reinvestment in a full run; L28 · how the route changes it"},
+    "L20": {"b": "L11 · KO’s growth, earned: %s × %s ≈ %s" % (pct(RR * 100, 1), pct(ROC * 100, 1), pct(G * 100, 1)),
+            "n": "L26 · growing KO’s cash flows"},
+    "L21": {"b": "L12 · %s of KO’s operating value sits in the terminal value" % pct(TVS_MOAT * 100, 0),
+            "n": "L26 · closing out the model"},
+    "L22": {"b": "L14 · KO’s value, %s a share with a moat, against a price of %s" % (usd(VPS_MOAT), usd(KO_PRICE)),
+            "n": "L32 · your verdict holds both halves"},
+    "L23": {"b": "L03–L14 · KO’s whole valuation, %s a share" % usd(VPS_MOAT),
+            "n": "L24–L27 · you run each part end to end"},
+    "L24": {"b": "L03–L07 · the pieces; L15–L17 · their defences",
+            "n": "L33 · your own company’s cost of capital"},
+    "L25": {"b": "L08–L10 · base year, tax and reinvestment; L18–L19 · where valuations fail",
+            "n": "L33 · your own company’s cash flows"},
+    "L26": {"b": "L11–L12 · growth and terminal value; L20–L21 · their defences",
+            "n": "L33 · closing out your own valuation"},
+    "L27": {"b": "L23–L26 · your own end-to-end run on KO",
+            "n": "L28–L29 · comparing models"},
+    "L28": {"b": "L01 · the four routes; L23–L27 · KO’s mature model, end to end",
+            "n": "L33 · route your own company first"},
+    "L29": {"b": "L09, L11, L12 · KO’s tax, growth and return on capital",
+            "n": "L33 · paths, not constants, in your own model"},
+    "L30": {"b": "L14 · KO’s value, %s a share" % usd(VPS_MOAT),
+            "n": "L31 · you defend the input that moves it most"},
+    "L31": {"b": "L30 · the inputs that move KO’s value most",
+            "n": "L32 · the verdict rests on it"},
+    "L32": {"b": "L22 · valuing vs pricing; L30–L31 · what moves KO’s value, and your defended choice",
+            "n": "L34 · the memo’s verdict"},
+    "L33": {"b": "L01–L32 · the whole method, with KO as your worked example",
+            "n": "L34 · writing it up"},
+    "L34": {"b": "L33 · your own valuation",
+            "n": "the next company, which goes faster"},
+}
+for lid, th in THREAD.items():
+    L.setdefault(lid, {})["thread"] = th
+
+# ---- terms before they're taught ------------------------------------------------------------------
+# Each term and the lesson that teaches it. Learn text (the idea, the walk-through, the thread) may use a
+# term from a later lesson only with a pointer to that lesson in the same sentence, e.g. "(L05–L07)".
+GLOSSARY = [
+    (3, "riskfree rate", r"risk-?free rate"),
+    (3, "default spread", r"default spread"),
+    (4, "equity risk premium", r"risk premium|implied premium|(?-i:\bERP\b)"),
+    (4, "country risk", r"country risk"),
+    (5, "beta", r"\bbetas?\b"),
+    (5, "unlevered / relevered", r"\b(?:un|re)lever"),
+    (5, "debt-to-equity", r"debt-to-equity|(?-i:\bD/E\b)"),
+    (5, "cost of equity", r"cost of equity"),
+    (6, "cost of debt", r"cost of debt"),
+    (6, "synthetic rating", r"synthetic rating|interest coverage"),
+    (6, "leases as debt", r"\bleases?\b"),
+    (7, "cost of capital", r"cost of capital|(?-i:\bWACC\b)"),
+    (7, "market-value weights", r"market[- ]value weights"),
+    (8, "one-off charges", r"one-off"),
+    (8, "capitalising", r"capitali[sz]"),
+    (8, "normalising", r"normali[sz]"),
+    (9, "effective tax rate", r"effective (?:tax )?rate"),
+    (9, "marginal tax rate", r"marginal (?:tax )?rate"),
+    (9, "losses carried forward", r"carried forward|carry[- ]?forward|(?-i:\bNOLs?\b)"),
+    (10, "net capex", r"net capex|capital expenditure"),
+    (10, "working capital", r"working capital"),
+    (10, "sales-to-capital", r"sales[- ]to[- ]capital"),
+    (11, "return on capital", r"return on capital|(?-i:\bROIC\b)"),
+    (11, "reinvestment rate", r"reinvestment rate"),
+    (12, "terminal value", r"\bterminal\b"),
+    (12, "growth forever", r"growth forever|stable growth"),
+    (12, "moat", r"\bmoats?\b"),
+    (12, "excess returns", r"excess returns?"),
+    (13, "minority interest", r"minority (?:interest|stake)"),
+    (13, "cross-holdings", r"cross-holding"),
+    (13, "employee options", r"\boptions\b"),
+    (13, "value per share", r"value per share"),
+    (14, "simulation", r"monte carlo|simulation"),
+    (22, "pricing", r"\bpricing\b"),
+    (22, "multiples", r"\bmultiples\b|(?-i:\bPE\b)|EV/Sales|price-to-book"),
+]
+POINTER = re.compile(r"\bL(\d\d)(?:\s*[–-]\s*L(\d\d))?")
+
+def learn_texts(html):
+    """The investing Learn step, lesson by lesson: the idea (VAL_KO's, else VAL_TEACH's), the walk-through, the thread."""
+    i = html.index("var VAL_TEACH=")
+    teach = json.loads(html[i + len("var VAL_TEACH="):html.index("\n  };", i) + 4])
+    out = {}
+    for n in range(1, 35):
+        lid = "L%02d" % n
+        x = L.get(lid, {})
+        parts = [("idea", x.get("teach") or teach.get(lid, {}).get("teach", ""))]
+        for s in x.get("walk", []):
+            parts += [("walk", s["h"])] + [("walk", q) for q in s.get("p", []) + s.get("p2", [])]
+            parts += [("walk", " ".join(it) if isinstance(it, list) else it) for it in s.get("l", [])]
+        parts += [("thread", x["thread"][k]) for k in ("b", "n") if x.get("thread", {}).get(k)]
+        out[lid] = parts
+    return out
+
+def term_order(html):
+    flags = []
+    for lid, parts in learn_texts(html).items():
+        n = int(lid[1:])
+        for where, text in parts:
+            for sent in re.split(r"(?<=[.!?])\s+(?=[A-Z‘“(])", text):
+                ptrs = [(int(a), int(b or a)) for a, b in POINTER.findall(sent)]
+                for intro, name, rx in GLOSSARY:
+                    if intro > n and re.search(rx, sent, re.I) and not any(a <= intro <= b for a, b in ptrs):
+                        flags.append("%s %s: “%s” is taught in L%02d — %s" % (lid, where, name, intro, sent[:110]))
+    return flags
+
 # ---- checks -------------------------------------------------------------------------------------
 def check():
     vids = set()
@@ -1582,6 +1751,9 @@ def main():
     m = re.search(r"(/\* VAL_KO:start[\s\S]*?\*/\n)([\s\S]*?)(  /\* VAL_KO:end \*/)", html)
     if not m: sys.exit("VAL_KO markers not found")
     new = html[:m.start(2)] + block() + html[m.end(2):]
+    flags = term_order(new)
+    if flags:
+        sys.exit("Learn text uses a term before the lesson that teaches it, with no pointer:\n  " + "\n  ".join(flags))
     if "--check" in sys.argv:
         sys.exit(0 if new == html else "VAL_KO block is out of date")
     open(HTML, "w", encoding="utf-8").write(new)
