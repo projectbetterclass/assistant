@@ -1096,6 +1096,463 @@ L["L34"] = {
     "example": "",
 }
 
+# =================================================================================================
+# Revisits: ten days later, the same question on a new company, with that company's numbers and a
+# short answer to check against. KO's lessons revisit on PepsiCo, NVIDIA's on AMD, Tesla's on BYD.
+# =================================================================================================
+def model(c):
+    """A company through the same chain as KO's (L03–L14). c holds the inputs; returns them with the results."""
+    m = dict(c)
+    m["E"] = c["shares"] * c["price"]
+    m["DE"] = c["debt"] / m["E"]
+    m["beta"] = c["unlev"] * (1 + (1 - TAX_US / 100) * m["DE"])
+    m["coe"] = RF_NET + m["beta"] * c["erp"]
+    m["kd"] = RF_NET + c["spread"]
+    m["kd_at"] = m["kd"] * (1 - TAX_US / 100)
+    m["we"] = m["E"] / (m["E"] + c["debt"])
+    m["wacc"] = m["we"] * m["coe"] + (1 - m["we"]) * m["kd_at"]
+    m["ebit_at"] = c["ebit"] * (1 - c["eff"] / 100)
+    m["rr"] = c["netcapex"] / m["ebit_at"]
+    m["roc"] = m["ebit_at"] / c["ic"]
+    m["g"] = m["rr"] * m["roc"]
+    return m
+def mdcf(m, g=None, roc_term=None, wacc=None, ebit=None, taxpath=True):
+    """Same as dcf(): ten years at g, tax walking to 25% over years 6–10, then growth forever. (value, tv share, pv of 1–10)"""
+    g = m["g"] if g is None else g; roc_term = m["roc"] if roc_term is None else roc_term
+    w = (m["wacc"] if wacc is None else wacc) / 100; e = m["ebit"] if ebit is None else ebit
+    pv = 0.0
+    for y in range(1, 11):
+        e *= 1 + g
+        t = m["eff"] if (y <= 5 or not taxpath) else m["eff"] + (TAX_US - m["eff"]) * (y - 5) / 5
+        pv += e * (1 - t / 100) * (1 - g / m["roc"]) / (1 + w) ** y
+    tv = e * (1 + g) * (1 - (TAX_US if taxpath else m["eff"]) / 100) * (1 - g / roc_term) / (w - g)
+    pvtv = tv / (1 + w) ** 10
+    return pv + pvtv, pvtv / (pv + pvtv), pv
+def mps(m, ops): return (ops + m["cash"] + m["cross"] - m["debt"] - m["minority"] - m["options"]) / m["shares"]
+def mvps(m, **kw): return mps(m, mdcf(m, **kw)[0])
+# the general chain must give KO's own answers before it is trusted with anyone else
+_ko = model(dict(shares=KO_SHARES_M, price=KO_PRICE, debt=D_M, unlev=BEV_UNLEV_CASH, erp=KO_ERP, spread=SYN_SPREAD, ebit=EBIT_CLEAN,
+                 eff=EFF, netcapex=NETCAPEX, ic=IC, cash=CASH_ST, cross=CROSS, minority=MINORITY, options=OPTIONS_VAL))
+assert abs(_ko["wacc"] - WACC) < 1e-9 and abs(mvps(_ko) - VPS_MOAT) < 1e-9 and abs(mvps(_ko, roc_term=WACC / 100) - VPS_NOMOAT) < 1e-9
+
+# ---- PepsiCo: annual report 2025 (10-K, filed 3 Feb 2026), $M ----------------------------------
+PEP10K = "https://www.sec.gov/Archives/edgar/data/77476/000007747626000007/pep-20251227.htm"
+PEP_SRC = {"s": "PepsiCo annual report 2025 (10-K)", "u": PEP10K}
+PEP_REV, PEP_REV24, PEP_EBIT, PEP_INT, PEP_PRETAX, PEP_TAX, PEP_EPS = 93925, 91854, 11498, 1840, 10244, 1949, 6.00
+PEP_IMP = {2023: 1230, 2024: 714, 2025: 1946}            # "impairment and other charges", by segment table
+PEP_RESTR = {2023: 446, 2024: 698, 2025: 964}            # 2019 Productivity Plan, every year since
+PEP_CORE = 14912                                          # the company's own "core" operating profit
+PEP_CAPEX, PEP_DA = 4415, 3451
+PEP_ACQ = {2023: 314, 2024: 256, 2025: 3391}             # acquisitions and investments (poppi, Siete in 2025)
+PEP_DEBT_LT, PEP_DEBT_CUR, PEP_LEASES = 42321, 6861, 3846
+PEP_CASH, PEP_EQM, PEP_EQUITY, PEP_MIN = 9159 + 371, 2038, 20406, 141
+PEP_SHARES, PEP_PRICE = 1366.649053, 143.52              # 10-K cover (23 Jan 2026); close 31 Dec 2025 (Yahoo)
+PEP_FOOD = 0.58                                           # convenient foods' share of revenue (beverages 42%)
+PEP_SEG = [("North America (foods and drinks)", 27528 + 28197, "North America"), ("Europe, Middle East & Africa", 18025, "EMEA"),
+           ("Latin America", 10549, "Central and South America"), ("Asia Pacific, Australia, NZ & China", 4629, "Asia")]
+PEP_IBF = 4997                                            # international beverage franchise, sold across the regions above
+PEP_US, PEP_MEX, PEP_RUS = 52228, 6947, 4768
+PEP_REG, PEP_REG_SE = 0.42, 0.12
+RUSSIA_ERP, MEXICO_ERP = 8.13, 6.69                       # his January 2026 file: Russia unrated, from its political-risk score
+FOOD = {"n": 78, "unlev": 0.47, "evs": 1.47, "margin": 10.77, "s2c": 1.71, "roc": 15.95, "rr": 32.77, "g": 5.23, "wacc": 5.79, "pe": 16.78}
+BEV_EVS_ = BEV_EVS
+
+PEP_DEBT = PEP_DEBT_LT + PEP_DEBT_CUR + PEP_LEASES
+_food, _bev = PEP_FOOD * PEP_REV, (1 - PEP_FOOD) * PEP_REV
+PEP_W_FOOD = _food * FOOD["evs"] / (_food * FOOD["evs"] + _bev * BEV_EVS)
+PEP_UNLEV = PEP_W_FOOD * FOOD["unlev"] + (1 - PEP_W_FOOD) * BEV_UNLEV_CASH
+_intl = [s for s in PEP_SEG if s[2] != "North America"]
+PEP_INTL_ERP = sum(r * REGION_ERP[k] for _, r, k in _intl) / sum(r for _, r, _ in _intl)
+PEP_ERP = (sum(r * REGION_ERP[k] for _, r, k in PEP_SEG) + PEP_IBF * PEP_INTL_ERP) / PEP_REV
+PEP_COV = PEP_EBIT / PEP_INT
+PEP_RATING, PEP_SPREAD = rate(PEP_COV)
+PEP_IMP_AVG = sum(PEP_IMP.values()) / len(PEP_IMP)
+PEP_EBIT_CLEAN = PEP_EBIT + PEP_IMP[2025] - PEP_IMP_AVG
+PEP_EFF = PEP_TAX / PEP_PRETAX * 100
+PEP_ACQ_AVG = sum(PEP_ACQ.values()) / len(PEP_ACQ)
+PEP_NETCAPEX = PEP_CAPEX - PEP_DA + PEP_ACQ_AVG
+PEP_NETCAPEX_25 = PEP_CAPEX - PEP_DA + PEP_ACQ[2025]
+PEP_IC = PEP_EQUITY + PEP_MIN + PEP_DEBT - PEP_CASH - PEP_EQM
+PEP_IN = dict(shares=PEP_SHARES, price=PEP_PRICE, debt=PEP_DEBT, unlev=PEP_UNLEV, erp=PEP_ERP, spread=PEP_SPREAD, ebit=PEP_EBIT_CLEAN,
+              eff=PEP_EFF, netcapex=PEP_NETCAPEX, ic=PEP_IC, cash=PEP_CASH, cross=PEP_EQM, minority=PEP_MIN, options=0.0)
+P = model(PEP_IN)
+assert P["g"] < RF_NET / 100, "PepsiCo's growth forever must stay under the riskfree rate"
+P_OPS, P_TVS, P_PV10 = mdcf(P)
+P_OPS0, P_TVS0, _ = mdcf(P, roc_term=P["wacc"] / 100)
+P_VPS, P_VPS0 = mps(P, P_OPS), mps(P, P_OPS0)
+P_VPS_FLAT = mps(P, mdcf(P, taxpath=False)[0])
+P_HIST = model(dict(PEP_IN, erp=PEP_ERP + HIST["1928–2025"][0] - ERP_GROSS))
+P_VPS_HIST = mvps(P_HIST)
+P_US = model(dict(PEP_IN, erp=ERP_NET)); P_VPS_US = mvps(P_US)
+P_WEUR = ((1 + P["wacc"] / 100) * K - 1) * 100; P_GEUR = (1 + P["g"]) * K - 1
+P_MARGIN = PEP_EBIT_CLEAN / PEP_REV * 100
+P_SENS = [
+    ("Beta ±0.2", mvps(model(dict(PEP_IN, unlev=PEP_UNLEV + 0.2 / (1 + 0.75 * P["DE"])))), mvps(model(dict(PEP_IN, unlev=PEP_UNLEV - 0.2 / (1 + 0.75 * P["DE"]))))),
+    ("Cost of capital ±0.5 point", mvps(P, wacc=P["wacc"] + 0.5), mvps(P, wacc=P["wacc"] - 0.5)),
+    ("Operating margin ±2 points", mvps(P, ebit=PEP_EBIT_CLEAN * (P_MARGIN - 2) / P_MARGIN), mvps(P, ebit=PEP_EBIT_CLEAN * (P_MARGIN + 2) / P_MARGIN)),
+    ("Growth ±1 point", mvps(P, g=P["g"] - 0.01), mvps(P, g=P["g"] + 0.01)),
+    ("Moat (return forever at the cost of capital, or at today’s)", P_VPS0, P_VPS),
+]
+P_SENS_TOP = sorted(P_SENS, key=lambda r: -abs(r[2] - r[1]))
+P_G_IMPLIED = solve(lambda g: mvps(P, g=g), 0.0, 0.06, PEP_PRICE)
+P_PE = PEP_PRICE / PEP_EPS
+P_EVS = (P["E"] + PEP_DEBT - PEP_CASH) / PEP_REV
+_r1 = P["ebit"] * (1 + P["g"]); _r1at = _r1 * (1 - P["eff"] / 100); _r1re = _r1at * P["g"] / P["roc"]
+P_Y1 = (_r1, _r1at, _r1re, _r1at - _r1re)
+assert abs(_ko["g"] - G) < 1e-12
+
+# ---- AMD: annual report 2025 (10-K, filed 4 Feb 2026), $M ------------------------------------------
+AMD10K = "https://www.sec.gov/Archives/edgar/data/2488/000000248826000018/amd-20251227.htm"
+AMD_SRC = {"s": "AMD annual report 2025 (10-K)", "u": AMD10K}
+AMD_REV = {2022: 23601, 2023: 22680, 2024: 25785, 2025: 34639}
+AMD_DC = {2024: 12579, 2025: 16635}
+AMD_EBIT, AMD_AMORT, AMD_RND, AMD_CAPEX, AMD_DEP = 3694, 1031 + 1223, 8091, 974, 521
+AMD_PRETAX, AMD_TAX = 4166, -103
+AMD_EQUITY, AMD_GW, AMD_INTANG = 62999, 25126, 16705
+AMD_DEBT = 2348 + 874 + 784                                # debt and operating leases
+AMD_CASH = 5539 + 5013
+AMD_SHARES, AMD_PRICE = 1630.410843, 214.16
+AMD_REG, AMD_REG_SE = 1.95, 0.42
+AMD_EBITA = AMD_EBIT + AMD_AMORT                          # before amortizing what it paid for Xilinx
+AMD_IC = AMD_EQUITY + AMD_DEBT - AMD_CASH
+AMD_ROC = AMD_EBIT * (1 - TAX_US / 100) / AMD_IC
+AMD_ROC_A = AMD_EBITA * (1 - TAX_US / 100) / AMD_IC
+AMD_ROC_X = AMD_EBITA * (1 - TAX_US / 100) / (AMD_IC - AMD_GW - AMD_INTANG)
+AMD_GROWTH = AMD_REV[2025] - AMD_REV[2024]
+AMD_NETCAPEX = AMD_CAPEX - AMD_DEP
+AMD_E = AMD_SHARES * AMD_PRICE
+G_FOREVER, R_MATURE, ROC_EDGE = RF_NET / 100, NV_RS, 0.15   # riskfree growth; his mature cost of capital in the NVIDIA model; his usual 15% edge
+def tv_mult(roc): return (1 - G_FOREVER / roc) / (R_MATURE - G_FOREVER)
+
+# ---- BYD: Hong Kong-listed, reports in renminbi (CNY M); Yahoo Finance's figures for 2025 -----------
+BYD_SRC = {"s": "BYD annual figures 2025 (Yahoo Finance)", "u": "https://finance.yahoo.com/quote/1211.HK/financials/"}
+BYD_REV = {2023: 602315.4, 2024: 777102.5, 2025: 803965.0}
+BYD_EBIT, BYD_NI, BYD_EPS = 38516.9, 32619.0, 3.58
+BYD_DEBT, BYD_CASH = 119120.6, 75424.7 + 54532.5
+BYD_CAPEX, BYD_DA, BYD_RND = 156807.9, 78570.6, 57978.1
+BYD_SHARES, BYD_PRICE_HKD, HKD_CNY = 9117.2, 97.75, 0.8899   # shares after the 3-for-1 split of June 2025
+BYD_REG, BYD_REG_SE, BYD_R2 = 0.92, 0.19, 0.29          # 2021–2025, monthly, against the Hang Seng
+TAX_CN = 25.0
+G_AUTO = {"n": 165, "unlev": 1.15, "evs": 1.50, "margin": 4.33, "wacc": 9.48}       # his global tables, January 2026
+G_ELEC = {"n": 1158, "unlev": 1.34, "evs": 2.77, "margin": 8.40}
+GLOBAL_SRC = {"s": "Damodaran · global industry tables, January 2026", "u": "https://pages.stern.nyu.edu/~adamodar/New_Home_Page/data.html"}
+BYD_E = BYD_SHARES * BYD_PRICE_HKD * HKD_CNY
+BYD_DE = BYD_DEBT / BYD_E
+BYD_B_AUTO = G_AUTO["unlev"] * (1 + (1 - TAX_CN / 100) * BYD_DE)
+BYD_B_ELEC = G_ELEC["unlev"] * (1 + (1 - TAX_CN / 100) * BYD_DE)
+BYD_PE = BYD_PRICE_HKD * HKD_CNY / BYD_EPS
+BYD_EVS = (BYD_E + BYD_DEBT - BYD_CASH) / BYD_REV[2025]
+BYD_MARGIN = BYD_EBIT / BYD_REV[2025] * 100
+
+# ---- Wells Fargo and IBM, for the routing revisit -------------------------------------------------
+WFC = {"cik": 72971, "assets": 2148631, "deposits": 1426207, "equity": 181117, "ni": 21338}
+IBM_ = {"cik": 51143, "rev": {2011: 106916, 2018: 79591, 2021: 57350, 2024: 62753, 2025: 67535}, "acq": 8294}
+
+def need(k, v, n=None, s=None):
+    d = {"k": k, "v": v}
+    if n: d["n"] = n
+    if s: d.update(s)
+    return d
+def nb(x): return "%.1f" % x
+P_ROWS = [  # the PepsiCo chain, for the revisits that use it
+    ("Riskfree rate", pct(RF_NET, 2)), ("Equity risk premium", pct(PEP_ERP, 2)), ("Beta", "%.2f" % P["beta"]),
+    ("Cost of capital", pct(P["wacc"], 2)), ("Clean operating income", M(PEP_EBIT_CLEAN)), ("Tax now → later", "%s → 25%%" % pct(PEP_EFF, 1)),
+    ("Return on capital · growth", "%s · %s" % (pct(P["roc"] * 100, 1), pct(P["g"] * 100, 2))),
+]
+REV = {}
+REV["L01"] = {"rev": "PEP, WFC, AMD, IBM",
+    "rtask": "Route four new companies: PepsiCo, Wells Fargo, AMD and IBM. Name each one’s route and the one thing it changes in the model. Which of the four is the trap, and why?",
+    "rneed": [need("PepsiCo: revenue 2025, growth", "%s · %s" % (B(PEP_REV), pct(gr(PEP_REV, PEP_REV24), 1)), "Operating margin %s." % pct(PEP_EBIT / PEP_REV * 100, 1), PEP_SRC),
+              need("Wells Fargo: assets · deposits", "%s · %s" % (B(WFC["assets"], 0), B(WFC["deposits"], 0)), "Equity %s, %s of assets." % (B(WFC["equity"], 0), pct(WFC["equity"] / WFC["assets"] * 100, 1)), {"s": "Wells Fargo annual report 2025 (SEC EDGAR)", "u": edgar(WFC["cik"])}),
+              need("AMD: revenue 2023 → 2025", "%s → %s" % (B(AMD_REV[2023]), B(AMD_REV[2025])), "Up %s in 2025; R&D is %s of revenue." % (pct(gr(AMD_REV[2025], AMD_REV[2024]), 0), pct(AMD_RND / AMD_REV[2025] * 100, 0)), AMD_SRC),
+              need("IBM: revenue 2011 → 2021 → 2025", "%s → %s → %s" % (B(IBM_["rev"][2011], 0), B(IBM_["rev"][2021], 0), B(IBM_["rev"][2025], 0)), "Up %s in 2025; %s spent buying companies." % (pct(gr(IBM_["rev"][2025], IBM_["rev"][2024]), 1), B(IBM_["acq"])), {"s": "IBM annual reports (SEC EDGAR)", "u": edgar(IBM_["cik"])})],
+    "rkey": [{"t": "Short answer", "l": [
+        "PepsiCo: mature. Earnings-first, net-capex reinvestment, the default path.",
+        "Wells Fargo: financial. Deposits are its raw material; value the equity, with reinvestment in regulatory capital.",
+        "AMD: high growth. Revenue drives the model; reinvestment through sales-to-capital.",
+        "IBM is the trap. Its revenue roughly halved from 2011 to 2021, which looks like decline, but much of the drop came from selling businesses and, in 2021, spinning off Kyndryl. It grew %s in 2025 and is buying companies: mature, not declining. Route by the business today, not the long chart." % pct(gr(IBM_["rev"][2025], IBM_["rev"][2024]), 1)],
+        **src(DECLINE)}]}
+REV["L02"] = {"rev": "PEP",
+    "rtask": "Tell PepsiCo’s story in two sentences: what it sells, to whom, where it’s heading. Grade it possible, plausible, probable, and name the one number in a PepsiCo valuation the story pins down most.",
+    "rneed": [need("What it sells", "58% snacks · 42% drinks", "Frito-Lay, Quaker; Pepsi, Gatorade. About 36% of revenue comes from bottling it does itself.", PEP_SRC),
+              need("Where", "%s from the US" % pct(PEP_US / PEP_REV * 100, 0), "Mexico %s, Russia %s, Canada, China." % (B(PEP_MEX), B(PEP_RUS)), PEP_SRC),
+              need("Growth 2025", pct(gr(PEP_REV, PEP_REV24), 1), "North American snack volume fell 3%.", PEP_SRC),
+              need("Operating margin 2025", pct(PEP_EBIT / PEP_REV * 100, 1), "KO: %s. His industries: soft drinks %s, food processing %s." % (pct(CLEAN_MARGIN, 0), pct(BEV_MARGIN, 1), pct(FOOD["margin"], 1)), PEP_SRC)],
+    "rkey": [{"t": "Short answer", "l": [
+        "Story: PepsiCo owns snack and drink brands and, unlike KO, makes and delivers much of it itself; it grows on price and new products while snack volumes slip.",
+        "Possible and plausible, yes. Probable: the slow growth, yes; the pricing is the claim to test, since volume is falling.",
+        "The number it pins down: the operating margin again, but here it sits near food makers’ (%s) rather than KO’s (%s), because PepsiCo carries the factories and trucks. So its reinvestment matters more than KO’s." % (pct(PEP_EBIT / PEP_REV * 100, 0), pct(CLEAN_MARGIN, 0))],
+        **src(NARRATIVE)}]}
+REV["L03"] = {"rev": "PEP",
+    "rtask": "Pick PepsiCo’s currency and riskfree rate. Then say what changes if you value it in Mexican pesos instead (Mexico is its second-biggest country).",
+    "rneed": [need("PepsiCo reports in", "US dollars", "%s of revenue from the US; Mexico %s." % (pct(PEP_US / PEP_REV * 100, 0), B(PEP_MEX)), PEP_SRC),
+              need("10-year Treasury · US default spread", "%s · %s" % (pct(TBOND, 2), pct(US_SPREAD, 2)), None, src(DU2_2026)),
+              need("Mexico’s default spread (Baa2)", "1.62%", "His January 2026 table.", {"s": "Damodaran · Country risk premiums, January 2026", "u": CTRY})],
+    "rkey": [{"t": "Short answer", "l": [
+        "Dollars, at %s − %s = %s." % (pct(TBOND, 2), pct(US_SPREAD, 2), pct(RF_NET, 2)),
+        "In pesos: Mexico’s 10-year bond rate less its 1.62% default spread, and peso cash flows with Mexico’s inflation in them. Done consistently, the value is the same; only mixing them changes it."],
+        **src(S12)}]}
+REV["L04"] = {"rev": "PEP",
+    "rtask": "Give PepsiCo an equity risk premium by where it sells. Which country inside its regions would you worry about?",
+    "rneed": [need("%s (%d%%)" % (n, round(r / PEP_REV * 100)), pct(REGION_ERP[k], 2), M(r), {"s": "PepsiCo 10-K · Damodaran’s regional premiums", "u": CTRY}) for n, r, k in PEP_SEG]
+             + [need("International beverage franchise (%d%%)" % round(PEP_IBF / PEP_REV * 100), "across the regions", M(PEP_IBF), PEP_SRC),
+                need("Russia, inside EMEA", pct(RUSSIA_ERP, 2), "%s of revenue. No credit rating; his premium comes from a political-risk score." % B(PEP_RUS), {"s": "Damodaran · Country risk premiums, January 2026", "u": CTRY})],
+    "rkey": [{"t": "Short answer", "l": [
+        "Weighted by revenue (the franchise spread like the other international revenue): %s, against %s for the US alone." % (pct(PEP_ERP, 2), pct(ERP_NET, 2)),
+        "Lower than KO’s %s: PepsiCo sells %s of its revenue in North America." % (pct(KO_ERP, 2), pct(PEP_SEG[0][1] / PEP_REV * 100, 0)),
+        "The worry: Russia, %s at %s, is averaged into EMEA at %s. Country by country, that slice would carry more." % (B(PEP_RUS), pct(RUSSIA_ERP, 2), pct(REGION_ERP["EMEA"], 2))],
+        "s": "Damodaran · Country risk premiums, January 2026", "u": CTRY}]}
+REV["L05"] = {"rev": "PEP",
+    "rtask": "Build PepsiCo’s bottom-up beta. It is in two businesses: weight them by value, not by sales. Then set it beside its regression beta.",
+    "rneed": [need("Snacks · drinks, share of revenue", "58% · 42%", None, PEP_SRC),
+              need("Food processing: unlevered beta · EV/Sales", "%.2f · %.2f" % (FOOD["unlev"], FOOD["evs"]), "%d US companies." % FOOD["n"], {"s": "Damodaran · Betas and EV/Sales by sector, January 2026", "u": BETAS}),
+              need("Soft drinks: unlevered beta · EV/Sales", "%.2f · %.2f" % (BEV_UNLEV_CASH, BEV_EVS), None, {"s": "Damodaran · Betas and EV/Sales by sector, January 2026", "u": BETAS}),
+              need("PepsiCo equity · debt (leases included)", "%s · %s" % (b(P["E"]), b(PEP_DEBT)), "%s M shares × $%.2f." % (format(round(PEP_SHARES), ","), PEP_PRICE), PEP_SRC),
+              need("Regression beta (5 years, monthly)", "%.2f" % PEP_REG, "Standard error %.2f." % PEP_REG_SE, {"s": "Computed from Yahoo Finance prices", "u": yahoo("PEP")})],
+    "rkey": [{"t": "Short answer", "l": [
+        "Value weights: snacks %s × %.2f, drinks %s × %.2f → %s snacks, %s drinks. The drinks are 42%% of sales but two thirds of the value." % (b(_food), FOOD["evs"], b(_bev), BEV_EVS, pct(PEP_W_FOOD * 100, 0), pct((1 - PEP_W_FOOD) * 100, 0)),
+        "Unlevered: %s × %.2f + %s × %.2f = %.2f. Debt-to-equity %s; levered %.2f." % (pct(PEP_W_FOOD * 100, 0), FOOD["unlev"], pct((1 - PEP_W_FOOD) * 100, 0), BEV_UNLEV_CASH, PEP_UNLEV, pct(P["DE"] * 100, 1), P["beta"]),
+        "Regression %.2f ± %.2f: use the bottom-up %.2f." % (PEP_REG, 2 * PEP_REG_SE, P["beta"])], **src(S6_BETA)}]}
+REV["L06"] = {"rev": "PEP",
+    "rtask": "Give PepsiCo a cost of debt from a synthetic rating, and add its leases to its debt.",
+    "rneed": [need("Operating income · interest expense", "%s · %s" % (M(PEP_EBIT), M(PEP_INT)), None, PEP_SRC),
+              need("His table: coverage 5.50 to 6.50 · 6.50 to 8.50", "A+ 0.70% · AA 0.55%", None, {"s": "Damodaran · Ratings and spreads, January 2026", "u": DAM + "ratings.html"}),
+              need("Riskfree rate · marginal tax", "%s · 25%%" % pct(RF_NET, 2)),
+              need("Debt · operating leases", "%s · %s" % (M(PEP_DEBT_LT + PEP_DEBT_CUR), M(PEP_LEASES)), None, PEP_SRC)],
+    "rkey": [{"t": "Short answer", "l": [
+        "Coverage %s ÷ %s = %.2f → %s, a %s spread." % (M(PEP_EBIT), M(PEP_INT), PEP_COV, PEP_RATING.split("/")[1], pct(PEP_SPREAD, 2)),
+        "Cost of debt %s; after tax %s." % (pct(P["kd"], 2), pct(P["kd_at"], 2)),
+        "Leases: %s more debt, %s in all. A weaker rating than KO’s AA: more debt for its earnings." % (M(PEP_LEASES), M(PEP_DEBT))], **src(S10_DEBT)}]}
+REV["L07"] = {"rev": "PEP",
+    "rtask": "Put PepsiCo’s cost of capital together at market weights. Compare it with book weights and with its two industries.",
+    "rneed": [need("Cost of equity (L04, L05 numbers)", pct(P["coe"], 2), "%s + %.2f × %s." % (pct(RF_NET, 2), P["beta"], pct(PEP_ERP, 2))),
+              need("After-tax cost of debt (L06 numbers)", pct(P["kd_at"], 2)),
+              need("Equity: market · book", "%s · %s" % (b(P["E"]), b(PEP_EQUITY)), None, PEP_SRC),
+              need("Debt, leases included", b(PEP_DEBT), None, PEP_SRC),
+              need("His industries’ cost of capital", "food %s · soft drinks %s" % (pct(FOOD["wacc"], 2), pct(BEV_WACC, 2)), None, {"s": "Damodaran · Cost of capital by sector, January 2026", "u": DAM + "wacc.html"})],
+    "rkey": [{"t": "Short answer", "l": [
+        "Market weights %s equity, %s debt: cost of capital %s." % (pct(P["we"] * 100, 0), pct((1 - P["we"]) * 100, 0), pct(P["wacc"], 2)),
+        "Book weights would put debt at %s and give %s: too low, because book equity is history." % (pct(PEP_DEBT / (PEP_DEBT + PEP_EQUITY) * 100, 0), pct(PEP_EQUITY / (PEP_DEBT + PEP_EQUITY) * P["coe"] + PEP_DEBT / (PEP_DEBT + PEP_EQUITY) * P["kd_at"], 2)),
+        "Above both industries, which use the US premium for every company; PepsiCo’s %s carries its foreign sales." % pct(PEP_ERP, 2)], "s": "Damodaran · Cost of capital by sector, January 2026", "u": DAM + "wacc.html"}]}
+REV["L08"] = {"rev": "PEP",
+    "rtask": "Clean PepsiCo’s 2025 operating income. Which of its “one-off” charges really are one-off?",
+    "rneed": [need("Reported operating income 2025", M(PEP_EBIT), "The company’s own “core” figure adds everything back: %s." % M(PEP_CORE), PEP_SRC),
+              need("Restructuring, 2023 · 2024 · 2025", " · ".join(M(v) for v in PEP_RESTR.values()), "Its productivity plan, running every year since 2019.", PEP_SRC),
+              need("Impairments and other charges, 2023 · 2024 · 2025", " · ".join(M(v) for v in PEP_IMP.values()), "2025: mostly the Rockstar energy-drink brand.", PEP_SRC)],
+    "rkey": [{"t": "Short answer", "l": [
+        "Restructuring comes every year: it’s a running cost. Leave it in.",
+        "Impairments come every year too, in different sizes: spread them. Average %s; add back only 2025’s excess, %s − %s = %s." % (M(PEP_IMP_AVG), M(PEP_IMP[2025]), M(PEP_IMP_AVG), M(PEP_IMP[2025] - PEP_IMP_AVG)),
+        "Clean operating income: %s (a %s margin), not the company’s %s. Adding back recurring charges is how “core” earnings flatter." % (M(PEP_EBIT_CLEAN), pct(P_MARGIN, 1), M(PEP_CORE))], **src(S5)}]}
+REV["L09"] = {"rev": "PEP",
+    "rtask": "Choose PepsiCo’s tax rate now and at the end of the forecast, and say how they meet.",
+    "rneed": [need("Tax · profit before tax, 2025", "%s · %s" % (M(PEP_TAX), M(PEP_PRETAX)), "2024’s rate: 19.4%.", PEP_SRC),
+              need("US marginal rate", "25%", None, src(DU7_2026))],
+    "rkey": [{"t": "Short answer", "l": [
+        "Effective %s ÷ %s = %s: hold it for years 1–5, then step to 25%% by year 10." % (M(PEP_TAX), M(PEP_PRETAX), pct(PEP_EFF, 1)),
+        "The path is worth %s a share less than keeping %s forever (%s against %s)." % (usd(P_VPS_FLAT - P_VPS), pct(PEP_EFF, 1), usd(P_VPS), usd(P_VPS_FLAT))], **src(DU7_2026)}]}
+REV["L10"] = {"rev": "PEP",
+    "rtask": "Build PepsiCo’s reinvestment from capex and acquisitions, then from sales-to-capital. What does 2025 alone get wrong?",
+    "rneed": [need("Capex · depreciation and amortisation", "%s · %s" % (M(PEP_CAPEX), M(PEP_DA)), None, PEP_SRC),
+              need("Acquisitions, 2023 · 2024 · 2025", " · ".join(M(v) for v in PEP_ACQ.values()), "2025: poppi and Siete.", PEP_SRC),
+              need("Revenue growth 2025", M(PEP_REV - PEP_REV24), None, PEP_SRC),
+              need("His sales-to-capital: food · soft drinks", "%.2f · %.2f" % (FOOD["s2c"], BEV_S2C), None, {"s": "Damodaran · Capital expenditures by sector, January 2026", "u": DAM + "capex.html"})],
+    "rkey": [{"t": "Short answer", "l": [
+        "2025 alone: %s − %s + %s = %s, %s of after-tax operating income. Two deals in one year inflate it." % (M(PEP_CAPEX), M(PEP_DA), M(PEP_ACQ[2025]), M(PEP_NETCAPEX_25), pct(PEP_NETCAPEX_25 / P["ebit_at"] * 100, 0)),
+        "Average the acquisitions (%s a year): %s, a %s reinvestment rate." % (M(PEP_ACQ_AVG), M(PEP_NETCAPEX), pct(P["rr"] * 100, 1)),
+        "From sales-to-capital at about 1.6: %s ÷ 1.6 = %s. The averaged net capex is the better guide for a mature company." % (M(PEP_REV - PEP_REV24), M((PEP_REV - PEP_REV24) / 1.6))], **src(S7_CF)}]}
+REV["L11"] = {"rev": "PEP",
+    "rtask": "Derive PepsiCo’s growth from reinvestment and return on capital, and set it beside its two industries.",
+    "rneed": [need("After-tax operating income", M(P["ebit_at"]), "%s × (1 − %s)." % (M(PEP_EBIT_CLEAN), pct(PEP_EFF, 1))),
+              need("Reinvestment (acquisitions averaged)", M(PEP_NETCAPEX)),
+              need("Invested capital", M(PEP_IC), "Equity + minority + debt − cash − equity stakes.", PEP_SRC),
+              need("His industries: return × reinvestment = growth", "food %s × %s = %s" % (pct(FOOD["roc"], 1), pct(FOOD["rr"], 1), pct(FOOD["g"], 2)), "Soft drinks %s." % pct(BEV_G, 2), {"s": "Damodaran · Fundamental growth by sector, January 2026", "u": DAM + "fundgrEB.html"})],
+    "rkey": [{"t": "Short answer", "l": [
+        "Return on capital %s ÷ %s = %s; reinvestment rate %s." % (M(P["ebit_at"]), M(PEP_IC), pct(P["roc"] * 100, 1), pct(P["rr"] * 100, 1)),
+        "Growth %s × %s = %s a year, just under the %s riskfree rate." % (pct(P["rr"] * 100, 1), pct(P["roc"] * 100, 1), pct(P["g"] * 100, 2), pct(RF_NET, 2)),
+        "Well below KO’s %s: the factories and trucks." % pct(ROC * 100, 0)], **src(S9)}]}
+REV["L12"] = {"rev": "PEP",
+    "rtask": "Set PepsiCo’s growth and return on capital forever under his two caps. What share of its value is terminal, with and without a moat?",
+    "rneed": [need("Growth (L11 numbers)", pct(P["g"] * 100, 2)), need("Cost of capital (L07 numbers)", pct(P["wacc"], 2)),
+              need("Return on capital today", pct(P["roc"] * 100, 1)), need("Riskfree rate", pct(RF_NET, 2), None, src(DU2_2026))],
+    "rkey": [{"t": "Short answer", "l": [
+        "Growth %s, under the cap. With the moat (%s forever): operating value %s, %s of it terminal." % (pct(P["g"] * 100, 2), pct(P["roc"] * 100, 1), b(P_OPS), pct(P_TVS * 100, 0)),
+        "Without it (return falls to %s): %s, %s terminal. The brands argue for an edge; a 16%% return is a smaller one than KO’s." % (pct(P["wacc"], 2), b(P_OPS0), pct(P_TVS0 * 100, 0))], **src(S9_TV)}]}
+REV["L13"] = {"rev": "PEP",
+    "rtask": "Go from PepsiCo’s operating value to value per share: cash, stakes, debt, minority interest, shares.",
+    "rneed": [need("Operating value (moat)", b(P_OPS)), need("Cash and short-term investments", M(PEP_CASH), None, PEP_SRC),
+              need("Equity stakes (book)", M(PEP_EQM), None, PEP_SRC), need("Debt, leases included", M(PEP_DEBT), None, PEP_SRC),
+              need("Minority interest", M(PEP_MIN), None, PEP_SRC), need("Shares", "%s M" % format(round(PEP_SHARES, 1), ",.1f"), None, PEP_SRC)],
+    "rkey": [{"t": "Short answer", "l": [
+        "%s + %s + %s − %s − %s = %s of equity." % (b(P_OPS), M(PEP_CASH), M(PEP_EQM), M(PEP_DEBT), M(PEP_MIN), b(P_OPS + PEP_CASH + PEP_EQM - PEP_DEBT - PEP_MIN)),
+        "÷ %s M shares = %s a share (options left out: small)." % (format(round(PEP_SHARES), ","), usd(P_VPS)),
+        "The biggest loose end is the debt: %s a share, against KO’s $10.98." % usd(PEP_DEBT / PEP_SHARES)], "s": "His method: " + S11_LOOSE[0], "u": yt(S11_LOOSE[1])}]}
+REV["L14"] = {"rev": "PEP",
+    "rtask": "Turn PepsiCo into a value per share and a range, then set it against the price. Which three inputs drive the spread?",
+    "rneed": [need("Value per share, moat · no moat", "%s · %s" % (usd(P_VPS), usd(P_VPS0))),
+              need("PepsiCo’s price, 31 Dec 2025", "$%.2f" % PEP_PRICE, None, {"s": "Yahoo Finance", "u": yahoo("PEP")})],
+    "rkey": [{"t": "Short answer", "l": ["Value %s with the moat, %s without, against $%.2f." % (usd(P_VPS), usd(P_VPS0), PEP_PRICE)]
+              + ["%s: %s to %s." % (k, usd(min(lo, hi)), usd(max(lo, hi))) for k, lo, hi in P_SENS if k.startswith(("Growth", "Cost", "Moat"))]
+              + ["For the price to be right: growth of %s a year instead of %s." % (pct(P_G_IMPLIED * 100, 2), pct(P["g"] * 100, 2))], **src(S6B)}]}
+REV["L15"] = {"rev": "PEP",
+    "rtask": "Value PepsiCo with his implied premium, then with the historical average. What breaks?",
+    "rneed": [need("Implied premium · 1928–2025 average", "%s · %s" % (pct(ERP_GROSS, 2), pct(HIST["1928–2025"][0], 2)), None, {"s": "Damodaran · Implied ERP and historical returns", "u": HISTIMPL}),
+              need("PepsiCo’s cost of capital and value (implied)", "%s · %s" % (pct(P["wacc"], 2), usd(P_VPS)))],
+    "rkey": [{"t": "Short answer", "l": [
+        "With the average, every premium rises %.2f points: cost of capital %s, value %s a share (from %s)." % (HIST["1928–2025"][0] - ERP_GROSS, pct(P_HIST["wacc"], 2), usd(P_VPS_HIST), usd(P_VPS)),
+        "What breaks: the valuation stops being about today’s market, and the average itself is uncertain by ±4 points."], "s": "Damodaran · Implied ERP by year", "u": HISTIMPL}]}
+REV["L17"] = {"rev": "PEP",
+    "rtask": "Value PepsiCo in euros instead of dollars. What cancels, and what would be the real error?",
+    "rneed": [need("Cost of capital · growth, in dollars", "%s · %s" % (pct(P["wacc"], 2), pct(P["g"] * 100, 2))),
+              need("Expected inflation: dollars · euros (assumed)", "%s · %s" % (pct(INF_USD, 1), pct(INF_EUR, 1)))],
+    "rkey": [{"t": "Short answer", "l": [
+        "In euros: cost of capital %s, growth %s, same value at today’s exchange rate (%s)." % (pct(P_WEUR, 2), pct(P_GEUR * 100, 2), usd(P_VPS)),
+        "The error is mixing: euro cash flows at the dollar rate, or the reverse."], **src(S12)}]}
+REV["L23"] = {"rev": "PEP",
+    "rtask": "Lay out PepsiCo’s valuation stage by stage. Which numbers were chosen, and which computed?",
+    "rneed": [need(k, v) for k, v in P_ROWS],
+    "rkey": [{"t": "Short answer", "l": [
+        "Chosen: the story; the riskfree rate net of the default spread; weighting the two businesses by value; averaging the impairments and the acquisitions; the tax path; the moat.",
+        "Computed: the premium (from where it sells), the beta (from its industries), the cost of debt (coverage), the weights, the return and growth.",
+        "The PepsiCo-specific choices, impairments and acquisitions, move its base year most."], "s": "His method: " + S11_LOOSE[0], "u": yt(S11_LOOSE[1])}]}
+REV["L24"] = {"rev": "PEP",
+    "rtask": "Build PepsiCo’s cost of capital in one go and explain each gap to its industries.",
+    "rneed": [need("Riskfree · premium · beta", "%s · %s · %.2f" % (pct(RF_NET, 2), pct(PEP_ERP, 2), P["beta"])),
+              need("Cost of debt after tax", pct(P["kd_at"], 2)), need("Weights, market", "%s equity" % pct(P["we"] * 100, 0)),
+              need("His industries", "food %s · soft drinks %s" % (pct(FOOD["wacc"], 2), pct(BEV_WACC, 2)), None, {"s": "Damodaran · Cost of capital by sector", "u": DAM + "wacc.html"})],
+    "rkey": [{"t": "Short answer", "l": [
+        "Cost of equity %s; cost of capital %s." % (pct(P["coe"], 2), pct(P["wacc"], 2)),
+        "Above both industries mostly because of the premium (%s vs the US %s); the beta, %.2f, is in between food and drinks." % (pct(PEP_ERP, 2), pct(ERP_NET, 2), P["beta"])], "s": "Damodaran · Cost of capital by sector", "u": DAM + "wacc.html"}]}
+REV["L25"] = {"rev": "PEP",
+    "rtask": "Work out PepsiCo’s year-1 free cash flow from its clean operating income.",
+    "rneed": [need("Clean operating income", M(PEP_EBIT_CLEAN)), need("Growth · tax", "%s · %s" % (pct(P["g"] * 100, 2), pct(PEP_EFF, 1))),
+              need("Reinvestment rate", pct(P["rr"] * 100, 1))],
+    "rkey": [{"t": "Short answer", "l": [
+        "Operating income %s × 1.%s = %s; after tax %s." % (M(PEP_EBIT_CLEAN), ("%.4f" % P["g"])[2:], M(P_Y1[0]), M(P_Y1[1])),
+        "Reinvestment %s; free cash flow %s." % (M(P_Y1[2]), M(P_Y1[3]))], **src(S7_CF)}]}
+REV["L26"] = {"rev": "PEP",
+    "rtask": "Close PepsiCo’s valuation: ten years, then a terminal value. What share is terminal, and is that defensible?",
+    "rneed": [need("Year-1 free cash flow", M(P_Y1[3])), need("Growth · cost of capital · return", "%s · %s · %s" % (pct(P["g"] * 100, 2), pct(P["wacc"], 2), pct(P["roc"] * 100, 1)))],
+    "rkey": [{"t": "Short answer", "l": [
+        "Years 1–10 are worth %s; the terminal value %s: %s of %s." % (b(P_PV10), b(P_OPS - P_PV10), pct(P_TVS * 100, 0), b(P_OPS)),
+        "Defensible for a company growing near the riskfree rate."], **src(S9_TV)}]}
+REV["L30"] = {"rev": "PEP",
+    "rtask": "Flip PepsiCo’s inputs one at a time. Which move its value most?",
+    "rneed": [need("Value per share", usd(P_VPS)), need("Beta · cost of capital", "%.2f · %s" % (P["beta"], pct(P["wacc"], 2))),
+              need("Margin · growth · return", "%s · %s · %s" % (pct(P_MARGIN, 1), pct(P["g"] * 100, 2), pct(P["roc"] * 100, 1)))],
+    "rkey": [{"t": "Short answer", "l": ["%s: %s to %s." % (k, usd(min(lo, hi)), usd(max(lo, hi))) for k, lo, hi in P_SENS]
+              + ["Biggest: %s, then %s." % (P_SENS_TOP[0][0].split(" ±")[0].split(" (")[0].lower(), P_SENS_TOP[1][0].split(" ±")[0].split(" (")[0].lower())], **src(S6B)}]}
+REV["L31"] = {"rev": "PEP",
+    "rtask": "Pick one of PepsiCo’s judgements, the moat or the country risk, and defend your choice with its price.",
+    "rneed": [need("Moat: return forever %s or %s" % (pct(P["roc"] * 100, 1), pct(P["wacc"], 2)), "%s or %s" % (usd(P_VPS), usd(P_VPS0))),
+              need("Country risk: by where it sells · the US", "%s or %s" % (usd(P_VPS), usd(P_VPS_US))),
+              need("His industries’ return vs cost", "food %s vs %s" % (pct(FOOD["roc"], 1), pct(FOOD["wacc"], 2)), None, {"s": "Damodaran · EVA by sector", "u": DAM + "EVA.html"})],
+    "rkey": [{"t": "Short answer", "l": [
+        "The moat is worth %s a share; food makers as a group earn %s against a %s cost, so a modest edge is defensible." % (usd(P_VPS - P_VPS0), pct(FOOD["roc"], 0), pct(FOOD["wacc"], 2)),
+        "Country risk is worth %s a share, %s KO’s %s, though PepsiCo sells %s of its revenue in North America. Its cost of capital sits closer to its growth (%s against %s, KO %s against %s), so each step in the discount rate moves its value more." % (usd(P_VPS_US - P_VPS), "more than" if P_VPS_US - P_VPS > VPS_US_ONLY - VPS_MOAT else "less than", usd(VPS_US_ONLY - VPS_MOAT), pct(PEP_SEG[0][1] / PEP_REV * 100, 0), pct(P["wacc"], 2), pct(P["g"] * 100, 2), pct(WACC, 2), pct(G * 100, 2))], **src(LIGHT)}]}
+REV["L32"] = {"rev": "PEP",
+    "rtask": "Give a value-vs-price verdict on PepsiCo, and check it against its peers.",
+    "rneed": [need("Value · price", "%s to %s · $%.2f" % (usd(P_VPS0), usd(P_VPS), PEP_PRICE)),
+              need("PepsiCo PE · EV/Sales", "%.1f · %.2f" % (P_PE, P_EVS), "Earnings per share $%.2f." % PEP_EPS, PEP_SRC),
+              need("Food processing PE · EV/Sales", "%.2f · %.2f" % (FOOD["pe"], FOOD["evs"]), None, {"s": "Damodaran · PE and EV/Sales by sector", "u": DAM + "pedata.html"}),
+              need("Soft drinks PE · EV/Sales", "%.2f · %.2f" % (BEV_PE_AGG, BEV_EVS), None, {"s": "Damodaran · PE and EV/Sales by sector", "u": DAM + "pedata.html"})],
+    "rkey": [{"t": "Short answer", "l": [
+        "Value %s to %s against $%.2f: %s." % (usd(P_VPS0), usd(P_VPS), PEP_PRICE, "expensive" if PEP_PRICE > P_VPS * 1.1 else ("cheap" if PEP_PRICE < P_VPS0 * 0.9 else "about fair, inside the range")),
+        "Against peers: a PE of %.1f sits between food makers (%.1f) and soft drinks (%.1f); so does EV/Sales (%.2f). Priced like the mix it is." % (P_PE, FOOD["pe"], BEV_PE_AGG, P_EVS),
+        "For the market to be right with the moat: growth of %s a year." % pct(P_G_IMPLIED * 100, 2)], **src(S14_REL)}]}
+
+# NVIDIA's lessons, ten days later on AMD
+REV["L18"] = {"rev": "AMD",
+    "rtask": "AMD: which inputs would you spend your hour on, and which would you take from a table? Use the numbers, three lines.",
+    "rneed": [need("Revenue 2024 → 2025", "%s → %s" % (B(AMD_REV[2024]), B(AMD_REV[2025])), "Data center %s → %s (+%s)." % (B(AMD_DC[2024]), B(AMD_DC[2025]), pct(gr(AMD_DC[2025], AMD_DC[2024]), 0)), AMD_SRC),
+              need("Operating margin", pct(AMD_EBIT / AMD_REV[2025] * 100, 1), "%s before amortising what it paid for Xilinx." % pct(AMD_EBITA / AMD_REV[2025] * 100, 1), AMD_SRC),
+              need("Semiconductors: margin · cost of capital", "%s · %s" % (pct(SEMI["margin"], 1), pct(SEMI["wacc"], 2)), None, {"s": "Damodaran · Margins and cost of capital by sector", "u": DAM + "wacc.html"})],
+    "rkey": [{"t": "Short answer", "l": [
+        "The hour goes on data-center growth and the margin. Closing a third of the gap to the industry’s margin (%s → %s) adds about %s of operating income a year." % (pct(AMD_EBITA / AMD_REV[2025] * 100, 0), pct((AMD_EBITA / AMD_REV[2025] * 100 * 2 + SEMI["margin"]) / 3, 0), B(AMD_REV[2025] * (SEMI["margin"] - AMD_EBITA / AMD_REV[2025] * 100) / 3 / 100)),
+        "The cost of capital: take his industry’s %s and move on." % pct(SEMI["wacc"], 2)], **src(DEEPSEEK)}]}
+REV["L19"] = {"rev": "AMD",
+    "rtask": "Charge AMD for its 2025 growth two ways: capex minus depreciation, and sales-to-capital. Which do you believe?",
+    "rneed": [need("Revenue growth 2025", B(AMD_GROWTH), None, AMD_SRC), need("Capex · depreciation", "%s · %s" % (M(AMD_CAPEX), M(AMD_DEP)), None, AMD_SRC),
+              need("R&D", B(AMD_RND), None, AMD_SRC), need("Semiconductors: sales-to-capital", "%.2f" % SEMI["s2c"], None, {"s": "Damodaran · Capital expenditures by sector", "u": DAM + "capex.html"})],
+    "rkey": [{"t": "Short answer", "l": [
+        "Capex − depreciation: %s for %s of new revenue, a ratio of %.0f. Not believable: it misses R&D (%s)." % (M(AMD_NETCAPEX), B(AMD_GROWTH), AMD_GROWTH / AMD_NETCAPEX, B(AMD_RND)),
+        "At the industry’s %.2f: %s of reinvestment; at 2.5, %s." % (SEMI["s2c"], B(AMD_GROWTH / SEMI["s2c"]), B(AMD_GROWTH / 2.5))], **src(NV2023)}]}
+REV["L20"] = {"rev": "AMD",
+    "rtask": "AMD: what return on capital does it earn, and what would analysts’ growth cost it? Why does buying Xilinx matter here?",
+    "rneed": [need("Operating income · before Xilinx amortisation", "%s · %s" % (M(AMD_EBIT), M(AMD_EBITA)), None, AMD_SRC),
+              need("Invested capital", M(AMD_IC), "Of which goodwill %s and intangibles %s, from buying Xilinx (2022)." % (B(AMD_GW), B(AMD_INTANG)), AMD_SRC),
+              need("Analysts’ growth, semiconductors", pct(SEMI["growth"], 2), None, {"s": "Damodaran · PE and growth by sector", "u": DAM + "pedata.html"})],
+    "rkey": [{"t": "Short answer", "l": [
+        "On all its capital: %s after tax (%s before the amortisation). At that return, %s growth needs %s of earnings reinvested: impossible." % (pct(AMD_ROC * 100, 1), pct(AMD_ROC_A * 100, 1), pct(SEMI["growth"], 1), pct(SEMI["growth"] / (AMD_ROC_A * 100) * 100, 0)),
+        "Without the Xilinx price: %s, needing %s. The acquisition is capital too (D-28): the growth story only works if new money earns far more than the old." % (pct(AMD_ROC_X * 100, 0), pct(SEMI["growth"] / (AMD_ROC_X * 100) * 100, 0))], **src(S9)}]}
+REV["L21"] = {"rev": "AMD",
+    "rtask": "AMD’s terminal value: growth capped at the riskfree rate, return on capital forever with or without an edge. What does the edge cost to assume?",
+    "rneed": [need("Growth forever (riskfree)", pct(RF_NET, 2), None, src(DU2_2026)), need("Cost of capital forever", pct(R_MATURE * 100, 1), "His mature rate in the NVIDIA model.", {"s": "Damodaran · NvidiaJan2025.xlsx", "u": NV25_XLS}),
+              need("Return forever: an edge · none", "%s · %s" % (pct(ROC_EDGE * 100, 0), pct(R_MATURE * 100, 1)), "15%: his figure for the big tech companies in 2024 (12% is his most common).")],
+    "rkey": [{"t": "Short answer", "l": [
+        "With a 15%% edge it reinvests %s of its income forever; with none, %s." % (pct(G_FOREVER / ROC_EDGE * 100, 0), pct(G_FOREVER / R_MATURE * 100, 0)),
+        "Each dollar of year-11 income is then worth %.1f or %.1f dollars: the edge adds %s to the terminal value. Assume it only with a named advantage." % (tv_mult(ROC_EDGE), tv_mult(R_MATURE), pct((tv_mult(ROC_EDGE) / tv_mult(R_MATURE) - 1) * 100, 0))], **src(TV_MYTH5)}]}
+REV["L27"] = {"rev": "AMD",
+    "rtask": "If you built AMD a model like his NVIDIA one, which inputs would be judgements and which computations?",
+    "rneed": [need("Segments 2025", "data center %s · client and gaming %s · embedded %s" % (B(AMD_DC[2025]), B(10640 + 3910), B(3454)), None, AMD_SRC),
+              need("Margin · R&D share", "%s · %s" % (pct(AMD_EBITA / AMD_REV[2025] * 100, 1), pct(AMD_RND / AMD_REV[2025] * 100, 0)), None, AMD_SRC)],
+    "rkey": [{"t": "Short answer", "l": [
+        "Judgements: the AI-chip market and AMD’s share of it, the target margin, sales-to-capital, the cost of capital forever, any edge forever.",
+        "Computations: revenue, operating income, tax path, reinvestment, discounting, the bridge to a share price."], **src(DEEPSEEK)}]}
+REV["L29"] = {"rev": "AMD",
+    "rtask": "Trace AMD’s three paths: tax, growth and return on capital. Where does each start, and where must it end?",
+    "rneed": [need("Tax 2025", "%s on %s of profit" % (M(AMD_TAX), M(AMD_PRETAX)), "A tax credit, not a charge.", AMD_SRC),
+              need("Revenue growth 2025", pct(gr(AMD_REV[2025], AMD_REV[2024]), 0), None, AMD_SRC),
+              need("Return on capital", pct(AMD_ROC_A * 100, 1), "All capital, before Xilinx amortisation.")],
+    "rkey": [{"t": "Short answer", "l": [
+        "Tax: a negative rate can’t be carried: start at the 25% marginal rate (D-23).",
+        "Growth: %s now, down to the riskfree rate by year 10." % pct(gr(AMD_REV[2025], AMD_REV[2024]), 0),
+        "Return: %s today is below the cost of capital, so this path rises, if the new money earns more: the reverse of NVIDIA’s." % pct(AMD_ROC_A * 100, 1)], **src(DEEPSEEK)}]}
+REV["L28"] = {"rev": "PEP vs AMD",
+    "rtask": "Put PepsiCo (mature) next to AMD (high growth). Name three ways their models must differ.",
+    "rneed": [need("PepsiCo: growth · margin", "%s · %s" % (pct(gr(PEP_REV, PEP_REV24), 1), pct(P_MARGIN, 1)), None, PEP_SRC),
+              need("AMD: growth · margin", "%s · %s" % (pct(gr(AMD_REV[2025], AMD_REV[2024]), 0), pct(AMD_EBITA / AMD_REV[2025] * 100, 1)), None, AMD_SRC)],
+    "rkey": [{"t": "Short answer", "l": [
+        "Start: PepsiCo from today’s earnings; AMD from revenue, with a margin path to a target.",
+        "Reinvestment: PepsiCo from net capex; AMD from sales-to-capital, R&D counted.",
+        "Where the value sits: PepsiCo’s is already %s terminal at %s growth; for AMD the growth story, and how long it lasts, would carry even more of it." % (pct(P_TVS * 100, 0), pct(P["g"] * 100, 1))], **src(PAYTM_V)}]}
+
+# Tesla's lessons, ten days later on BYD
+REV["L16"] = {"rev": "BYD",
+    "rtask": "BYD: a car maker, or a battery-and-electrics company? Build its bottom-up beta for each and set them beside its regression.",
+    "rneed": [need("Car makers, global: unlevered beta", "%.2f" % G_AUTO["unlev"], "%d companies." % G_AUTO["n"], GLOBAL_SRC),
+              need("Electrical equipment, global: unlevered beta", "%.2f" % G_ELEC["unlev"], "%s companies." % format(G_ELEC["n"], ","), GLOBAL_SRC),
+              need("BYD debt · market value of equity", "CNY %s B · CNY %s B" % (format(round(BYD_DEBT / 1000), ","), format(round(BYD_E / 1000), ",")), "%s M shares × HK$%.2f × %.4f CNY per HKD." % (format(round(BYD_SHARES), ","), BYD_PRICE_HKD, HKD_CNY), BYD_SRC),
+              need("China’s tax rate", "25%", None, {"s": "Damodaran · Country tax rates, January 2026", "u": CTRY}),
+              need("Regression beta vs the Hang Seng", "%.2f" % BYD_REG, "Standard error %.2f; R² %.2f." % (BYD_REG_SE, BYD_R2), {"s": "Computed from Yahoo Finance prices", "u": yahoo("1211.HK")})],
+    "rkey": [{"t": "Short answer", "l": [
+        "Global tables: BYD is based outside the US, so his rule uses the global industries.",
+        "Debt-to-equity %s. Car maker: %.2f; electrical equipment: %.2f." % (pct(BYD_DE * 100, 1), BYD_B_AUTO, BYD_B_ELEC),
+        "Regression %.2f ± %.2f, against Hong Kong’s index, not the world’s. Use bottom-up." % (BYD_REG, 2 * BYD_REG_SE)], **src(DRM1)}]}
+REV["L22"] = {"rev": "BYD",
+    "rtask": "Is BYD cheap? Answer as a pricer against car makers, then say what a valuer would still need to know.",
+    "rneed": [need("Revenue 2024 → 2025", "CNY %s B → %s B" % (format(round(BYD_REV[2024] / 1000), ","), format(round(BYD_REV[2025] / 1000), ",")), "Up %s, after +%s in 2024." % (pct(gr(BYD_REV[2025], BYD_REV[2024]), 1), pct(gr(BYD_REV[2024], BYD_REV[2023]), 0)), BYD_SRC),
+              need("Operating margin · PE · EV/Sales", "%s · %.1f · %.2f" % (pct(BYD_MARGIN, 1), BYD_PE, BYD_EVS), "Price HK$%.2f; earnings CNY %.2f a share." % (BYD_PRICE_HKD, BYD_EPS), BYD_SRC),
+              need("Car makers, global: EV/Sales · margin", "%.2f · %s" % (G_AUTO["evs"], pct(G_AUTO["margin"], 1)), None, GLOBAL_SRC),
+              need("Capex · depreciation 2025", "CNY %s B · %s B" % (format(round(BYD_CAPEX / 1000), ","), format(round(BYD_DA / 1000), ",")), None, BYD_SRC)],
+    "rkey": [{"t": "Short answer", "l": [
+        "As a pricer: EV/Sales %.2f against %.2f for car makers, with a slightly higher margin. Cheap against its peers." % (BYD_EVS, G_AUTO["evs"]),
+        "As a valuer you’d still need the story: does growth come back after 2025’s slowdown, and does capex of %s of revenue pay off? Pricing can’t answer that." % pct(BYD_CAPEX / BYD_REV[2025] * 100, 0)], **src(TSLA_DIY)}]}
+
+# the produce lessons: no new company, the method from memory
+REV["L33"] = {"rev": "your next company",
+    "rtask": "From memory: the order you build a valuation in, with one rule for each step. Then name the step you’d most likely get wrong on your own company.",
+    "rkey": [{"t": "Short answer", "l": [
+        "Story (3P) → route → currency and riskfree rate → premium by where it sells → bottom-up beta → synthetic rating → market-weighted cost of capital.",
+        "Clean base year → tax path → reinvestment (net capex or sales-to-capital) → growth = reinvestment × return → terminal (growth ≤ riskfree; return → cost of capital unless a moat).",
+        "Cash, stakes, all debt, options → per share → a range → value vs price, and pricing vs peers."], "s": "His method: " + S11_LOOSE[0], "u": yt(S11_LOOSE[1])}]}
+REV["L34"] = {"rev": "your next company",
+    "rtask": "From memory: the parts of a valuation memo, and what each must contain.",
+    "rkey": [{"t": "Short answer", "l": [
+        "The story, graded. Three judgements, each with its rule and what it’s worth. A range, not a point. The verdict: value vs price, and pricing vs peers. What would have to be true for the market to be right."], **src(LIGHT)}]}
+
+for lid, r in REV.items():
+    L.setdefault(lid, {}).update(r)
+
 # ---- checks -------------------------------------------------------------------------------------
 def check():
     vids = set()
@@ -1103,13 +1560,17 @@ def check():
         lib = json.load(open(LIBRARY))
         vids = set((lib.get("videos", lib)).keys())
     for lid, x in L.items():
-        for item in x.get("need", []) + x.get("key", []):
+        for item in x.get("need", []) + x.get("key", []) + x.get("rneed", []) + x.get("rkey", []):
             u = item.get("u", "")
             m = re.search(r"v=([\w-]{11})", u)
             if m and vids and m.group(1) not in vids:
                 sys.exit("%s: video %s is not in the youtube-digest library" % (lid, m.group(1)))
         for item in x.get("need", []):
             assert item["k"] and item["v"] and (item.get("s") or re.search(r"\(L\d\d|\(assumed\)", item["k"])), (lid, item)   # a source, the earlier lesson it comes from, or marked as an assumption
+        for item in x.get("rneed", []):
+            assert item["k"] and item["v"], (lid, item)
+        if "rtask" in x:
+            assert x.get("rev") and x.get("rkey") and "What you need" not in x["rtask"], lid   # a revisit names its company and has an answer
 check()
 
 def block():
