@@ -1,3 +1,5 @@
+// SUPERSEDED by scripts/build-doctrine-learner.py, which writes the learner rewrite (scripts/doctrine-learner.md).
+// Running this would put the agent's own rulebook text back, so it needs --agent-text to run at all.
 // Bring the Valuation Agent doctrine into the app, so a lesson's reading opens inside the sitting.
 //   node scripts/build-doctrine.mjs [path/to/valuation-agent/doctrine]
 // Reads every D-NN-*.md entry and three passages of the doctrine README, keeps what you learn from
@@ -5,6 +7,8 @@
 // the code needs (the Engine section) and the change logs. Writes the
 // <script id="app-doctrine" type="application/json"> block into time-tracker.html, after the articles.
 import fs from "node:fs";
+if (!process.argv.includes("--agent-text")) { console.error("superseded: run python3 scripts/build-doctrine-learner.py (or pass --agent-text to restore the agent's text)"); process.exit(1); }
+process.argv = process.argv.filter((x) => x !== "--agent-text");
 import path from "node:path";
 import { execFileSync } from "node:child_process";
 
