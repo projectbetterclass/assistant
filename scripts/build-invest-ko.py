@@ -201,8 +201,8 @@ L["L05"] = {
         {"k": "KO’s business", "v": "Soft drinks", "n": "One business: Damodaran’s ‘Beverage (Soft)’ industry.", "s": "KO annual report 2025 (10-K)", "u": TENK},
         {"k": "Unlevered beta, soft drinks (corrected for cash)", "v": "%.2f" % BEV_UNLEV_CASH, "n": "%d US companies; their average levered beta is %.2f. Data as of January 2026." % (BEV_FIRMS, BEV_BETA), "s": "Damodaran · Betas by sector, January 2026", "u": BETAS},
         {"k": "KO’s equity, market value (31 Dec 2025)", "v": b(E_M), "n": "%s million shares × $%.2f." % (format(round(KO_SHARES_M, 1), ",.1f"), KO_PRICE), "s": "KO 10-K cover (shares) · closing price 31 Dec 2025", "u": TENK},
-        {"k": "KO’s debt, leases included", "v": b(D_M), "n": "Loans and notes $%s M + long-term debt $%s M + operating leases $%s M. (The bonds’ market value is $%s M.)" % (format(KO_NOTES, ","), format(KO_LTD, ","), format(KO_LEASES, ","), format(KO_LTD_FAIR, ",")), "s": "KO annual report 2025 (10-K)", "u": TENK},
-        {"k": "Marginal tax rate, US", "v": pct(TAX_US, 0), **src(DU7_2026)},
+        {"k": "KO’s debt, leases included (why: L06)", "v": b(D_M), "n": "Loans and notes $%s M + long-term debt $%s M + operating leases $%s M (L06). (The bonds’ market value is $%s M.)" % (format(KO_NOTES, ","), format(KO_LTD, ","), format(KO_LEASES, ","), format(KO_LTD_FAIR, ",")), "s": "KO annual report 2025 (10-K)", "u": TENK},
+        {"k": "Marginal tax rate, US (more in L09)", "v": pct(TAX_US, 0), **src(DU7_2026)},
         {"k": "KO’s regression beta (5 years, monthly)", "v": "%.2f" % REG_BETA, "n": "Against the S&P 500, 2021–2025. Standard error %.2f." % REG_SE, "s": "Computed from Yahoo Finance prices", "u": "https://finance.yahoo.com/quote/KO/history/"},
     ],
     "key": [
@@ -239,13 +239,13 @@ L["L04"] = {
                "Then the regional mix, because it changes as KO sells more in riskier places."],
          "s": "Damodaran · Country risk premiums, January 2026", "u": CTRY},
         {"t": "His own Coca-Cola example (2018 numbers)",
-         "l": ["Coca-Cola’s beta 0.80, riskfree 3%. A project in Nigeria: 3% + 0.80 × 13.15% = 13.52%. In Chile: 3% + 0.80 × 6.22% = 7.98%. In the US: 3% + 0.80 × 5.37% = 7.30%.",
+         "l": ["Coca-Cola’s beta 0.80 (beta comes next, in L05), riskfree 3%. A project in Nigeria: 3% + 0.80 × 13.15% = 13.52%. In Chile: 3% + 0.80 × 6.22% = 7.98%. In the US: 3% + 0.80 × 5.37% = 7.30%.",
                "Same business, same currency, different country risk, different hurdle rate. Using one rate everywhere would make Coca-Cola over-invest in its riskiest markets."],
          **src(CR2018)},
     ],
 }
 L["L06"] = {
-    "task": "Using the numbers in What you need, give KO a cost of debt from a synthetic rating (interest coverage), check it against KO’s actual rating, add its leases to debt, and decide whether a country default burden applies. Judge: does the rating or the leases move KO’s cost of capital more? Check D-13–D-15.",
+    "task": "Using the numbers in What you need, give KO a cost of debt from a synthetic rating (interest coverage), check it against KO’s actual rating, add its leases to debt, and decide whether a country default burden applies. Judge: does the rating or the leases move KO’s cost of capital (L07) more? Check D-13–D-15.",
     "need": [
         {"k": "Operating income 2025", "v": M(EBIT), "s": "KO annual report 2025 (10-K)", "u": TENK},
         {"k": "Interest expense 2025", "v": M(INT_EXP), "s": "KO annual report 2025 (10-K)", "u": TENK},
@@ -255,7 +255,7 @@ L["L06"] = {
         {"k": "KO’s actual rating", "v": "%s (S&P) · %s (Moody’s)" % (RATING_SP, RATING_MOODY), "s": "KO annual report 2025 (10-K)", "u": TENK},
         {"k": "Riskfree rate (from L03)", "v": pct(RF_NET, 2), **src(DU2_2026)},
         {"k": "Operating leases", "v": M(KO_LEASES), "n": "Already on KO’s balance sheet, discounted at 3.9%.", "s": "KO annual report 2025 (10-K)", "u": TENK},
-        {"k": "Marginal tax rate", "v": pct(TAX_US, 0), **src(DU7_2026)},
+        {"k": "Marginal tax rate (more in L09)", "v": pct(TAX_US, 0), **src(DU7_2026)},
     ],
     "key": [
         {"t": "Worked answer: his method, KO’s numbers",
@@ -264,7 +264,7 @@ L["L06"] = {
                "Check: KO’s actual %s rating carries %s, so %s before tax. He prefers an actual rating when one exists; the two are close here.%s" % (RATING_SP, pct(ACT_SPREAD, 2), pct(RF_NET + ACT_SPREAD, 2), " With the one-off charges added back (L08), coverage is %.2f, an AAA." % (EBIT_CLEAN / INT_EXP)),
                "Leases: add the %s to debt, so debt is %s." % (M(KO_LEASES), b(D_M)),
                "No country default burden: KO borrows in dollars as a US company, with earnings spread over many countries.",
-               "Which moves the cost of capital more: the rating. AA versus A+ moves it by %.3f points; leaving the leases out moves it by %.3f. Both are tiny for KO, because debt is only %s of its capital." % (abs(WACC_ACT - WACC), abs(WACC_NOLEASE - WACC), pct(WD * 100, 1))],
+               "Which moves the cost of capital (L07) more: the rating. AA versus A+ moves it by %.3f points; leaving the leases out moves it by %.3f. Both are tiny for KO, because debt is only %s of its capital." % (abs(WACC_ACT - WACC), abs(WACC_NOLEASE - WACC), pct(WD * 100, 1))],
          "s": "His method: " + S10_DEBT[0], "u": yt(S10_DEBT[1])},
         {"t": "His own test question (Session 5)",
          "l": ["Q: To convert leases to debt, which rate do you discount the lease commitments at?",
@@ -418,7 +418,7 @@ L["L13"] = {
     ],
 }
 L["L14"] = {
-    "task": "Using the numbers in What you need, turn the KO inputs into a value per share — then into a range, not a point. Decide which three inputs drive the spread. Compare with KO’s price and name the game you’re playing: valuing, or pricing? Check D-41–D-42.",
+    "task": "Using the numbers in What you need, turn the KO inputs into a value per share — then into a range, not a point. Decide which three inputs drive the spread. Compare with KO’s price and name the game you’re playing: valuing, or pricing (L22)? Check D-41–D-42.",
     "need": [
         {"k": "Operating value (L12)", "v": "%s or %s" % (b(OPS_MOAT), b(OPS_NOMOAT)), "n": "With and without a moat."},
         {"k": "Cash + stakes − debt − minority − options (L13)", "v": b(CASH_ST + CROSS - D_M - MINORITY - OPTIONS_VAL)},
@@ -430,7 +430,7 @@ L["L14"] = {
          "l": ["Value per share: %s with the moat, %s without, against a price of $%.2f." % (usd(VPS_MOAT), usd(VPS_NOMOAT), KO_PRICE)]
               + ["%s: %s to %s a share." % (k[0].upper() + k[1:], usd(lo), usd(hi)) for k, (lo, hi) in SENS.items()]
               + ["Those three drive the spread: growth, return on capital forever and the cost of capital. Put ranges on them and let a simulation run, rather than trusting one number.",
-                 "On these numbers the market pays more than the value. For the market to be right, KO would have to grow faster than its reinvestment supports, or deserve a lower cost of capital. Valuing is asking what it is worth; pricing is asking what others pay for similar drinks companies. Know which game you’re in."],
+                 "On these numbers the market pays more than the value. For the market to be right, KO would have to grow faster than its reinvestment supports, or deserve a lower cost of capital. Valuing is asking what it is worth; pricing is asking what others pay for similar drinks companies (L22). Know which game you’re in."],
          "s": "His method: " + S6B[0], "u": yt(S6B[1])},
         {"t": "His own test question (Session 6B)",
          "l": ["Q: Which inputs should you give distributions to in a simulation?",
@@ -621,7 +621,7 @@ def gr(a, b_): return (a / b_ - 1) * 100
 L["L01"] = {
     "task": "Four companies, four routes: KO, JPMorgan, NVIDIA and Intel. Using the numbers in What you need, route each (mature, financial, young/high-growth, declining) and name the one thing the route changes in the model. Then judge: what would it cost to route Intel as mature instead? Check D-43/D-44.",
     "need": [
-        {"k": "KO: revenue 2025, and growth", "v": "%s · %s" % (B(REV), pct(gr(REV, KO_REV_2024), 1)), "n": "Operating margin %s (before one-off charges)." % pct(CLEAN_MARGIN, 1), "s": "KO annual report 2025 (10-K)", "u": TENK},
+        {"k": "KO: revenue 2025, and growth", "v": "%s · %s" % (B(REV), pct(gr(REV, KO_REV_2024), 1)), "n": "Operating margin %s (before one-off charges, L08)." % pct(CLEAN_MARGIN, 1), "s": "KO annual report 2025 (10-K)", "u": TENK},
         {"k": "JPMorgan: assets, and how they are paid for", "v": B(JPM["assets"], 0), "n": "Deposits %s; shareholders’ equity only %s (%s of assets). It lends out what it borrows." % (B(JPM["deposits"], 0), B(JPM["equity"], 0), pct(JPM["equity"] / JPM["assets"] * 100, 1)), "s": "JPMorgan annual report 2025 (10-K, SEC EDGAR)", "u": edgar(JPM["cik"])},
         {"k": "JPMorgan: net income 2025", "v": B(JPM["ni"]), "n": "A return on equity of about %s." % pct(JPM["ni"] / ((JPM["equity"] + JPM["equity_2024"]) / 2) * 100, 0), "s": "JPMorgan annual report 2025 (10-K, SEC EDGAR)", "u": edgar(JPM["cik"])},
         {"k": "NVIDIA: revenue, year to Jan 2023 → Jan 2026", "v": "%s → %s" % (B(NVDA["rev"]["FY2023"]), B(NVDA["rev"]["FY2026"])), "n": "%.0f× in three years; operating margin %s." % (NVDA["rev"]["FY2026"] / NVDA["rev"]["FY2023"], pct(NVDA["opinc"] / NVDA["rev"]["FY2026"] * 100, 0)), "s": "NVIDIA annual reports (10-K, SEC EDGAR)", "u": edgar(NVDA["cik"])},
@@ -632,15 +632,15 @@ L["L01"] = {
     "key": [
         {"t": "Worked answer: his routes, these numbers",
          "l": ["KO: mature. Growth of %s and a steady %s margin. The default path: today’s operating income, net-capex reinvestment, all 13 stages (L03–L14)." % (pct(gr(REV, KO_REV_2024), 1), pct(CLEAN_MARGIN, 0)),
-               "JPMorgan: financial. Debt is its raw material, not its financing: %s of deposits fund %s of assets. Value the equity: net income less what it must keep back as regulatory capital, discounted at the cost of equity. Book equity matters, because the regulator watches it." % (B(JPM["deposits"], 0), B(JPM["assets"], 0)),
-               "NVIDIA: high growth (not young, but growing like it). Revenue drives the model, and reinvestment is charged through sales-to-capital (L19). Last year’s operating income tells you little about year 5.",
+               "JPMorgan: financial. Debt is its raw material, not its financing: %s of deposits fund %s of assets. Value the equity: net income less what it must keep back as regulatory capital, discounted at the cost of equity (L05–L07). Book equity matters, because the regulator watches it." % (B(JPM["deposits"], 0), B(JPM["assets"], 0)),
+               "NVIDIA: high growth (not young, but growing like it). Revenue drives the model, and reinvestment is charged through sales-to-capital (L10, L19). Last year’s operating income tells you little about year 5.",
                "Intel: declining. Revenue down %s in four years, operating losses. The route flips the inputs: revenue can shrink, reinvestment can turn negative as assets are sold, margins can improve as the worst parts go, and the chance of failure becomes its own input, never a higher discount rate." % pct(-gr(INTC["rev"][2025], INTC["rev"][2021]), 0),
                "The cost of routing Intel as mature: you’d assume it grows forever and reinvests to do so, with no chance of failure. That is a bet that the decline ends, hidden inside a default.",
                "His own Intel call (2024) shows the honest version: he priced in very little, 3%% growth and a 25%% margin, below its own history, and still got ≈ $23.70 against $18.89. Intel then spent %s in 2025, %s more than depreciation, the ‘trying too hard’ he warned about." % (B(INTC["capex"]), B(INTC["capex"] - INTC["dep"]))],
          **src(DECLINE)},
         {"t": "His own words on banks",
          "l": ["‘When a bank borrows money at three percent it hopes to make money by lending that out at four percent… if debt is raw material we can no longer think of it as a source of capital.’",
-               "So a bank is always an equity valuation: cash flows to equity at the cost of equity, priced with PE or price-to-book, never EV/EBITDA."],
+               "So a bank is always an equity valuation: cash flows to equity at the cost of equity (L05–L07), priced with multiples like PE or price-to-book (L22), never EV/EBITDA."],
          **src(BANKS)},
     ],
 }
@@ -683,7 +683,7 @@ L["L02"] = {
         {"t": "Worked answer: one way to tell it",
          "l": ["Story: KO sells the brands and the concentrate, and lets bottlers carry the factories and trucks; it grows with population, prices and new drinks in poorer countries, not with volume in rich ones.",
                "Possible: yes. Plausible: yes, it has done exactly this for decades. Probable: the slow growth, yes (under 1% more cases in 2025). The pricing power is the claim to test: revenue grew faster than volume.",
-               "The number it pins down most: the operating margin, and with it the return on capital. A brand owner that lets others do the heavy lifting earns %s on sales against %s for the average soft-drinks company, on little capital (L11: %s return on capital)." % (pct(CLEAN_MARGIN, 0), pct(BEV_MARGIN, 0), pct(ROC * 100, 0)),
+               "The number it pins down most: the operating margin, and with it the return on capital (L11). A brand owner that lets others do the heavy lifting earns %s on sales against %s for the average soft-drinks company, on little capital (L11: %s return on capital)." % (pct(CLEAN_MARGIN, 0), pct(BEV_MARGIN, 0), pct(ROC * 100, 0)),
                "What it doesn’t pin down: the discount rate. The story is about cash flows; risk comes later (L03–L07)."],
          **src(NARRATIVE)},
         {"t": "His 3P test, in his words",
@@ -1969,15 +1969,22 @@ GLOSSARY = [
     (13, "employee options", r"\boptions\b"),
     (13, "value per share", r"value per share"),
     (14, "simulation", r"monte carlo|simulation"),
-    (22, "pricing", r"\bpricing\b"),
+    (22, "pricing", r"\bpricing\b(?! power)"),
     (22, "multiples", r"\bmultiples\b|(?-i:\bPE\b)|EV/Sales|price-to-book"),
 ]
 POINTER = re.compile(r"\bL(\d\d)(?:\s*[–-]\s*L(\d\d))?")
 
 def learn_texts(html):
-    """The investing Learn step, lesson by lesson: the idea (VAL_KO's, else VAL_TEACH's), the walk-through, the thread."""
+    """What a lesson shows, lesson by lesson: the idea (VAL_KO's, else VAL_TEACH's), the walk-through, the thread,
+    the task (VAL_KO's, else the curriculum's), the numbers box and the worked answer."""
     i = html.index("var VAL_TEACH=")
     teach = json.loads(html[i + len("var VAL_TEACH="):html.index("\n  };", i) + 4])
+    c0 = html.index("var VAL_CURRICULUM=")
+    cur = {}
+    for m in re.finditer(r'(\{"id": "L\d\d".*?\})(?=,?\s*\n)', html[c0:html.index("VAL_CURRICULUM.key=")]):
+        o = json.loads(m.group(1))
+        cur[o["id"]] = o
+    assert len(cur) == 34, len(cur)
     out = {}
     for n in range(1, 35):
         lid = "L%02d" % n
@@ -1987,6 +1994,13 @@ def learn_texts(html):
             parts += [("walk", s["h"])] + [("walk", q) for q in s.get("p", []) + s.get("p2", [])]
             parts += [("walk", " ".join(it) if isinstance(it, list) else it) for it in s.get("l", [])]
         parts += [("thread", x["thread"][k]) for k in ("b", "n") if x.get("thread", {}).get(k)]
+        # the rest of what the lesson shows: its task, the numbers box, the worked answer
+        parts += [("task", x.get("task") or cur.get(lid, {}).get("task", ""))]
+        parts += [("needNote", x["needNote"])] if x.get("needNote") else []
+        for it in x.get("need", []):
+            parts += [("need", it["k"])] + ([("need", it["n"])] if it.get("n") else [])
+        for b_ in x.get("key", []):
+            parts += ([("answer", b_["t"])] if b_.get("t") else []) + [("answer", q) for q in b_.get("l", [])]
         out[lid] = parts
     return out
 
