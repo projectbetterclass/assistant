@@ -20,7 +20,7 @@ def course(meta, lessons):
         x.setdefault("estimateMin", 30)
         x["order"] = i + 1
         assert x["rung"] in meta["rungs"], (x["id"], x["rung"])
-        assert 250 < len(x["teach"]) < 1100, (x["id"], len(x["teach"]))
+        assert 150 < len(x["teach"]) < 1100, (x["id"], len(x["teach"]))   # a short idea, or a paragraph; never empty
         for a in x.get("after", []):
             assert meta["rungs"].index(next(y for y in lessons if y["id"] == a)["rung"]) == meta["rungs"].index(x["rung"]) - 1, (x["id"], "after", a)
     assert len(meta["rungDesc"]) == len(meta["rungs"])

@@ -287,7 +287,7 @@ def check_extra():
     e(X11_E, 0.12); e(20 * 1.8 - 30, 6); e(14 * 1.8 - 30, -4.8); e(20 * 1.8 - 24, 12)
     e(FULL_LOTS, 6, 0); e(CLOSE_PIPS, 186.2, 0.1); e(M_EU, 333.33)
     for lid, x in EXTRA.items():
-        assert 250 < len(x["teach"]) < 1100, (lid, len(x["teach"]))
+        assert 150 < len(x["teach"]) < 1100, (lid, len(x["teach"]))
 
 for x in L:
     x.update(EXTRA[x["id"]])
