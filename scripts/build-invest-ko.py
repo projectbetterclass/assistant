@@ -1578,6 +1578,286 @@ REV["L34"] = {"rev": "your next company",
 for lid, r in REV.items():
     L.setdefault(lid, {}).update(r)
 
+# ---- walk-throughs for L02–L14: the method, then his own worked example, then your turn on KO ------
+# One worked company throughout: his Alphabet valuation of March 2018 (blog post and spreadsheet), so the
+# example never gives away a KO answer, a revisit company (PepsiCo, AMD, BYD) or a later lesson's case.
+ALPHA_XLSX = "https://pages.stern.nyu.edu/~adamodar/pc/blog/AlphabetApr2018.xlsx"
+ALPHA_PDF = "https://pages.stern.nyu.edu/~adamodar/pdfiles/blog/Google2018.pdf"
+A_SRC = {"s": "Damodaran · Alphabet valuation, March 2018 (spreadsheet)", "u": ALPHA_XLSX}
+A_BLOG = {"s": "Damodaran · Alphabet Soup: Mostly Google, but Lots of Bets! (2018)", "u": ALPHA_PDF}
+EGP_SRC = {"s": "Damodaran · Session 12: Currencies & Exchange Rates (slides)", "u": "https://pages.stern.nyu.edu/~adamodar/pdfiles/FoundationsOnline/slides/session12.pdf"}
+# his spreadsheet, $ million unless marked
+A = dict(rev=110855, rev_prev=90272, ebit=26146, rd=16625, rd_amort=12020.67, rd_asset=30017.67, lease_adj=147.44,
+         lease_debt=7620.50, debt_book=3969, debt_mkt=3601.69, eff=24.3, marg=25.0, s2c=2.030311, rf=2.75,
+         regions=[("North America", 52449, 5.08), ("Europe", 36046, 6.0058), ("Asia", 16235, 6.05), ("Latin America", 6125, 8.7505)],
+         biz=[("Advertising", 109652, 1.568262, 0.969156), ("Diversified", 1203, 1.688909, 0.758014)],
+         shares=703, price=1050, ebit_cov=26293.44, int_cov=250.71, spread=0.54, wacc_t=8.0, roc_t=12.0, g5=12.0,
+         rev1=124157.6, ebit1_at=26196.37, reinv1=6552.0, ebitT_at=57270.70, df10=0.4554548525, pv_cf=213889.62,
+         cash=101871, trapped=60000, trapped_tax=15.0, roic=25.36, mroic=56.59, sim_median=957, sim_price=1030, p_over=65, limit=950)
+A_REV_W = sum(r for _, r, _ in A["regions"])
+A_ERP = sum(r * e for _, r, e in A["regions"]) / A_REV_W
+A_VAL = [(n, r * m, b_) for n, r, m, b_ in A["biz"]]
+A_BU = sum(v * b_ for _, v, b_ in A_VAL) / sum(v for _, v, _ in A_VAL)
+A_E = A["shares"] * A["price"]
+A_D = A["debt_mkt"] + A["lease_debt"]
+A_DE = A_D / A_E
+A_BL = A_BU * (1 + (1 - A["marg"] / 100) * A_DE)
+A_COE = A["rf"] + A_BL * A_ERP
+A_COV = A["ebit_cov"] / A["int_cov"]
+A_KD = A["rf"] + A["spread"]
+A_KD_AT = A_KD * (1 - A["marg"] / 100)
+A_WE = A_E / (A_E + A_D)
+A_WACC = A_WE * A_COE + (1 - A_WE) * A_KD_AT
+A_RD_ADJ = A["rd"] - A["rd_amort"]
+A_EBIT_ADJ = A["ebit"] + A_RD_ADJ + A["lease_adj"]
+A_RIR_T = A["rf"] / A["roc_t"]
+A_TFCF = A["ebitT_at"] * (1 - A_RIR_T)
+A_TV = A_TFCF / ((A["wacc_t"] - A["rf"]) / 100)
+A_PV_TV = A_TV * A["df10"]
+A_OPS = A_PV_TV + A["pv_cf"]
+A_TV0 = A["ebitT_at"] * (1 - A["rf"] / A["wacc_t"]) / ((A["wacc_t"] - A["rf"]) / 100)
+A_MOAT_PS = (A_PV_TV - A_TV0 * A["df10"]) / A["shares"]
+A_CASH = A["cash"] - A["trapped"] * (A["marg"] - A["trapped_tax"]) / 100
+A_DEBT_OUT = A["debt_book"] + A["lease_debt"]
+A_EQ = A_OPS - A_DEBT_OUT + A_CASH
+A_VPS = A_EQ / A["shares"]
+A_RR1 = A["reinv1"] / A["ebit1_at"]
+# his own numbers come back: premium, beta, cost of equity and capital, base year, reinvestment, terminal value, value per share
+for got, want, tol in ((A_ERP, 5.7259, 1e-3), (A_BU, 0.96669, 1e-4), (A_BL, 0.97771, 1e-4), (A_COE, 8.3483, 1e-3),
+                       (A_COV, 104.874, 1e-2), (A_WACC, 8.2602, 1e-3), (A_EBIT_ADJ, 30897.77, 0.05),
+                       ((A["rev1"] - A["rev"]) / A["s2c"], A["reinv1"], 0.05), (A_TFCF, 44146.16, 0.05), (A_TV, 840879.33, 1),
+                       (A_PV_TV, 382982.57, 1), (A_CASH, 95871, 0.5), (A_VPS, 968.92, 0.01)):
+    assert abs(got - want) < tol, (got, want)
+
+def a_b(x): return B(x)          # Alphabet figures in billions, like KO's
+WALK = {}
+WALK["L02"] = [
+    {"h": "Why the story comes first",
+     "p": ["A spreadsheet will take any number you type. The story is what stops you typing nonsense: it says what the business is, so you can ask of every number whether it fits. Aswath’s warning cuts both ways. Number people hide behind precision; storytellers hide behind a big vision. You need both, and each keeps the other honest."]},
+    {"h": "How he does it",
+     "l": [["Tell it short.", "What the company sells, to whom, why they buy, who it competes with, where it is heading. Two or three sentences."],
+           ["Grade it.", "Possible (could it happen at all?), plausible (has something like it happened?), probable (is it likely?). Only the probable part goes into the base case; plausible upsides go into a range."],
+           ["Turn each part into an input.", "How big the market is and what share the company takes sets revenue. The business model sets the margin it settles at. How it grows sets reinvestment (L10). Whether it has a lasting edge sets the return on capital forever (L11–L12). How cyclical it is feeds risk (L03–L07)."],
+           ["Check the loop.", "If a number doesn’t fit the story, one of them has to change."]]},
+    {"h": "Where it goes wrong",
+     "l": ["A story with no numbers attached, so nothing can be checked.",
+           "Numbers that contradict the story: a ‘mature, steady’ story with 20% growth; a ‘light, asset-free’ story with heavy reinvestment.",
+           "Putting a plausible upside into the base case because it is exciting."]},
+    {"h": "Worked: his Alphabet, March 2018",
+     "p": ["The facts he started from: digital ads were $228.4 billion of the $584 billion spent on advertising in 2017; Google took 42.2% of digital, Facebook 20.9%. His story: Google keeps taking share of a digital ad market that is slowing, privacy rules dull its edge, its other businesses add little for now, and it stays a low-cost, high-margin business."],
+     "l": [["Revenue.", "12% a year for five years, below the 15% of the past five, because digital ads were already a large slice of all ads and privacy rules could bite."],
+           ["Margin.", "Kept at %s, the margin it earned in 2017 once R&D is counted as an investment (L08): ‘business stays a low cost, high margin one’." % pct(A_EBIT_ADJ / A["rev"] * 100, 2)],
+           ["Lasting edge.", "A return on capital of 12% forever, above its cost of capital (L07, L11–L12): ‘strong competitive advantages’."],
+           ["Graded.", "YouTube taking on Spotify and Netflix was plausible, not probable, so he left it out of the base case and called it the upside."]],
+     "p2": ["The one number he said the value hangs on: revenue growth, not the margin."],
+     **A_BLOG},
+    {"h": "Your turn: KO",
+     "p": ["Use the numbers below: what KO sells and to whom, where, how much of the world’s drinking it already has, volume against revenue, its margins and its advertising. Write the story in two sentences, grade it, then decide which single number in KO’s valuation the story pins down most."]},
+]
+WALK["L03"] = [
+    {"h": "Why the currency doesn’t matter, and consistency does",
+     "p": ["A currency is a unit of measurement. Value a company in dollars and again in euros and you should get the same answer, because inflation shows up twice: in the cash flows (higher-inflation currencies have faster-growing numbers) and in the discount rate (their interest rates are higher too). Mix them, dollar cash flows with a euro rate, and the answer is meaningless."]},
+    {"h": "How he picks the riskfree rate",
+     "l": [["Same currency as the cash flows.", "Dollar cash flows, a dollar rate."],
+           ["Long-term.", "A going business lasts decades, so use the 10-year government bond rate today, not an average and not a ‘normal’ rate."],
+           ["Truly free of default.", "If the government can default, its bond rate includes a default spread. Subtract it."],
+           ["No trustworthy bond?", "Build the rate from the dollar rate and the difference in expected inflation."]]},
+    {"h": "Where it goes wrong",
+     "l": ["Swapping in a rate you think of as ‘normal’ because today’s looks low or high: you are then betting on rates, not valuing a company.",
+           "Taking a risky government’s bond rate as riskfree and counting the same risk again later, in the premium (L04)."]},
+    {"h": "Worked: his examples",
+     "l": [["Alphabet, March 2018.", "Dollars throughout; the 10-year US Treasury rate, 2.75%. The US was rated Aaa then, so there was nothing to take out."],
+           ["The Egyptian pound, December 2015.", "No usable bond rate, so he built one: the dollar rate 2.27%, US inflation 1.5%, Egyptian inflation 9.7%. Riskfree rate in pounds = 1.0227 × (1.097 ÷ 1.015) − 1 = 10.53%. The extra 8 points is inflation, not risk."]],
+     **EGP_SRC},
+    {"h": "Your turn: KO",
+     "p": ["KO reports in dollars. Take the 10-year Treasury rate below and decide what to do about the US default spread, the one problem his 2018 Alphabet valuation didn’t have. Then weigh which choice could move KO’s value more: the currency or the rate."]},
+]
+WALK["L04"] = [
+    {"h": "What the premium is",
+     "p": ["The equity risk premium is the extra return investors want for owning stocks rather than the riskfree bond. It is one number for the whole market, set by investors today, and it applies to every company before you adjust for how risky that company is (L05)."]},
+    {"h": "How he does it",
+     "l": [["Start from the implied premium.", "The return that makes the index’s expected cash payouts (dividends and buybacks) worth today’s index level, minus the riskfree rate. It is today’s price of risk, not a historical average."],
+           ["Add country risk where the company operates.", "Riskier markets carry an extra premium. What counts is where the company sells, not where it is incorporated."],
+           ["Weight by revenue.", "Multiply each region’s premium by its share of the company’s revenue and add up."]]},
+    {"h": "Where it goes wrong",
+     "l": ["Using the premium of the country of incorporation: a US company that sells half its products in emerging markets is not a pure US risk.",
+           "Using a historical average, which depends on the years you pick (L15)."]},
+    {"h": "Worked: his Alphabet, March 2018",
+     "p": ["The US premium then was %s. Alphabet’s revenue by region, each with its premium:" % pct(A["regions"][0][2], 2)],
+     "l": ["%s: %s of revenue at %s" % (n, pct(r / A_REV_W * 100, 1), pct(e, 2)) for n, r, e in A["regions"]],
+     "p2": ["Weighted: %s. Higher than the US premium alone, because half of Alphabet’s revenue comes from outside North America. That is the number that goes into its cost of equity (L05)." % pct(A_ERP, 2)],
+     **A_SRC},
+    {"h": "Your turn: KO",
+     "p": ["KO’s numbers below give each operating segment’s share of revenue and premium. Weight them the same way. Then judge which input you would fight hardest to get right."]},
+]
+WALK["L05"] = [
+    {"h": "What beta measures",
+     "p": ["Beta is how much a company’s stock moves with the market. A beta of 1 is average risk; 0.6 moves about 60% as much as the market; 1.5 moves 50% more. Multiply it by the risk premium (L04) and you have the company’s extra return over the riskfree rate: cost of equity = riskfree rate + beta × premium."]},
+    {"h": "Why not the regression",
+     "p": ["The obvious way, regressing the stock’s returns on the market’s, gives a number with a wide margin of error, set by the past five years and by the company’s old debt and old businesses. Averaging across many companies in the same business cancels most of that noise."]},
+    {"h": "How he builds it bottom-up",
+     "l": [["Name the businesses.", "By how the company makes money."],
+           ["Take each business’s unlevered beta.", "The average for many companies in that business, with their debt taken out, from his industry tables."],
+           ["Weight by value.", "Revenue × what investors pay for each dollar of that business’s sales (EV/Sales, more in L22)."],
+           ["Put this company’s debt back in.", "Levered beta = unlevered beta × (1 + (1 − tax rate) × debt-to-equity), with debt and equity at market value."]]},
+    {"h": "Worked: his Alphabet, March 2018",
+     "l": ["%s: revenue %s × %.2f = %s of value, unlevered beta %.2f" % (n, M(r), m, a_b(r * m), b_) for n, r, m, b_ in A["biz"]],
+     "p2": ["Weighted by value: %.4f. Debt (leases included, L06) of %s against equity of %s: a debt-to-equity of %s. Levered beta = %.4f × (1 + 0.75 × %.4f) = %.2f. Cost of equity = %s + %.2f × %s = %s." % (A_BU, a_b(A_D), a_b(A_E), pct(A_DE * 100, 2), A_BU, A_DE, A_BL, pct(A["rf"], 2), A_BL, pct(A_ERP, 2), pct(A_COE, 2))],
+     **A_SRC},
+    {"h": "Your turn: KO",
+     "p": ["KO is one business, so there is nothing to weight: take the soft-drinks unlevered beta and put KO’s own debt back in. Then set the result beside KO’s regression beta and decide which you’d trust, and when the regression would be the better number."]},
+]
+WALK["L06"] = [
+    {"h": "What the cost of debt is",
+     "p": ["What the company would pay to borrow long-term today. Not the coupon on bonds it issued years ago, and not interest expense divided by debt: both look backward. It is the riskfree rate plus a default spread for how likely the company is to fail to pay."]},
+    {"h": "How he does it",
+     "l": [["Get a rating.", "Use the actual one if it has one. Either way, also make a synthetic one: interest coverage = operating income ÷ interest expense, then read the rating and its default spread off his table. Safer coverage, smaller spread."],
+           ["Add it up.", "Pre-tax cost of debt = riskfree rate + default spread (+ part of the country’s spread, if the company carries that risk)."],
+           ["Count all the debt.", "Leases and other fixed commitments are debt: discount the future lease payments at the pre-tax cost of debt and add the result to debt."],
+           ["Take the tax off.", "Interest saves tax at the rate on the last dollar of profit, the marginal tax rate (L09): after-tax cost = pre-tax × (1 − marginal rate)."]]},
+    {"h": "Where it goes wrong",
+     "l": ["Leaving leases out, which understates debt and makes the company look safer than it is.",
+           "Using the effective tax rate (L09) for the tax saving."]},
+    {"h": "Worked: his Alphabet, March 2018",
+     "p": ["Alphabet barely borrowed: its only interest was the interest built into its leases. Its lease commitments, discounted at the pre-tax cost of debt, were worth %s, against %s of ordinary debt. Coverage: operating income %s ÷ interest %s = %.0f times, far above his top band (8.5): AAA, a %s spread. Pre-tax cost of debt %s + %s = %s; after tax at 25%%, %s. Its actual rating was AA; he used the synthetic one." % (a_b(A["lease_debt"]), a_b(A["debt_book"]), M(A["ebit_cov"]), M(A["int_cov"]), A_COV, pct(A["spread"], 2), pct(A["rf"], 2), pct(A["spread"], 2), pct(A_KD, 2), pct(A_KD_AT, 2))],
+     **A_SRC},
+    {"h": "Your turn: KO",
+     "p": ["KO does borrow. Work out its coverage from the numbers below, read off the rating and spread, and compare with KO’s actual rating. Then add the leases and decide which moves KO’s cost of capital (L07) more: the rating or the leases."]},
+]
+WALK["L07"] = [
+    {"h": "What the cost of capital is",
+     "p": ["A company is paid for by its owners and its lenders, and each wants a return. The cost of capital is the blend: cost of equity × the equity’s share + after-tax cost of debt × the debt’s share. It is the rate that turns the company’s future cash into today’s value."]},
+    {"h": "How he weights it",
+     "l": [["Market values, never book.", "Equity at shares × price; debt at its market value, leases included. Book equity is an accounting leftover; investors want a return on what the company is worth today."],
+           ["One number for the whole company.", "Built from its business mix and its debt. For a single division or a new project, use that thing’s own risk instead."]]},
+    {"h": "Where it goes wrong",
+     "l": ["Book-value weights. For a company whose market value is far above its book value, they make debt look much bigger than it is.",
+           "Using the company-wide number for a division that is riskier or safer than the average."]},
+    {"h": "Worked: his Alphabet, March 2018",
+     "p": ["Equity %s (703 million shares × $1,050), debt %s: %s equity, %s debt. Cost of capital = %s × %s + %s × %s = %s. With so little debt, it is nearly the cost of equity." % (a_b(A_E), a_b(A_D), pct(A_WE * 100, 1), pct((1 - A_WE) * 100, 1), pct(A_WE * 100, 1), pct(A_COE, 2), pct((1 - A_WE) * 100, 1), pct(A_KD_AT, 2), pct(A_WACC, 2))],
+     **A_SRC},
+    {"h": "Your turn: KO",
+     "p": ["KO carries real debt. Weight its cost of equity and after-tax cost of debt by market values, then redo it with book values and see how far the answer moves. Compare with his soft-drinks average."]},
+]
+WALK["L08"] = [
+    {"h": "Why the base year needs cleaning",
+     "p": ["Every forecast grows from this year’s operating income, so an error here carries into every year after it. Accounting puts some spending in the wrong place, in directions you can predict, and the job is to put it back."]},
+    {"h": "How he does it",
+     "l": [["Three boxes.", "Every expense is operating (it helps this year), capital (it helps for years) or financing (it comes from borrowing). Move anything in the wrong box."],
+           ["R&D is capital.", "It builds an asset. Add this year’s R&D back to operating income, subtract the amortisation of past years’ R&D, and count the research asset as invested capital."],
+           ["One-offs: genuine or recurring?", "Add back a charge that won’t return. A ‘one-off’ that comes back every few years is a cost: spread it over the years instead."],
+           ["Negative earnings: ask why first.", "A one-off, a cycle (average the margin over it), a young company (aim at what mature peers earn) or a broken business (a story and a real chance of failure)."]]},
+    {"h": "Worked: his Alphabet, March 2018",
+     "p": ["Reported operating income %s on revenue of %s: a %s margin. R&D: %s this year, spread over three years; amortisation of the past three years’ R&D %s. Adjustment: %s. Leases moved to debt (L06) add %s more. Clean operating income: %s, a margin of %s. The research asset, %s, joins invested capital." % (M(A["ebit"]), M(A["rev"]), pct(A["ebit"] / A["rev"] * 100, 1), M(A["rd"]), M(A["rd_amort"]), "+" + M(A_RD_ADJ), M(A["lease_adj"]), M(A_EBIT_ADJ), pct(A_EBIT_ADJ / A["rev"] * 100, 1), M(A["rd_asset"]))],
+     **A_SRC},
+    {"h": "Your turn: KO",
+     "p": ["KO reports no R&D, so the cleanup that mattered most for Alphabet doesn’t apply. KO’s question is its ‘other operating charges’: look at 2025 and 2024 side by side and decide whether they are one-off or a recurring cost of doing business."]},
+]
+WALK["L09"] = [
+    {"h": "Two rates, two jobs",
+     "l": [["Effective rate.", "The income tax in the accounts ÷ profit before tax, for the same year. What the company really pays now, after credits, deferrals and lower rates abroad. Use it to tax operating income at the start."],
+           ["Marginal rate.", "The legal rate on the last dollar of profit. Use it for the tax that interest saves (L06), and as the rate the forecast ends at, because breaks and deferrals don’t last forever."]]},
+    {"h": "How he does it",
+     "l": [["The path.", "Hold the effective rate for years 1–5, step it to the marginal rate in equal steps over years 6–10, and use the marginal rate after year 10, in the terminal value (L12)."],
+           ["Tax as if there were no debt.", "Operating income × (1 − tax rate). The interest saving is already in the after-tax cost of debt; counting it here too counts it twice."],
+           ["Losses carried forward.", "Keep a running balance: income they shelter pays no tax until they are used up."]]},
+    {"h": "Worked: his Alphabet, March 2018",
+     "p": ["Effective rate %s for years 1–5; then %s, %s, %s, %s; %s in year 10 and after. The tax saving on its debt used 25%%. No losses carried forward." % (pct(A["eff"], 1), pct(24.44, 2), pct(24.58, 2), pct(24.72, 2), pct(24.86, 2), pct(A["marg"], 0))],
+     **A_SRC},
+    {"h": "Your turn: KO",
+     "p": ["KO’s effective rate is well below the marginal rate. Set its path, check for losses carried forward, then weigh whether the tax path or the base-year cleanup (L08) moves KO’s value more."]},
+]
+WALK["L10"] = [
+    {"h": "Why reinvestment is the bill for growth",
+     "p": ["A company can’t grow without spending: plants, equipment, research, acquisitions, stock on the shelves. Reinvestment is everything it spends to grow, net of what simply replaces what wears out. Forget it and you have assumed growth for free."]},
+    {"h": "Two ways to measure it",
+     "l": [["From the accounts.", "Net capex = capital spending − depreciation + R&D that you capitalised (L08) + acquisitions, including ones paid in stock + leases. Add the change in non-cash working capital: operating current assets minus non-debt current liabilities."],
+           ["From the growth.", "For a fast-growing or young company the past is a poor guide, so tie reinvestment to the growth you forecast with a sales-to-capital ratio: reinvestment = the extra revenue ÷ the ratio. A ratio of 3 means each $1 of new capital brings $3 of new revenue."]]},
+    {"h": "Where it goes wrong",
+     "l": ["Growth with no reinvestment behind it.", "Using one lumpy year of capital spending as if it were normal."]},
+    {"h": "Worked: his Alphabet, March 2018",
+     "p": ["He drove it from revenue, using Alphabet’s own sales-to-capital ratio, %.2f, for all ten years. Year 1: revenue grows from %s to %s, so reinvestment = %s ÷ %.2f = %s. As growth slows after year 5, the bill shrinks with it. His reason, in the story sheet: ‘reinvestment will be in technology and in occasional acquisitions’." % (A["s2c"], M(A["rev"]), M(A["rev1"]), M(A["rev1"] - A["rev"]), A["s2c"], M(A["reinv1"]))],
+     **A_SRC},
+    {"h": "Your turn: KO",
+     "p": ["Build KO’s reinvestment both ways: from capital spending, depreciation, acquisitions and working capital, then from his soft-drinks sales-to-capital and KO’s revenue growth. Decide which fits a company like KO, and when you would switch to the other."]},
+]
+WALK["L11"] = [
+    {"h": "Growth has to be paid for",
+     "p": ["The identity: growth in operating income = reinvestment rate × return on capital. Reinvestment rate = reinvestment ÷ after-tax operating income; return on capital = after-tax operating income ÷ invested capital. A company that reinvests half its after-tax income at 12% grows about 6% a year."]},
+    {"h": "How he uses it",
+     "l": [["As the growth, for a steady company.", "Measure the two parts and multiply."],
+           ["As a check, for a changing one.", "When margins are still moving, choose revenue growth from the story and charge it through sales-to-capital (L10); then ask what return on new capital that growth needs."],
+           ["Analysts as a cross-check only.", "Their forecasts look a few years ahead, follow each other and echo the company."],
+           ["The shape.", "Years 2–5 at the chosen growth, years 6–10 stepping down in five equal steps, growth forever from year 11 (L12)."]]},
+    {"h": "Worked: his Alphabet, March 2018",
+     "p": ["He chose 12%% revenue growth for five years, against 15%% over the past five and %s in the latest year, then stepped it down to 2.75%% by year 10. The check: in year 1 Alphabet reinvests %s of %s after-tax operating income, a reinvestment rate of %s. To grow 12%% on that, each new dollar must earn about %s (12 ÷ %.2f). His story sheet shows the return on new capital the forecast implies, %s, against %s on existing capital. That high bar is the price of the growth he assumed." % (pct((A["rev"] / A["rev_prev"] - 1) * 100, 1), M(A["reinv1"]), M(A["ebit1_at"]), pct(A_RR1 * 100, 0), pct(12 / A_RR1, 0), A_RR1, pct(A["mroic"], 1), pct(A["roic"], 1))],
+     **A_SRC},
+    {"h": "Your turn: KO",
+     "p": ["Measure KO’s reinvestment rate and return on capital from the numbers below and multiply. Set the result beside his soft-drinks figure, decide which goes in the model, then judge how fast KO’s growth needs to fade."]},
+]
+WALK["L12"] = [
+    {"h": "Why a terminal value",
+     "p": ["You can’t forecast forever, so after year 10 one number captures all the years after: the terminal value. It is usually most of the value, which is why it needs the most care."]},
+    {"h": "His two caps",
+     "l": [["Growth forever ≤ the riskfree rate.", "No company can outgrow the economy forever, and the riskfree rate is his stand-in for the economy’s long-run growth."],
+           ["Return on capital forever → the cost of capital.", "Competition wears down excess returns. Keep them above the cost of capital only if you can name the moat that protects them."],
+           ["Reinvestment follows.", "Reinvestment rate = growth ÷ return on capital. Year 11 cash flow = after-tax operating income × (1 − reinvestment rate). Terminal value = that cash flow ÷ (cost of capital − growth)."],
+           ["Never end on a multiple.", "Ending with ‘ten times earnings’ is pricing, what the market pays for similar companies (L22), dressed up as a DCF."]]},
+    {"h": "Worked: his Alphabet, March 2018",
+     "p": ["Growth forever 2.75%%, the riskfree rate. Cost of capital after year 10: 8%%. Return on capital forever: 12%%, above 8%%, for ‘strong competitive advantages’. Reinvestment rate = 2.75 ÷ 12 = %s. Year 11: %s × (1 − %s) = %s. Terminal value = %s ÷ (8%% − 2.75%%) = %s, worth %s today: %s of the operating value." % (pct(A_RIR_T * 100, 1), M(A["ebitT_at"]), pct(A_RIR_T * 100, 1), M(A_TFCF), M(A_TFCF), a_b(A_TV), a_b(A_PV_TV), pct(A_PV_TV / A_OPS * 100, 0)),
+           "What the moat was worth: with the return falling to 8%%, reinvestment rises to %s and the value drops by about $%.0f a share." % (pct(A["rf"] / A["wacc_t"] * 100, 1), A_MOAT_PS)],
+     **A_SRC},
+    {"h": "Your turn: KO",
+     "p": ["Set KO’s growth forever under the cap and choose its return on capital forever: can you name KO’s moat? Then find what share of KO’s value sits in the terminal value."]},
+]
+WALK["L13"] = [
+    {"h": "From the business to the shares",
+     "p": ["The DCF values the operating business. The shareholders own that, plus everything outside it, minus every other claim ahead of them."]},
+    {"h": "How he does it",
+     "l": [["Add cash.", "At face value: ‘cash is cash’. Less any tax still due to bring it home."],
+           ["Add stakes in other companies.", "Their income isn’t in operating income, so value them separately: listed ones at market price."],
+           ["Subtract all the debt.", "Borrowings, leases, unfunded pensions. And the minority interest: the outsiders’ share of subsidiaries counted at 100%."],
+           ["Subtract employee options.", "Value them as options and subtract; then divide by the shares actually outstanding."]]},
+    {"h": "Worked: his Alphabet, March 2018",
+     "p": ["Operating value %s. Minus debt, leases included: %s. Plus cash: %s, less the extra US tax on the %s held abroad, %s × (25%% − 15%%) = %s, leaving %s. No stakes, no minority interest, no options outstanding. Equity: %s. Per share: ÷ 703 million = %s." % (a_b(A_OPS), a_b(A_DEBT_OUT), a_b(A["cash"]), a_b(A["trapped"]), a_b(A["trapped"]), a_b(A["cash"] - A_CASH), a_b(A_CASH), a_b(A_EQ), usd(A_VPS))],
+     **A_SRC},
+    {"h": "Your turn: KO",
+     "p": ["KO has more loose ends than Alphabet: listed stakes in its bottlers, a minority interest, employee options. Walk from operating value to equity with the numbers below, and find which loose end moves KO’s value per share most."]},
+]
+WALK["L14"] = [
+    {"h": "From a value to a verdict",
+     "p": ["A single value per share pretends to know more than you do. The honest output is a range, and a comparison with the price that says what would have to be true for the market to be right."]},
+    {"h": "How he does it",
+     "l": [["Point value.", "Equity ÷ shares."],
+           ["A range.", "Give the uncertain inputs, growth, margin and reinvestment, a distribution and run the valuation thousands of times: a simulation. The spread of results shows how much you really know."],
+           ["Against the price.", "If they differ, either you are right and the market is wrong, or the other way round. Name the inputs the gap depends on."]]},
+    {"h": "Worked: his Alphabet, March 2018",
+     "p": ["His point value: %s a share, against $%s when he built the spreadsheet. His simulation: a median of $%d; at a price of $%s, a %d%% chance the stock was overvalued, with more room above than below. The input it hinged on: revenue growth. His verdict: the closest he had come to owning it, with an order to buy at $%d." % (usd(A_VPS), format(A["price"], ","), A["sim_median"], format(A["sim_price"], ","), A["p_over"], A["limit"])],
+     **A_BLOG},
+    {"h": "Your turn: KO",
+     "p": ["Divide KO’s equity by its shares, once with a moat and once without, and set both against the price. Name the three inputs that drive the spread, and say what would have to be true for the market to be right."]},
+]
+IDEA = {
+    "L02": "A valuation is a bridge between a story and numbers. Tell the story first, grade it possible, plausible or probable, and let only the probable part set the numbers. When a number and the story disagree, one of them has to change.",
+    "L03": "Value the company in one currency and keep everything in it, cash flows and discount rate alike. The riskfree rate is today’s long-term government bond rate in that currency, with any government default spread taken out.",
+    "L04": "The equity risk premium is the extra return investors demand for owning stocks: use today’s implied premium, not a historical average. Add country risk for where the company sells, weighted by its revenue there.",
+    "L05": "Beta measures how much a company moves with the market. Build it bottom-up from the businesses the company is in, then put its own debt back in; one company’s regression beta is too noisy to trust.",
+    "L06": "The cost of debt is what the company would pay to borrow long-term today: the riskfree rate plus a default spread from its rating, real or synthetic. Leases are debt, and the tax saving uses the marginal rate (L09).",
+    "L07": "The cost of capital blends the cost of equity and the after-tax cost of debt, weighted by market values, never book values. One number for the company as a whole; a division or a project gets its own.",
+    "L08": "Clean the base year before you forecast from it: put every expense in the right box, capitalise R&D, and add back only true one-offs. Every later year grows from this number.",
+    "L09": "Tax operating income at the effective rate now and walk it to the marginal rate by year 10. The marginal rate also sets the tax that interest saves, and losses carried forward shelter income until they run out.",
+    "L10": "Reinvestment is the bill for growth: net capital spending, acquisitions and working capital. For a fast-growing company, tie it to the growth with a sales-to-capital ratio instead of trusting the past.",
+    "L11": "Growth has to be earned: growth = reinvestment rate × return on capital. It is the growth for a steady company and the check on the growth you chose for a changing one; analysts’ forecasts are a cross-check, never the input.",
+    "L12": "After year 10 a terminal value closes the model, and it is usually most of the value. Growth forever no higher than the riskfree rate, return on capital forever at the cost of capital unless you can name a moat, and reinvestment that follows from the two.",
+    "L13": "The DCF values the operating business. To reach the shares, add cash and stakes in other companies, subtract all the debt, the minority interest and employee options, and divide by the shares outstanding.",
+    "L14": "A value per share is a range, not a point: simulate the uncertain inputs and see how wide the range is. Then set it against the price and say what would have to be true for the market to be right.",
+}
+for lid, w in WALK.items():
+    L.setdefault(lid, {})["walk"] = w
+for lid in ("L03", "L04"):
+    L[lid]["teach"] = IDEA[lid]
+
+
 # ---- the thread: what each lesson builds on (with the number it carries in) and where its result goes --
 # Shown at the top of the Learn step. "b" never states today's answer: only numbers from lessons already done.
 THREAD = {
