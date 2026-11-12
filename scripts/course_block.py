@@ -4,7 +4,8 @@ import json, os, re
 
 HTML = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "time-tracker.html")
 LIBRARY = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "youtube-digest", "data", "library.json")
-KEYS = ["id", "order", "rung", "stage_name", "concept", "estimateMin", "teach", "task", "co", "rev", "after", "watch", "read"]
+KEYS = ["id", "order", "rung", "stage_name", "concept", "estimateMin", "teach", "task", "co", "rev", "after", "watch", "read",
+        "walk", "thread", "need", "needNote", "key", "rtask", "rneed", "rkey"]
 
 
 def yt(vid, channel, title, why):
@@ -24,6 +25,52 @@ def course(meta, lessons):
             assert meta["rungs"].index(next(y for y in lessons if y["id"] == a)["rung"]) == meta["rungs"].index(x["rung"]) - 1, (x["id"], "after", a)
     assert len(meta["rungDesc"]) == len(meta["rungs"])
     return dict(meta, lessons=[{k: x[k] for k in KEYS if k in x} for x in lessons])
+
+
+def lesson_texts(x):
+    """Everything a lesson shows, as (where, text) pairs: the idea, walk-through, thread, task, numbers box, worked answer."""
+    out = [("idea", x.get("teach", ""))]
+    for sec in x.get("walk", []):
+        out += [("walk", sec["h"])] + [("walk", q) for q in sec.get("p", []) + sec.get("p2", [])]
+        out += [("walk", " ".join(it) if isinstance(it, list) else it) for it in sec.get("l", [])]
+    out += [("thread", x["thread"][k]) for k in ("b", "n") if x.get("thread", {}).get(k)]
+    out += [("task", x.get("task", ""))] + ([("needNote", x["needNote"])] if x.get("needNote") else [])
+    for it in x.get("need", []):
+        out += [("need", it["k"])] + ([("need", it["n"])] if it.get("n") else [])
+    for b in x.get("key", []):
+        out += ([("answer", b["t"])] if b.get("t") else []) + [("answer", q) for q in b.get("l", [])]
+    return out
+
+
+def term_order(lessons, glossary, prefix):
+    """A term may be used before the lesson that teaches it only with a pointer to that lesson in the same sentence,
+    e.g. "(X07)" or "X03–X05". glossary: [(lesson number, name, regex)]. Returns the offending sentences."""
+    ptr = re.compile(r"\b%s(\d\d)(?:\s*[–-]\s*%s(\d\d))?" % (prefix, prefix))
+    flags = []
+    for x in lessons:
+        n = int(x["id"][1:])
+        for where, text in lesson_texts(x):
+            for sent in re.split(r"(?<=[.!?])\s+(?=[A-Z‘“(€$])", text):
+                ps = [(int(a), int(b or a)) for a, b in ptr.findall(sent)]
+                for intro, name, rx in glossary:
+                    if intro > n and re.search(rx, sent, re.I) and not any(a <= intro <= b for a, b in ps):
+                        flags.append("%s %s: “%s” is taught in %s%02d — %s" % (x["id"], where, name, prefix, intro, sent[:110]))
+    return flags
+
+
+def check_extras(lessons):
+    """The numbers box, worked answer, walk-through and revisit fields have the shapes the app renders."""
+    for x in lessons:
+        for it in x.get("need", []) + x.get("rneed", []):
+            assert it.get("k") and it.get("v"), (x["id"], it)
+        for b in x.get("key", []) + x.get("rkey", []):
+            assert b.get("l") and all(isinstance(q, str) and q for q in b["l"]), (x["id"], b)
+        for sec in x.get("walk", []):
+            assert sec.get("h") and (sec.get("p") or sec.get("l")), (x["id"], sec)
+        if "rtask" in x:
+            assert x.get("rev") and x.get("rkey"), (x["id"], "a revisit needs its company and an answer")
+        if "thread" in x:
+            assert x["thread"].get("n"), (x["id"], "a thread says where the lesson leads")
 
 
 def check_videos(cur, library=LIBRARY):
