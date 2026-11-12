@@ -68,7 +68,7 @@ def check_extras(lessons):
         for sec in x.get("walk", []):
             assert sec.get("h") and (sec.get("p") or sec.get("l")), (x["id"], sec)
         if "rtask" in x:
-            assert x.get("rev") and x.get("rkey"), (x["id"], "a revisit needs its company and an answer")
+            assert (x.get("rev") or "{idea}" in x["rtask"]) and x.get("rkey"), (x["id"], "a revisit needs its company (or {idea}) and an answer")
         if "thread" in x:
             assert x["thread"].get("n"), (x["id"], "a thread says where the lesson leads")
 

@@ -32,18 +32,19 @@ LTV = yt("uYds0zcAFWM", A, "I Just Learned This After 14 Years of Business", "li
 NUMBER = yt("jzKpAtzKQ54", A, "Business Owners: You NEED to Know This Number", "the one number that tells you if you can grow")
 STAY = yt("-j8_YCWZ05Q", A, "How to Get Your Customers to Stay FOREVER", "churn as a leaky bucket, and the first month")
 PERFECT = yt("3fsJFUvA6Ts", A, "What Makes The Perfect Business (5 Things)", "recurring revenue and what makes customers stay")
+MARKET = yt("LqC-oXjatmA", A, "The Key To Finding a Profitable Market", "the four tests, with the resume-coach and seniors-dating examples")
 SCALE = yt("N5MExtki_VI", A, "If I Wanted To Scale A Service Business In 2026, Here's What I'd Do", "growing a service business one constraint at a time")
 
 L = [
  dict(id="B01", rung="Market", stage_name="A starving crowd", concept="Pick the market before the product",
   task="Score the two niches from your Making money with AI plan on the four: pain, money to pay, easy to reach, growing (1–10 each). Judge: which niche wins, and which of the four is its weakest — and can you fix that, or should you switch?",
-  co="your AI service", rev="Intensity Applied", watch=[CROWD, BROKE]),
+  co="your AI service", rev="Intensity Applied", watch=[CROWD, MARKET, BROKE], read=["$100M Offers, the “starving crowd” chapter"]),
  dict(id="B02", rung="Market", stage_name="Niche until it hurts", concept="One who, one problem, one result",
   task="Write your one-sentence niche for the AI service: who exactly, which recurring task, and the result in their words. Then write it once more, narrower. Judge: which version would make an owner say ‘that’s me’, and what do you lose by choosing it?",
   co="your AI service", rev="Intensity Applied", watch=[BROKE]),
  dict(id="B03", rung="Offer", stage_name="The value equation", concept="Dream outcome × likelihood ÷ (time × effort)",
   task="Rate your AI service from the owner’s side, 1–10, on each of the four: the dream outcome, how likely it feels, how soon they see something, and how much effort it asks of them. Write one change for each that would raise the value. Judge: which single change would raise it most, and why?",
-  co="your AI service", rev="Intensity Applied", after=["B01", "B02"], watch=[EQ, K700]),
+  co="your AI service", rev="Intensity Applied", after=["B01", "B02"], watch=[EQ, K700], read=["$100M Offers, the “value equation” chapter"]),
  dict(id="B04", rung="Offer", stage_name="Problems into solutions", concept="List every problem, then solve each one",
   task="List ten problems a small firm would have with handing over its weekly admin to you, before, during and after. Turn each into a named solution. Judge: which three problems would stop a sale if you left them out?",
   co="your AI service", rev="Intensity Applied", after=["B02"], watch=[OFFERS]),
@@ -52,7 +53,7 @@ L = [
   co="your AI service", rev="Intensity Applied", after=["B01"], watch=[KEYNOTE, EQ]),
  dict(id="B06", rung="Price", stage_name="Price on value", concept="Charge from the value, not from your hours",
   task="For one firm from your interviews: the hours your service saves a month, what an hour of theirs is worth, the value per month, and your price at half of it. Judge: if they push back on price, is that a price problem or a value problem — and how would you tell?",
-  co="your AI service", rev="Intensity Applied", after=["B04", "B05"], watch=[PROFIT, PRICES]),
+  co="your AI service", rev="Intensity Applied", after=["B04", "B05"], watch=[PROFIT, PRICES], read=["$100M Offers, the “commodity problem” and pricing chapters"]),
  dict(id="B07", rung="Price", stage_name="Let clients fund growth", concept="Gross margin, cost to acquire, and 30-day cash",
   task="For your €300-a-month service: estimate your hours per client, the cost of the tools, your gross margin, and what it costs you, in hours and euros, to win one client. Is the first month enough to cover it? Judge: what would you change first, a setup fee, up-front payment, or a cheaper way to win clients?",
   co="your AI service", rev="Intensity Applied", after=["B05"], watch=[FUNDING, MKT101]),
@@ -85,7 +86,7 @@ L = [
 # ---- each lesson's idea, walk-through, numbers box, worked answer, thread and revisit -------------------------------
 # The numbers are your Making money with AI plan's (€300 a month at half the value of 10 hours at €60, a free 60-day
 # pilot for three firms, two conversations a day, towards 1.5 hours a client). Anything the plan doesn't fix is marked
-# "assumed" where it is used, so you can put in your own. Hormozi's figures are his own claims.
+# "assumed" where it is used, so you can put in your own. The figures in Hormozi's videos are Hormozi's own claims.
 def eur(x, d=0): return ("−" if x < 0 else "") + "€" + format(abs(x), ",.%df" % d)
 def pc(x, d=0): return ("%." + str(d) + "f%%") % x
 PRICE, HOURS_SAVED, OWNER_RATE = 300, 10, 60
@@ -104,7 +105,7 @@ PLAN = {"k": "Your plan’s price", "v": "€300 a month", "n": "Half the value 
 EXTRA = {}
 EXTRA["B01"] = dict(
   teach="Market first, then the offer, then how well you sell: an average offer to a starving crowd sells, a great offer to the wrong people doesn’t. A starving crowd has real pain, money to pay, people you can find in one place, and a market that is still growing.",
-  walk=[{"h": "Why the market comes first", "p": ["You can fix an offer in a week and your selling in a month. You can’t fix a market that has no money or no pain; you can only leave it."]},
+  walk=[{"h": "Why the market comes first", "p": ["You can fix an offer in a week and your selling in a month. You can’t fix a market that has no money or no pain; you can only leave it."], "p2": ["If you know a market from your own life, start there: you already know its pain, and where its people gather."]},
         {"h": "The four tests", "l": [["Pain.", "They lose money, time or sleep over it, every week. A nice-to-have fails."], ["Money.", "The person with the pain can pay, and signs the cheques."], ["Easy to find.", "A list, a trade group, an industry: somewhere they gather."], ["Growing.", "More of them, or more need, each year."]]},
         {"h": "Where it goes wrong", "l": ["Picking the market you like, not the one that passes.", "Scoring every test 7 to be polite; be harsh with the weakest."]},
         {"h": "Worked: Hormozi’s two failures", "p": ["Unemployed people have the pain but not the money. Newspaper buyers can pay, but the market is shrinking. Each fails one test, and everything after it gets harder. Small firms drowning in weekly admin can pass all four: the hours are lost every week, the owner pays, they cluster by trade, and AI makes the problem newly solvable."]},
@@ -132,7 +133,7 @@ EXTRA["B03"] = dict(
   teach="Value = (dream outcome × how likely they believe they’ll get it) ÷ (how long it takes × how much effort it costs them). A bigger promise is the obvious lever; certainty, speed and less effort are the cheaper ones, and usually worth more.",
   walk=[{"h": "The four parts", "l": [["Dream outcome.", "The life after the result, in their words."], ["Likelihood.", "How sure they are it will work for them: proof, results from people like them, a guarantee (B05)."], ["Time delay.", "How soon they see something."], ["Effort.", "What it asks of them: meetings, learning, changing habits."]]},
         {"h": "Where it goes wrong", "l": ["Only raising the promise.", "Rating it from your side, not the owner’s."]},
-        {"h": "Worked: Hormozi’s liposuction", "p": ["Liposuction and a $5 weight-loss ebook promise the same outcome. The price gap is the other three parts: a doctor with 10,000 surgeries behind him is far more likely to deliver, in an afternoon, with almost no effort from you."]},
+        {"h": "Worked: Hormozi’s liposuction", "p": ["Liposuction and a $5 weight-loss ebook promise the same outcome. The price gap is the other three parts: a doctor who has done 10,000 surgeries is far more likely to deliver, in an afternoon, with almost no effort from you."]},
         {"h": "Your turn: your AI service", "p": ["Rate it 1–10 on each part from the owner’s side, and write one change for each."]}],
   key=[{"t": "A good answer looks like", "l": ["Ratings from the owner’s side, e.g. outcome 7 (evenings back), likelihood 4 (no proof yet), time 5 (results in month two), effort 6 (they must explain their process).",
         "One change each: a case from the first pilot (likelihood), invoices out in week one (time), a 30-minute onboarding call and you do the rest (effort).",
@@ -167,10 +168,11 @@ EXTRA["B05"] = dict(
 
 EXTRA["B06"] = dict(
   teach="Price from the value you create, not from your hours: a low price is the hardest business there is, with no money to deliver well, to find customers or to fix mistakes. Your plan prices the service near half its value, and raises prices for new clients first when demand outruns your time.",
-  walk=[{"h": "Why cheap is hard", "p": ["Thin margins leave nothing for delivering well, finding the next client or fixing mistakes, and the cheapest buyers ask the most. A higher price also makes clients take the work more seriously."]},
+  walk=[{"h": "Why cheap is hard", "p": ["Thin margins leave nothing for delivering well, finding the next client or fixing mistakes, and the cheapest buyers ask the most. A higher price also makes clients take the work more seriously."], "p2": ["Sell what everyone sells and you compete on price, and lose. Make an offer people can’t compare (B05), then charge for the value."]},
+        {"h": "The margin maths", "p": ["At a 20%% profit margin, a 20%% price rise doubles your profit: on a %s sale that costs %s to deliver you keep %s; at %s you keep %s. Small price changes move profit far more than they move revenue." % (eur(100), eur(80), eur(20), eur(120), eur(40))]},
         {"h": "How to set it", "l": [["Value per month.", "Hours saved × what an hour of theirs is worth."], ["Price.", "A share of that value, your plan says half: they keep the other half."], ["Raising it.", "When demand outruns your time, raise it for new clients first."]]},
         {"h": "Where it goes wrong", "l": ["Pricing from your hours or your costs.", "Discounting before you’ve heard the real objection (B12)."]},
-        {"h": "Worked: Hormozi’s gym", "p": ["When he tripled the price at his gym, a third of the members left and revenue still doubled: 3 × ⅔ = 2. Fewer clients at a higher price also meant more time and money for each one."]},
+        {"h": "Worked: Hormozi’s gym", "p": ["When Hormozi tripled the price at the gym, a third of the members left and revenue still doubled: 3 × ⅔ = 2. Fewer clients at a higher price also meant more time and money for each one."]},
         {"h": "Your turn: one firm from your interviews", "p": ["Hours saved a month, what an hour of theirs is worth, the value, and your price at half."]}],
   need=[{"k": "Your plan’s example firm", "v": "10 hours · €60 an hour", "n": "Hours saved a month, and what an hour of the owner’s is worth."}],
   key=[{"t": "Worked answer, with your plan’s numbers", "l": ["Value: 10 hours × €60 = %s a month. Price at half: %s a month, the gate in your plan." % (eur(VALUE), eur(VALUE / 2)),
@@ -307,6 +309,7 @@ GLOSSARY = [
 
 def check_extra():
     e = lambda a, b, tol=0.5: abs(a - b) <= tol or sys.exit(f"bad number: {a} vs {b}")
+    e((120 - 80) / (100 - 80), 2, 0); e(3 * 2 / 3, 2, 1e-9)                      # the margin maths, the gym
     e(VALUE, 600); e(GP_NOW, 110); e(GP_GOAL, 210); e(CAC_HOURS, 39); e(CAC, 1560); e(LTV12, 2880); e(LTV6, 1440)
     for lid, x in EXTRA.items():
         assert 150 < len(x["teach"]) < 1100, (lid, len(x["teach"]))
@@ -328,7 +331,7 @@ C = course({"goal_id": "goal_biz", "key": "biz", "title": "Offers & sales with H
      "blurb": "One question on your own offer per sitting: the AI service your Making money with AI plan pilots with small firms, and the revisit on Intensity Applied. Written in my words from Alex Hormozi’s videos in your library.",
      "allDone": "now make the offer to three firms. 💼",
      "revWord": "another offer",
-     "refNote": "The idea opens in step 2 of the sitting — guess first. The videos are Hormozi’s, for when you want more; his revenue figures are his own claims."}, L)
+     "refNote": "The idea opens in step 2 of the sitting — guess first. The videos are Hormozi’s, for when you want more; the revenue figures in them are Hormozi’s own claims."}, L)
 check_videos(C)
 check_extras(C["lessons"])
 FLAGS = term_order(C["lessons"], GLOSSARY, "B")
