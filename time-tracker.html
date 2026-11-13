@@ -1324,6 +1324,47 @@ button.step-name:hover .step-nm{color:var(--accent)}
 .cs-ev{grid-area:ev;justify-self:start;max-width:100%;padding:3px 6px;border:1px solid var(--line-strong);border-radius:7px;background:var(--surface);color:var(--ink);font-family:inherit;font-size:16px}
 .cs-pm{grid-area:pm;font-size:12px;color:var(--muted);white-space:nowrap;text-align:right}
 .cs-row .icon-btn{grid-area:x;width:32px;height:32px;font-size:14px}
+.sp-acts{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:8px}
+.sp-nav{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:12px 0 6px}
+.sp-mon{font-family:var(--font-display);font-size:16px;font-weight:600}
+.sp-nav .icon-btn{width:34px;height:34px}
+.sp-pp{margin-top:2px;font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums}
+.sp-gs-wrap{display:flex;flex-direction:column;gap:11px;margin-top:14px}
+.sp-g{display:flex;flex-direction:column;gap:4px}
+.sp-gh{display:flex;justify-content:space-between;align-items:baseline;gap:10px;font-size:13.5px}
+.sp-gn{font-weight:600}
+.sp-g.is-empty .sp-gn{color:var(--faint);font-weight:500}
+.sp-gv{font-family:var(--font-mono);font-size:13px;font-variant-numeric:tabular-nums;white-space:nowrap}
+.sp-gt{color:var(--muted)}
+.sp-gt.is-over{color:var(--bad)}
+.sp-bar{position:relative;display:block;height:7px;border-radius:99px;background:var(--surface);border:1px solid var(--line)}
+.sp-bar i{display:block;height:100%;max-width:100%;border-radius:99px;background:var(--accent)}
+.sp-bar i.is-over{background:var(--bad)}
+.sp-bar b{position:absolute;top:-4px;bottom:-4px;width:2px;margin-left:-1px;border-radius:1px;background:var(--ink)}
+.sp-gs{font-size:12px;line-height:1.45;color:var(--muted)}
+.sp-big{margin:10px 0 0;font-size:12.5px;line-height:1.5;color:var(--muted)}
+.sp-big b{color:var(--ink);font-weight:600}
+.sp-row{display:grid;grid-template-columns:auto minmax(0,1fr) auto auto;grid-template-areas:"d w a x" "ev ev ev x";align-items:center;gap:6px 10px;padding:9px 10px 9px 12px;font-size:13.5px}
+.sp-row+.sp-row{border-top:1px solid var(--line)}
+.sp-row .icon-btn{grid-area:x;width:32px;height:32px;font-size:14px}
+.sp-items{margin-top:3px;font-size:12px;color:var(--muted)}
+.sp-items summary{cursor:pointer;color:var(--accent);font-weight:600}
+.sp-items ul{list-style:none;margin:6px 0 2px;padding:0;display:flex;flex-direction:column;gap:2px}
+.sp-items li{display:flex;justify-content:space-between;gap:10px}
+.sp-items li span:last-child{font-family:var(--font-mono);white-space:nowrap}
+.sp-foot{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px 12px;margin-top:12px}
+.sp-foot .cs-note{margin:0}
+.sp-ppl{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--muted)}
+.sp-ppl .cs-ev{grid-area:auto}
+.sp-tf{margin-top:10px}
+.sp-rcpt{margin-top:12px;padding:12px;border:1px solid var(--accent);border-radius:12px;background:var(--surface-2);display:flex;flex-direction:column;gap:9px}
+.sp-rcpt .fire-h{margin-top:0}
+.sp-rl{display:grid;grid-template-columns:minmax(0,1fr) auto;grid-template-areas:"w a" "ev ev";gap:5px 10px;padding:8px 10px;font-size:13px}
+.sp-rl+.sp-rl{border-top:1px solid var(--line)}
+.sp-warn{color:var(--warn)}
+.sp-none{margin-top:10px}
+.sp-fire{margin-top:16px;padding-top:11px;border-top:1px solid var(--line)}
+.sp-fire>summary{cursor:pointer;font-size:13px;font-weight:600;color:var(--muted)}
 .gp-fire .mg-fire{margin:0}
 .mg-fire{display:flex;align-items:baseline;flex-wrap:wrap;gap:3px 9px;width:100%;margin:2px 0 12px;padding:9px 11px;border:1px solid var(--line);border-left:3px solid var(--good);border-radius:9px;background:var(--surface-2);font-family:inherit;text-align:left;color:var(--ink);cursor:pointer}
 .mg-fire:hover{border-color:var(--line-strong);border-left-color:var(--good)}
@@ -1760,7 +1801,12 @@ button.step-name:hover .step-nm{color:var(--accent)}
   // constants the first render() below already needs (a var further down is still undefined then)
   var HOUR_GOAL=100,HOUR_BASICS=20;   // 20h: roughly what the basics of a new skill take (Josh Kaufman, The First 20 Hours) · 100h: a rule of thumb for getting ahead of most people who start
   var FIRE_REAL=0.05,FIRE_RATES=[4,3.5],FIRE_STEPS=[500,1000,2000,3000];
-  var COST_CATS=[["home","Housing"],["food","Food & groceries"],["transport","Transport"],["bills","Bills & insurance"],["health","Health"],["fun","Going out & fun"],["other","Other"]];
+  var COST_CATS=[["home","Housing & energy","fixed"],["bills","Bills, phone & insurance","fixed"],["food","Food & groceries","day"],["house","Household & care","day"],
+    ["transport","Transport","day"],["health","Health","day"],["clothes","Clothes","save"],["stuff","Furniture & appliances","save"],["fun","Going out & fun","social"],["other","Other","other"]];
+  /* Nibud's four groups: vaste lasten, huishoudelijke uitgaven, reserveringsuitgaven, sociale participatie. Every category sits in one. */
+  var COST_GROUPS=[["fixed","Fixed costs","rent, energy, phone, insurance"],["day","Day-to-day","groceries, household, transport"],["save","Saving-up costs","clothes, appliances, repairs"],["social","Social life","going out, hobbies, memberships"],["other","Other",""]];
+  var FOOD_KINDS=[["meat","Meat & fish"],["dairy","Dairy & eggs"],["veg","Fruit & veg"],["bread","Bread & bakery"],["snack","Snacks & sweets"],["nuts","Nuts"],["sauce","Sauces & spreads"],["drink","Drinks"],["food","Other food"]];
+  var NIBUD_FOOD=[230,255];   // healthy eating for one person, a month: Nibud's €7.56–€8.40 a day × 30.4 days
   var FILE_SYN={option:"option options call calls put puts wheel leaps theta delta strike premium spread condor assigned assignment expiry",
     fire:"fire spend spending spent cost costs budget retire retirement savings expenses",
     invest:"stock stocks share shares valuation dcf damodaran aswath etf dividend company earnings portfolio",
@@ -1789,7 +1835,7 @@ button.step-name:hover .step-nm{color:var(--accent)}
   function loadSes(){try{var s=JSON.parse(localStorage.getItem(SES_KEY)||"null");if(s&&s.tid&&s.d&&Date.now()-(s.at||0)<2*86400000)return s;}catch(e){}return null;}
   var DEC_KEY="wmtw_dec_draft";   // an unfinished call survives a reload — e.g. you switched apps to look up the price
   function loadDecDraft(){try{var s=JSON.parse(localStorage.getItem(DEC_KEY)||"null");if(s&&s.d&&s.gid&&Date.now()-(s.t0||0)<3*86400000)return s;}catch(e){}return null;}
-  var ui={looseOpen:false, fireOpen:{}, costOpen:{}, fileOpen:{}, docOpen:{}, refShow:{}, addOpen:false, goalOpen:false, actionOpen:{}, noteOpen:{}, cueOpen:{}, idOpen:{}, repOpen:{}, stepAddOpen:{}, proposal:{}, loading:{}, projectOpen:false, projEdit:{}, projLoading:{}, adviseLoading:{}, currRefs:{}, projCardOpen:{}, goalSecOpen:{}, aswClosed:loadAsw(), aswAll:false, aswOpen:{}, lessonOpen:{}, stepOpen:{}, dec:loadDecDraft(), decRows:{}, decAll:false, armed:null, ses:loadSes(), goalMode:"have", shapeLevel:"new", shapeTopic:"", shapeLoading:false, shapeProposal:null, hoLoading:{}, ideaOpen:{}, view:loadView(), goalId:loadGoalId(), nameOpen:{}, branchOpen:{}, cvGoal:loadCvGoal(), cvMode:loadCvMode(), art:loadArt(), date:dayKey(Date.now())};
+  var ui={looseOpen:false, fireOpen:{}, costOpen:{}, spendMonth:{}, tgtOpen:{}, spFire:{}, rcpt:null, fileOpen:{}, docOpen:{}, refShow:{}, addOpen:false, goalOpen:false, actionOpen:{}, noteOpen:{}, cueOpen:{}, idOpen:{}, repOpen:{}, stepAddOpen:{}, proposal:{}, loading:{}, projectOpen:false, projEdit:{}, projLoading:{}, adviseLoading:{}, currRefs:{}, projCardOpen:{}, goalSecOpen:{}, aswClosed:loadAsw(), aswAll:false, aswOpen:{}, lessonOpen:{}, stepOpen:{}, dec:loadDecDraft(), decRows:{}, decAll:false, armed:null, ses:loadSes(), goalMode:"have", shapeLevel:"new", shapeTopic:"", shapeLoading:false, shapeProposal:null, hoLoading:{}, ideaOpen:{}, view:loadView(), goalId:loadGoalId(), nameOpen:{}, branchOpen:{}, cvGoal:loadCvGoal(), cvMode:loadCvMode(), art:loadArt(), date:dayKey(Date.now())};
   var isTouch=("ontouchstart" in window)||(navigator.maxTouchPoints>0);
   var sampleNS; // undefined=unknown, null=unavailable, function=ready
   var shotLim;  // undefined=unknown, null=this view can't send Claude an image, object=the image limits
@@ -1804,10 +1850,15 @@ button.step-name:hover .step-nm{color:var(--accent)}
   root.addEventListener("click",onClick);
   root.addEventListener("submit",onSubmit);
   root.addEventListener("input",onInput);
-  root.addEventListener("toggle",function(e){var d=e.target;if(d&&d.classList&&d.classList.contains("ses-more"))ui.sesMore=d.open?d.getAttribute("data-lid"):null;},true);   // "Want more" stays open while you open and close its cards
+  root.addEventListener("toggle",function(e){var d=e.target;if(d&&d.classList&&d.classList.contains("ses-more"))ui.sesMore=d.open?d.getAttribute("data-lid"):null;if(d&&d.classList&&d.classList.contains("sp-fire"))ui.spFire[d.getAttribute("data-id")]=d.open;},true);   // "Want more" stays open while you open and close its cards
   root.addEventListener("change",function(e){   // linking a task's time to a goal, from the overview; the round's weekday minutes
     var el=e.target;
     if(el&&el.getAttribute("data-action")==="shot-file"){var sf=el.files&&el.files[0];if(sf)shotTake(sf);return;}
+    if(el&&el.getAttribute("data-action")==="rcpt-file"){var rf=el.files&&el.files[0];if(rf)rcptTake(el.getAttribute("data-id"),rf);return;}
+    if(el&&el.getAttribute("data-action")==="rcpt-line-cat"){var rs=ui.rcpt,ri=+el.getAttribute("data-i");if(rs&&rs.r&&rs.r.lines[ri]){rs.r.lines[ri].cat=el.value;if(el.value!=="food")rs.r.lines[ri].k="";render();}return;}
+    if(el&&el.getAttribute("data-action")==="rcpt-date"){if(ui.rcpt&&ui.rcpt.r&&/^\d{4}-\d{2}-\d{2}$/.test(el.value))ui.rcpt.r.date=el.value;render();return;}
+    if(el&&el.getAttribute("data-action")==="cost-cat"){var kg=el.getAttribute("data-id"),kcid=el.getAttribute("data-cid"),kv=el.value;commit(function(){var c=findCost(kg,kcid);if(c&&COST_CATS.some(function(k){return k[0]===kv;}))c.cat=kv;});return;}
+    if(el&&el.getAttribute("data-action")==="spend-people"){var pg=el.getAttribute("data-id"),pv=Math.max(1,Math.min(20,parseInt(el.value,10)||1));commit(function(){var g=findGoal(pg);if(g&&g.fire){if(pv>1)g.fire.people=pv;else delete g.fire.people;}});return;}
     if(el&&el.getAttribute("data-action")==="cost-every"){var eg=el.getAttribute("data-id"),ecid=el.getAttribute("data-cid"),ev=el.value;commit(function(){var c=findCost(eg,ecid);if(!c)return;if(ev)c.every=ev;else delete c.every;});return;}
     if(el&&el.getAttribute("data-action")==="dp-stack"){var sg=el.getAttribute("data-id"),sv=el.value;dayEdit(function(r){if(sv)r.stack[sg]=sv;else delete r.stack[sg];});return;}
     if(el&&(el.classList.contains("dp-ml")||el.classList.contains("dp-mt"))){var mid=el.getAttribute("data-mid"),mv=el.value.trim(),lab=el.classList.contains("dp-ml");
@@ -2188,6 +2239,7 @@ button.step-name:hover .step-nm{color:var(--accent)}
     else if(a==="idea-add")addIdea(f.getAttribute("data-id"),val("idea-name"));
     else if(a==="add-branch"){var bp=f.getAttribute("data-id");addGoal(val("branch-"+bp),null,"",bp);}
     else if(a==="fire-save"){var fg=f.getAttribute("data-id");saveFire(fg,val("fire-month-"+fg),val("fire-have-"+fg),val("fire-add-"+fg));}
+    else if(a==="spend-tgt-save")saveTargets(f.getAttribute("data-id"));
     else if(a==="cost-save"){var cg=f.getAttribute("data-id");saveCost(cg,val("cost-what-"+cg),val("cost-amt-"+cg),val("cost-d-"+cg),val("cost-cat-"+cg),val("cost-ev-"+cg));}
     else if(a==="goal-name"){var rg=f.getAttribute("data-id"),rn=(val("gname-"+rg)||"").trim();ui.nameOpen[rg]=false;if(rn)commit(function(){var g=findGoal(rg);if(g)g.name=rn.slice(0,140);});else render();}
   }
@@ -2308,6 +2360,11 @@ button.step-name:hover .step-nm{color:var(--accent)}
     else if(a==="file-as"){fileTask(id,val("file-g-"+id),b.getAttribute("data-kind"));}
     else if(a==="cost-add"){ui.costOpen[id]=true;render();var cf=document.getElementById("cost-what-"+id);if(cf)cf.focus();}
     else if(a==="cost-cancel"){ui.costOpen[id]=false;render();}
+    else if(a==="spend-month"){var sm0=monthOf(dayKey(Date.now()));ui.spendMonth[id]=monthShift(ui.spendMonth[id]||sm0,+b.getAttribute("data-n")||0);if(ui.spendMonth[id]>sm0)ui.spendMonth[id]=sm0;render();}
+    else if(a==="spend-tgt"){ui.tgtOpen[id]=!ui.tgtOpen[id];render();}
+    else if(a==="spend-tgt-cancel"){ui.tgtOpen[id]=false;render();}
+    else if(a==="rcpt-save")rcptSave(id);
+    else if(a==="rcpt-cancel"){rcptClear();render();}
     else if(a==="cost-del"){if(armed("cost-del:"+id))deleteCost(b.getAttribute("data-gid"),id);}
     else if(a==="fire-edit"){ui.fireOpen[id]=true;render();var ff=document.getElementById("fire-add-"+id);if(ff)ff.focus();}
     else if(a==="fire-cancel"){ui.fireOpen[id]=false;render();}
@@ -4193,29 +4250,160 @@ button.step-name:hover .step-nm{color:var(--accent)}
     commit(function(){var g=findGoal(gid);if(!g||!g.fire)return;(g.fire.costs=g.fire.costs||[]).push(c);});
   }
   function deleteCost(gid,cid){commit(function(){var g=findGoal(gid);if(g&&g.fire&&g.fire.costs)g.fire.costs=g.fire.costs.filter(function(c){return c.id!==cid;});});}
+  /* What you spend: what really went out each month, in Nibud's four groups (fixed costs, day-to-day, saving-up, social life),
+     per person, and against a monthly target once a month of logging is in. Receipts are read by Claude, line by line. */
+  function round2(n){return Math.round(n*100)/100;}
+  function catOf(id){return COST_CATS.filter(function(k){return k[0]===id;})[0]||COST_CATS[COST_CATS.length-1];}
+  function grpOf(cat){return catOf(cat)[2];}
+  function catOptions(sel){return COST_GROUPS.map(function(x){var cs=COST_CATS.filter(function(k){return k[2]===x[0];});
+    return cs.length?'<optgroup label="'+esc(x[1])+'">'+cs.map(function(k){return '<option value="'+k[0]+'"'+(k[0]===sel?' selected':'')+'>'+esc(k[1])+'</option>';}).join("")+'</optgroup>':"";}).join("");}
+  function monthOf(d){return String(d||"").slice(0,7);}
+  function monthShift(mk,n){var y=+mk.slice(0,4),m=+mk.slice(5,7)-1+n;y+=Math.floor(m/12);m=((m%12)+12)%12;return y+"-"+pad(m+1);}
+  function monthName(mk){return new Date(+mk.slice(0,4),+mk.slice(5,7)-1,1).toLocaleDateString(undefined,{month:"long",year:"numeric"});}
+  function spendBy(costs,mk){   // what was really spent in one calendar month, by group and by category
+    var o={total:0,grp:{},cat:{},list:[]};
+    costs.forEach(function(c){if(monthOf(c.d)!==mk)return;o.total+=c.amt;var gk=grpOf(c.cat);o.grp[gk]=(o.grp[gk]||0)+c.amt;o.cat[c.cat]=(o.cat[c.cat]||0)+c.amt;o.list.push(c);});
+    return o;
+  }
+  function foodKinds(list){var o={};list.forEach(function(c){if(c.cat!=="food")return;(c.items||[]).forEach(function(it){if(!it.k)return;o[it.k]=(o[it.k]||0)+it.a;});});return o;}
+  function renderSpend(g,costs){
+    var f=g.fire,today=monthOf(dayKey(Date.now())),mk=ui.spendMonth[g.id]||today,S=spendBy(costs,mk),P=spendBy(costs,monthShift(mk,-1)),ppl=f.people||1,T=f.targets||null;
+    var first=costs[costs.length-1].d,days=costDays(costs);
+    var nav='<div class="sp-nav"><button class="icon-btn" data-action="spend-month" data-id="'+g.id+'" data-n="-1" type="button" aria-label="Previous month"'+(monthOf(first)>=mk?' disabled':'')+'>‹</button>'+
+      '<span class="sp-mon">'+esc(monthName(mk))+'</span>'+
+      '<button class="icon-btn" data-action="spend-month" data-id="'+g.id+'" data-n="1" type="button" aria-label="Next month"'+(mk>=today?' disabled':'')+'>›</button></div>';
+    var top='<div class="cs-num">'+moneyC(round2(S.total))+'<span> spent'+(mk===today?' so far':'')+'</span></div>'+
+      '<div class="sp-pp">'+(ppl>1?moneyC(round2(S.total/ppl))+' a person, for '+ppl+' people':'For 1 person')+(P.total?' · '+esc(monthName(monthShift(mk,-1)).split(" ")[0])+': '+moneyC(round2(P.total)):'')+'</div>';
+    var max=Math.max.apply(null,COST_GROUPS.map(function(x){return Math.max(S.grp[x[0]]||0,(T&&T[x[0]])||0);}).concat([1]));
+    var rows='<div class="sp-gs-wrap">'+COST_GROUPS.map(function(x){
+      var v=S.grp[x[0]]||0,t=T&&T[x[0]],cats=COST_CATS.filter(function(k){return k[2]===x[0]&&S.cat[k[0]];}),over=!!t&&v>t;
+      if(x[0]==="other"&&!v)return "";
+      return '<div class="sp-g'+(v?'':' is-empty')+'"><div class="sp-gh"><span class="sp-gn">'+esc(x[1])+'</span><span class="sp-gv">'+(v?moneyC(round2(v)):'—')+(t?' <span class="sp-gt'+(over?' is-over':'')+'">of '+money(t)+'</span>':'')+'</span></div>'+
+        '<span class="sp-bar"><i class="'+(over?'is-over':'')+'" style="width:'+(v/max*100).toFixed(1)+'%"></i>'+(t?'<b style="left:'+(t/max*100).toFixed(1)+'%"></b>':'')+'</span>'+
+        '<div class="sp-gs">'+(cats.length?cats.map(function(k){return esc(k[1])+' '+moneyC(round2(S.cat[k[0]]));}).join(" · "):(x[2]?'Nothing logged: '+esc(x[2]):''))+'</div></div>';
+    }).join("")+'</div>';
+    var K=foodKinds(S.list),kk=FOOD_KINDS.filter(function(k){return K[k[0]];}).sort(function(a,b){return K[b[0]]-K[a[0]];});
+    var food=S.cat.food||0,inside=(kk.length||food)?'<div class="fire-h">Inside food &amp; groceries</div>'+
+      (kk.length?'<div class="cs-cats">'+kk.map(function(k){return '<span class="cs-cat on">'+esc(k[1])+' <b>'+moneyC(round2(K[k[0]]))+'</b></span>';}).join("")+'</div>':'')+
+      (food&&ppl>1?'<p class="cs-note">'+moneyC(round2(food/ppl))+' a person this month. For a full month, Nibud puts healthy eating at about €'+NIBUD_FOOD[0]+'–€'+NIBUD_FOOD[1]+' a person.</p>':''):'';
+    var big=S.list.slice().sort(function(a,b){return b.amt-a.amt;}).slice(0,3);
+    var bigs=big.length>1?'<p class="sp-big">Biggest: '+big.map(function(c){return '<b>'+esc(c.what)+'</b> '+moneyC(c.amt);}).join(" · ")+'</p>':'';
+    var list=S.list.length?'<div class="fire-h">Every cost in '+esc(monthName(mk).split(" ")[0])+'</div><div class="fire-tbl">'+S.list.map(function(c){
+      var its=c.items&&c.items.length?'<details class="sp-items"><summary>'+c.items.length+' item'+(c.items.length===1?'':'s')+'</summary><ul>'+c.items.slice().sort(function(a,b){return b.a-a.a;}).map(function(it){return '<li><span>'+esc(it.w)+'</span><span>'+moneyC(it.a)+'</span></li>';}).join("")+'</ul></details>':'';
+      return '<div class="sp-row"><span class="cs-d">'+esc(artDate(c.d))+'</span><div class="cs-w">'+esc(c.what)+its+'</div><span class="cs-a">'+moneyC(c.amt)+'</span>'+
+        '<select class="cs-ev" data-action="cost-cat" data-id="'+g.id+'" data-cid="'+esc(c.id)+'" aria-label="Kind of cost: '+esc(c.what)+'">'+catOptions(c.cat)+'</select>'+xBtn("cost-del",esc(c.id),"Delete this cost",' data-gid="'+g.id+'"')+'</div>';
+    }).join("")+'</div>':'<div class="fire-sub sp-none">Nothing logged in '+esc(monthName(mk))+' yet.</div>';
+    var openOn=dayKey(keyToDate(first).getTime()+30*86400000);
+    var foot='<div class="sp-foot"><label class="sp-ppl">Spending for <select class="cs-ev" data-action="spend-people" data-id="'+g.id+'" aria-label="How many people this spending is for">'+
+      [1,2,3,4,5,6,7,8].map(function(n){return '<option value="'+n+'"'+(n===ppl?' selected':'')+'>'+n+(n===1?' person':' people')+'</option>';}).join("")+'</select></label>'+
+      (days>=30?'<button class="btn btn-ghost btn-sm" data-action="spend-tgt" data-id="'+g.id+'" type="button">'+(T?'Change targets':'Set targets')+'</button>':'<span class="cs-note">Targets open after a month of logging, on '+esc(artDate(openOn))+'.</span>')+'</div>'+
+      (ui.tgtOpen[g.id]?targetsForm(g,costs):'');
+    return nav+top+rows+inside+bigs+list+foot;
+  }
+  function targetsForm(g,costs){
+    var T=g.fire.targets||{},last=spendBy(costs,monthShift(monthOf(dayKey(Date.now())),-1));
+    return '<form class="fire-form sp-tf" data-action="spend-tgt-save" data-id="'+g.id+'" autocomplete="off"><div class="fire-sub">A monthly target per group. Start from what you really spent last month, then aim a little lower: in the research, the most ambitious budgets cut spending most.</div><div class="cs-two">'+
+      COST_GROUPS.filter(function(x){return x[0]!=="other";}).map(function(x){var v=T[x[0]]!=null?T[x[0]]:Math.round(last.grp[x[0]]||0);
+        return '<label class="fire-lbl" for="tgt-'+x[0]+'-'+g.id+'">'+esc(x[1])+' (€)<input id="tgt-'+x[0]+'-'+g.id+'" class="field" inputmode="decimal" value="'+(v||"")+'" placeholder="none"></label>';}).join("")+
+      '</div><div class="note-btns"><button class="btn btn-primary btn-sm" type="submit">Save targets</button><button class="btn btn-ghost btn-sm" data-action="spend-tgt-cancel" data-id="'+g.id+'" type="button">Cancel</button></div></form>';
+  }
+  function saveTargets(gid){
+    var t={};COST_GROUPS.forEach(function(x){if(x[0]==="other")return;var a=costAmt(val("tgt-"+x[0]+"-"+gid));if(a)t[x[0]]=a;});
+    ui.tgtOpen[gid]=false;
+    commit(function(){var g=findGoal(gid);if(!g||!g.fire)return;if(Object.keys(t).length)g.fire.targets=t;else delete g.fire.targets;});
+  }
+  /* a receipt: Claude reads the image into lines; you check them; each kind of cost on it is saved as one cost, with its lines */
+  function rcptPrompt(){
+    return ["The image is a shop receipt, or a screenshot or photo of one. Read it for a personal spending log.",
+      'Return JSON only: {"date":"YYYY-MM-DD or null","store":"short shop name","total":number,"lines":[{"what":"item","amt":number,"cat":"…","k":"…"}]}',
+      "- total: what was paid, in euros, after discounts and rounding.",
+      "- lines: one per item. amt is the net euros for that line after any discount printed under it (e.g. Lidl Plus korting, Actieprijs, In prijs verlaagd): fold each discount into its item, never a line of its own. Keep quantities in the name, e.g. \"Bio volle melk ×8\". Skip subtotal, VAT, payment, change, savings and loyalty lines. A rounding line (afronding) becomes its own line called \"Rounding\".",
+      "- what: the item as printed, tidied, in the receipt's own language, at most 40 characters.",
+      "- cat, one of: food (food and drink), house (cleaning, toilet paper, personal care), clothes, stuff (furniture, appliances, kitchenware), transport (fuel, tickets, parking), health (pharmacy, medicine), fun (going out, hobbies, gifts), home (rent, energy, water), bills (phone, internet, insurance, subscriptions), other.",
+      "- k, for food lines only, one of: meat (meat and fish), dairy (dairy and eggs), veg (fruit and vegetables), bread (bread and bakery), snack (snacks, sweets, cake), nuts, sauce (sauces, spreads, dips), drink, food (anything else).",
+      "- Use a dot for decimals. If a line is unreadable, leave it out rather than guess."].join("\n");
+  }
+  function rcptNorm(res){
+    var o=res&&typeof res==="object"?res:{},num=function(x){var n=typeof x==="number"?x:parseFloat(String(x==null?"":x).replace(",","."));return isFinite(n)?round2(n):null;};
+    var lines=(Array.isArray(o.lines)?o.lines:[]).map(function(l){
+      var a=num(l&&l.amt);if(a===null)return null;
+      var c=COST_CATS.some(function(k){return k[0]===l.cat;})?l.cat:"other",k=c==="food"?(FOOD_KINDS.some(function(x){return x[0]===l.k;})?l.k:"food"):"";
+      return {what:String(l.what||"Item").replace(/\s+/g," ").trim().slice(0,60)||"Item",amt:a,cat:c,k:k};}).filter(Boolean).slice(0,150);
+    var d=/^\d{4}-\d{2}-\d{2}$/.test(o.date||"")&&o.date<=dayKey(Date.now())?o.date:dayKey(Date.now());
+    return {date:d,store:String(o.store||"").replace(/\s+/g," ").trim().slice(0,40),total:num(o.total),lines:lines};
+  }
+  function rcptClear(){var s=ui.rcpt;if(!s)return;ui.rcpt=null;if(s.ctl)try{s.ctl.abort();}catch(e){}}
+  function rcptTake(gid,file){
+    if(!file||!shotOK())return;var L=shotLim,types=L.mediaTypes||[];
+    if(types.length&&types.indexOf(file.type)<0){toast("Use a PNG, JPEG or WebP image");return;}
+    if(L.maxInputBytes&&file.size>L.maxInputBytes){toast("That image is too big to read");return;}
+    rcptClear();var ctl=new AbortController(),s=ui.rcpt={gid:gid,st:"reading",ctl:ctl};render();
+    var p;try{p=sampleNS.json(rcptPrompt(),{images:file,modelTier:"quick",cache:false,signal:ctl.signal});}catch(e){p=Promise.reject({code:"upstream_error"});}
+    Promise.resolve(p).then(function(res){
+      if(ui.rcpt!==s)return;var r=rcptNorm(res);s.ctl=null;
+      if(!r.lines.length){s.st="failed";s.why="Couldn’t find any items on that one.";render();return;}
+      s.st="review";s.r=r;render();
+    },function(err){
+      if(ui.rcpt!==s)return;var c=err&&err.code;if(c==="cancelled")return;s.st="failed";s.ctl=null;
+      s.why=c==="rate_limited"?"Claude is busy right now. Try again in a minute.":c==="image_rejected"?"That image couldn’t be opened.":(c==="not_granted"||c==="sampling_disabled"||c==="images_unavailable"||c==="capability_disabled"||c==="capability_removed"||c==="not_declared")?"Receipts can’t be read in this view.":"Couldn’t read it this time.";
+      render();
+    });
+  }
+  function rcptPanel(g){
+    var s=ui.rcpt;if(!s||s.gid!==g.id)return "";
+    var cancel='<button class="btn btn-ghost btn-sm" data-action="rcpt-cancel" data-id="'+g.id+'" type="button">'+(s.st==="failed"?'Close':'Cancel')+'</button>';
+    if(s.st==="reading")return '<div class="sp-rcpt"><div class="ai-loading">Reading the receipt…</div><div class="note-btns">'+cancel+'</div></div>';
+    if(s.st==="failed")return '<div class="sp-rcpt"><div class="fire-sub">'+esc(s.why||"Couldn’t read it this time.")+'</div><div class="note-btns">'+cancel+'</div></div>';
+    var r=s.r,sum=round2(r.lines.reduce(function(t,l){return t+l.amt;},0)),off=r.total!=null&&Math.abs(sum-r.total)>0.05;
+    var n=COST_CATS.filter(function(k){return r.lines.some(function(l){return l.cat===k[0]&&!/^(rounding|afronding)$/i.test(l.what);});}).length;
+    var dup=!!r.store&&((g.fire.costs||[]).some(function(c){return c.d===r.date&&c.what.toLowerCase().indexOf(r.store.toLowerCase())>=0;}));
+    return '<div class="sp-rcpt"><div class="fire-h">Check the receipt'+(r.store?' · '+esc(r.store):'')+'</div>'+
+      '<label class="fire-lbl" for="rcpt-d">Date<input id="rcpt-d" class="field" type="date" data-action="rcpt-date" value="'+esc(r.date)+'" max="'+dayKey(Date.now())+'"></label>'+
+      '<div class="fire-tbl">'+r.lines.map(function(l,i){return '<div class="sp-rl"><span class="cs-w">'+esc(l.what)+'</span><span class="cs-a">'+moneyC(l.amt)+'</span>'+
+        '<select class="cs-ev" data-action="rcpt-line-cat" data-i="'+i+'" aria-label="Kind of cost: '+esc(l.what)+'">'+catOptions(l.cat)+'</select></div>';}).join("")+'</div>'+
+      '<p class="cs-note">The lines add up to <b>'+moneyC(sum)+'</b>'+(r.total!=null?'; the receipt says <b>'+moneyC(r.total)+'</b>'+(off?'. A line may be missing or misread: check before saving.':'.'):'.')+'</p>'+
+      (dup?'<p class="cs-note sp-warn">You already have costs from '+esc(r.store)+' on '+esc(artDate(r.date))+'. Check this isn’t the same receipt.</p>':'')+
+      '<div class="note-btns"><button class="btn btn-primary btn-sm" data-action="rcpt-save" data-id="'+g.id+'" type="button">Save as '+n+' cost'+(n===1?'':'s')+'</button>'+cancel+'</div></div>';
+  }
+  function rcptSave(gid){
+    var s=ui.rcpt;if(!s||s.st!=="review"||s.gid!==gid)return;var r=s.r,rnd=function(l){return /^(rounding|afronding)$/i.test(l.what);};
+    var by={},order=[],tot=function(ls){return ls.reduce(function(t,l){return t+l.amt;},0);};
+    r.lines.forEach(function(l){if(rnd(l))return;if(!by[l.cat]){by[l.cat]=[];order.push(l.cat);}by[l.cat].push(l);});
+    if(!order.length)return;
+    var bigc=order.slice().sort(function(a,b){return tot(by[b])-tot(by[a]);})[0];
+    r.lines.forEach(function(l){if(rnd(l))by[bigc].push(l);});
+    var store=r.store||"Receipt",add=order.map(function(cat){
+      var ls=by[cat],c={id:uid(),d:r.date,what:(store+": "+catOf(cat)[1].toLowerCase()).slice(0,80),amt:round2(tot(ls)),cat:cat,src:"receipt",
+        items:ls.map(function(l){var it={w:l.what,a:l.amt};if(cat==="food"&&l.k)it.k=l.k;return it;})};
+      if(grpOf(cat)==="save")c.every="once";return c;});
+    rcptClear();ui.spendMonth[gid]=monthOf(r.date);
+    commit(function(){var g=findGoal(gid);if(!g||!g.fire)return;var cs=g.fire.costs=g.fire.costs||[];add.forEach(function(c){cs.push(c);});});
+    toast("Receipt saved as "+add.length+" cost"+(add.length===1?"":"s"));
+  }
   function renderCosts(g){
     var f=g.fire;if(!f)return "";
     var costs=(f.costs||[]).slice().sort(function(a,b){return a.d<b.d?1:a.d>b.d?-1:0;}),M=costMonthly(costs),open=!!ui.costOpen[g.id];
-    var head='<div class="fire-top"><span class="fire-eye">What you spend</span>'+(open?'':'<button class="btn btn-primary btn-sm" data-action="cost-add" data-id="'+g.id+'" type="button">+ Add a cost</button>')+'</div>';
+    var head='<div class="fire-top"><span class="fire-eye">What you spend</span>'+(open?'':'<span class="sp-acts">'+(shotOK()?'<label class="btn btn-ghost btn-sm shot-pick">Add a receipt<input type="file" accept="'+esc(shotLim.mediaTypes&&shotLim.mediaTypes.length?shotLim.mediaTypes.join(","):"image/*")+'" data-action="rcpt-file" data-id="'+g.id+'" aria-label="Add a receipt"></label>':'')+
+      '<button class="btn btn-primary btn-sm" data-action="cost-add" data-id="'+g.id+'" type="button">+ Add a cost</button></span>')+'</div>';
     var body;
-    if(!costs.length)body='<div class="fire-sub">Log what you actually spend, and you’ll see how it compares with the <b>'+money(f.month)+' a month</b> your FIRE number is built on.</div>';
+    if(!costs.length)body='<div class="fire-sub">Log what you spend: a receipt, a bill, a tank of petrol. Each month is shown in Nibud’s four groups, and against the <b>'+money(f.month)+' a month</b> your FIRE number is built on.</div>';
     else{
       var real=M.unsure===0||M.days>=28,gap=f.month-M.total,pct=f.month?Math.min(M.total/f.month,1)*100:0;
       var since=costs[costs.length-1].d;
-      var miss=COST_CATS.filter(function(k){return k[0]!=="other"&&M.cat[k[0]]==null;}).map(function(k){return k[1].toLowerCase();});
+      var miss=COST_CATS.filter(function(k){return k[2]==="fixed"&&M.cat[k[0]]==null;}).map(function(k){return k[1].toLowerCase();});
       body='<div class="cs-num">'+money(M.total)+'<span>'+(real?' a month':' so far, counted as one month')+'</span></div>'+
         '<div class="fire-sub">From '+costs.length+' cost'+(costs.length===1?'':'s')+' logged since '+esc(artDate(since))+'. Your FIRE number is built on <b>'+money(f.month)+' a month</b>.</div>'+
         '<span class="fm cs-m" role="img" aria-label="'+esc(money(M.total)+' of '+money(f.month)+' a month')+'"><i style="width:'+pct.toFixed(2)+'%"></i></span>'+
         '<div class="cs-gap">'+(gap>=0?'<b>'+money(gap)+' a month</b> of the '+money(f.month)+' isn’t accounted for yet.':'You spend <b>'+money(-gap)+' a month more</b> than your number assumes. Raise it with Edit above.')+'</div>'+
         '<div class="cs-cats">'+COST_CATS.map(function(k){var v=M.cat[k[0]];return '<span class="cs-cat'+(v!=null?' on':'')+'">'+esc(k[1])+(v!=null?' <b>'+money(v)+'</b>':'')+'</span>';}).join("")+'</div>'+
-        (miss.length?'<p class="cs-note">Nothing logged yet for '+esc(miss.length>1?miss.slice(0,-1).join(", ")+" and "+miss[miss.length-1]:miss[0])+'. Until those are in, this is only part of the picture.</p>':'')+
+        (miss.length?'<p class="cs-note">Nothing logged yet for '+esc(miss.length>1?miss.slice(0,-1).join(", ")+" and "+miss[miss.length-1]:miss[0])+'. Those are your fixed costs: until they’re in, this is only part of the picture.</p>':'')+
         (M.unsure?'<p class="cs-note">'+M.unsure+' cost'+(M.unsure===1?' has':'s have')+' no “how often” yet, so '+(M.unsure===1?'it’s':'they’re')+' spread over '+(M.days<31?'a month':M.days+' days')+'. Set how often you buy '+(M.unsure===1?'it':'them')+', so a bulk buy counts per month instead of all at once.</p>':'');
     }
     var form=open?'<form class="fire-form cs-form" data-action="cost-save" data-id="'+g.id+'" autocomplete="off">'+
         '<label class="fire-lbl" for="cost-what-'+g.id+'">What<input id="cost-what-'+g.id+'" class="field" maxlength="80" placeholder="e.g. groceries, petrol, rent"></label>'+
         '<div class="cs-two"><label class="fire-lbl" for="cost-amt-'+g.id+'">Cost (€)<input id="cost-amt-'+g.id+'" class="field" inputmode="decimal" placeholder="e.g. 12,50"></label>'+
         '<label class="fire-lbl" for="cost-d-'+g.id+'">When<input id="cost-d-'+g.id+'" class="field" type="date" value="'+dayKey(Date.now())+'" max="'+dayKey(Date.now())+'"></label></div>'+
-        '<div class="cs-two"><label class="fire-lbl" for="cost-cat-'+g.id+'">Kind of cost<select id="cost-cat-'+g.id+'" class="field">'+COST_CATS.map(function(k){return '<option value="'+k[0]+'"'+(k[0]===((costs[0]&&costs[0].cat)||"food")?' selected':'')+'>'+esc(k[1])+'</option>';}).join("")+'</select></label>'+
+        '<div class="cs-two"><label class="fire-lbl" for="cost-cat-'+g.id+'">Kind of cost<select id="cost-cat-'+g.id+'" class="field">'+catOptions((costs[0]&&costs[0].cat)||"food")+'</select></label>'+
         '<label class="fire-lbl" for="cost-ev-'+g.id+'">How often<select id="cost-ev-'+g.id+'" class="field">'+COST_EVERY.map(function(x){return '<option value="'+x[0]+'">'+esc(x[1])+'</option>';}).join("")+'</select></label></div>'+
         '<div class="note-btns"><button class="btn btn-primary btn-sm" type="submit">Save</button><button class="btn btn-ghost btn-sm" data-action="cost-cancel" data-id="'+g.id+'" type="button">Cancel</button></div>'+
       '</form>':'';
@@ -4228,9 +4416,9 @@ button.step-name:hover .step-nm{color:var(--accent)}
           '<span class="cs-pm">'+pm+'</span>'+xBtn("cost-del",esc(c.id),"Delete this cost",' data-gid="'+g.id+'"')+'</div>';
       }).join("")+'</div></div>';
     }).join(""):"";
-    return '<div class="fire cs">'+head+body+form+list+
-      (costs.length?'<p class="fire-note">What you spend now is a floor, not the answer. Your number is for the life you want once you stop working, so it also needs what that life costs: a home of your own, insurance, holidays. After a month of logging, update it with Edit above.</p>':'')+
-    '</div>';
+    var est=costs.length?'<details class="sp-fire" data-id="'+g.id+'"'+(ui.spFire[g.id]?' open':'')+'><summary>For your FIRE number: about '+money(M.total)+' a month</summary>'+body+list+
+      '<p class="fire-note">What you spend now is a floor, not the answer. Your number is for the life you want once you stop working, so it also needs what that life costs: a home of your own, insurance, holidays. After a month of logging, update it with Edit above.</p></details>':body;
+    return '<div class="fire cs">'+head+rcptPanel(g)+form+(costs.length?renderSpend(g,costs):'')+est+'</div>';
   }
   function goalCard(g){
     var kids=goalKids(g.id),up=goalParent(g),ids=kids.length?treeIds(g):g.id;
