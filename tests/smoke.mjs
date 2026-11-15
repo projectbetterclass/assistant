@@ -11,13 +11,6 @@ for (const width of [402, 1280]) for (const dark of [false, true]) for (const vi
   if (view === "review") check(tag + ": no 'null' times", !(await page.$$eval(".tl-start,.tl-time span", els => els.some(e => /null/.test(e.textContent)))));
   await ctx.close();
 }
-{ // the old page: Review printed null start times
-  const { page, ctx } = await openPage(browser, { file: new URL("./test-same.html", import.meta.url).pathname, view: "review", time: new Date("2026-11-08T21:00:00") });
-  await page.clock.runFor(200);
-  const s = await page.$$eval(".tl-start", els => els.map(e => e.textContent));
-  console.log("  v65 review start times on 8 Nov:", JSON.stringify(s.slice(0, 4)));
-  await ctx.close();
-}
 {
   const { page, ctx } = await openPage(browser, { view: "review", time: new Date("2026-11-08T21:00:00") });
   await page.clock.runFor(200);
