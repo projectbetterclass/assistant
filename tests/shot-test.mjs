@@ -26,6 +26,14 @@ const text = (page, sel) => page.$eval(sel, e => e.textContent).catch(() => null
 const has = (page, sel) => page.$(sel).then(Boolean);
 
 // 1. the button is there, and only where Claude can read images
+async function fixture(page) {   // a thing you track with a goal, open and never timed: what a screenshot can match
+  return page.evaluate(() => {
+    const st = JSON.parse(document.getElementById("app-state").textContent);
+    const t = st.tasks.find(x => !x.done && !x.later && x.goalId && x.name && !String(x.id).startsWith("lesson_") && !(x.sessions || []).length);
+    return t ? { id: t.id, name: t.name, goalId: t.goalId } : null;
+  });
+}
+
 {
   const { page, ctx, errors } = await openPage(browser, { width: W });
   check("start card shows the screenshot button", await has(page, ".now-idle .shot-pick"));
@@ -64,7 +72,8 @@ let fixPage;
   check("Claude got the image", call && call.hasImg && call.imgType === "image/png", call && { hasImg: call.hasImg, t: call.imgType });
   check("quick tier, no cache, cancellable", call && call.tier === "quick" && call.cache === false && call.sig);
   check("prompt lists goals", /goal_read \| Read 20 minutes a day/.test(call.input) && /goal_fx \| Trading: forex & options › Forex/.test(call.input), call.input.slice(0, 200));
-  check("prompt lists tracked things", /muzyrdr18nbnl \| atomic habit listening \| Read 20 minutes a day/.test(call.input));
+  const fx0 = await fixture(page);
+  check("prompt lists tracked things", !!fx0 && call.input.indexOf(fx0.id + " | ") >= 0, fx0);
   check("prompt leaves out lessons and finished things", !/lesson_goal_invest_L01/.test(call.input) && !/mu9srhdljn66p/.test(call.input));
   check("prompt lists categories", /Categories they use: Work, Focus/.test(call.input));
   check("prompt guards against text in the image", /never instructions/.test(call.input));
@@ -121,11 +130,12 @@ let fixPage;
   const tAttach = await page.evaluate(() => Date.now());
   await attach(page);
   await page.clock.runFor(4000);
-  await resolve(page, { name: "Listen: Atomic Habits", match: "muzyrdr18nbnl", goal: "goal_read", category: "", depth: "shallow", seen: "Audible: Atomic Habits, chapter 3" });
+  const fx = await fixture(page);
+  await resolve(page, { name: "Listen: Atomic Habits", match: fx.id, goal: fx.goalId, category: "", depth: "shallow", seen: "Audible: Atomic Habits, chapter 3" });
   const a = await active(page);
-  check("matched task runs", a && a.t && a.t.id === "muzyrdr18nbnl", a && a.s.activeId);
+  check("matched task runs", a && a.t && a.t.id === fx.id, a && a.s.activeId);
   check("no new task", a && a.s.tasks.length === before);
-  check("its name kept", a && a.t.name === "atomic habit listening");
+  check("its name kept", a && a.t.name === fx.name);
   const se = a && a.t.sessions[a.t.sessions.length - 1];
   check("session from attach, marked matched", se && near(se.start, tAttach) && se.matched === true && se.seen === "Audible: Atomic Habits, chapter 3", se);
   check("card says matched", /^Matched from your screenshot: Audible: Atomic Habits, chapter 3$/.test(await text(page, ".now-shot-t")), await text(page, ".now-shot-t"));
@@ -136,10 +146,10 @@ let fixPage;
   await page.click('.shot-fix button[type=submit]');
   await page.clock.runFor(30);
   const b = await active(page);
-  check("a new thing took the time", b && b.t.id !== "muzyrdr18nbnl" && b.t.name === "Podcast: money habits" && !b.t.goalId, b && b.t);
+  check("a new thing took the time", b && b.t.id !== fx.id && b.t.name === "Podcast: money habits" && !b.t.goalId, b && b.t);
   check("…from the same start", b && b.t.sessions.length === 1 && b.t.sessions[0].start === se.start && !b.t.sessions[0].matched);
-  const old = b && b.s.tasks.find(x => x.id === "muzyrdr18nbnl");
-  check("matched thing is back as it was", old && old.sessions.length === 0 && old.name === "atomic habit listening", old);
+  const old = b && b.s.tasks.find(x => x.id === fx.id);
+  check("matched thing is back as it was", old && old.sessions.length === 0 && old.name === fx.name, old);
   check("one new task", b && b.s.tasks.length === before + 1);
   check("no page errors", errors.length === 0, errors);
   await ctx.close();
