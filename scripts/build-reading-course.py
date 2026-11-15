@@ -74,18 +74,99 @@ L = [
 ]
 for x in L:
     x["estimateMin"] = 20   # the Reading goal's own 20 minutes
+    x["rung"] = "Read better"   # the reading techniques come after the books, as an optional last part
+    x.pop("after", None)
 
-C = course({"goal_id": "goal_read", "key": "read", "title": "Read so it sticks", "azTitle": "Read so it sticks, A → Z",
-     "rungs": ["Habit", "Before", "During", "After", "Keep", "Use"],
-     "rungDesc": ["a time and a place, two minutes to start, never miss twice", "prime the chapter, and know the problem you’re reading for",
-                  "sprints and pauses, and no highlighter without a question", "digest what you consume, and the five kinds of information",
-                  "a map of the ideas, and recall the way you’ll use it", "pay for the memory you need, and choose the next book"],
-     "blurb": "One reading technique per sitting, used straight away on the chapter you’re reading, inside your daily minutes. Written in my words from Justin Sung’s videos in your library and the Atomic Habits notes on your shelf; plain reading on its own clock still counts.",
-     "allDone": "now just read, with the method. 📖",
-     "revWord": "another chapter",
-     "refNote": "The idea opens in step 2 of the sitting — guess first. The videos are Justin Sung’s, for when you want more; the notes are on your bookshelf, below on this page."}, L)
+# ---- the books: every chapter note on the bookshelf (articles/book-*.md) becomes a sitting ---------------------------
+# Guess what the chapter says, read the note (or listen to that chapter), write the idea and one action for tomorrow from
+# memory, check it against the chapter's points. The action comes back at the next sitting as "did you do it?".
+# A note added later (from the audiobooks on the PC) becomes a sitting the next time this script runs; ids are per book
+# and per note number, so a new book never renumbers the sittings you've done.
+import glob, re
+ART = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "articles")
+BOOKS_IN_ORDER = [  # book (as in the note's channel), id letter, what it's for
+    ("Atomic Habits", "A", "James Clear: small habits, made obvious, attractive, easy and satisfying"),
+    ("Eat That Frog!", "E", "Brian Tracy: the most important task first, every day"),
+    ("The Richest Man in Babylon", "Y", "George S. Clason: pay yourself first, and make your money work"),
+    ("Zero to One", "Z", "Peter Thiel: start small, own a market, build something new"),
+    ("The Mom Test", "M", "Rob Fitzpatrick: ask about their life, not your idea"),
+    ("$100M Offers", "O", "Alex Hormozi: an offer so good people feel stupid saying no"),
+]
+norm = lambda t: re.sub(r"[^a-z0-9$]", "", t.lower())
+def plain(t):
+    t = re.sub(r"\[([^\]]+)\]\([^)]+\)", r"\1", t)
+    return re.sub(r"\*\*?([^*]+)\*\*?", r"\1", t).replace("`", "").strip()
+def item(line):
+    m = re.match(r"\*\*(.+?)\*\*\s*(.*)", line)
+    return [plain(m.group(1)), plain(m.group(2))] if m and m.group(2) else plain(line)
+def parse_note(path):
+    raw = open(path, encoding="utf-8").read()
+    fm, body = re.match(r"---\n(.*?)\n---\n(.*)", raw, re.S).groups()
+    meta = dict(re.findall(r"^(\w+):\s*(.*)$", fm, re.M))
+    teach, idea, tryit, walk, cur = "", "", "", [], None
+    for blk in re.split(r"\n\s*\n", body.strip()):
+        lines = [x.rstrip() for x in blk.strip().split("\n") if x.strip()]
+        if lines[0].startswith("## "):
+            cur = {"h": plain(lines[0][3:]), "l": [], "p": []}; walk.append(cur); lines = lines[1:]
+        m = re.match(r"\*\*(.+?)\*\*\s*(.*)", lines[0]) if lines else None
+        if m and not lines[0].startswith(("- ", "|")) and len(lines) == 1:
+            label, text = m.group(1).rstrip(".").lower(), plain(m.group(2))
+            if "idea worth keeping" in label: idea = text; continue
+            if label.startswith("try it"): tryit = text; continue
+            if not teach and not walk: teach = text; continue
+        for ln in lines:
+            if cur is None: cur = {"h": "In short", "l": [], "p": []}; walk.append(cur)
+            if re.match(r"^\|[\s:-]+\|", ln) and set(ln) <= set("|:- "): continue   # a table's separator row
+            if ln.startswith("|"): cur["l"].append(" · ".join(plain(c) for c in ln.strip("|").split("|") if c.strip())); continue
+            mm = re.match(r"^(?:- |\d+\. )(.*)", ln)
+            cur["l"].append(item(mm.group(1))) if mm else cur["p"].append(plain(ln))
+    walk = [{k: v for k, v in w.items() if v} for w in walk]
+    return meta, teach, idea, tryit, [w for w in walk if w.get("p") or w.get("l")]
+notes = {}
+for path in glob.glob(os.path.join(ART, "book-*.md")):
+    meta, teach, idea, tryit, walk = parse_note(path)
+    notes.setdefault(norm(meta["channel"]), []).append((int(meta["n"]), meta, teach, idea, tryit, walk))
+known = {norm(b) for b, _, _ in BOOKS_IN_ORDER}
+assert set(notes) <= known, ("a book on the shelf isn't in BOOKS_IN_ORDER", set(notes) - known)
+first_sentence = lambda t: re.split(r"(?<=[.!?])\s", t.strip(), 1)[0]
+BOOK_L, BOOK_RUNGS, BOOK_DESC = [], [], []
+for book, letter, desc in BOOKS_IN_ORDER:
+    ns = sorted(notes.get(norm(book), []), key=lambda x: x[0])
+    if not ns: continue
+    BOOK_RUNGS.append(book); BOOK_DESC.append(desc)
+    for i, (n, meta, teach, idea, tryit, walk) in enumerate(ns):
+        lid = "%s%02d" % (letter, n % 100); part = meta.get("part", ""); title = plain(meta["title"])
+        if len(teach) < 150: teach = (teach + " " + idea).strip()
+        if len(teach) < 150 and tryit: teach = (teach + " " + tryit).strip()
+        pts = []
+        for w in walk:
+            for it in w.get("l", []):
+                pts.append((it[0] + ": " + first_sentence(it[1])) if isinstance(it, list) else first_sentence(it))
+        act = tryit or "Pick the one line of this chapter you’d act on, and do it tomorrow."
+        les = dict(id=lid, rung=book, stage_name=part or ("Note %d" % n), concept=title, estimateMin=20,
+            teach=teach,
+            task="Before you read, guess what this chapter says about ‘%s’. Then read the note, or listen to %s of the audiobook. From memory, write the idea in your own words and one action for tomorrow, as ‘After I …, I will …’. Judge: which line of this chapter would change what you do this week?" % (title, part or "this chapter"),
+            co=book, rev=book,
+            walk=walk + ([{"h": "The idea worth keeping", "p": [idea]}] if idea else []) + [{"h": "Your turn: one action for tomorrow", "p": [act, "Write it as ‘After I …, I will …’, small enough to do in two minutes."]}],
+            key=[{"t": "The chapter in short", "l": pts[:6] or [teach]}] + ([{"t": "The idea worth keeping", "l": [idea]}] if idea else []),
+            thread={"n": ("%s%02d · %s" % (letter, ns[i + 1][0] % 100, plain(ns[i + 1][1]["title"]))) if i + 1 < len(ns) else "the next book on your shelf"},
+            rtask="From memory: this chapter’s idea in two lines, and the action you chose. Did it stick?",
+            rkey=[{"t": "Short answer", "l": [idea or teach]}],
+            read=["Your bookshelf: %s, %s — %s" % (book, part, title), "Or listen: %s, %s, in the audiobook" % (book, part)])
+        if i: les["thread"]["b"] = "%s%02d · %s" % (letter, ns[i - 1][0] % 100, plain(ns[i - 1][1]["title"]))
+        elif BOOK_L: les["thread"]["b"] = "the previous book, %s" % BOOK_L[-1]["co"]
+        BOOK_L.append(les)
+L = BOOK_L + L
+
+C = course({"goal_id": "goal_read", "key": "read", "title": "Your books, one chapter a sitting", "azTitle": "Your books, A → Z",
+     "rungs": BOOK_RUNGS + ["Read better"],
+     "rungDesc": BOOK_DESC + ["the reading techniques: a time and a place, priming, sprints, PACER, maps, retrieval, the next book"],
+     "blurb": "One chapter per sitting, in Justin Sung’s four steps: guess what it says, read the note on your shelf or listen to that chapter, write the idea and one action for tomorrow from memory, then check it. The next sitting starts with: did you do it? The reading techniques come last, under Read better.",
+     "allDone": "now add the next book to your shelf. 📖",
+     "revWord": "the same chapter, a week on",
+     "refNote": "Guess first: the idea opens in step 2. The notes are in my words, from the books; the audiobooks on your PC are the full text."}, L)
 check_videos(C)
-write("READ_CURRICULUM", ["Read so it sticks — 12 sittings on the Reading goal, in my words from Justin Sung's videos in the youtube-digest",
+write("READ_CURRICULUM", ["Read so it sticks — your books, one chapter a sitting (one per note on the bookshelf, in the order of BOOKS_IN_ORDER),\n     then 12 reading techniques under Read better, in my words from Justin Sung's videos in the youtube-digest",
       "library and the Atomic Habits notes on the bookshelf: a time and a place, the two-minute start, priming, reading for a problem,",
       "sprints and pauses, highlighting, consume vs digest, PACER, mind maps, retrieval, the memory ladder and choosing the next book.",
       "Each runs on the chapter you're reading, at 20 minutes. Built by scripts/build-reading-course.py."], C)

@@ -21,9 +21,9 @@ Nearly everything people pay for falls under **health, wealth or relationships.*
 
 ## Niche down
 - A general offer competes with everyone and sells cheap. The same thing aimed at one specific group can sell for many times more, because it fits them exactly.
-- He walks through narrowing a broad offer step by step, with the price it can carry going up at each step.
+- Hormozi walks through narrowing a broad offer step by step, with the price it can carry going up at each step.
 - **Commit.** Hopping between markets resets you to zero each time. Pick one and stay long enough to get good.
 
 **The idea worth keeping.** Check the four signs before you build anything. If one is missing, the business will feel like pushing uphill.
 
-**Try it on your work.** Score your idea's market on the four signs: yes, not sure, no. Then narrow it once: add a job, a situation or a life stage. This is P02.
+**Try it on your work.** Score your idea's market on the four signs: yes, not sure, no. Then narrow it once: add a job, a situation or a life stage. This is B01 in Business.

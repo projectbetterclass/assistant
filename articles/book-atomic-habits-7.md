@@ -24,7 +24,7 @@ charts: false
 ## Chapter 20: the downside of creating good habits
 - Habits free your attention, but on autopilot you stop noticing mistakes. Mastery is habits plus deliberate practice.
 - The Lakers under Pat Riley tracked every player's numbers and aimed for small yearly gains on their career best.
-- **Reflect and review:** Clear writes a yearly review (what went well, what didn't, what I learned) and checks his life against his values.
+- **Reflect and review:** Clear writes a yearly review (what went well, what didn't, what I learned) and checks it against Clear's own values.
 - Hold your identity loosely. "I'm an athlete" can break when your sport ends; "I'm someone who's mentally tough" can last.
 
 ## Conclusion: the secret to results that last

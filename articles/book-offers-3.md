@@ -16,10 +16,10 @@ charts: false
 - **Better results** mean better reviews and referrals, which bring better customers who can pay more.
 - Cheap prices run the cycle backwards: less to deliver with, less committed customers, worse results.
 
-## What he means in practice
+## What it means in practice
 - **Price is an issue only when the value isn't clear.** If they say it's too expensive, they don't yet see enough value.
 - **Don't discount to close.** Add value instead, or change how they pay (see the "sell one thing" read on the Hormozi shelf).
 
 **The idea worth keeping.** Your price is part of your offer. A low price says "this probably won't change much for you".
 
-**Try it on your work.** Write the price you were planning to charge, then double it. What would you have to add so the doubled price feels fair? Often the answer is more support, faster results or a guarantee. This is P08.
+**Try it on your work.** Write the price you were planning to charge, then double it. What would you have to add so the doubled price feels fair? Often the answer is more support, faster results or a guarantee. This is B06 in Business.

@@ -13,7 +13,7 @@ charts: false
 ## Chapter 8: how to make a habit irresistible
 - Gulls will peck at an exaggerated fake beak over a real one, and junk food works the same way: an exaggerated version of what we're wired to want.
 - Dopamine rises when we *expect* a reward, not only when we get it. Wanting drives action more than liking does.
-- **Temptation bundling:** pair something you need to do with something you want to do. One student rigged his exercise bike so Netflix only played while he pedalled.
+- **Temptation bundling:** pair something you need to do with something you want to do. One student rigged an exercise bike so Netflix only played while pedalling.
 - Stack it: "After [current habit], I'll do [habit I need]. After [habit I need], I'll do [habit I want]."
 
 ## Chapter 9: the role of family and friends in shaping your habits

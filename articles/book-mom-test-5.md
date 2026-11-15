@@ -14,7 +14,7 @@ charts: false
 - **Go to them:** cold messages (low response, fine to start), turning up where they already gather, finding a natural excuse to talk.
 - **Bring them to you:** host a meetup, speak or teach, write about the problem.
 - **Warm introductions:** everyone knows someone. Friends, advisors, your university and your network get you in the door.
-- When you ask for a meeting, he suggests five parts: what you're working on, where you are, where you're stuck, why this person can help, and the ask.
+- When you ask for a meeting, Fitzpatrick suggests five parts: what you're working on, where you are, where you're stuck, why this person can help, and the ask.
 
 ## Chapter 7: choosing your customers
 - **Startups don't starve, they drown:** too many possible customers, so the feedback is a mess.
@@ -27,4 +27,4 @@ charts: false
 
 **The idea worth keeping.** A customer group is only specific enough when you can say where to find them this week.
 
-**Try it on your work.** Write a "who and where" for your idea: the specific group, and three places (online or offline) where you could find ten of them this week. This is P03 and P10.
+**Try it on your work.** Write a "who and where" for your idea: the specific group, and three places (online or offline) where you could find ten of them this week. This is P02 and P07.

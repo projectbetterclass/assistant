@@ -24,4 +24,4 @@ charts: false
 
 **The idea worth keeping.** "Would", "might" and "always" are warning words. Real facts sound like "last Tuesday, I…".
 
-**Try it on your work.** After your next conversation, write down everything you learned and mark each line: fact, compliment, fluff or idea. Throw out all but the facts. This is P05.
+**Try it on your work.** After your next conversation, write down everything you learned and mark each line: fact, compliment, fluff or idea. Throw out all but the facts. This is P04.

@@ -25,4 +25,4 @@ Hormozi ranks three things by how much they matter: **the market first, then the
 
 **The idea worth keeping.** If you're competing on price, the problem is the offer, not the price.
 
-**Try it on your work.** Write how a customer would compare you with the alternatives today. If the honest answer is "on price", note one thing you could add that nobody else includes. The next notes build on it. This is P07 and P08.
+**Try it on your work.** Write how a customer would compare you with the alternatives today. If the honest answer is "on price", note one thing you could add that nobody else includes. The next notes build on it. This is B03 and B06 in Business.

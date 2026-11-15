@@ -11,7 +11,7 @@ charts: false
 **The argument.** The third law. People do what takes the least effort. Make good habits so easy you can't say no, and make bad ones hard.
 
 ## Chapter 11: walk slowly, but never backward
-- A photography teacher split his class: one half graded on quantity, the other on making one perfect photo. The quantity group took the best photos; they learned by doing.
+- A photography teacher split a class: one half graded on quantity, the other on making one perfect photo. The quantity group took the best photos; they learned by doing.
 - **Motion versus action:** planning and researching feel productive but produce nothing. Action does. Motion can be a polite way to procrastinate.
 - A habit forms by repetition, not by time. The question isn't "how many days?" but "how many times?"
 
@@ -26,7 +26,7 @@ charts: false
 - Master showing up first. A habit has to exist before it can be improved. Then build it up step by step.
 
 ## Chapter 14: how to make good habits inevitable and bad habits impossible
-- Victor Hugo locked away his clothes so he couldn't go out until his book was finished: a commitment device.
+- Victor Hugo locked away every set of clothes, so going out was impossible until the book was finished: a commitment device.
 - **One-time choices** pay off forever: unsubscribe, delete the app, buy the better mattress. Automation is the strongest form.
 
 **The idea worth keeping.** The automatic monthly transfer in your FIRE plan is exactly chapter 14. You make one choice once, and it saves every month after.

@@ -13,7 +13,7 @@ charts: false
 ## Chapter 1: the challenge of the future
 - Copying is easier than creating, so most effort goes to 1 to n.
 - A world that only copies can't keep growing; it runs out of resources. The future needs new things.
-- A good answer to his question sounds like "most people believe X, but the truth is the opposite of X."
+- A good answer to Thiel's question sounds like "most people believe X, but the truth is the opposite of X."
 
 ## Chapter 2: party like it's 1999
 After the dot-com crash, Silicon Valley learned four lessons. Thiel thinks the opposite of each is closer to right:
@@ -27,4 +27,4 @@ After the dot-com crash, Silicon Valley learned four lessons. Thiel thinks the o
 
 **The idea worth keeping.** Ask of anything you're thinking of building: is this a new thing, or a copy in a new place? Copies can make money (a service often is one), but know which one you're doing.
 
-**Try it on your work.** Write one answer to his question, about anything you know well: your field, your city, your age group. It's hard, and that's the point. This is lesson P01.
+**Try it on your work.** Write one answer to Thiel's question, about anything you know well: your field, your city, your age group. It's hard, and that's the point. This is lesson P01.

@@ -16,7 +16,7 @@ charts: false
 - Our brains evolved for instant payoffs. Good habits need a small reward in the moment, one that fits the identity you're building.
 
 ## Chapter 16: how to stick with good habits every day
-- A young stockbroker kept two jars and moved a paper clip from one to the other after every sales call. Seeing progress kept him going.
+- A young stockbroker kept two jars and moved a paper clip from one to the other after every sales call. Seeing the progress kept the stockbroker going.
 - **Habit tracking** is a reminder, a small reward and an honest record, all at once. "Don't break the chain."
 - **Never miss twice.** Missing once is an accident; missing twice starts a new habit. On a bad day, do a smaller version.
 - Watch out: once a number becomes the target, it stops being a good measure. Track what really matters, not just what's easy to count.

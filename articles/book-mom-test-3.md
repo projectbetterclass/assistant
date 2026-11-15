@@ -23,4 +23,4 @@ charts: false
 
 **The idea worth keeping.** Write your three questions down before you talk to anyone. Without them, you'll drift into pleasant chat and learn nothing.
 
-**Try it on your work.** Write the scariest question about your idea. Then write how you could ask it casually, as part of a normal conversation about their week. This is P04.
+**Try it on your work.** Write the scariest question about your idea. Then write how you could ask it casually, as part of a normal conversation about their week. This is P03.

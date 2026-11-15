@@ -23,8 +23,8 @@ charts: false
 - **Bonuses beat discounts.** A discount says the thing is worth less. A bonus adds value and keeps the price.
 - **Guarantees come in kinds:** unconditional (no questions), conditional (if you do the work and don't get the result), even an "anti-guarantee" (all sales final, said honestly with a reason).
 - **Scarcity and urgency must be true.** Fake ones get found out and cost you trust.
-- His name formula has five parts (he spells it MAGIC): a reason for the offer, who it's for, the goal, the time, and a container word.
+- The name formula has five parts, spelled MAGIC: a reason for the offer, who it's for, the goal, the time, and a container word.
 
 **The idea worth keeping.** Remove the buyer's risk and give them a real reason to act now. Both are honest ways to sell more.
 
-**Try it on your work.** Give your offer a name with his five parts, one guarantee you could actually keep, and one bonus that answers the most common "but…". This is P07 and P08.
+**Try it on your work.** Give your offer a name with the five parts, one guarantee you could actually keep, and one bonus that answers the most common "but…". This is B03 and B06 in Business.
