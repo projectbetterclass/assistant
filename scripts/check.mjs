@@ -33,6 +33,17 @@ if (!stateM) {
   }
 }
 
+const artM = html.match(/<script id="app-articles" type="application\/json">([\s\S]*?)<\/script>/);
+if (artM) {
+  try {
+    const a = JSON.parse(artM[1]);
+    if (!a || !Array.isArray(a.items) || a.items.some((x) => !x.id || !x.md || !x.title)) fail("app-articles items are malformed");
+    else ok("app-articles JSON parses (" + a.items.length + " articles)");
+  } catch (e) {
+    fail("app-articles JSON is invalid: " + e.message);
+  }
+}
+
 const appM = html.match(/<script id="app">([\s\S]*?)<\/script>/);
 if (!appM) {
   fail("could not extract the app script");
