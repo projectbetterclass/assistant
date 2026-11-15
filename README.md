@@ -89,6 +89,12 @@ every channel in the library (Aswath Damodaran, Justin Sung, HealthyGamerGG, …
 `--channel`, a few seconds across everything, longer while the PC is busy); in
 a phone/cloud session the first search prints a one-time `git clone` command to
 run.
+
+**Audiobooks** (channel `Audiobooks`: Zero to One, Atomic Habits, Eat That Frog!, The Richest
+Man in Babylon, …) are whole books, so they are kept **on the PC only**, in
+`Downloads/Youtube Scraper/audiobooks/`, never on GitHub. `--find`, `--search` and a video id
+include them on the PC; a phone/cloud session can't see them.
+
 Use it when writing or checking lessons, e.g. for `valuation_curriculum.json`:
 quote what was said, cite the video link, and treat chart readings as possibly
 misread (check a number against the video before relying on it).

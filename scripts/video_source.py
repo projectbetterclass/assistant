@@ -43,6 +43,10 @@ _DOWNLOADS = Path(__file__).resolve().parents[2]  # scripts/ -> repo -> the fold
 LOCAL_ARCHIVE = Path(os.environ.get(
     "YTDIGEST_ARCHIVE", _DOWNLOADS / "Youtube Scraper" / "data" / "archive"))
 RAW_ARCHIVE = "https://raw.githubusercontent.com/projectbetterclass/youtube-digest/main/data/archive/"
+# Audiobooks: whole books, kept on the PC only (the library repo is public, so they are never on
+# GitHub). They sit next to data/ in the youtube-digest working copy, in the same layout as
+# data/archive (<video_id>/transcript.md + INDEX.md, channel "Audiobooks").
+AUDIOBOOKS = Path(os.environ.get("YTDIGEST_AUDIOBOOKS", LOCAL_ARCHIVE.parent.parent / "audiobooks"))
 
 _ID = re.compile(r"(?:v=|youtu\.be/|shorts/|embed/|live/)([A-Za-z0-9_-]{11})")
 _BARE_ID = re.compile(r"[A-Za-z0-9_-]{11}")
@@ -104,10 +108,15 @@ def load(ref: str, archive: Optional[Path] = None,
          fetch: Optional[Callable[[str], Optional[str]]] = None) -> VideoSource:
     """Load one video's transcript + on-screen visuals from the library."""
     vid = video_id(ref)
+    book = AUDIOBOOKS / vid / "transcript.md" if archive is None else None
     archive = LOCAL_ARCHIVE if archive is None else archive
     fetch = _fetch_github if fetch is None else fetch
-    transcript, w1 = _read(f"{vid}/transcript.md", archive, fetch)
-    visuals, w2 = _read(f"{vid}/visuals.md", archive, fetch)
+    if book is not None and book.is_file():  # an audiobook: PC only, never on GitHub
+        transcript, w1 = book.read_text(encoding="utf-8"), "this PC (audiobooks folder, not on GitHub)"
+        visuals, w2 = None, ""
+    else:
+        transcript, w1 = _read(f"{vid}/transcript.md", archive, fetch)
+        visuals, w2 = _read(f"{vid}/visuals.md", archive, fetch)
     if transcript is None and visuals is None:
         raise LookupError(f"video {vid} is not in the youtube-digest library "
                           "(not a watched channel, or not collected yet)")
@@ -169,6 +178,9 @@ def find(query: str, index_text: Optional[str] = None, limit: int = 10) -> List[
     if index_text is None:
         index_text, _ = _read("INDEX.md", LOCAL_ARCHIVE, _fetch_github)
         index_text = index_text or ""
+        books = AUDIOBOOKS / "INDEX.md"
+        if books.is_file():  # audiobooks: on this PC only
+            index_text += "\n" + books.read_text(encoding="utf-8", errors="replace")
     words = [w for w in re.findall(r"\w+", query.lower()) if w]
     hits = []
     for line in index_text.splitlines():
@@ -449,7 +461,10 @@ def search(query: str, k: int = 10, channel: Optional[str] = None,
     if not terms:
         return []
     finders = [_finder(t) for t in terms]
+    with_books = archive == LOCAL_ARCHIVE and AUDIOBOOKS.is_dir()  # audiobooks: on this PC only
     meta = _index_meta(archive)
+    if with_books:
+        meta.update(_index_meta(AUDIOBOOKS))
     want = _norm(channel) if channel is not None and channel.strip() else ""
     if channel is not None and channel.strip() and not want:
         raise ChannelNotFound(f"{channel!r} has no letters or digits to match a channel name.")
@@ -464,6 +479,10 @@ def search(query: str, k: int = 10, channel: Optional[str] = None,
     docs = []  # (vid, n_words, counts or None, chart_counts or None)
     with os.scandir(archive) as entries:  # on Windows, is_dir()/stat() here need no extra syscall
         video_dirs = [e for e in entries if e.is_dir()]
+    if with_books:
+        with os.scandir(AUDIOBOOKS) as entries:
+            video_dirs += [e for e in entries if e.is_dir()]
+    dir_of = {e.name: Path(e.path) for e in video_dirs}
     known = _visuals_ids(archive)
     for entry in video_dirs:
         vid, dpath = entry.name, entry.path
@@ -503,7 +522,7 @@ def search(query: str, k: int = 10, channel: Optional[str] = None,
 
     hits = []
     for covered, bm25, vid, counts, chart in scored[:k]:
-        d = archive / vid
+        d = dir_of.get(vid, archive / vid)
         date, ch, title, url = meta.get(vid, ("", "", "", f"https://www.youtube.com/watch?v={vid}"))
         body = "\n".join(x for x in (_read_body(d / "transcript.md"), _read_body(d / "visuals.md")) if x)
         low = body.lower()
