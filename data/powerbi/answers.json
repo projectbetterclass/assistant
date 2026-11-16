@@ -1,0 +1,360 @@
+{
+ "raw": {
+  "Orders.csv": 10157,
+  "Customers.csv": 60,
+  "Products.csv": 40,
+  "Suppliers.csv": 8,
+  "Carriers.csv": 4,
+  "Warehouses.csv": 3,
+  "orders_blank_delivered": 38,
+  "orders_dup": 30,
+  "orders_test": 12,
+  "orders_ids": 3545
+ },
+ "clean_lines": 10115,
+ "cust_by_country": {
+  "Netherlands": 30,
+  "Belgium": 15,
+  "Germany": 15
+ },
+ "open_lines": 38,
+ "units_by_cat": {
+  "Beverages": 41520,
+  "Snacks": 39159,
+  "Household": 38401,
+  "Personal care": 39559
+ },
+ "lines_by_wh": {
+  "Rotterdam": 3266,
+  "Venlo": 3512,
+  "Tilburg": 3337
+ },
+ "totals": {
+  "lines": 10115,
+  "delivered": 10077,
+  "units_ordered": 158639,
+  "units_shipped": 156300,
+  "revenue": 4087427.47,
+  "freight": 254463.0,
+  "freight_pct": 6.2,
+  "kg": 1096237,
+  "eur_per_kg": 0.232,
+  "fill": 98.9
+ },
+ "service": {
+  "ontime": 93.4,
+  "infull": 97.0,
+  "otif": 90.7,
+  "otif_by_wh": {
+   "Rotterdam": 91.6,
+   "Venlo": 88.8,
+   "Tilburg": 91.7
+  },
+  "late_share_by_carrier": {
+   "Haven Transport": 33.0,
+   "Brug Logistiek": 38.0,
+   "Duin Express": 8.7,
+   "Kanaal Freight": 20.2
+  }
+ },
+ "by_year": {
+  "2024": {
+   "otif": 91.1,
+   "fill": 98.8,
+   "freight": 123482.0,
+   "revenue": 1926106.56,
+   "lines": 4838,
+   "eur_per_kg": 0.237,
+   "otif_by_wh": {
+    "Rotterdam": 91.0,
+    "Venlo": 91.8,
+    "Tilburg": 90.5
+   }
+  },
+  "2025": {
+   "otif": 90.3,
+   "fill": 99.0,
+   "freight": 130981.0,
+   "revenue": 2161320.91,
+   "lines": 5277,
+   "eur_per_kg": 0.228,
+   "otif_by_wh": {
+    "Rotterdam": 92.1,
+    "Venlo": 86.0,
+    "Tilburg": 93.0
+   }
+  }
+ },
+ "ytd_jun": {
+  "2024": 60683.74,
+  "2025": 68432.1
+ },
+ "monthly_otif_2025": {
+  "1": 90.1,
+  "2": 92.7,
+  "3": 89.3,
+  "4": 95.0,
+  "5": 95.8,
+  "6": 94.5,
+  "7": 88.0,
+  "8": 88.2,
+  "9": 90.7,
+  "10": 84.6,
+  "11": 89.7,
+  "12": 84.9
+ },
+ "mavg3_2025": {
+  "10": 87.8,
+  "11": 88.3,
+  "12": 86.4
+ },
+ "low_customers_2025": [
+  {
+   "id": "C55",
+   "name": "Online De Kolk Duisburg",
+   "country": "Germany",
+   "wh": "Venlo",
+   "otif": 70.3,
+   "lines": 91
+  },
+  {
+   "id": "C48",
+   "name": "Markt Dijkzicht Köln",
+   "country": "Germany",
+   "wh": "Venlo",
+   "otif": 73.1,
+   "lines": 78
+  },
+  {
+   "id": "C59",
+   "name": "Online Kade Oost Duisburg",
+   "country": "Germany",
+   "wh": "Venlo",
+   "otif": 79.8,
+   "lines": 124
+  },
+  {
+   "id": "C01",
+   "name": "Buurtsuper Groene Hart",
+   "country": "Netherlands",
+   "wh": "Venlo",
+   "otif": 80.5,
+   "lines": 174
+  },
+  {
+   "id": "C02",
+   "name": "Online Noorderlicht",
+   "country": "Netherlands",
+   "wh": "Rotterdam",
+   "otif": 81.5,
+   "lines": 81
+  },
+  {
+   "id": "C53",
+   "name": "Großhandel Molenhoek Düsseldorf",
+   "country": "Germany",
+   "wh": "Venlo",
+   "otif": 83.6,
+   "lines": 134
+  },
+  {
+   "id": "C34",
+   "name": "Buurtwinkel Rozengaard Antwerpen",
+   "country": "Belgium",
+   "wh": "Tilburg",
+   "otif": 84.7,
+   "lines": 98
+  },
+  {
+   "id": "C26",
+   "name": "Groothandel Weidegrond",
+   "country": "Netherlands",
+   "wh": "Rotterdam",
+   "otif": 84.8,
+   "lines": 66
+  },
+  {
+   "id": "C10",
+   "name": "Supermarkt Marktplein",
+   "country": "Netherlands",
+   "wh": "Tilburg",
+   "otif": 86.6,
+   "lines": 67
+  },
+  {
+   "id": "C51",
+   "name": "Frischemarkt Het Anker Essen",
+   "country": "Germany",
+   "wh": "Venlo",
+   "otif": 86.8,
+   "lines": 114
+  },
+  {
+   "id": "C30",
+   "name": "Buurtsuper Zuidpunt",
+   "country": "Netherlands",
+   "wh": "Rotterdam",
+   "otif": 87.4,
+   "lines": 103
+  },
+  {
+   "id": "C07",
+   "name": "Supermarkt De Spil",
+   "country": "Netherlands",
+   "wh": "Rotterdam",
+   "otif": 87.5,
+   "lines": 72
+  },
+  {
+   "id": "C43",
+   "name": "Supermarché Duinrand Antwerpen",
+   "country": "Belgium",
+   "wh": "Tilburg",
+   "otif": 87.5,
+   "lines": 40
+  },
+  {
+   "id": "C54",
+   "name": "Markt De Pijl Essen",
+   "country": "Germany",
+   "wh": "Venlo",
+   "otif": 87.6,
+   "lines": 121
+  },
+  {
+   "id": "C21",
+   "name": "Groothandel Het Anker",
+   "country": "Netherlands",
+   "wh": "Venlo",
+   "otif": 87.7,
+   "lines": 130
+  },
+  {
+   "id": "C39",
+   "name": "Online Lindenhof Hasselt",
+   "country": "Belgium",
+   "wh": "Tilburg",
+   "otif": 88.0,
+   "lines": 50
+  },
+  {
+   "id": "C49",
+   "name": "Markt Waterkant Düsseldorf",
+   "country": "Germany",
+   "wh": "Venlo",
+   "otif": 88.3,
+   "lines": 128
+  },
+  {
+   "id": "C11",
+   "name": "Online Vennehof",
+   "country": "Netherlands",
+   "wh": "Rotterdam",
+   "otif": 88.7,
+   "lines": 62
+  },
+  {
+   "id": "C18",
+   "name": "Buurtsuper Dijkzicht",
+   "country": "Netherlands",
+   "wh": "Rotterdam",
+   "otif": 88.7,
+   "lines": 71
+  },
+  {
+   "id": "C19",
+   "name": "Online Waterkant",
+   "country": "Netherlands",
+   "wh": "Rotterdam",
+   "otif": 88.9,
+   "lines": 72
+  },
+  {
+   "id": "C04",
+   "name": "Groothandel Rozengaard",
+   "country": "Netherlands",
+   "wh": "Rotterdam",
+   "otif": 89.5,
+   "lines": 57
+  },
+  {
+   "id": "C33",
+   "name": "Online Havenzicht Antwerpen",
+   "country": "Belgium",
+   "wh": "Tilburg",
+   "otif": 89.5,
+   "lines": 76
+  },
+  {
+   "id": "C60",
+   "name": "Großhandel Zuidpunt Köln",
+   "country": "Germany",
+   "wh": "Venlo",
+   "otif": 89.8,
+   "lines": 147
+  }
+ ],
+ "venlo": {
+  "otif_h1": 92.1,
+  "otif_h2": 79.9,
+  "eur_kg_h1": 0.238,
+  "eur_kg_h2": 0.194,
+  "kg_h2": 98521,
+  "saving": 4364,
+  "delivered_h2": 901,
+  "extra_fail": 110,
+  "per_fail": 39.7,
+  "kanaal_share_h2": 76.9,
+  "otif_h2_kanaal": 78.0,
+  "otif_h2_other": 86.5,
+  "otif_q4_kanaal": 74.8,
+  "otif_q3_kanaal": 80.3,
+  "kanaal_eur_kg": 0.175
+ },
+ "supplier_q4": {
+  "name": "Krokant Foods",
+  "fill": 90.1,
+  "others": 99.1,
+  "fill_q3": 98.6
+ },
+ "rls_venlo": {
+  "lines": 3512,
+  "otif": 88.8,
+  "customers": 18
+ },
+ "rls_tilburg": {
+  "lines": 3337,
+  "otif": 91.7,
+  "customers": 21
+ },
+ "otif_2024_rotterdam": 91.0,
+ "units_by_cat_2025": {
+  "Beverages": 21050,
+  "Snacks": 20276,
+  "Household": 20748,
+  "Personal care": 21264
+ },
+ "by_carrier_2025": {
+  "Haven Transport": {
+   "otif": 91.0,
+   "eur_kg": 0.231
+  },
+  "Brug Logistiek": {
+   "otif": 92.7,
+   "eur_kg": 0.219
+  },
+  "Duin Express": {
+   "otif": 94.3,
+   "eur_kg": 0.283
+  },
+  "Kanaal Freight": {
+   "otif": 78.0,
+   "eur_kg": 0.175
+  }
+ },
+ "revenue_by_channel_2025": {
+  "Supermarket": 937872.42,
+  "Wholesale": 685835.97,
+  "Online": 537612.52
+ }
+}
