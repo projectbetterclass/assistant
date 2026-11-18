@@ -23,11 +23,12 @@ writes the new code with the live saved data byte-for-byte unchanged.
 
 | Check | What it covers |
 |---|---|
-| `node coursecheck.mjs <goal> <prefix> <n>` | one course, every lesson: thread, idea, walk-through, numbers, answer, revisit. `goal_fire F 12`, `goal_build P 9`, `goal_biz B 15`, `goal_opt H 18`, `goal_fx X 12` |
+| `node coursecheck.mjs <goal> <prefix> <n>` | one course, every lesson: thread, idea, walk-through, numbers, answer, revisit. `goal_fire F 12`, `goal_build P 9`, `goal_biz B 15`, `goal_opt H 18`, `goal_fx X 12`, `goal_career C 15`, `goal_pbi Q 12` |
 | `node learncheck.mjs` | investing sittings, Learn step |
 | `node refcheck.mjs` | tappable D-xx rule references |
 | `node revcheck.mjs` | revisits: their own numbers and closed answers |
-| `node flows.mjs`, `parts.mjs`, `smoke.mjs` | the main screens and flows |
+| `node flows.mjs`, `smoke.mjs` | the main screens and flows |
+| `node parts.mjs` | lessons in two halves: part 1 learn it, part 2 do it, and Done counts the day |
 | `node shot-test.mjs` | starting a task from a screenshot |
 | `node docs.mjs` | the doctrine cards |
 | `node shot-all.mjs` | every investing lesson at phone width |
