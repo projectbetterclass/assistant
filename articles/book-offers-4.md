@@ -28,4 +28,4 @@ charts: false
 
 **The idea worth keeping.** If you want to charge more, look at the bottom of the equation first: faster and easier.
 
-**Try it on your work.** For your service, write one change for each of the four levers. Circle the one that costs you least. This is B03 in Business.
+**Try it on your work.** For your service, write one change for each of the four levers. Circle the one that costs you least.

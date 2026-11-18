@@ -24,4 +24,4 @@ charts: false
 
 **The idea worth keeping.** The best offers are a long list of small problems solved, not one big promise.
 
-**Try it on your work.** Write ten problems your customer hits on the way to the result. Turn three into solutions you could deliver cheaply. That's the start of your offer. This is B03 in Business.
+**Try it on your work.** Write ten problems your customer hits on the way to the result. Turn three into solutions you could deliver cheaply. That's the start of your offer.

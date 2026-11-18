@@ -25,4 +25,4 @@ charts: false
 
 **The idea worth keeping.** Judge every conversation by one test: did they give up time, reputation or money?
 
-**Try it on your work.** Decide what commitment you'll ask for in your next conversation: a second chat, an intro to someone, a small deposit, a free trial on the conditions in the Hormozi first-five read. Ask for it. This is P05.
+**Try it on your work.** Decide what commitment you'll ask for in your next conversation: a second chat, an intro to someone, a small deposit, a free trial on the conditions in the Hormozi first-five read. Ask for it.

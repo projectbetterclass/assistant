@@ -27,4 +27,4 @@ charts: false
 
 **The idea worth keeping.** Remove the buyer's risk and give them a real reason to act now. Both are honest ways to sell more.
 
-**Try it on your work.** Give your offer a name with the five parts, one guarantee you could actually keep, and one bonus that answers the most common "but…". This is B03 and B06 in Business.
+**Try it on your work.** Give your offer a name with the five parts, one guarantee you could actually keep, and one bonus that answers the most common "but…".

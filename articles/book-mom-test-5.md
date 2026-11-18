@@ -27,4 +27,4 @@ charts: false
 
 **The idea worth keeping.** A customer group is only specific enough when you can say where to find them this week.
 
-**Try it on your work.** Write a "who and where" for your idea: the specific group, and three places (online or offline) where you could find ten of them this week. This is P02 and P07.
+**Try it on your work.** Write a "who and where" for your idea: the specific group, and three places (online or offline) where you could find ten of them this week.

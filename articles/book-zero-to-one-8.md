@@ -29,4 +29,4 @@ Most cleantech companies of the 2000s failed because they couldn't answer these:
 
 **The idea worth keeping.** You won't get seven yeses. Thiel says to get as many as you can, and to be honest about the ones you can't.
 
-**Try it on your work.** These are the seven questions on your idea board. Open the starred idea in Building products and answer each with yes, not sure or no. A "not sure" is a question to go and find out. This is P12.
+**Try it on your work.** Take your idea, Intensity Applied or whichever you'd most like to build, and answer each of the seven with yes, not sure or no. A "not sure" is a question to go and find out.

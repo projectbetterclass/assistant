@@ -26,4 +26,4 @@ Nearly everything people pay for falls under **health, wealth or relationships.*
 
 **The idea worth keeping.** Check the four signs before you build anything. If one is missing, the business will feel like pushing uphill.
 
-**Try it on your work.** Score your idea's market on the four signs: yes, not sure, no. Then narrow it once: add a job, a situation or a life stage. This is B01 in Business.
+**Try it on your work.** Score your idea's market on the four signs: yes, not sure, no. Then narrow it once: add a job, a situation or a life stage.

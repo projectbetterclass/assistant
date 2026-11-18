@@ -22,4 +22,4 @@ charts: false
 
 **The idea worth keeping.** Be honest about your market. If you have to squeeze it into a tiny intersection to sound unique, you're in a crowded market wearing a costume.
 
-**Try it on your work.** Describe your idea's market in one plain sentence. Then list three things a customer could use instead. If the list is long, find a smaller group you could serve better than anyone. This feeds P03 (own a tiny market first).
+**Try it on your work.** Describe your idea's market in one plain sentence. Then list three things a customer could use instead. If the list is long, find a smaller group you could serve better than anyone.

@@ -27,4 +27,4 @@ After the dot-com crash, Silicon Valley learned four lessons. Thiel thinks the o
 
 **The idea worth keeping.** Ask of anything you're thinking of building: is this a new thing, or a copy in a new place? Copies can make money (a service often is one), but know which one you're doing.
 
-**Try it on your work.** Write one answer to Thiel's question, about anything you know well: your field, your city, your age group. It's hard, and that's the point. This is lesson P01.
+**Try it on your work.** Write one answer to Thiel's question, about anything you know well: your field, your city, your age group. It's hard, and that's the point.

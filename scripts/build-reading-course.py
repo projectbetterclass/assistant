@@ -6,7 +6,7 @@
 #   python3 scripts/build-reading-course.py       -> rewrites the block in time-tracker.html
 import os, sys
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from course_block import yt, course, check_videos, write
+from course_block import yt, course, check_videos, check_extras, write
 
 JS = "Justin Sung"
 FOCUS = yt("4YF3_fw1Jko", JS, "4 Tips to Read Without Losing Focus", "priming a paragraph, then reading for its anchor points, even when tired")
@@ -82,7 +82,7 @@ for x in L:
 # memory, check it against the chapter's points. The action comes back at the next sitting as "did you do it?".
 # A note added later (from the audiobooks on the PC) becomes a sitting the next time this script runs; ids are per book
 # and per note number, so a new book never renumbers the sittings you've done.
-import glob, re
+import glob, json, re
 ART = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "articles")
 BOOKS_IN_ORDER = [  # book (as in the note's channel), id letter, what it's for
     ("Atomic Habits", "A", "James Clear: small habits, made obvious, attractive, easy and satisfying"),
@@ -130,42 +130,69 @@ known = {norm(b) for b, _, _ in BOOKS_IN_ORDER}
 assert set(notes) <= known, ("a book on the shelf isn't in BOOKS_IN_ORDER", set(notes) - known)
 first_sentence = lambda t: re.split(r"(?<=[.!?])\s", t.strip(), 1)[0]
 BOOK_L, BOOK_RUNGS, BOOK_DESC = [], [], []
+# Building products lives here now: its nine lessons were the Zero to One and Mom Test chapters used on your own idea, so
+# each of those chapters carries that lesson's task, worked example, good-answer check and revisit (reading-apply.json).
+APPLY = json.load(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "reading-apply.json"), encoding="utf-8"))
+LISTEN = {"h": "How to listen", "l": ["At a speed you can follow, not double speed: digesting it is what makes it stick.", "Pause after each big idea and say it back in one sentence, out loud or in your head.",
+                                       "Link it to something you already know, and say the link.", "Drifted off? Go back 30 seconds rather than pushing on."]}
+def bare(h): return re.sub(r"^(?:Chapters?|Ch\.)\s*[\d–-]+:\s*", "", h).strip()
+def cap(s): return s[:1].upper() + s[1:]
 for book, letter, desc in BOOKS_IN_ORDER:
     ns = sorted(notes.get(norm(book), []), key=lambda x: x[0])
     if not ns: continue
     BOOK_RUNGS.append(book); BOOK_DESC.append(desc)
     for i, (n, meta, teach, idea, tryit, walk) in enumerate(ns):
-        lid = "%s%02d" % (letter, n % 100); part = meta.get("part", ""); title = plain(meta["title"])
+        lid = "%s%02d" % (letter, n % 100); part = meta.get("part", "") or "this chapter"; title = plain(meta["title"])
         if len(teach) < 150: teach = (teach + " " + idea).strip()
         if len(teach) < 150 and tryit: teach = (teach + " " + tryit).strip()
         pts = []
         for w in walk:
             for it in w.get("l", []):
                 pts.append((it[0] + ": " + first_sentence(it[1])) if isinstance(it, list) else first_sentence(it))
+        heads = [w["h"] for w in walk if w["h"] != "In short"]
+        ap = APPLY.get(lid)
         act = tryit or "Pick the one line of this chapter you’d act on, and do it tomorrow."
-        les = dict(id=lid, rung=book, stage_name=part or ("Note %d" % n), concept=title, estimateMin=20,
-            teach=teach,
-            task="Before you read, guess what this chapter says about ‘%s’. Then read the note, or listen to %s of the audiobook. From memory, write the idea in your own words and one action for tomorrow, as ‘After I …, I will …’. Judge: which line of this chapter would change what you do this week?" % (title, part or "this chapter"),
-            co=book, rev=book,
-            walk=walk + ([{"h": "The idea worth keeping", "p": [idea]}] if idea else []) + [{"h": "Your turn: one action for tomorrow", "p": [act, "Write it as ‘After I …, I will …’, small enough to do in two minutes."]}],
-            key=[{"t": "The chapter in short", "l": pts[:6] or [teach]}] + ([{"t": "The idea worth keeping", "l": [idea]}] if idea else []),
-            thread={"n": ("%s%02d · %s" % (letter, ns[i + 1][0] % 100, plain(ns[i + 1][1]["title"]))) if i + 1 < len(ns) else "the next book on your shelf"},
-            rtask="From memory: this chapter’s idea in two lines, and the action you chose. Did it stick?",
-            rkey=[{"t": "Short answer", "l": [idea or teach]}],
-            read=["Your bookshelf: %s, %s — %s" % (book, part, title), "Or listen: %s, %s, in the audiobook" % (book, part)])
+        # the brief: listen first, then the work; a chapter that carries a product lesson asks you to use it on your idea
+        if ap:
+            do, judge = (ap["task"].split(" Judge: ", 1) + [""])[:2]
+            task = ("Listen to %s of the audiobook, pausing to say each idea back. Then, from memory: %s End with one action for tomorrow, as ‘After I …, I will …’." % (part, do)
+                    + (" Judge: " + judge if judge else ""))
+        else:
+            task = ("Before you press play, guess what this part says about ‘%s’. Listen to %s of the audiobook, pausing to say each idea back. Then, from memory, write the idea in your own words and one action for tomorrow, as ‘After I …, I will …’. Judge: which line of it would change what you do this week?" % (title, part))
+        lw = [{"h": "The map, before you press play", "p": ["%s of %s, in %d part%s. Keep them in mind while you listen: they’re where each idea will land." % (cap(part), book, max(1, len(heads)), "" if len(heads) == 1 else "s")],
+               "l": [bare(h) for h in heads] or [title]},
+              {"h": "Listen for", "l": ["%s: what’s the claim, and the reason or example behind it?" % cap(bare(h)) for h in heads[:3]] or ["The one claim this part makes, and the reason behind it."]},
+              LISTEN,
+              {"h": "Can’t listen now? The chapter note", "fold": walk + ([{"h": "The idea worth keeping", "p": [idea]}] if idea else [])}]
+        if ap: lw += ap["walk"]
+        lw.append({"h": "Your turn: %s" % part, "p": ["Play %s, %s, in the audiobook, with the map above in mind. Then say the idea in one line." % (book, part),
+                                                     ("Next, use it on your idea: Intensity Applied, or whichever idea you’d most like to build." if ap else act + " Write it as ‘After I …, I will …’, small enough to do in two minutes.")]})
+        key = (ap["key"] if ap else []) + [{"t": "The chapter in short", "l": pts[:6] or [teach]}] + ([{"t": "The idea worth keeping", "l": [idea]}] if idea else [])
+        les = dict(id=lid, rung=book, stage_name=meta.get("part", "") or ("Note %d" % n), concept=title, estimateMin=30, teach=teach, task=task, co=book, rev=book,
+                   walk=lw, key=key,
+                   thread={"n": ("%s%02d · %s" % (letter, ns[i + 1][0] % 100, plain(ns[i + 1][1]["title"]))) if i + 1 < len(ns) else "the next book on your shelf"},
+                   rtask=(ap["rtask"][:1].upper() + ap["rtask"][1:]) if ap else "From memory: this chapter’s idea in two lines, and the action you chose. Did it stick?",
+                   rkey=ap["rkey"] if ap else [{"t": "Short answer", "l": [idea or teach]}],
+                   read=["Listen: %s, %s, in the audiobook" % (book, part), "Or read: the chapter note, under ‘Can’t listen now?’ in step 2"])
         if i: les["thread"]["b"] = "%s%02d · %s" % (letter, ns[i - 1][0] % 100, plain(ns[i - 1][1]["title"]))
         elif BOOK_L: les["thread"]["b"] = "the previous book, %s" % BOOK_L[-1]["co"]
         BOOK_L.append(les)
+assert set(APPLY) <= {x["id"] for x in BOOK_L}, "a product lesson's chapter is missing from the shelf"
+for x in BOOK_L:   # a chapter keeps to its own book: no pointers to other lessons in what it shows
+    for sec in x["walk"] + [s for w in x["walk"] for s in w.get("fold", [])]:
+        for t in [sec.get("h", "")] + sec.get("p", []) + [" ".join(q) if isinstance(q, list) else q for q in sec.get("l", [])]:
+            assert not re.search(r"\b(?:P|Z|M|O|A|E|Y|B)\d\d\b", t), (x["id"], "points at another lesson", t)
 L = BOOK_L + L
 
 C = course({"goal_id": "goal_read", "key": "read", "title": "Your books, one chapter a sitting", "azTitle": "Your books, A → Z",
      "rungs": BOOK_RUNGS + ["Read better"],
      "rungDesc": BOOK_DESC + ["the reading techniques: a time and a place, priming, sprints, PACER, maps, retrieval, the next book"],
-     "blurb": "One chapter per sitting, in Justin Sung’s four steps: guess what it says, read the note on your shelf or listen to that chapter, write the idea and one action for tomorrow from memory, then check it. The next sitting starts with: did you do it? The reading techniques come last, under Read better.",
+     "blurb": "One chapter per sitting, made for the audiobook, in Justin Sung’s four steps: guess what it says and look at its map, listen with the map in mind and pause to say each idea back, write it from memory, then check it. A chapter longer than today’s slot runs in two halves: listen one day, write and check the next. The Zero to One and Mom Test chapters ask you to use them on your own idea (they used to be the Building products course). The reading techniques come last, under Read better.",
      "allDone": "now add the next book to your shelf. 📖",
      "revWord": "the same chapter, a week on",
-     "refNote": "Guess first: the idea opens in step 2. The notes are in my words, from the books; the audiobooks on your PC are the full text."}, L)
+     "refNote": "Guess first: the map opens in step 2. The chapter notes are in my words, from the books, folded away under ‘Can’t listen now?’; the audiobooks on your PC are the full text."}, L)
 check_videos(C)
+check_extras(C["lessons"])
 write("READ_CURRICULUM", ["Read so it sticks — your books, one chapter a sitting (one per note on the bookshelf, in the order of BOOKS_IN_ORDER),\n     then 12 reading techniques under Read better, in my words from Justin Sung's videos in the youtube-digest",
       "library and the Atomic Habits notes on the bookshelf: a time and a place, the two-minute start, priming, reading for a problem,",
       "sprints and pauses, highlighting, consume vs digest, PACER, mind maps, retrieval, the memory ladder and choosing the next book.",

@@ -22,4 +22,4 @@ charts: false
 
 **The idea worth keeping.** Your price is part of your offer. A low price says "this probably won't change much for you".
 
-**Try it on your work.** Write the price you were planning to charge, then double it. What would you have to add so the doubled price feels fair? Often the answer is more support, faster results or a guarantee. This is B06 in Business.
+**Try it on your work.** Write the price you were planning to charge, then double it. What would you have to add so the doubled price feels fair? Often the answer is more support, faster results or a guarantee.

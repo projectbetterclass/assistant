@@ -27,4 +27,4 @@ charts: false
 
 **The idea worth keeping.** "Everyone would have thought of that" is not a reason to drop an idea. Check whether they actually have.
 
-**Try it on your work.** Write down one thing you've seen up close (a job, a hobby, your studies) that seems broken and that people around you accept as normal. That's the raw material for the "secret" question on your idea board (P12).
+**Try it on your work.** Write down one thing you've seen up close (a job, a hobby, your studies) that seems broken and that people around you accept as normal. That's the raw material for a secret.

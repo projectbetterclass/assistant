@@ -66,7 +66,9 @@ def check_extras(lessons):
         for b in x.get("key", []) + x.get("rkey", []):
             assert b.get("l") and all(isinstance(q, str) and q for q in b["l"]), (x["id"], b)
         for sec in x.get("walk", []):
-            assert sec.get("h") and (sec.get("p") or sec.get("l")), (x["id"], sec)
+            assert sec.get("h") and (sec.get("p") or sec.get("l") or sec.get("fold")), (x["id"], sec)
+            for sub in sec.get("fold", []):   # a folded section: sections shown only when you open it
+                assert sub.get("h") and (sub.get("p") or sub.get("l")), (x["id"], sub)
         if "rtask" in x:
             assert (x.get("rev") or "{idea}" in x["rtask"]) and x.get("rkey"), (x["id"], "a revisit needs its company (or {idea}) and an answer")
         if "thread" in x:

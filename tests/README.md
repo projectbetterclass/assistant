@@ -23,7 +23,7 @@ writes the new code with the live saved data byte-for-byte unchanged.
 
 | Check | What it covers |
 |---|---|
-| `node coursecheck.mjs <goal> <prefix> <n>` | one course, every lesson: thread, idea, walk-through, numbers, answer, revisit. `goal_fire F 12`, `goal_build P 9`, `goal_biz B 15`, `goal_opt H 18`, `goal_fx X 12`, `goal_career C 15`, `goal_pbi Q 12` |
+| `node coursecheck.mjs <goal> <prefix> <n>` | one course, every lesson: thread, idea, walk-through, numbers, answer, revisit. `goal_fire F 12`, `goal_biz B 15`, `goal_opt H 18`, `goal_fx X 12`, `goal_career C 15`, `goal_pbi Q 12` |
 | `node learncheck.mjs` | investing sittings, Learn step |
 | `node refcheck.mjs` | tappable D-xx rule references |
 | `node revcheck.mjs` | revisits: their own numbers and closed answers |

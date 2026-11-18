@@ -11,9 +11,9 @@ const lastState = page => page.evaluate(() => { const h = window.__pub[window.__
 const tile = (page, name) => page.$$eval(".day .rt", (els, name) => { const e = els.find(x => (x.querySelector(".rt-n") || {}).innerText === name); return e ? e.querySelector(".rt-m").innerText.replace(/\s+/g, " ") : ""; }, name);
 
 for (const w of [402, 900]) {
-  // day 1: Products, part 1, done early
+  // day 1: FIRE plan, part 1, done early
   let { page, errors, ctx } = await openPage(browser, { width: w, time: D1 });
-  await start(page, "goal_build", "P01");
+  await start(page, "goal_fire", "F01");
   let brief = await txt(page, ".ses-brief");
   check(`${w} part 1 says what it is`, /Part 1 of 2: learn it/.test(brief) && /however long it took/.test(brief), brief.slice(0, 300));
   check(`${w} part 1 has two steps`, (await page.$$(".ses-pills .ses-pill")).length === 2 && /1 Guess/.test(await txt(page, ".ses-pills")) && /2 Learn/.test(await txt(page, ".ses-pills")));
@@ -25,8 +25,8 @@ for (const w of [402, 900]) {
   await page.fill("#ses-gist", "copy a known product, but for a narrow group it fails");
   await page.click('[data-action="ses-done1"]'); await page.clock.runFor(3000);
   check(`${w} Done stops the clock`, !(await page.$(".now-active")) && /Part 1 done ✓/.test(await txt(page, "#toast")), await txt(page, "#toast"));
-  check(`${w} the day plan counts it done, early`, /✓ done · \d+ min/.test(await tile(page, "Products")), await tile(page, "Products"));
-  let st = await lastState(page), t = st && st.tasks.find(x => x.id === "lesson_goal_build_P01");
+  check(`${w} the day plan counts it done, early`, /✓ done · \d+ min/.test(await tile(page, "FIRE plan")), await tile(page, "FIRE plan"));
+  let st = await lastState(page), t = st && st.tasks.find(x => x.id === "lesson_goal_fire_F01");
   check(`${w} saved: part 1 done today, with the one line`, t && t.p1 === "2026-11-18" && (t.fin || []).includes("2026-11-18") && t.study.slice(-1)[0].gist === "copy a known product, but for a narrow group it fails", JSON.stringify(t && { p1: t.p1, fin: t.fin }));
   check(`${w} no sideways scroll (day 1)`, await noHScroll(page));
   fs.writeFileSync(TMP, (await page.evaluate(() => window.__pub[window.__pub.length - 1])));
@@ -35,8 +35,8 @@ for (const w of [402, 900]) {
 
   // day 2: part 2 of the same lesson
   ({ page, errors, ctx } = await openPage(browser, { width: w, time: D2, file: TMP }));
-  check(`${w} next day the plan is open again`, !/✓/.test(await tile(page, "Products")), await tile(page, "Products"));
-  await start(page, "goal_build", "P01");
+  check(`${w} next day the plan is open again`, !/✓/.test(await tile(page, "FIRE plan")), await tile(page, "FIRE plan"));
+  await start(page, "goal_fire", "F01");
   brief = await txt(page, ".ses-brief");
   check(`${w} part 2 says what it is`, /Part 2 of 2: do it/.test(brief), brief.slice(0, 300));
   const pills = await txt(page, ".ses-pills");
@@ -49,9 +49,9 @@ for (const w of [402, 900]) {
   const chk = await txt(page, ".ses");
   check(`${w} Check shows part 1's one line`, /Part 1, in one line/i.test(chk) && /narrow group it fails/.test(chk), chk.slice(0, 400));
   await page.click('[data-action="cur-nailed"] >> nth=0'); await page.clock.runFor(3000);
-  st = await lastState(page); t = st && st.tasks.find(x => x.id === "lesson_goal_build_P01");
-  check(`${w} nailed: lesson done, day counted`, st && st.goals.find(g => g.id === "goal_build").curr.done.P01 === true && (t.fin || []).includes("2026-11-19"));
-  check(`${w} the day plan shows it done`, /✓/.test(await tile(page, "Products")), await tile(page, "Products"));
+  st = await lastState(page); t = st && st.tasks.find(x => x.id === "lesson_goal_fire_F01");
+  check(`${w} nailed: lesson done, day counted`, st && st.goals.find(g => g.id === "goal_fire").curr.done.F01 === true && (t.fin || []).includes("2026-11-19"));
+  check(`${w} the day plan shows it done`, /✓/.test(await tile(page, "FIRE plan")), await tile(page, "FIRE plan"));
   check(`${w} no errors (day 2)`, errors.length === 0, errors.join(" | "));
   await ctx.close();
 

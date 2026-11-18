@@ -1,0 +1,365 @@
+{
+ "Z01": {
+  "was": "P01",
+  "concept": "Zero to one, or one to n",
+  "task": "Is your idea a 0-to-1 or a 1-to-n idea? Answer Thiel’s question for its area in one sentence. Judge: if it’s 1 to n, what do you do that the ones you copy don’t? If you can’t name it, that’s the first gap. Try it this week: find the three closest products to your idea and write what each one gets wrong.",
+  "walk": [
+   {
+    "h": "Where it goes wrong",
+    "l": [
+     "Calling a copy new.",
+     "Copying with no reason to win: the same product, for the same people, with a smaller budget."
+    ]
+   },
+   {
+    "h": "Worked: an app like Intensity Applied",
+    "p": [
+     "An app for lifters who want to build muscle is 1 to n: training apps and logbooks already exist. That’s fine. The work is the gap: a group the big apps serve badly, such as lifters who have stalled for months, and the one thing done for them that the others don’t do."
+    ]
+   }
+  ],
+  "key": [
+   {
+    "t": "A good answer looks like",
+    "l": [
+     "One word first: ‘1 to n’, for most first products.",
+     "One sentence naming a group and a gap, e.g. ‘lifters who’ve stalled for months get generic programmes; nobody shows them which variable to change next’.",
+     "Three named competitors, each with one specific miss taken from a user’s complaint (an app review, a forum post), not from your guess."
+    ]
+   }
+  ],
+  "rtask": "Your idea: 0 to 1 or 1 to n, and the one thing it would do that the closest product doesn’t.",
+  "rkey": [
+   {
+    "t": "Short answer",
+    "l": [
+     "Most are 1 to n. The answer is one specific gap for one group, taken from a real complaint about the closest product; if you can’t name one, that’s the finding."
+    ]
+   }
+  ]
+ },
+ "Z02": {
+  "was": "P08",
+  "concept": "What keeps it yours",
+  "task": "Which of the four could your idea have in five years — honestly? Name it, and what you’d have to do from day one to build it. Judge: if a funded competitor copied your idea next month, what would they still not have? Try it this week: write that answer as your one-line pitch.",
+  "walk": [
+   {
+    "h": "Where it goes wrong",
+    "l": [
+     "Calling ‘first’ a moat: Thiel argues the last mover wins.",
+     "A brand with nothing underneath it."
+    ]
+   },
+   {
+    "h": "Worked: an app like Intensity Applied",
+    "l": [
+     "Technology 10 times better is hard: most training logic is public.",
+     "Network effects are weak, unless many lifters’ data makes the advice better for each one.",
+     "Scale: software is cheap to serve, but so is every rival’s.",
+     "So the likeliest moat is that data, built from day one by logging what each lifter changed and what happened next."
+    ]
+   }
+  ],
+  "key": [
+   {
+    "t": "A good answer looks like",
+    "l": [
+     "One moat, chosen honestly. ‘None yet’ is fine if you name the one you’ll build.",
+     "A day-one action that starts it: logging the data, starting the community, owning the niche’s name.",
+     "The copycat line, written as your one-line pitch: what they’d still lack next month."
+    ]
+   }
+  ],
+  "rtask": "Your idea: which moat could it build, and what’s the first step this month?",
+  "rkey": [
+   {
+    "t": "Short answer",
+    "l": [
+     "One of Thiel’s four, or Hormozi’s know-how, with a concrete first step. ‘None yet’ counts if you name the one you’ll build."
+    ]
+   }
+  ]
+ },
+ "Z03": {
+  "was": "P02",
+  "concept": "Own a tiny market first",
+  "task": "Write your idea’s smallest real market in one sentence: who, doing what, where. Roughly how many of them are there, and how would you reach the first 100? Judge: is it small enough that you’d be their obvious choice, but big enough to matter? Try it this week: message three people in that group.",
+  "walk": [
+   {
+    "h": "Where it goes wrong",
+    "l": [
+     "The 1% of a huge market.",
+     "A group so broad that no single place reaches it.",
+     "Skipping the market tests: pain, money, easy to find, growing."
+    ]
+   },
+   {
+    "h": "Worked: PayPal",
+    "p": [
+     "PayPal didn’t start with everyone who pays online. It started with eBay’s power sellers: a small group who traded every day and talked to each other. Once they used it, the rest of eBay followed. Thiel’s rule: dominate a small market, then expand to the one next to it."
+    ]
+   }
+  ],
+  "key": [
+   {
+    "t": "A good answer looks like",
+    "l": [
+     "Who, doing what, where, e.g. ‘lifters training 3–5 times a week who’ve stalled for six months, in strength-training communities online’.",
+     "A rough count with its source, like a community’s member count or an association’s list. A guess with a source beats a big number without one.",
+     "A plan for the first 100 that names the place and the message, not ‘social media’."
+    ]
+   }
+  ],
+  "rtask": "Your idea: its smallest real market in one sentence, and where the first 100 gather.",
+  "rkey": [
+   {
+    "t": "Short answer",
+    "l": [
+     "Who, doing what, where, in one sentence, plus a named place where they gather. If the place is ‘online’, the group is still too broad."
+    ]
+   }
+  ]
+ },
+ "Z07": {
+  "was": "P06",
+  "concept": "If you build it, they won’t just come",
+  "task": "Make a distribution map for your idea: 20 places its customers already pay attention — subreddits, creators, newsletters, groups, search terms, tools they pay for. Pick one channel for the first 100 users. Judge: what will one customer cost you there, and what will they pay you in a year? Try it this week: post or reply once in that channel.",
+  "walk": [
+   {
+    "h": "Where it goes wrong",
+    "l": [
+     "Posting everywhere instead of doing one channel well.",
+     "A €5-a-month app, sold one person at a time."
+    ]
+   },
+   {
+    "h": "Worked: an app at €5 a month",
+    "p": [
+     "A user who stays 6 months is worth €30. Winning each one by hand, even 30 minutes at your €40 an hour, costs €20: only 1.5 times, in the doldrums. So the channel has to be nearly free per user: a community where one post reaches thousands, or users who bring other users."
+    ]
+   }
+  ],
+  "key": [
+   {
+    "t": "A good answer looks like",
+    "l": [
+     "20 named places, not categories: that subreddit, that newsletter, that creator, that search phrase.",
+     "One channel and why: the group already talks about the problem there, in its own words.",
+     "Two numbers: the cost to win one customer there, and a year’s revenue from one. The second should be at least three times the first; at €5 a month that means winning each user for under €20."
+    ]
+   }
+  ],
+  "rtask": "Your idea: one channel for the first 100, what a customer costs you there, and what one pays you in a year.",
+  "rkey": [
+   {
+    "t": "Short answer",
+    "l": [
+     "A year’s revenue should be at least three times what one customer costs to win. At a low monthly price, the channel has to be nearly free per user."
+    ]
+   }
+  ]
+ },
+ "Z08": {
+  "was": "P09",
+  "concept": "Score it, pick one, set a kill rule",
+  "task": "Score every idea you’re weighing, Intensity Applied and any others, on the seven questions. Pick the one to test next, and write the result that would make you drop it — for example, fewer than 3 of 10 people commit. Judge: is your favourite also the best-scoring one? If not, why? Try it this week: run its test.",
+  "walk": [
+   {
+    "h": "Where it goes wrong",
+    "l": [
+     "Scoring your favourite generously.",
+     "No kill rule, so nothing ever fails and nothing gets dropped."
+    ]
+   },
+   {
+    "h": "Worked: the cleantech bust",
+    "p": [
+     "Thiel blames the cleantech crash of the late 2000s on companies that answered few of the seven well: no clearly better technology, bad timing, crowded markets, weak sales, no secret. Solyndra is the main example in the book."
+    ]
+   }
+  ],
+  "key": [
+   {
+    "t": "A good answer looks like",
+    "l": [
+     "A table of ideas × the seven, yes or no (or 1–5), with the weakest question for each idea named.",
+     "The pick, and if it isn’t the top score, the reason in one line.",
+     "A kill rule with a number and a date: e.g. ‘fewer than 3 of 10 pay for the founding year within six weeks: drop it’."
+    ]
+   }
+  ],
+  "rtask": "Your idea: score it on the seven questions and write its kill rule.",
+  "rkey": [
+   {
+    "t": "Short answer",
+    "l": [
+     "Seven answers with the weakest one named, and a kill rule with a number and a date, written before the test."
+    ]
+   }
+  ]
+ },
+ "M01": {
+  "was": "P03",
+  "concept": "Ask about their life, not your idea",
+  "task": "Write three bad questions and three good ones for your idea, then rewrite each bad one into a good one. Judge: which good question is most likely to show you you’re wrong? Try it this week: ask it to two real people, and note who they were and what you learned.",
+  "walk": [
+   {
+    "h": "Where it goes wrong",
+    "l": [
+     "Pitching and calling it research.",
+     "Counting compliments as demand."
+    ]
+   },
+   {
+    "h": "Worked: Fastlane",
+    "p": [
+     "Its founders ran about 20 of these calls a week, about 2,000 in all, and found their product in what people already did: they narrowed an all-in-one tool down to one job. It reached $69K a month within two months."
+    ],
+    "s": "Starter Story · How This SaaS Hit $69K/Month In Just 2 Months",
+    "u": "https://www.youtube.com/watch?v=BA_fC95p43c"
+   }
+  ],
+  "key": [
+   {
+    "t": "A good answer looks like",
+    "l": [
+     "Good questions start with ‘the last time’, ‘walk me through’, ‘what have you tried’, ‘what did it cost’. For Intensity Applied: ‘When did your lifts last go up? What did you change after that?’",
+     "Bad ones mention the product or ask about the future: ‘Would you pay for an app that…’.",
+     "The one most likely to prove you wrong: ‘What have you tried to fix it?’ If the answer is ‘nothing’, the pain may not be real."
+    ]
+   }
+  ],
+  "rtask": "Your idea: one bad question rewritten into a good one, and the question most likely to prove you wrong.",
+  "rkey": [
+   {
+    "t": "Short answer",
+    "l": [
+     "The good version asks about a specific past event (‘the last time…’). The riskiest question is usually ‘what have you tried?’: no attempts, no real pain."
+    ]
+   }
+  ]
+ },
+ "M02": {
+  "was": "P04",
+  "concept": "Compliments, fluff and feature requests",
+  "task": "Take three reactions you’ve had to your idea — or typical ones: “Nice!”, “I’d use that”, “It should have X”. Sort each into compliment, fluff or idea, and write the follow-up question that turns it into a fact. Judge: what’s the one fact about your customer you still don’t know? Try it this week: get that fact from one person.",
+  "walk": [
+   {
+    "h": "Where it goes wrong",
+    "l": [
+     "Leaving on a high with nothing written down.",
+     "Building the requested feature instead of finding the reason behind it."
+    ]
+   },
+   {
+    "h": "Worked: three reactions, turned into facts",
+    "l": [
+     "‘Nice idea!’ is a compliment: ‘Thanks. How do you handle it today?’",
+     "‘I’d use that every week’ is fluff: ‘When did you last need it? What did you do?’",
+     "‘It should sync with my watch’ is a request: ‘What would that let you do that you can’t now?’"
+    ]
+   }
+  ],
+  "key": [
+   {
+    "t": "A good answer looks like",
+    "l": [
+     "Each reaction labelled, then followed by a question about the past or about why.",
+     "The missing fact is about their life, not your product. For Intensity Applied, e.g.: how many lifters who stall actually change anything, and what.",
+     "Getting it from one person this week counts. A survey of opinions doesn’t."
+    ]
+   }
+  ],
+  "rtask": "Your idea: the most common compliment or ‘I would’ you’ve heard, and the question that turns it into a fact.",
+  "rkey": [
+   {
+    "t": "Short answer",
+    "l": [
+     "Anchor it in the past: ‘When did that last happen? What did you do?’ A fact is something that already happened, with a cost or a time attached."
+    ]
+   }
+  ]
+ },
+ "M04": {
+  "was": "P05",
+  "concept": "Time, reputation, money",
+  "task": "For your idea, write the commitment you’ll ask for at each stage: after a first chat, after a demo, and before you build the full product. Judge: what’s the smallest money commitment that would really prove demand? Try it this week: ask one person for it.",
+  "walk": [
+   {
+    "h": "Where it goes wrong",
+    "l": [
+     "Not asking, to keep the meeting pleasant.",
+     "Treating ‘sounds great, keep me posted’ as a yes."
+    ]
+   },
+   {
+    "h": "Worked: Cleo",
+    "p": [
+     "Cleo built a waitlist from LinkedIn posts and sold its paid beta only to that list: about $30K a month within days, before any public launch. Joining the waitlist cost people time; the paid beta cost money."
+    ],
+    "s": "Starter Story · How My App Hit $60K/Month in 2 Months",
+    "u": "https://www.youtube.com/watch?v=XifgHi9R5Rc"
+   }
+  ],
+  "key": [
+   {
+    "t": "A good answer looks like",
+    "l": [
+     "Three asks, one per stage, each one something they could say no to.",
+     "A real, small money ask. For Intensity Applied, e.g.: a founding-member year at a discount, paid before launch, offered only to the waitlist.",
+     "The result that would stop you, in numbers, decided now: e.g. fewer than 3 of 10 people who saw the demo pay."
+    ]
+   }
+  ],
+  "rtask": "Your idea: the smallest money commitment that would prove demand, and the result that would stop you.",
+  "rkey": [
+   {
+    "t": "Short answer",
+    "l": [
+     "A real payment they could refuse: a pre-order, a deposit, a paid beta. The stopping result is a number decided now, e.g. fewer than 3 of 10."
+    ]
+   }
+  ]
+ },
+ "M05": {
+  "was": "P07",
+  "concept": "Do things that don’t scale",
+  "task": "Write your idea’s first-100 plan: who is already searching for a solution, one thing that doesn’t scale you’d do for each early user, and where you’ll show up. Judge: which step gets you the first 10, and how fast? Try it this week: do the unscalable thing for one person.",
+  "walk": [
+   {
+    "h": "Where it goes wrong",
+    "l": [
+     "Waiting for a launch day.",
+     "Automating something before you’ve done it by hand ten times."
+    ]
+   },
+   {
+    "h": "Worked: Super Demo",
+    "p": [
+     "Its founder talked to more than 100 founders before building, then made free demos for founders who asked on Reddit, in public, so others saw them. It is now at $250K a month."
+    ],
+    "s": "Starter Story · How This $250K/Month SaaS Got Its First 100 Users (Steal This Playbook)",
+    "u": "https://www.youtube.com/watch?v=l4WEqPX52Cg"
+   }
+  ],
+  "key": [
+   {
+    "t": "A good answer looks like",
+    "l": [
+     "For Intensity Applied, e.g.: lifters searching ‘plateau’ or ‘stalled bench press’ (searchers); a free review of someone’s last eight weeks of training, posted with permission (unscalable, and public); the communities on your distribution map (show up).",
+     "The first 10 usually come from the unscalable step: one person at a time, starting this week.",
+     "A date for the first 10, and what you’ll do if they aren’t in by then."
+    ]
+   }
+  ],
+  "rtask": "Your idea: one thing that doesn’t scale you’d do for each of the first 10 users.",
+  "rkey": [
+   {
+    "t": "Short answer",
+    "l": [
+     "Something personal and visible: a free review, a done-with-you setup, a reply in public. If it takes more than an hour each, make it smaller, not automated."
+    ]
+   }
+  ]
+ }
+}

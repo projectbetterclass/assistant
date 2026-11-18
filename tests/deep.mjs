@@ -3,7 +3,7 @@
 import { launch, openPage } from "./harness.mjs";
 import fs from "fs";
 const DIR = new URL(".", import.meta.url).pathname;
-const GOALS = process.argv[2] ? [process.argv[2]] : ["goal_invest", "goal_build", "goal_opt", "goal_fx", "goal_fire", "goal_biz", "goal_career", "goal_read"];
+const GOALS = process.argv[2] ? [process.argv[2]] : ["goal_invest", "goal_opt", "goal_fx", "goal_fire", "goal_biz", "goal_career", "goal_read"];
 const browser = await launch();
 async function open(gid) {
   const o = await openPage(browser, { width: 402, height: 900, view: "curriculum" });

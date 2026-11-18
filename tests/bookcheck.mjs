@@ -33,4 +33,39 @@ for (const w of [402, 900]) {
   if (w === 402) await (await page.$(".ses")).screenshot({ path: new URL("./book-402.png", import.meta.url).pathname });
   await ctx.close();
 }
+// made for the audiobook: part 1 is guess, then listen with the chapter's map; the written note is folded away
+const start = async (page, lid) => { await page.evaluate(lid => { const b = document.createElement("button"); b.setAttribute("data-action", "cur-start"); b.setAttribute("data-id", "goal_read"); b.setAttribute("data-lid", lid); document.getElementById("root").appendChild(b); b.click(); }, lid); await page.clock.runFor(80); };
+for (const w of [402, 900]) {
+  const { page, errors, ctx } = await openPage(browser, { width: w, time: new Date(2026, 10, 18, 18, 30).getTime() });
+  await start(page, "A01");
+  check(`${w} part 1 is listening`, /Part 1 of 2: listen/.test(await txt(page, ".ses-brief")) && /2 Listen/.test(await txt(page, ".ses-pills")), await txt(page, ".ses-pills"));
+  await toStep(page, 1);
+  const lw = await txt(page, ".ses-walk");
+  check(`${w} the map, what to listen for, how to listen`, /The map, before you press play/.test(lw) && /Listen for/.test(lw) && /How to listen/.test(lw) && /Pause after each big idea/.test(lw), lw.slice(0, 300));
+  check(`${w} the note is folded away`, (await page.$eval(".walk-fold", d => !d.open).catch(() => false)) && /Can’t listen now\?/.test(lw));
+  check(`${w} the idea waits for the check`, !(await page.$(".ses .ses-teach")));
+  await page.click(".walk-fold > summary"); await page.clock.runFor(30);
+  check(`${w} the note opens`, (await page.$eval(".walk-fold", d => d.open)) && /The idea worth keeping/.test(await txt(page, ".walk-fold")));
+  await page.click('[data-action="stop"]').catch(() => {}); await page.clock.runFor(60);
+  // a Zero to One chapter that used to be a Building products lesson: use it on your idea
+  await start(page, "Z01");
+  const zb = await txt(page, ".ses-brief");
+  check(`${w} Z01 asks you to use it on your idea`, /Listen to Ch\. 1–2/.test(zb) && /0-to-1 or a 1-to-n idea/.test(zb), zb.slice(0, 300));
+  await toStep(page, 1);
+  const zw = await txt(page, ".ses-walk");
+  check(`${w} Z01 carries the worked example`, /Worked: an app like Intensity Applied/.test(zw) && !/\bP\d\d\b/.test(zw), zw.slice(-300));
+  await toStep(page, 3);
+  check(`${w} Z01 check: a good answer, then the chapter`, /A good answer looks like/i.test(await txt(page, ".ses .hkey")) && /The chapter in short/i.test(await txt(page, ".ses .hkey")));
+  check(`${w} no sideways scroll (listening)`, await noHScroll(page));
+  check(`${w} no errors (listening)`, errors.length === 0, errors.join(" | "));
+  await ctx.close();
+}
+// Building products has moved into Reading: no course on its goal, and not in the day plan
+{
+  const { page, errors, ctx } = await openPage(browser, { width: 402, time: new Date(2026, 10, 18, 18, 30).getTime() });
+  const names = await page.$$eval(".day .rt .rt-n", es => es.map(e => e.innerText));
+  check("Products is out of the day plan", !names.includes("Products") && names.includes("Reading"), names.join(", "));
+  check("no errors (day plan)", errors.length === 0, errors.join(" | "));
+  await ctx.close();
+}
 summary("books"); await browser.close();

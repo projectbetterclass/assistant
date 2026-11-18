@@ -24,4 +24,4 @@ charts: false
 
 **The idea worth keeping.** For a service, the method is almost always personal: you, talking to people. That's not a stopgap. It's the channel.
 
-**Try it on your work.** Write how your first ten customers will hear about you: the actual channel, not "word of mouth". Then put a weekly number on it, like the rule of 100 on the Hormozi shelf. This is P09 and P10.
+**Try it on your work.** Write how your first ten customers will hear about you: the actual channel, not "word of mouth". Then put a weekly number on it, like the rule of 100 on the Hormozi shelf.

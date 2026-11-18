@@ -23,4 +23,4 @@ charts: false
 
 **The idea worth keeping.** "Big market" is usually a trap for a beginner. A tiny market you can actually own beats a huge one where you're one of a thousand.
 
-**Try it on your work.** For your best idea, write the smallest group of people you could serve better than anyone, specific enough that you could list where they gather. Which of the four would protect you there later? This is P03 and P11.
+**Try it on your work.** For your best idea, write the smallest group of people you could serve better than anyone, specific enough that you could list where they gather. Which of the four would protect you there later?

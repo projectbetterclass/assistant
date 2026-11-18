@@ -27,4 +27,4 @@ Two more good ones: "Who else should I talk to?" and "Is there anything else I s
 
 **The idea worth keeping.** Once you mention your idea, people start being nice instead of truthful. Keep it out of the conversation for as long as you can.
 
-**Try it on your work.** Rewrite three questions you'd normally ask about your idea so they're about the person's last week instead. Then have one real conversation using only those. This is lesson P03.
+**Try it on your work.** Rewrite three questions you'd normally ask about your idea so they're about the person's last week instead. Then have one real conversation using only those.
