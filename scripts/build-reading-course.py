@@ -159,9 +159,14 @@ for book, letter, desc in BOOKS_IN_ORDER:
                     + (" Judge: " + judge if judge else ""))
         else:
             task = ("Before you press play, guess what this part says about ‘%s’. Listen to %s of the audiobook, pausing to say each idea back. Then, from memory, write the idea in your own words and one action for tomorrow, as ‘After I …, I will …’. Judge: which line of it would change what you do this week?" % (title, part))
-        lw = [{"h": "The map, before you press play", "p": ["%s of %s, in %d part%s. Keep them in mind while you listen: they’re where each idea will land." % (cap(part), book, max(1, len(heads)), "" if len(heads) == 1 else "s")],
-               "l": [bare(h) for h in heads] or [title]},
-              {"h": "Listen for", "l": ["%s: what’s the claim, and the reason or example behind it?" % cap(bare(h)) for h in heads[:3]] or ["The one claim this part makes, and the reason behind it."]},
+        terms = [it[0].rstrip(".") for w in walk for it in w.get("l", []) if isinstance(it, list)][:5]   # the note's key terms, in bold
+        one = len(heads) <= 1
+        lw = [{"h": "The map, before you press play", "p": ["%s of %s%s. Keep %s in mind while you listen: %s where each idea will land." % (cap(part), book, "" if one else ", in %d parts" % len(heads), "it" if one else "them", "it’s" if one else "they’re")],
+               "l": [cap(bare(h)) for h in heads] or [title]},
+              {"h": "Listen for", "l": ["%s: what’s the claim, and the reason or example behind it?" % cap(bare(h)) for h in heads[:3]]
+                   + (["These terms, and what each one means: %s." % "; ".join(terms)] if terms else [])}]
+        lw[1]["l"] = lw[1]["l"] or ["The one claim this part makes, and the reason behind it."]
+        lw += [
               LISTEN,
               {"h": "Can’t listen now? The chapter note", "fold": walk + ([{"h": "The idea worth keeping", "p": [idea]}] if idea else [])}]
         if ap: lw += ap["walk"]
