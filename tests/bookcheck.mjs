@@ -1,5 +1,5 @@
 // the books as daily sittings: the home card, a chapter sitting, tomorrow's action, and "did you do it?" at the next one
-import { launch, openPage, check, summary, noHScroll, lastPub } from "./harness.mjs";
+import { launch, openPage, check, summary, noHScroll, lastPub, toStep } from "./harness.mjs";
 const browser = await launch();
 const T = new Date(2026, 10, 15, 18, 30).getTime();
 const txt = (p, s) => p.$eval(s, e => e.innerText.replace(/\s+/g, " ").trim()).catch(() => "");
@@ -13,7 +13,7 @@ for (const w of [402, 900]) {
   check(`${w} the sitting is the chapter`, /A01 · Tiny gains compound/.test(now) && /on Atomic Habits/.test(ses), now.slice(0, 160));
   check(`${w} no action to check yet`, !(await page.$(".act-box")));
   check(`${w} home card hides while the sitting runs`, !(await page.$(".home-book")));
-  for (const i of [1, 2, 3]) { await page.click(`.dec-nav [data-i="${i}"]`); await page.clock.runFor(40); }
+  for (const i of [1, 2, 3]) await toStep(page, i);
   const chk = await txt(page, ".ses");
   check(`${w} check step asks for tomorrow's action`, /Your one action for tomorrow/.test(chk) && /The chapter in short/.test(chk), chk.slice(-300));
   await page.fill("#ses-confuse", "After I get home, I will read two pages");

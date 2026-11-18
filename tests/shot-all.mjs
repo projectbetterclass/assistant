@@ -1,4 +1,4 @@
-import { launch, openPage, check, summary, noHScroll } from "./harness.mjs";
+import { launch, openPage, check, summary, noHScroll, toStep, SAT } from "./harness.mjs";
 import fs from "fs";
 const DIR = new URL(".", import.meta.url).pathname;
 const html = fs.readFileSync(DIR + "page.html", "utf8");
@@ -18,7 +18,7 @@ for (const W of [402, 1280]) for (const lid of IDS) {
   await page.clock.runFor(80);
   const brief = await page.$eval(".ses-brief", e => e.innerText).catch(() => "");
   check(lid + " " + W + ": task mentions What you need", /What you need/.test(brief), brief.slice(0, 120));
-  await page.click('.ses-pills [data-i="1"]'); await page.clock.runFor(40);
+  await toStep(page, 1);
   const need = await page.$eval(".ses .need", e => e.innerText).catch(() => "");
   check(lid + " " + W + ": Learn shows What you need", /WHAT YOU NEED/i.test(need), need.slice(0, 80));
   const sesText = await page.$eval(".ses", e => e.innerText);
@@ -30,9 +30,9 @@ for (const W of [402, 1280]) for (const lid of IDS) {
     return (d.right > v.left + 1 && d.bottom > v.top + 1 && v.bottom > d.top + 1) || d.width < w * 0.3 ? r.querySelector("dt").innerText + " | " + r.querySelector(".need-v").innerText : null; }).filter(Boolean));
   check(lid + " " + W + ": labels and values don't collide", clash.length === 0, clash);
   if (W === 402 && SHOTS.includes(lid)) await page.$eval(".ses .need", e => e.scrollIntoView({ block: "start" })), await page.screenshot({ path: DIR + `inv-${lid}-learn.png` });
-  await page.click('.dec-nav [data-i="2"]'); await page.clock.runFor(40);
+  await toStep(page, 2);
   check(lid + ": Write shows What you need, named as in Learn", /WHAT YOU NEED/i.test(await page.$eval(".ses .need-sm", e => e.innerText).catch(() => "")));
-  await page.click('.dec-nav [data-i="3"]'); await page.clock.runFor(40);
+  await toStep(page, 3);
   const key = await page.$eval(".ses .hkey", e => e.innerText).catch(() => "");
   check(lid + ": Check shows a worked answer", /CHECK YOUR ANSWER/i.test(key) && key.length > 200, key.slice(0, 120));
   if (SPOT[lid] && W === 402) check(lid + ": spot number " + SPOT[lid], SPOT[lid].test(need + "\n" + key), (need + key).slice(0, 300));

@@ -1,15 +1,15 @@
 // every investing lesson's Learn step: the thread line, L01's walk-through, the box named the same in Learn and Write
-import { launch, openPage, check, summary, noHScroll } from "./harness.mjs";
+import { launch, openPage, check, summary, noHScroll, toStep, SAT } from "./harness.mjs";
 const browser = await launch();
 const txt = (p, s) => p.$eval(s, e => e.innerText.replace(/\s+/g, " ").trim()).catch(() => "");
 const ids = Array.from({ length: 34 }, (_, i) => "L" + String(i + 1).padStart(2, "0"));
 for (const w of [402, 900]) {
-  const o = await openPage(browser, { width: w });
+  const o = await openPage(browser, { width: w, time: SAT });
   const { page, errors } = o;
   for (const lid of ids) {
     await page.evaluate(id => { const b = document.createElement("button"); b.setAttribute("data-action", "cur-start"); b.setAttribute("data-id", "goal_invest"); b.setAttribute("data-lid", id); document.getElementById("root").appendChild(b); b.click(); }, lid);
     await page.clock.runFor(80);
-    await page.click('.dec-nav [data-i="1"]'); await page.clock.runFor(40);
+    await toStep(page, 1);
     const th = await txt(page, ".ses-thread");
     check(`${w} ${lid} thread`, (lid === "L01" ? /Starts here the first lesson/i.test(th) : /Builds on L\d\d/i.test(th)) && /Leads to/i.test(th), th);
     if (lid !== "L01") check(`${w} ${lid} thread names an earlier lesson only`, (/Builds on (L\d\d)/i.exec(th) || [])[1] < lid, th);
@@ -28,7 +28,7 @@ for (const w of [402, 900]) {
     }
     check(`${w} ${lid} Learn box named What you need`, !(await page.$(".need")) || /What you need/i.test(await txt(page, ".need .need-h")));
     check(`${w} ${lid} no sideways scroll`, await noHScroll(page));
-    await page.click('.dec-nav [data-i="2"]'); await page.clock.runFor(40);
+    await toStep(page, 2);
     const wb = await txt(page, ".need-sm .need-h");
     check(`${w} ${lid} Write box named the same`, !(await page.$(".need-sm")) || /What you need/i.test(wb), wb);
     check(`${w} ${lid} no 'Your inputs'`, !/Your inputs/i.test(await txt(page, ".ses")));

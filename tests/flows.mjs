@@ -1,5 +1,5 @@
 // The lesson flows over days: a full sitting graded nailed, its revisit 10 days later; shaky → 3 days; priming; pause mid-sitting; stop for today.
-import { launch, openPage, check, summary, lastPub } from "./harness.mjs";
+import { launch, openPage, check, summary, lastPub, toStep, SAT } from "./harness.mjs";
 const browser = await launch();
 const txt = (p, s) => p.$eval(s, e => e.innerText.replace(/\s+/g, " ").trim()).catch(() => "");
 async function startLesson(page, gid, lid) {
@@ -18,15 +18,15 @@ async function carry(o, browser, opts) {
 
 // 1. a whole sitting, graded nailed; then the revisit 10 days later
 {
-  let o = await openPage(browser, {});
+  let o = await openPage(browser, { time: SAT });
   let { page, errors } = o;
   await startLesson(page, "goal_invest", "L02");
   check("sitting opens on Guess", /Step 1 of 4 · Guess/i.test(await txt(page, ".ses")));
   await page.fill("#ses-guess", "growth and margin");
-  await page.click('.dec-nav [data-i="1"]'); await page.clock.runFor(40);
-  await page.click('.dec-nav [data-i="2"]'); await page.clock.runFor(40);
+  await toStep(page, 1);
+  await toStep(page, 2);
   await page.fill("#ses-answer", "KO sells drinks worldwide through bottlers; the story pins down the target margin.");
-  await page.click('.dec-nav [data-i="3"]'); await page.clock.runFor(40);
+  await toStep(page, 3);
   const chk = await txt(page, ".ses");
   check("Check shows your guess and your answer", /You guessed\s*growth and margin/i.test(chk) && /You wrote\s*KO sells drinks/i.test(chk), chk.slice(0, 300));
   await page.fill("#ses-confuse", "how the story sets the margin");
@@ -64,9 +64,9 @@ async function carry(o, browser, opts) {
 
 // 2. shaky → back in 3 days, not done
 {
-  const { page, ctx, errors } = await openPage(browser, {});
+  const { page, ctx, errors } = await openPage(browser, { time: SAT });
   await startLesson(page, "goal_fire", "F01");
-  await page.click('.ses-pills [data-i="3"]'); await page.clock.runFor(40);
+  await toStep(page, 3);
   await page.click("[data-action=cur-shaky]"); await page.clock.runFor(80);
   const s = await lastPub(page), g = s.goals.find(x => x.id === "goal_fire");
   check("shaky: not done", !g.curr.done || !g.curr.done.F01);
@@ -77,10 +77,10 @@ async function carry(o, browser, opts) {
 
 // 3. "Not yet — stop for today": clock stops, lesson stays open, notes kept
 {
-  const { page, ctx, errors } = await openPage(browser, {});
+  const { page, ctx, errors } = await openPage(browser, { time: SAT });
   await startLesson(page, "goal_opt", "H01");
   await page.fill("#ses-guess", "sell the put");
-  await page.click('.ses-pills [data-i="3"]'); await page.clock.runFor(40);
+  await toStep(page, 3);
   await page.click("[data-action=ses-stop]"); await page.clock.runFor(80);
   const s = await lastPub(page), g = s.goals.find(x => x.id === "goal_opt");
   check("stop for today: clock stopped", !s.activeId);
@@ -91,10 +91,10 @@ async function carry(o, browser, opts) {
 
 // 4. pause in the middle of a sitting, then continue: the step and the notes are still there
 {
-  const { page, ctx, errors } = await openPage(browser, {});
+  const { page, ctx, errors } = await openPage(browser, { time: SAT });
   await startLesson(page, "goal_read", "R03");
   await page.fill("#ses-guess", "skim first");
-  await page.click('.dec-nav [data-i="1"]'); await page.clock.runFor(40);
+  await toStep(page, 1);
   await page.click("[data-action=pause]"); await page.clock.runFor(80);
   check("paused card", /Paused/i.test(await txt(page, ".now-paused")));
   await page.clock.runFor(5 * 60000);

@@ -4,6 +4,18 @@ const { chromium } = createRequire(import.meta.url)("playwright");
 import fs from "fs";
 const DIR = new URL(".", import.meta.url).pathname;
 export const T0 = new Date("2026-11-09T10:00:00"); // a Monday morning
+export const SAT = new Date("2026-11-14T10:00:00"); // a Saturday: the longer slot, so a 30-minute lesson fits one sitting
+
+// go to step i of the running sitting (0 guess/recall, 1 learn, 2 write, 3 check); when today's lesson runs in two
+// halves and part 1 has no such step, go on to part 2 first, the way you'd do both halves in one go
+export async function toStep(page, i) {
+  const nav = `.dec-nav [data-i="${i}"]`, pill = `.ses-pills [data-i="${i}"]`;
+  if (!(await page.$(nav)) && !(await page.$(pill)) && i >= 2 && (await page.$('[data-action="ses-go2"]'))) {
+    await page.click('[data-action="ses-go2"]'); await page.clock.runFor(60);
+  }
+  if (await page.$(nav)) await page.click(nav); else await page.click(pill);
+  await page.clock.runFor(40);
+}
 
 export async function launch() { return chromium.launch(); }
 

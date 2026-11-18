@@ -954,6 +954,10 @@ button.step-name:hover .step-nm{color:var(--accent)}
 .ses-walk ul{margin:0 0 6px;padding-left:18px;display:flex;flex-direction:column;gap:6px}
 .ses-walk li b{font-weight:600}
 .walk-src{margin-top:2px;font-size:12px}
+.ses-next2{margin-top:10px;font-size:13px;line-height:1.5;color:var(--muted)}
+.ses-next2 .cue-btn{font-size:13px}
+.ses-back{margin:10px 0;border:1px solid var(--line);border-radius:10px;background:var(--surface-2);padding:9px 11px}
+.ses-back summary{cursor:pointer;font-size:13px;font-weight:600;color:var(--accent)}
 .dref{display:inline;border:0;margin:0 1px;padding:0 4px;border-radius:5px;background:var(--accent-soft);color:var(--accent);font:inherit;font-family:var(--font-mono);font-size:.9em;font-weight:600;line-height:inherit;cursor:pointer}
 .dref.on{background:var(--accent);color:var(--accent-ink)}
 .curr-tag.dref{font-size:11px;font-weight:500;padding:1px 6px;border:1px solid var(--line)}
@@ -1561,21 +1565,28 @@ button.step-name:hover .step-nm{color:var(--accent)}
     var B=inRound(g)?branchCourses(g):[];if(B.length)return B.reduce(function(n,x){return n+curMinToday(x.id);},0);
     return Math.floor(goalStats(treeIds(g)).todaySec/60);
   }
-  function lessonPlan(g,l,t){   // a lesson longer than today's slot runs over several sittings: which part today is, of how many, and how long it is
+  function lessonPlan(g,l,t){   // a lesson that fits today's slot is one sitting; a longer one runs in two halves of the same lesson:
+    // part 1, learn it (guess, read, the idea in one line); part 2 next time, do it (recall, write, check). A part counts when you press its Done
     if(typeof g==="string")g=findGoal(g);
     var T=curTarget(g),est=l&&l.estimateMin||15;
     if(!l||(g&&currDone(g)[l.id]))return {k:1,n:1,min:Math.min(T,est),est:est};   // a review: one sitting
-    var today=dayKey(Date.now()),days={},before=0;
-    (t&&t.sessions||[]).forEach(function(se){if(se.end==null)return;var k=dayKey(se.start),sec=(se.end-se.start)/1000;if(k===today)return;before+=sec;days[k]=(days[k]||0)+sec;});
-    var k=Object.keys(days).filter(function(x){return days[x]>=60;}).length+1;   // a day with at least a minute on it was a part
-    var left=est-before/60;left=left<=0?T:Math.max(left,Math.ceil(T/2));   // past its estimate: one more full sitting; never a scrap of a sitting
-    var rest=Math.max(1,Math.ceil(left/(T*1.15)));   // a sitting may run up to 15% over the slot rather than leave a scrap
-    return {k:k,n:k-1+rest,min:Math.max(5,Math.round(left/rest)),est:est};
+    if(est<=T*1.15)return {k:1,n:1,min:est,est:est};   // a sitting may run up to 15% over the slot rather than split
+    return {k:part1Done(t,est)?2:1,n:2,min:T,est:est};
   }
-  function sesStages(g,l,t){   // one sitting, scaled to today's part of the lesson: same four stages, same order; from part 2 the first one is recall
-    var p=lessonPlan(g,l,t),m=p.min;
-    var out=SES_STAGES.map(function(x){return [x[0],x[1],Math.max(1,Math.round(x[2]*m/DAILY_MIN))];}),sum=0;
-    out.forEach(function(x){sum+=x[2];});out[1][2]=Math.max(1,out[1][2]+m-sum);
+  function part1Done(t,est){   // pressed Done on part 1; or, for a lesson begun before parts worked this way, half its time logged on earlier days
+    if(!t)return false;if(t.p1)return true;
+    var today=dayKey(Date.now()),before=0;(t.sessions||[]).forEach(function(se){if(se.end!=null&&dayKey(se.start)!==today)before+=(se.end-se.start)/1000;});
+    return before/60>=est/2;
+  }
+  function markFin(t){if(!t)return;var k=dayKey(Date.now());t.fin=t.fin||[];if(t.fin.indexOf(k)<0)t.fin.push(k);if(t.fin.length>60)t.fin=t.fin.slice(-60);}   // a part (or a whole lesson, or a revisit) finished on this day
+  function finToday(t){return !!(t&&t.fin&&t.fin.indexOf(dayKey(Date.now()))>=0);}
+  function goalFinToday(g){if(!g)return false;var ids=treeIds(g);return state.tasks.some(function(t){return ids.indexOf(t.goalId)>=0&&String(t.id).indexOf("lesson_")===0&&finToday(t);});}   // finishing today's part early counts as done
+  function sesStages(g,l,t){   // today's steps as [key, label, minutes, step]: all four for a lesson in one sitting, or one half of them;
+    // step is the 0–3 index the sitting screen uses (0 guess or recall, 1 learn, 2 write, 3 check)
+    var p=lessonPlan(g,l,t),m=p.min,pick=p.n<2?[0,1,2,3]:(p.k<2?[0,1]:[0,2,3]);
+    var w=pick.map(function(i){return SES_STAGES[i][2];}),W=w.reduce(function(a,b){return a+b;},0),sum=0;
+    var out=pick.map(function(i,j){return [SES_STAGES[i][0],SES_STAGES[i][1],Math.max(1,Math.round(w[j]*m/W)),i];});
+    out.forEach(function(x){sum+=x[2];});var big=pick.indexOf(p.n>1&&p.k>1?2:1);out[big][2]=Math.max(1,out[big][2]+m-sum);
     if(p.k>1&&!(ui.ses&&t&&ui.ses.tid===t.id&&ui.ses.primed))out[0][1]="Recall";   // a guess made the night before stays a guess
     return out;
   }
@@ -2345,8 +2356,13 @@ button.step-name:hover .step-nm{color:var(--accent)}
     else if(a==="ses-stage"){sesCapture();if(ui.ses){ui.ses.stage=parseInt(b.getAttribute("data-i"),10)||0;saveSes();render();}}
     else if(a==="ses-old"){sesCapture();if(ui.ses){var ov=b.getAttribute("data-v"),oi=ui.ses.d.old.indexOf(ov);if(oi>=0)ui.ses.d.old.splice(oi,1);else ui.ses.d.old.push(ov);saveSes();render();}}
     else if(a==="ses-stop"){sesCapture();if(ui.ses&&ui.ses.rev){saveSes();stopTask();}else{var spt=findTask(state.activeId),spi=spt&&lessonOfTask(spt),spl=spi&&lessonPlan(spi.g,spi.l,spt);
-      commit(function(){sesWrite(null);var st=findTask(state.activeId);if(st)closeRunning(st);state.activeId=null;});
-      if(spl&&spl.n>1&&spl.k<spl.n)toast("Part "+spl.k+" of "+spl.n+" done. Next time starts where you stopped.");}}   // a revisit keeps its draft; a sitting files its notes
+      commit(function(){sesWrite(null);var st=findTask(state.activeId);if(st){closeRunning(st);markFin(st);if(state.paused&&state.paused.id===st.id)clearPause();}state.activeId=null;});
+      toast("Counted for today ✓ "+(spl&&spl.n>1&&spl.k<spl.n?"Next time: part "+(spl.k+1)+".":"The lesson comes back next time."));}}   // a revisit keeps its draft; a sitting files its notes
+    else if(a==="ses-done1"){sesCapture();var d1=findTask(state.activeId);if(d1&&isLessonTask(d1)){
+      commit(function(){sesWrite(null);var x=findTask(state.activeId);if(x){x.p1=dayKey(Date.now());markFin(x);closeRunning(x);if(state.paused&&state.paused.id===x.id)clearPause();}state.activeId=null;});
+      toast("Part 1 done ✓ It counts for today. Next time: recall it, then write and check.");}}
+    else if(a==="ses-go2"){sesCapture();var d2=findTask(state.activeId);if(d2&&isLessonTask(d2)&&ui.ses){commit(function(){var x=findTask(state.activeId);if(x){x.p1=dayKey(Date.now());markFin(x);}});
+      if(ui.ses){ui.ses.stage=2;saveSes();}render();}}
     else if(a==="rev-start")startRevisit(id,b.getAttribute("data-lid"));
     else if(a==="rev-nailed")finishRevisit(id,b.getAttribute("data-lid"),"nailed");
     else if(a==="rev-shaky")finishRevisit(id,b.getAttribute("data-lid"),"shaky");
@@ -2441,7 +2457,7 @@ button.step-name:hover .step-nm{color:var(--accent)}
     if(sb&&isLessonTask(st)&&ui.ses){var sinf=lessonOfTask(st),sS=sinf?sesStages(sinf.g,sinf.l,st):SES_STAGES,sT=sS.reduce(function(a,x){return a+x[2];},0),ssec=lessonSecToday(st),si=sesStageAt(ssec,sS),mk=document.getElementById("ses-mark"),sg=document.getElementById("ses-sug");
       if(mk)mk.style.left=Math.min(ssec/60/sT*100,100).toFixed(1)+"%";
       sb.querySelectorAll(".ses-seg").forEach(function(el,i){el.classList.toggle("is-now",i===si);});
-      if(sg)sg.textContent=(si!==ui.ses.stage)?"Suggested now: "+sS[si][1]:"";}
+      if(sg)sg.textContent=(sS[si][3]!==ui.ses.stage)?"Suggested now: "+sS[si][1]:"";}
     var rb=document.getElementById("rev-mark");
     if(rb&&st&&ui.ses&&ui.ses.rev){var rsec=Math.max(0,(now-(runningStart(st)||now))/1000),rl=document.getElementById("rev-left");
       rb.style.left=Math.min(rsec/(REV_MIN*60)*100,100).toFixed(1)+"%";
@@ -2492,13 +2508,13 @@ button.step-name:hover .step-nm{color:var(--accent)}
     var l=cl.lesson,run=state.activeId&&findTask(state.activeId);
     if(run&&isLessonTask(run)&&run.goalId===g.id)return "";   // the sitting itself is on screen
     var same=READ_CURRICULUM.lessons.filter(function(x){return x.rung===l.rung;}),k=same.indexOf(l)+1;
-    var T=curTarget(g),met=curMinToday(g.id)>=T,when=(g.curr&&g.curr.when)||"Today";
+    var T=curTarget(g),met=curMinToday(g.id)>=T||goalFinToday(g),when=(g.curr&&g.curr.when)||"Today",bp=lessonPlan(g,l,findTask(lessonTid(g.id,l.id)));
     var cy=bookAct(g,l),act=cy&&cy.did==null?'<div class="hb-act">Last time’s action: “'+esc(cy.q)+'”. You’ll say whether you did it when you start.</div>':'';
     return '<div class="home-book card"><div class="home-next-eye">'+(met?'Today’s book sitting is done ✓':esc(when)+' · '+T+' min')+'</div>'+
       '<div class="hb-book">'+esc(l.co)+'<span> · chapter note '+k+' of '+same.length+'</span></div>'+
       '<div class="hb-ch">'+esc(l.concept)+'</div>'+act+
-      '<div class="home-next-row"><span class="hb-steps">Guess, read or listen, write it from memory, check. Then one action for tomorrow.</span>'+
-      (met?'':'<button class="btn btn-primary btn-sm" data-action="cur-start" data-id="'+g.id+'" data-lid="'+l.id+'" type="button">Start</button>')+'</div></div>';
+      '<div class="home-next-row"><span class="hb-steps">'+(bp.n<2?'Guess, read or listen, write it from memory, check. Then one action for tomorrow.':bp.k<2?'Part 1 of 2: guess, then read or listen, and the idea in one line. Part 2 next time: write it from memory, check, and one action for tomorrow.':'Part 2 of 2: recall it, write it from memory, check, then one action for tomorrow.')+'</span>'+
+      '<button class="btn '+(met?'btn-ghost':'btn-primary')+' btn-sm" data-action="cur-start" data-id="'+g.id+'" data-lid="'+l.id+'" type="button">'+(met?'Read on: next chapter':'Start')+'</button></div></div>';
   }
   function renderHome(){
     // a phone gets one column; a wide screen puts what to do now on the left and the day + inbox on the right
@@ -2540,7 +2556,7 @@ button.step-name:hover .step-nm{color:var(--accent)}
   function missedYesterday(g){   // done the day before, missed yesterday, nothing yet today: "never miss twice" — and only then, never for things you haven't started
     var d=roundDays(g),t0=startOfToday();return !d[dayKey(t0)]&&!d[dayKey(t0-86400000)]&&!!d[dayKey(t0-2*86400000)];
   }
-  function roundState(){var run=state.activeId&&findTask(state.activeId);return roundThings().map(function(g){var T=thingTarget(g),m=thingMinToday(g);return {g:g,T:T,m:m,ok:m>=T,on:!!(run&&treeIds(g).indexOf(run.goalId)>=0)};});}
+  function roundState(){var run=state.activeId&&findTask(state.activeId);return roundThings().map(function(g){var T=thingTarget(g),m=thingMinToday(g);return {g:g,T:T,m:m,ok:m>=T||goalFinToday(g),on:!!(run&&treeIds(g).indexOf(run.goalId)>=0)};});}
   function dayBlocks(){   // each moment with what's stacked on it, in time order; whatever isn't tied to a moment yet goes under Anytime
     var R=roundState(),st=(state.dayRound&&state.dayRound.stack)||{},M=dayMoments(),by={},d=new Date(),t=d.getHours()*60+d.getMinutes();
     R.forEach(function(x){var mid=st[x.g.id]||"";if(mid&&!M.some(function(m){return m.id===mid;}))mid="";(by[mid]=by[mid]||[]).push(x);});
@@ -2561,8 +2577,8 @@ button.step-name:hover .step-nm{color:var(--accent)}
     return '<div class="rt'+(ok?' is-done':'')+(on?' is-on':'')+(big?' is-next':'')+'"><button class="rt-n" data-action="goal-open" data-id="'+g.id+'" type="button">'+esc(roundLabel(g))+'</button>'+
       (on?'<button class="rt-go is-stop" data-action="stop" type="button" aria-label="'+esc('Stop '+roundLabel(g))+'">■</button>'
         :'<button class="rt-go'+(big?' is-big':'')+'" data-action="round-start" data-id="'+g.id+'" type="button" aria-label="'+esc('Start '+roundLabel(g))+'">'+(big?'▶ Start · 2 min':'▶')+'</button>')+
-      '<span class="rt-m">'+(ok?'✓ ':'')+m+' / '+T+'<span class="rt-u"> min</span>'+(!ok&&!on&&m===0&&missedYesterday(g)?'<span class="rt-tag">missed yesterday · don’t miss twice</span>':'')+'</span>'+
-      '<span class="rt-bar"><i style="width:'+Math.min(100,Math.round(m/T*100))+'%"></i></span></div>';
+      '<span class="rt-m">'+(ok&&m<T?'✓ done · '+m+'<span class="rt-u"> min</span>':(ok?'✓ ':'')+m+' / '+T+'<span class="rt-u"> min</span>')+(!ok&&!on&&m===0&&missedYesterday(g)?'<span class="rt-tag">missed yesterday · don’t miss twice</span>':'')+'</span>'+
+      '<span class="rt-bar"><i style="width:'+(ok?100:Math.min(100,Math.round(m/T*100)))+'%"></i></span></div>';
   }
   function homeRound(){
     var L=roundThings(),wd=weekdayMin();if(!L.length||!wd)return "";
@@ -2900,6 +2916,7 @@ button.step-name:hover .step-nm{color:var(--accent)}
       gg.curr=gg.curr||{};gg.curr.done=gg.curr.done||{};
       if(grade==="nailed"){gg.curr.done[l.id]=true;if(t)t.done=true;}
       else {delete gg.curr.done[l.id];if(t)t.done=false;}   // faded: not yours yet — honest count
+      markFin(t);
       setRevisit(gg,l.id,grade,true);
     });
     toast(grade==="nailed"?(keeps?"Still there after 10 days — it’s yours ✓":"Nailed without the notes — one more check in 10 days"):"Faded — it comes back in 3 days, without the notes");
@@ -2977,6 +2994,7 @@ button.step-name:hover .step-nm{color:var(--accent)}
       gg.curr=gg.curr||{};gg.curr.done=gg.curr.done||{};
       if(grade==="nailed"){gg.curr.done[l.id]=true;if(t)t.done=true;}
       else {delete gg.curr.done[l.id];if(t)t.done=false;}   // needed the notes: not yours yet
+      markFin(t);
       setRevisit(gg,l.id,grade,false);
     });
     toast(grade==="nailed"?"Nailed without the notes ✓ — it comes back once, in "+REV_DAYS.nailed+" days":"Shaky — it comes back in "+REV_DAYS.shaky+" days, without the notes");
@@ -2985,17 +3003,17 @@ button.step-name:hover .step-nm{color:var(--accent)}
   function sesFor(t){   // the draft for this lesson task; a fresh one if the lesson changed — pre-filled with last night's prime
     var info=lessonOfTask(t);if(!info)return null;
     if(!ui.ses||ui.ses.tid!==t.id){var pr=info.g.curr&&info.g.curr.prime,hit=!!(pr&&pr.lid===info.l.id&&pr.guess);
-      ui.ses={tid:t.id,at:Date.now(),stage:0,primed:hit,d:{guess:hit?pr.guess:"",qs:"",answer:"",confuse:"",old:[]}};saveSes();}
+      ui.ses={tid:t.id,at:Date.now(),stage:0,primed:hit,d:{guess:hit?pr.guess:"",qs:"",answer:"",confuse:"",gist:"",old:[]}};saveSes();}
     return ui.ses;
   }
   function saveSes(){try{if(ui.ses)localStorage.setItem(SES_KEY,JSON.stringify(ui.ses));else localStorage.removeItem(SES_KEY);}catch(e){}}
-  function sesCapture(){if(!ui.ses)return;var d=ui.ses.d;[["ses-guess","guess"],["ses-qs","qs"],["ses-answer","answer"],["ses-confuse","confuse"]].forEach(function(f){var e=document.getElementById(f[0]);if(e)d[f[1]]=e.value;});}
+  function sesCapture(){if(!ui.ses)return;var d=ui.ses.d;[["ses-guess","guess"],["ses-qs","qs"],["ses-answer","answer"],["ses-confuse","confuse"],["ses-gist","gist"]].forEach(function(f){var e=document.getElementById(f[0]);if(e)d[f[1]]=e.value;});}
   function sesWrite(grade,tid){   // called inside commit(): store the sitting on its lesson task, carry the open question forward, clear the draft
     var s=ui.ses;if(!s||(tid&&s.tid!==tid))return;var t=findTask(s.tid),info=t&&lessonOfTask(t);if(!info){ui.ses=null;saveSes();return;}
     var d=s.d;
     if(s.rev){if((d.answer||"").trim()){t.study=t.study||[];t.study.push({at:Date.now(),rev:true,co:s.co,answer:d.answer,grade:grade||null});}ui.ses=null;saveSes();return;}   // a revisit: just the answer, no carry-over
-    var any=[d.guess,d.qs,d.answer,d.confuse].some(function(x){return (x||"").trim();})||d.old.length;
-    if(any){t.study=t.study||[];t.study.push({at:Date.now(),guess:d.guess,qs:d.qs,answer:d.answer,confuse:d.confuse,old:d.old.slice(),grade:grade||null});}
+    var any=[d.guess,d.qs,d.answer,d.confuse,d.gist].some(function(x){return (x||"").trim();})||(d.old||[]).length;
+    if(any){t.study=t.study||[];var en={at:Date.now(),guess:d.guess,qs:d.qs,answer:d.answer,confuse:d.confuse,old:(d.old||[]).slice(),grade:grade||null};if((d.gist||"").trim())en.gist=d.gist;t.study.push(en);}
     var g=info.g;g.curr=g.curr||{};
     if((d.confuse||"").trim())g.curr.carry={q:d.confuse.trim().slice(0,240),lid:info.l.id,at:Date.now()};
     if(g.curr.prime&&g.curr.prime.lid===info.l.id)delete g.curr.prime;
@@ -3013,30 +3031,36 @@ button.step-name:hover .step-nm{color:var(--accent)}
   function renderSession(t){
     var info=lessonOfTask(t);if(!info)return "";var g=info.g,l=info.l,s=sesFor(t),d=s.d,co=lessonCo(l),st=s.stage;
     if(s.rev)return renderRevisit(t,g,l,s);
-    var pl=lessonPlan(g,l,t),S=sesStages(g,l,t),T=pl.min,sec=lessonSecToday(t),now=sesStageAt(sec,S),P=taskParts(l),cont=pl.k>1&&!s.primed,last=pl.k>=pl.n;
-    var pills=S.map(function(x,i){return '<button class="ses-pill'+(i===st?' on':(i<st?' done':''))+'" data-action="ses-stage" data-i="'+i+'" type="button" aria-pressed="'+(i===st?'true':'false')+'">'+(i+1)+' '+x[1]+'<span>'+x[2]+'m</span></button>';}).join("");
+    var pl=lessonPlan(g,l,t),S=sesStages(g,l,t),T=pl.min,sec=lessonSecToday(t),now=sesStageAt(sec,S),P=taskParts(l),cont=pl.k>1&&!s.primed,last=pl.k>=pl.n,half=pl.n>1;
+    var idx=S.map(function(x){return x[3];});
+    if(idx.indexOf(st)<0){var nxs=idx.filter(function(i){return i>=st;})[0];st=nxs!=null?nxs:idx[idx.length-1];s.stage=st;saveSes();}   // a step that isn't in today's half: the nearest one that is
+    var pos=idx.indexOf(st),sx=function(i){return S[idx.indexOf(i)];};
+    var pills=S.map(function(x,j){return '<button class="ses-pill'+(j===pos?' on':(j<pos?' done':''))+'" data-action="ses-stage" data-i="'+x[3]+'" type="button" aria-pressed="'+(j===pos?'true':'false')+'">'+(j+1)+' '+x[1]+'<span>'+x[2]+'m</span></button>';}).join("");
     var segs=S.map(function(x,i){return '<i class="ses-seg'+(i===now?' is-now':'')+'" style="width:'+(x[2]/T*100).toFixed(1)+'%"></i>';}).join("");   // not "now": that's the running card's class
     var bar='<div class="ses-bar" id="ses-bar">'+segs+'<b id="ses-mark" style="left:'+Math.min(sec/60/T*100,100).toFixed(1)+'%"></b></div>'+
-      '<div class="ses-sug" id="ses-sug">'+(now!==st?'Suggested now: '+S[now][1]:'')+'</div>';
+      '<div class="ses-sug" id="ses-sug">'+(now!==pos?'Suggested now: '+S[now][1]:'')+'</div>';
     var call=callBtn(l);
     // the brief: always on top, so you never have to work out what this sitting is for
     var brief='<div class="ses-brief"><div class="ses-q"><b>Today’s sitting</b><span class="ses-co">on '+esc(co)+'</span></div>'+
       '<dl class="ses-plan"><div><dt>Do</dt><dd class="ses-act">'+refLinks(l,P.act,"ses")+'</dd></div>'+
       (P.ask?'<div><dt>Answer</dt><dd class="ses-ask">'+refLinks(l,P.ask,"ses")+'</dd></div>':'')+
-      (pl.n>1?'<div><dt>Today</dt><dd class="ses-part">Part '+pl.k+' of '+pl.n+', about '+T+' minutes. The whole lesson is about '+pl.est+' minutes, so at your pace it takes '+pl.n+' sittings.</dd></div>':'')+
-      '<div><dt>'+(last?'Done when':'Done for today')+'</dt><dd>'+(last?'you’ve written it from memory (step 3) and checked it against the idea (step 4). About '+T+' minutes.':'you’ve written what you have so far from memory (step 3) and checked it (step 4). Next time picks up where you stop.')+'</dd></div></dl>'+refPanel(l,"ses")+'</div>';
-    var head=function(i,txt){return '<div class="ses-step"><span class="ses-step-n">Step '+(i+1)+' of 4 · '+S[i][1]+' · '+S[i][2]+' min</span><p class="ses-do">'+txt+'</p></div>';};
-    var nav=function(i){return '<div class="dec-nav"><span></span><button class="btn btn-primary btn-sm" data-action="ses-stage" data-i="'+i+'" type="button">Next: '+S[i][1]+' →</button></div>';};
+      (half?'<div><dt>Today</dt><dd class="ses-part">'+(pl.k<2?'Part 1 of 2: learn it. Guess, then read the idea and the walk-through, and end with the idea in one line. About '+T+' minutes. Part 2, next time: recall it, then write your answer and check it.'
+        :'Part 2 of 2: do it. Recall the idea, write your answer from memory, then check it. About '+T+' minutes.'+(pl.est>2.3*T?' It’s a big one, about '+pl.est+' minutes in all: work on it a sitting at a time; “Not yet — stop for today” counts the day and keeps your place.':''))+'</dd></div>':'')+
+      '<div><dt>Done when</dt><dd>'+(half&&pl.k<2?'you’ve written the idea in one line and pressed Done. That counts for today, however long it took.'
+        :'you’ve written it from memory (step '+(idx.indexOf(2)+1)+') and checked it (step '+(idx.indexOf(3)+1)+'). That counts for today, however long it took.')+'</dd></div></dl>'+refPanel(l,"ses")+'</div>';
+    var head=function(i,txt){var x=sx(i);return '<div class="ses-step"><span class="ses-step-n">Step '+(idx.indexOf(i)+1)+' of '+S.length+' · '+x[1]+' · '+x[2]+' min</span><p class="ses-do">'+txt+'</p></div>';};
+    var nav=function(i){return '<div class="dec-nav"><span></span><button class="btn btn-primary btn-sm" data-action="ses-stage" data-i="'+i+'" type="button">Next: '+sx(i)[1]+' →</button></div>';};
     var body;
     var prev=(t.study||[]).filter(function(x){return !x.rev;}).slice(-1)[0];   // the last sitting's notes, for a lesson that runs over several
+    var p1g=(t.study||[]).filter(function(x){return !x.rev&&(x.gist||"").trim();}).slice(-1)[0];   // part 1's idea in one line
     var bact=st===0&&bookAct(g,l)?actBox(g,bookAct(g,l)):'';
-    if(st===0&&cont)body=head(0,'Before you open anything, write what you remember from last time: the idea, and where you stopped. Recalling it first is what makes it stick.')+bact+
+    if(st===0&&cont)body=head(0,'Before you open anything, write what you remember from part 1: the idea, and how you’d use it. Recalling it first is what makes it stick.')+bact+
       '<input id="ses-guess" class="field" value="'+esc(d.guess)+'" placeholder="What you remember…" aria-label="What you remember from last time, before looking">'+
-      '<div class="ses-why">Retrieve before you re-read: it’s the effort of remembering that does the work. <i>Justin Sung</i></div>'+nav(1);
+      '<div class="ses-why">Retrieve before you re-read: it’s the effort of remembering that does the work. <i>Justin Sung</i></div>'+nav(idx[1]);
     else if(st===0)body=head(0,'Before you read anything, write your best guess at the answer. One line is enough. Being wrong is fine: it makes the reading stick.')+bact+
       (s.primed?'<div class="ses-lbl"><span class="ses-ok">You guessed this ahead ✓</span></div>':'')+
       '<input id="ses-guess" class="field" value="'+esc(d.guess)+'" placeholder="Your guess…" aria-label="Your guess, before any reading">'+
-      '<div class="ses-why">Generate first, check later: recognising isn’t recalling. <i>Justin Sung</i></div>'+nav(1);
+      '<div class="ses-why">Generate first, check later: recognising isn’t recalling. <i>Justin Sung</i></div>'+nav(idx[1]);
     else if(st===1){
       var openDoc=Object.keys(ui.docOpen).some(function(k){return ui.docOpen[k]&&k.indexOf("ses:"+l.id+":")===0;}),refs=lessonRefs(l,"ses");
       body=head(1,cont?'Pick up where you stopped. Read what you need for the next piece of the task, with the task in mind.':'Read the idea with the task in mind. Stop when you could explain it to a friend.')+
@@ -3044,15 +3068,22 @@ button.step-name:hover .step-nm{color:var(--accent)}
       threadLine(l)+(l.teach?'<div class="ses-teach"><b>The idea.</b> '+esc(l.teach)+'</div>':'')+walkBox(l)+needBox(l,"learn")+call+
       (refs?'<details class="ses-more" data-lid="'+l.id+'"'+(openDoc||ui.sesMore===l.id?' open':'')+'><summary>Want more? The full notes and videos</summary>'+refs+'</details>':'')+
       '<label class="ses-lbl" for="ses-qs">Anything unclear? Write it as a question (optional)</label>'+
-      '<textarea id="ses-qs" class="field note-area ses-area" placeholder="Questions as they come up…">'+esc(d.qs)+'</textarea>'+nav(2);}
-    else if(st===2)body=head(2,'Close the idea. From memory, write your answer to the task above'+(P.ask?' and the question':'')+'. It doesn’t need to be neat: the gaps are what step 4 is for.')+
+      '<textarea id="ses-qs" class="field note-area ses-area" placeholder="Questions as they come up…">'+esc(d.qs)+'</textarea>'+
+      (half&&pl.k<2?'<label class="ses-lbl" for="ses-gist">The idea in one line, in your own words</label>'+
+        '<input id="ses-gist" class="field" value="'+esc(d.gist||"")+'" placeholder="In one line…" aria-label="The idea in one line, in your own words">'+
+        '<div class="curr-btns"><button class="btn btn-primary btn-sm" data-action="ses-done1" type="button">Done · part 1 of 2 ✓</button></div>'+
+        '<div class="ses-next2">Part 2 is next time: recall it, then write your answer and check it. <button class="cue-btn" data-action="ses-go2" type="button">Doing both today? Go on to part 2 →</button></div>'
+      :nav(2));}
+    else if(st===2)body=head(2,'Close the idea. From memory, write your answer to the task above'+(P.ask?' and the question':'')+'. It doesn’t need to be neat: the gaps are what the check is for.')+
       needBox(l,"write")+
+      (half&&pl.k>1&&prev&&(prev.answer||"").trim()?'<div class="ses-prev"><b>Where you stopped last time.</b><div class="ses-prev-v">'+esc(prev.answer)+'</div></div>':'')+
+      (half&&pl.k>1?'<details class="ses-back"><summary>Stuck? Open the idea and walk-through again</summary>'+(l.teach?'<div class="ses-teach"><b>The idea.</b> '+esc(l.teach)+'</div>':'')+walkBox(l)+'</details>':'')+
       '<textarea id="ses-answer" class="field note-area ses-area ses-answer" placeholder="Your answer, without looking…" aria-label="Your answer, from memory">'+esc(d.answer)+'</textarea>'+nav(3);
     else{
       var mine=function(lbl,v){return '<div class="ses-mine"><span class="ses-mine-l">'+lbl+'</span>'+((v||"").trim()?'<div class="ses-mine-v">'+esc(v)+'</div>':'<div class="ses-mine-v is-empty">Nothing written</div>')+'</div>';};
       var chk=P.refs.length?'<div class="ses-chk"><span class="ses-mine-l">Check it against</span><div class="doc-list">'+P.refs.map(function(k){return docRow(l,k,"chk");}).join("")+'</div></div>':'';
       body=head(3,'Put your answer next to the idea. What you missed is the part worth your time.')+
-      '<div class="ses-cmp">'+mine(cont?"You recalled":"You guessed",d.guess)+mine("You wrote",d.answer)+'</div>'+
+      '<div class="ses-cmp">'+(half&&pl.k>1&&p1g?mine("Part 1, in one line",p1g.gist):'')+mine(cont?"You recalled":"You guessed",d.guess)+mine("You wrote",d.answer)+'</div>'+
       keyBox(l)+(l.teach?'<div class="ses-teach ses-key"><b>The idea.</b> '+esc(l.teach)+'</div>':'')+chk+
       '<label class="ses-lbl" for="ses-confuse">'+(isBook(l)?'Your one action for tomorrow, as ‘After I …, I will …’. It comes back at the next sitting as: did you do it?':'What did you miss, or what’s still unclear? One line: it comes back as a question next time')+'</label>'+
       '<input id="ses-confuse" class="field" value="'+esc(d.confuse)+'" placeholder="'+(isBook(l)?'After I get home, I will …':'e.g. the step you’d get wrong without the notes…')+'">'+
@@ -3176,7 +3207,7 @@ button.step-name:hover .step-nm{color:var(--accent)}
   /* today's plan — on the goal card ("card") and at the top of the A → Z view ("az") */
   function renderToday(g,where){
     var c=currFor(g);if(!c)return "";
-    var plan=todayPlan(g),done=currDone(g),mins=curMinToday(g.id),T=curTarget(g),met=mins>=T;
+    var plan=todayPlan(g),done=currDone(g),mins=curMinToday(g.id),T=curTarget(g),met=mins>=T||goalFinToday(g);
     var allDone=c.lessons.every(function(l){return done[l.id];});
     var planned=0;plan.forEach(function(id){planned+=lessonLeftMin(g,lessonById(id));});
     var rows=plan.length?'<div class="td-list">'+plan.map(function(id){return lessonRow(g,lessonById(id),where==="az"?"plan-az":"plan",plan);}).join("")+'</div>'
@@ -3810,7 +3841,7 @@ button.step-name:hover .step-nm{color:var(--accent)}
   /* today's ring: minutes against today's target (lessons, daily minutes, or the round's) — or, for a goal with none, days active this week */
   function goalRing(g){
     var c=currFor(g),T=thingTarget(g),pct,met,title,n;
-    if(c){var m=curMinToday(g.id);pct=Math.min(m/T,1);met=m>=T;title=m+" of "+T+" min today";n=m;}
+    if(c){var m=curMinToday(g.id);met=m>=T||goalFinToday(g);pct=met?1:Math.min(m/T,1);title=m+" of "+T+" min today"+(met&&m<T?", done":"");n=m;}
     else if(T){var dm=thingMinToday(g);pct=Math.min(dm/T,1);met=dm>=T;title=dm+" of "+T+" min today";n=dm;}
     else {var st=goalStats(treeIds(g));pct=st.activeDays/7;met=st.activeDays>=5;title=st.activeDays+" of the last 7 days";n=st.activeDays+"/7";}
     var r=15,cf=2*Math.PI*r,on=(pct*cf).toFixed(1);

@@ -1,5 +1,5 @@
 // Open every rule note from inside its lessons (Learn → Want more, and Check): renders, no raw markdown, no agent wording.
-import { launch, openPage, check, summary, noHScroll } from "./harness.mjs";
+import { launch, openPage, check, summary, noHScroll, toStep, SAT } from "./harness.mjs";
 import fs from "fs";
 const DIR = new URL(".", import.meta.url).pathname;
 const file = DIR + (process.argv[2] || "page.html");
@@ -9,10 +9,10 @@ check("49 rules and 4 ideas", Object.keys(D.d).length === 49 && Object.keys(D.x)
 const B = await launch();
 const seen = new Set();
 for (const W of [402]) for (const lid of ["L01","L02","L03","L04","L05","L06","L07","L08","L09","L10","L11","L12","L13","L14","L15","L16","L17","L18","L19","L20","L21","L22","L23","L24","L25","L26","L27","L28","L29","L30","L31","L32","L33","L34"]) {
-  const { page, ctx, errors } = await openPage(B, { width: W, file });
+  const { page, ctx, errors } = await openPage(B, { width: W, file, time: SAT });
   await page.evaluate(lid => { const b = document.createElement("button"); b.setAttribute("data-action", "cur-start"); b.setAttribute("data-id", "goal_invest"); b.setAttribute("data-lid", lid); document.getElementById("root").appendChild(b); b.click(); }, lid);
   await page.clock.runFor(80);
-  await page.click('.ses-pills [data-i="1"]'); await page.clock.runFor(40);
+  await toStep(page, 1);
   const more = await page.$("details.ses-more");
   if (more) { await page.$eval("details.ses-more", d => { d.open = true; d.dispatchEvent(new Event("toggle")); }); await page.clock.runFor(30); }
   const keys = await page.$$eval(".ses-more .doc-b", bs => bs.map(b => b.getAttribute("data-k")));
