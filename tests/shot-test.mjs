@@ -280,8 +280,8 @@ let fixPage;
   await ctx.close();
 }
 
-// 10. stopping says honestly whether the time filled the round
-for (const [goal, re] of [["goal_invest", /^✓ 3m logged under Investing\. Its round minutes come from the lessons\.$/], ["goal_read", /^✓ Reading: 3 of 14 min today\. That counts\./], ["muyi5ymrd1huk", /^✓ [^:]+: 3 of 14 min today\. That counts\./]]) {
+// 10. stopping says honestly whether the time filled the round (3 minutes here, plus whatever the saved data already logged today)
+for (const [goal, re] of [["goal_invest", /^✓ 3m logged under Investing\. Its round minutes come from the lessons\.$/], ["goal_read", /^✓ Reading: ([3-9]|1[0-4]) of 14 min today\. That counts\./], ["muyi5ymrd1huk", /^✓ [^:]+: ([3-9]|1[0-4]) of 14 min today\. That counts\./]]) {
   const { page, ctx, errors } = await openPage(browser, { width: W });
   await attach(page);
   await resolve(page, { name: "Thing for " + goal, match: null, goal, category: "", depth: "deep", seen: "x" });

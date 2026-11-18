@@ -172,128 +172,15 @@
    "wh": "Rotterdam",
    "otif": 84.8,
    "lines": 66
-  },
-  {
-   "id": "C10",
-   "name": "Supermarkt Marktplein",
-   "country": "Netherlands",
-   "wh": "Tilburg",
-   "otif": 86.6,
-   "lines": 67
-  },
-  {
-   "id": "C51",
-   "name": "Frischemarkt Het Anker Essen",
-   "country": "Germany",
-   "wh": "Venlo",
-   "otif": 86.8,
-   "lines": 114
-  },
-  {
-   "id": "C30",
-   "name": "Buurtsuper Zuidpunt",
-   "country": "Netherlands",
-   "wh": "Rotterdam",
-   "otif": 87.4,
-   "lines": 103
-  },
-  {
-   "id": "C07",
-   "name": "Supermarkt De Spil",
-   "country": "Netherlands",
-   "wh": "Rotterdam",
-   "otif": 87.5,
-   "lines": 72
-  },
-  {
-   "id": "C43",
-   "name": "Supermarché Duinrand Antwerpen",
-   "country": "Belgium",
-   "wh": "Tilburg",
-   "otif": 87.5,
-   "lines": 40
-  },
-  {
-   "id": "C54",
-   "name": "Markt De Pijl Essen",
-   "country": "Germany",
-   "wh": "Venlo",
-   "otif": 87.6,
-   "lines": 121
-  },
-  {
-   "id": "C21",
-   "name": "Groothandel Het Anker",
-   "country": "Netherlands",
-   "wh": "Venlo",
-   "otif": 87.7,
-   "lines": 130
-  },
-  {
-   "id": "C39",
-   "name": "Online Lindenhof Hasselt",
-   "country": "Belgium",
-   "wh": "Tilburg",
-   "otif": 88.0,
-   "lines": 50
-  },
-  {
-   "id": "C49",
-   "name": "Markt Waterkant Düsseldorf",
-   "country": "Germany",
-   "wh": "Venlo",
-   "otif": 88.3,
-   "lines": 128
-  },
-  {
-   "id": "C11",
-   "name": "Online Vennehof",
-   "country": "Netherlands",
-   "wh": "Rotterdam",
-   "otif": 88.7,
-   "lines": 62
-  },
-  {
-   "id": "C18",
-   "name": "Buurtsuper Dijkzicht",
-   "country": "Netherlands",
-   "wh": "Rotterdam",
-   "otif": 88.7,
-   "lines": 71
-  },
-  {
-   "id": "C19",
-   "name": "Online Waterkant",
-   "country": "Netherlands",
-   "wh": "Rotterdam",
-   "otif": 88.9,
-   "lines": 72
-  },
-  {
-   "id": "C04",
-   "name": "Groothandel Rozengaard",
-   "country": "Netherlands",
-   "wh": "Rotterdam",
-   "otif": 89.5,
-   "lines": 57
-  },
-  {
-   "id": "C33",
-   "name": "Online Havenzicht Antwerpen",
-   "country": "Belgium",
-   "wh": "Tilburg",
-   "otif": 89.5,
-   "lines": 76
-  },
-  {
-   "id": "C60",
-   "name": "Großhandel Zuidpunt Köln",
-   "country": "Germany",
-   "wh": "Venlo",
-   "otif": 89.8,
-   "lines": 147
   }
  ],
+ "worst_late_by_carrier_2025": {
+  "Haven Transport": 10,
+  "Brug Logistiek": 2,
+  "Duin Express": 0,
+  "Kanaal Freight": 12
+ },
+ "worst_late_h2_share": 70.8,
  "venlo": {
   "otif_h1": 92.1,
   "otif_h2": 79.9,

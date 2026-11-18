@@ -1,0 +1,358 @@
+# Builds "Power BI for supply chain" (PBI_CURRICULUM) in time-tracker.html: 12 sittings on the Power BI goal (a branch
+# of Career). They follow the order of Microsoft's free PL-300 training on Microsoft Learn: each sitting links its module,
+# and Microsoft's own lab as an optional extra (the labs need SQL Server and, for publishing, a work or school account).
+# Every sitting is one step of one dashboard for Kade Distribution, a made-up Dutch wholesaler: the practice data and the
+# numbers every worked answer quotes come from scripts/make-powerbi-data.py (data/powerbi/answers.json).
+#   python3 scripts/make-powerbi-data.py && python3 scripts/build-powerbi-course.py
+import json, os, re, sys
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from course_block import course, check_extras, term_order, lesson_texts, write
+
+A = json.load(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "data", "powerbi", "answers.json"), encoding="utf-8"))
+DATA = "https://github.com/projectbetterclass/assistant/raw/c667561590da7fe291f46a0c328f5bada2b415fd/data/powerbi/kade-practice-data.zip"
+ML = "https://learn.microsoft.com/en-us/training/"
+COURSE, M_START, M_GET, M_CLEAN = ML + "courses/pl-300t00", ML + "modules/get-started-with-power-bi/", ML + "modules/get-data-power-bi/", ML + "modules/clean-data-power-bi/"
+P_MODEL, P_REPORT = ML + "paths/model-data-power-bi/", ML + "paths/power-bi-effective/"
+M_REQ, M_DESIGN, M_UX = ML + "modules/power-bi-effective-requirements/", ML + "modules/power-bi-effective-reports/", ML + "modules/power-bi-effective-user-experience/"
+def lab(f, title, note=""):
+    return {"h": "Optional: Microsoft’s lab", "p": ["Microsoft’s step-by-step lab on its own sample data (Adventure Works)." + (" " + note if note else "")],
+            "s": "Microsoft lab · " + title, "u": "https://microsoftlearning.github.io/PL-300-Microsoft-Power-BI-Data-Analyst/Instructions/Labs/%s.html" % f}
+def learn(title, url, text): return {"h": "On Microsoft Learn (free)", "p": [text], "s": "Microsoft Learn · " + title, "u": url}
+
+def eur(x, d=2): return "€{:,.{}f}".format(x, d)
+def n(x): return "{:,}".format(x)
+def pc(x): return "%.1f%%" % x
+R, T, S, V, Y = A["raw"], A["totals"], A["service"], A["venlo"], A["by_year"]
+WH = ["Rotterdam", "Venlo", "Tilburg"]; CARS = ["Haven Transport", "Brug Logistiek", "Duin Express", "Kanaal Freight"]
+LOW = A["low_customers_2025"]; WORST = LOW[0]; WLATE = A["worst_late_by_carrier_2025"]
+SUP = A["supplier_q4"]
+
+L = [
+ dict(id="Q01", rung="Get data", stage_name="Set up", concept="From a question to a dashboard", estimateMin=30,
+  teach="Power BI does four jobs in order: get data in, shape it into a model, calculate the numbers, and show them so someone can decide. A dashboard starts from questions, not charts: who reads it, which decision it serves, which few numbers answer it. In supply chain the first number is usually OTIF, on time in full: the share of order lines that arrived by the requested date, complete.",
+  walk=[{"h": "The four jobs", "l": [["Get data.", "Connect to files or databases, and clean them (Q02–Q03)."], ["Model.", "Link the tables so a filter on one reaches the others (Q04)."],
+                                      ["Calculate.", "Write each number once, so every chart uses the same one (Q05–Q07)."], ["Show and share.", "Pages that answer the questions, published safely (Q08–Q11)."]]},
+        {"h": "Set up, once", "p": ["Install Power BI Desktop from the Microsoft Store on your PC; it’s free, and it runs on Windows only. Download the practice data, unzip it into a folder you’ll keep, such as Documents\\Kade, and read README.txt: it has the definitions the whole course uses. Kade Distribution is a made-up wholesaler with warehouses in Rotterdam, Venlo and Tilburg: your client for the next twelve sittings."],
+         "s": "Practice data · kade-practice-data.zip (made up, generated for practice)", "u": DATA},
+        learn("Get started building with Power BI", M_START, "The tour of Power BI Desktop, the Power BI service in the browser, and the mobile app. The PL-300 course page lists every free module, in the order this course follows."),
+        {"h": "Where it goes wrong", "l": ["Starting with charts: a page of visuals nobody asked for.", "Ten numbers on one page: the reader can’t tell which one matters.",
+                                            "A number without a definition: two people get two different OTIFs from the same data."]},
+        {"h": "Worked: the ops manager’s Monday", "p": ["Kade’s operations manager has ten minutes on Monday. The question isn’t ‘what happened’ but ‘where do I act this week’: which warehouse or carrier lets customers down, whether that’s getting better or worse, and what it costs. So the first page needs OTIF, its trend, and a split by warehouse and carrier, before anything about money."]},
+        {"h": "Your turn: Kade Distribution", "p": ["The five questions the ops manager asks every Monday, each with the one number that answers it and its definition from README.txt."]}],
+  need=[{"k": "Practice data", "v": "kade-practice-data.zip", "n": "README.txt and six CSV files"}, {"k": "Software", "v": "Power BI Desktop", "n": "free, Windows only"}],
+  task="Install Power BI Desktop, download and unzip the practice data, and read README.txt. Then write the five questions Kade’s operations manager asks every Monday, each with the one number that answers it and how that number is defined. Judge: which of your five would the manager act on first, and which is only nice to know?",
+  key=[{"t": "A good answer looks like", "l": ["Service: what share of order lines arrived on time and in full (OTIF %), and where it’s lowest, by warehouse and by carrier.",
+        "Trend: is OTIF better or worse than last month, and than last year?", "Completeness: the fill rate, cartons shipped ÷ cartons ordered.",
+        "Cost: freight per kg shipped, and freight as a share of revenue.", "Who is hurt: the customers with the lowest OTIF.",
+        "Each with its definition from README.txt. OTIF comes first, because it’s the one a customer feels."]}],
+  thread={"n": "Q02 · getting the six files into Power BI, and looking at them before trusting them"},
+  co="Kade Distribution", rev="the finance manager",
+  rtask="Write the five questions for a different reader: Kade’s finance manager. Which numbers change, and which stay?",
+  rkey=[{"t": "Short answer", "l": ["Finance asks about money first: revenue, freight as a share of revenue, freight per kg and its trend, and what poor service costs (re-deliveries, credit notes).",
+                                     "OTIF stays, as a cost driver rather than the headline."]}]),
+
+ dict(id="Q02", rung="Get data", stage_name="Get data in", concept="Load the files, then look before you trust", estimateMin=45,
+  teach="Data comes in through Power Query, the editor behind Transform data. Every click there becomes a step you can see, change or delete, and the steps rerun at each refresh, so you clean once, not every month. Before trusting a table, profile it: how many values are valid, empty or errors, and how many are distinct. Profiling looks at the first 1,000 rows unless you tell it to use them all.",
+  walk=[{"h": "Get the files in", "l": ["Home › Get data › Text/CSV, pick Orders.csv, then Transform data rather than Load.", "If everything lands in one column, set the delimiter to Semicolon: it’s a Dutch export.",
+                                         "In Power Query, Home › New source › Text/CSV for the other five files.", "Each file becomes a query; its steps are listed under Applied steps."]},
+        {"h": "Look before you trust", "l": [["Column quality.", "The share of valid, error and empty values in each column."], ["Column distribution.", "Distinct and unique values: an ID column should be all unique."],
+                                              ["Column profile.", "Counts, minimum and maximum for the column you select."], ["Status bar.", "Switch ‘based on top 1000 rows’ to the entire data set."]]},
+        learn("Get data in Power BI", M_GET, "Files, databases, and the choice between importing data and querying it live."),
+        lab("01-get-data-in-power-bi", "Get data in Power BI", "It needs SQL Server installed, so skip it unless you want the database practice."),
+        {"h": "Where it goes wrong", "l": ["Clicking Load instead of Transform data, so you never see what came in.", "Trusting a profile of the first 1,000 rows of a 10,000-row file.",
+                                            "Not noticing that Power BI guessed the types. On a PC set to English (US), 05-01-2024 can become 1 May, and 14,73 can become 1473 (Q03 fixes that)."]},
+        {"h": "Worked: what an order line is", "p": ["OrderID repeats in Orders.csv, because one order has several lines; OrderID with LineNo is what identifies a row. Some cells are empty on purpose: an order not yet delivered on the extract date, 31-12-2025, has no delivered date yet."]},
+        {"h": "Your turn: Kade’s six files", "p": ["Load all six, switch profiling to the entire data set, and profile Orders column by column."]}],
+  need=[{"k": "Files", "v": "the six CSVs in kade-practice-data"}, {"k": "Profiling", "v": "View › Column quality, Column distribution, Column profile"}],
+  task="Load all six CSVs with Transform data, switch profiling to the entire data set, and profile Orders. Write down the rows per table, which Orders columns have empty values and how many, and any column showing errors or odd values. Judge: which of those empty values are real, and which would be a problem?",
+  key=[{"t": "Worked answer", "l": ["Rows: Orders %s, Customers %d, Products %d, Suppliers %d, Carriers %d, Warehouses %d." % (n(R["Orders.csv"]), R["Customers.csv"], R["Products.csv"], R["Suppliers.csv"], R["Carriers.csv"], R["Warehouses.csv"]),
+        "Empty in Orders: ShipDate, DeliveredDate, QtyShipped and FreightEUR, %d each: the lines not yet delivered on 31-12-2025. Those are real; leave them, and count only delivered lines in OTIF." % R["orders_blank_delivered"],
+        "Errors depend on your PC’s language. In English (US), dates with a day above 12, such as 13-01-2024, show as errors, and FreightEUR loses its comma. On a Dutch PC they read correctly. Either way, Q03 sets the types on purpose.",
+        "Odd values: CustomerID ‘TEST’ in a few rows, and Customers spells its countries in several ways."]}],
+  thread={"b": "Q01 · the questions and the definitions", "n": "Q03 · cleaning what you found, so the numbers can be trusted"},
+  co="Kade Distribution", rev="Products and Customers",
+  rtask="Profile Products.csv and Customers.csv on the entire data set: rows, empty values, and which column should be all unique.",
+  rkey=[{"t": "Short answer", "l": ["Products: 40 rows, no empty values, ProductID all unique; prices and weights use a dot, so they read correctly.",
+                                     "Customers: 60 rows, CustomerID all unique; Country has far more distinct values than the three countries in it (spellings and trailing spaces). Q03 cleans that."]}]),
+
+ dict(id="Q03", rung="Get data", stage_name="Clean", concept="Set the types on purpose, then remove what isn’t real", estimateMin=60,
+  teach="Cleaning makes each column mean one thing. First the types: delete the type step Power BI guessed and set dates and decimals with the file’s locale, here Dutch (Netherlands), so 05-01-2024 is 5 January and 14,73 is €14.73. Then remove rows that aren’t real: duplicates from the export and test orders. Last, make text consistent: trim spaces, then give each country one spelling.",
+  walk=[{"h": "The steps, in this order", "l": ["Orders: delete the ‘Changed Type’ step.", "OrderDate, RequestedDate, ShipDate, DeliveredDate: right-click › Change type › Using locale › Date, Dutch (Netherlands). FreightEUR the same way, as Decimal number.",
+                                                 "LineNo, QtyOrdered, QtyShipped: Whole number. Empty cells should show as null; if one shows Error, right-click › Replace errors › null.",
+                                                 "Filter CustomerID: untick TEST.", "Select all columns, then Home › Remove rows › Remove duplicates.",
+                                                 "Customers: Transform › Format › Trim on Customer and Country, then Replace values: NL and Nederland → Netherlands, BE and België → Belgium, DE and Deutschland → Germany.",
+                                                 "Home › Close & apply."]},
+        learn("Clean, transform, and load data in Power BI", M_CLEAN, "Replacing values, fixing types, unpivoting, and reading the M code behind the steps in the Advanced Editor."),
+        lab("02-transform-data-power-bi", "Clean, transform, and load data in Power BI", "It continues from the first lab’s SQL Server data."),
+        {"h": "Where it goes wrong", "l": ["Replacing ‘Nederland’ before trimming: ‘Nederland ’ with a space doesn’t match, and stays.",
+                                            "Removing duplicates on OrderID alone: that deletes real order lines, since an order has several.",
+                                            "Setting the type in a later step while the guessed one still runs first: the damage is already done."]},
+        {"h": "Worked: one bad date", "p": ["Read as English (US), 05-01-2024 becomes 1 May 2024: no error, just wrong. That’s why you check against facts you know: Kade’s first order is on 2 January 2024 and its last on 31 December 2025. An earliest date in February, or a freight total about a hundred times too big, means a type was guessed."]},
+        {"h": "Your turn: Orders and Customers", "p": ["Clean both in that order of steps, noting the Orders row count after each one."]}],
+  need=[{"k": "Locale", "v": "Dutch (Netherlands)", "n": "for the four date columns and FreightEUR"}, {"k": "Rows to remove", "v": "CustomerID TEST, and exact duplicates"}],
+  task="Clean Orders: types with the Dutch locale, filter out the TEST rows, remove exact duplicates. Clean Customers: trim, then one spelling per country. Close & apply. Write down the Orders row count after each step, the earliest and latest OrderDate, the freight total, and the customers per country. Judge: which step would have done the most damage if you’d skipped it, and how would you have noticed?",
+  key=[{"t": "Worked answer", "l": ["Orders: %s rows in; %s after removing the %d TEST rows; %s after removing the %d duplicates." % (n(R["Orders.csv"]), n(R["Orders.csv"] - R["orders_test"]), R["orders_test"], n(A["clean_lines"]), R["orders_dup"]),
+        "Earliest OrderDate 2 January 2024, latest 31 December 2025.",
+        "FreightEUR total %s (put the column in a card, as a sum). About €%s million means the comma was read as a thousands separator." % (eur(T["freight"]), round(T["freight"] * 100 / 1e6)),
+        "Customers: Netherlands %d, Belgium %d, Germany %d." % tuple(A["cust_by_country"][k] for k in ["Netherlands", "Belgium", "Germany"]),
+        "The most damaging skip is the locale: no errors, just wrong dates and freight a hundred times too big. Only a fact you already know catches it."]}],
+  thread={"b": "Q02 · what profiling showed", "n": "Q04 · linking the clean tables into one model"},
+  co="Kade Distribution", rev="a fresh import",
+  rtask="Import Orders.csv again as a new query and set its types from memory, without notes. Check it against the facts you know.",
+  rkey=[{"t": "Short answer", "l": ["Earliest order 2 January 2024, latest 31 December 2025, freight %s, and %s rows once the TEST rows and duplicates are gone. Anything else means a guessed type is still in the steps." % (eur(T["freight"]), n(A["clean_lines"]))]}]),
+
+ dict(id="Q04", rung="Model", stage_name="Star schema", concept="Facts in the middle, lookups around them", estimateMin=45,
+  teach="A model is the tables plus the relationships between them. The shape that works best is a star schema: one fact table in the middle, here Orders, with a row per event and the numbers you add up, and dimension tables around it that describe it and that you filter by. Each relationship runs one-to-many, and filters flow from the one side to the many side.",
+  walk=[{"h": "Build it", "l": ["Model view: drag Customers[CustomerID] onto Orders[CustomerID]; the same for ProductID, WarehouseID and CarrierID.",
+                                 "Products[SupplierID] to Suppliers[SupplierID]: one step out from the star, which is fine.",
+                                 "Check each relationship: one-to-many (1 to *), cross-filter direction Single.",
+                                 "A date table: Modeling › New table, Date = CALENDAR(DATE(2024,1,1), DATE(2025,12,31)). Add Year = YEAR('Date'[Date]) and Month = MONTH('Date'[Date]) as new columns (calculated columns, Q05).",
+                                 "Relate Date[Date] to Orders[OrderDate], then Table tools › Mark as date table.",
+                                 "Hide the ID columns in Orders, so nobody builds a chart on Orders[CustomerID]."]},
+        learn("Model data with Power BI", P_MODEL, "Its first module covers semantic models (Microsoft’s word for a model): star schemas, relationships, cardinality and date tables."),
+        lab("03-configure-semantic-model", "Configure a semantic model in Power BI"),
+        {"h": "Where it goes wrong", "l": ["Two routes between tables: Customers has a WarehouseID too, and relating that as well gives Power BI two paths from Warehouses to Orders. Leave it out.",
+                                            "Many-to-many, or filters in both directions, set ‘to make it work’: they hide a modelling mistake.",
+                                            "No date table: the time comparisons in Q07 need one."]},
+        {"h": "Worked: why the star", "p": ["Without relationships, a table with Category from Products and the sum of QtyOrdered from Orders shows the same total in every row: the Category filter can’t reach Orders. With Products one-to-many Orders, each category gets its own total."]},
+        {"h": "Your turn: Kade’s model", "p": ["The relationships, the date table, and a table visual of Category with the sum of QtyOrdered."]}],
+  need=[{"k": "Fact table", "v": "Orders"}, {"k": "Lookups", "v": "Customers, Products, Warehouses, Carriers, Date", "n": "Suppliers hangs off Products"}],
+  task="Build the relationships and the date table. Then make a table visual: Products[Category] with the sum of Orders[QtyOrdered]. Write down the four category totals and the grand total. Judge: if every row showed the same number, what would that tell you?",
+  key=[{"t": "Worked answer", "l": ["Beverages %s, Snacks %s, Household %s, Personal care %s: %s cartons ordered in all." % tuple([n(A["units_by_cat"][c]) for c in ["Beverages", "Snacks", "Household", "Personal care"]] + [n(T["units_ordered"])]),
+        "The same number in every row means the filter from Products doesn’t reach Orders: a missing relationship, or one pointing the wrong way."]}],
+  thread={"b": "Q03 · clean tables", "n": "Q05 · the numbers themselves, written once as measures"},
+  co="Kade Distribution", rev="2025 only",
+  rtask="The same table for 2025 only: add a slicer on Date[Year] and pick 2025.",
+  rkey=[{"t": "Short answer", "l": ["2025: Beverages %s, Snacks %s, Household %s, Personal care %s. If the slicer changes nothing, Date isn’t related to Orders[OrderDate]." % tuple(n(A["units_by_cat_2025"][c]) for c in ["Beverages", "Snacks", "Household", "Personal care"])]}]),
+
+ dict(id="Q05", rung="Calculate", stage_name="Measures", concept="Write each number once, as a measure", estimateMin=45,
+  teach="A measure is a DAX formula worked out when a visual asks for it, for whatever is filtered then: one Revenue measure gives the total in a card and each warehouse’s figure in a bar chart. A calculated column is worked out once per row and stored. If you need it per row to filter or group by, make a column; if you add it up or divide it, make a measure.",
+  walk=[{"h": "The base measures", "l": ["Lines = COUNTROWS(Orders)", "Units Ordered = SUM(Orders[QtyOrdered])", "Units Shipped = SUM(Orders[QtyShipped])", "Freight = SUM(Orders[FreightEUR])",
+                                         "Revenue = SUMX(Orders, Orders[QtyShipped] * RELATED(Products[UnitPriceEUR]))", "Kg Shipped = SUMX(Orders, Orders[QtyShipped] * RELATED(Products[CartonWeightKg]))",
+                                         "Freight % = DIVIDE([Freight], [Revenue])", "Freight per kg = DIVIDE([Freight], [Kg Shipped])"],
+         "p2": ["SUMX goes through Orders row by row and adds up the result; RELATED fetches the price from Products, on the one side of the relationship."]},
+        {"h": "Two flags per row", "p": ["OTIF needs a yes or no for each line, so these two are calculated columns on Orders (Table tools › New column):"],
+         "l": ["On Time = IF(NOT ISBLANK(Orders[DeliveredDate]) && Orders[DeliveredDate] <= Orders[RequestedDate], 1, 0)", "In Full = IF(NOT ISBLANK(Orders[DeliveredDate]) && Orders[QtyShipped] >= Orders[QtyOrdered], 1, 0)"]},
+        learn("Model data with Power BI", P_MODEL, "The modules on writing DAX formulas, adding measures, and calculated tables and columns."),
+        lab("04-create-dax-calculations", "Create DAX calculations in semantic models"),
+        {"h": "Where it goes wrong", "l": ["Dragging the FreightEUR column into a chart instead of a measure: fine until you need a ratio.",
+                                            "A / instead of DIVIDE: dividing by zero gives an error, where DIVIDE gives a blank.",
+                                            "Measures scattered over the tables: keep them in one empty table called Measures (Home › Enter data)."]},
+        {"h": "Worked: why Freight % can’t be a column", "p": ["Freight ÷ revenue for each row, then averaged, counts a €2 line as much as a €2,000 line. The measure divides the total freight by the total revenue for whatever is filtered: %s ÷ %s = %s over the two years." % (eur(T["freight"]), eur(T["revenue"]), pc(T["freight_pct"]))]},
+        {"h": "Your turn: Kade’s measures", "p": ["Eight measures, two flag columns, and the measures in cards."]}],
+  need=[{"k": "Measures", "v": "8, in an empty table called Measures"}, {"k": "Columns", "v": "On Time and In Full, on Orders"}],
+  task="Write the eight measures and the two flag columns. Put Lines, Units Ordered, Units Shipped, Revenue, Freight, Freight % and Freight per kg in cards for the whole period. Judge: which of these would come out wrong if you’d built it as a calculated column and summed it?",
+  key=[{"t": "Worked answer", "l": ["Lines %s · Units ordered %s · Units shipped %s." % (n(T["lines"]), n(T["units_ordered"]), n(T["units_shipped"])),
+        "Revenue %s · Freight %s · Freight %% %s · Freight per kg %s." % (eur(T["revenue"]), eur(T["freight"]), pc(T["freight_pct"]), eur(T["eur_per_kg"], 3)),
+        "Freight % and Freight per kg: a ratio of totals can’t be built by adding up rows. Every ratio belongs in a measure."]}],
+  thread={"b": "Q04 · the star model the measures run on", "n": "Q06 · OTIF, by changing what a measure counts"},
+  co="Kade Distribution", rev="2025 by channel",
+  rtask="Revenue by channel for 2025: Customers[Channel] in a table, with the Year slicer on 2025.",
+  rkey=[{"t": "Short answer", "l": ["Supermarket %s, Wholesale %s, Online %s. The same Revenue measure, with no new formula: that’s what a measure is for." % tuple(eur(A["revenue_by_channel_2025"][c]) for c in ["Supermarket", "Wholesale", "Online"])]}]),
+
+ dict(id="Q06", rung="Calculate", stage_name="Filter context", concept="CALCULATE changes what a measure counts", estimateMin=45,
+  teach="Every measure is worked out inside a filter context: the filters from the visual’s rows, the slicers and the page. CALCULATE works a measure out with filters you add or remove: CALCULATE([Lines], Orders[On Time] = 1) counts on-time lines only, still for the warehouse the row shows. ALL removes a filter, which is how you get a share of a total.",
+  walk=[{"h": "The OTIF measures", "l": ["Delivered Lines = CALCULATE([Lines], NOT ISBLANK(Orders[DeliveredDate]))", "On-time % = DIVIDE(CALCULATE([Lines], Orders[On Time] = 1), [Delivered Lines])",
+                                         "In-full % = DIVIDE(CALCULATE([Lines], Orders[In Full] = 1), [Delivered Lines])", "OTIF % = DIVIDE(CALCULATE([Lines], Orders[On Time] = 1, Orders[In Full] = 1), [Delivered Lines])",
+                                         "Fill rate = DIVIDE([Units Shipped], CALCULATE([Units Ordered], NOT ISBLANK(Orders[DeliveredDate])))",
+                                         "Late Lines = [Delivered Lines] - CALCULATE([Lines], Orders[On Time] = 1)", "Late share = DIVIDE([Late Lines], CALCULATE([Late Lines], ALL(Carriers)))"]},
+        learn("Model data with Power BI", P_MODEL, "The module on modifying DAX filter context: CALCULATE, ALL and their relatives."),
+        lab("05-modify-dax-filter-context", "Modify DAX filter context in Power BI"),
+        {"h": "Where it goes wrong", "l": ["Dividing by all lines instead of delivered lines: the open orders count as failures.",
+                                            "Multiplying On-time % by In-full %: two filters in one CALCULATE mean ‘and’, line by line, which isn’t the same number.",
+                                            "ALL(Orders) instead of ALL(Carriers): it removes every filter, the year slicer too."]},
+        {"h": "Worked: a share of the total", "p": ["In a table by carrier, Late Lines for Brug Logistiek counts only Brug’s late lines, because the row filters to Brug. CALCULATE([Late Lines], ALL(Carriers)) takes that row filter away, so the bottom of the fraction is every late line: Brug’s share is %s." % pc(S["late_share_by_carrier"]["Brug Logistiek"])]},
+        {"h": "Your turn: Kade’s service level", "p": ["Seven measures, cards for the whole period, and tables by warehouse and by carrier."]}],
+  need=[{"k": "Delivered line", "v": "DeliveredDate filled in"}, {"k": "OTIF", "v": "on time AND in full ÷ delivered lines"}],
+  task="Write the seven measures. Show On-time %, In-full %, OTIF % and Fill rate in cards for both years together, OTIF % in a table by warehouse, and Late share in a table by carrier. Judge: one warehouse is worst. Is that enough to blame it, or what would you check first?",
+  key=[{"t": "Worked answer", "l": ["Delivered lines %s · On time %s · In full %s · OTIF %s · Fill rate %s." % (n(T["delivered"]), pc(S["ontime"]), pc(S["infull"]), pc(S["otif"]), pc(T["fill"])),
+        "OTIF by warehouse: " + ", ".join("%s %s" % (w, pc(S["otif_by_wh"][w])) for w in WH) + ".",
+        "Late share: " + ", ".join("%s %s" % (c, pc(S["late_share_by_carrier"][c])) for c in CARS) + ".",
+        "Venlo is lowest, but that’s over two years. Before blaming the warehouse, check when it dropped (Q07) and which carrier carried the late lines (Q10). Kanaal Freight has a fifth of all late lines while it only appears in the second half of 2025: a clue."]}],
+  thread={"b": "Q05 · the base measures", "n": "Q07 · the same measures over time: this year against last"},
+  co="Kade Distribution", rev="Rotterdam 2024",
+  rtask="OTIF % for Rotterdam in 2024 only, using slicers.",
+  rkey=[{"t": "Short answer", "l": ["Rotterdam 2024: %s. No new measure: the slicers set the filter context, and OTIF %% follows." % pc(A["otif_2024_rotterdam"])]}]),
+
+ dict(id="Q07", rung="Calculate", stage_name="Over time", concept="This year against last, and the trend", estimateMin=60,
+  teach="Time intelligence functions shift the dates a measure runs over, using the date table: TOTALYTD adds up from 1 January, SAMEPERIODLASTYEAR moves the same dates back a year. Visual calculations are written on a chart rather than in the model, and work on what it shows, such as a three-month moving average that smooths the noise so a trend shows.",
+  walk=[{"h": "The measures", "l": ["Freight YTD = TOTALYTD([Freight], 'Date'[Date])", "Freight YTD LY = CALCULATE([Freight YTD], SAMEPERIODLASTYEAR('Date'[Date]))",
+                                     "Freight YTD vs LY = DIVIDE([Freight YTD] - [Freight YTD LY], [Freight YTD LY])"],
+         "p2": ["They need the marked date table from Q04, related to Orders[OrderDate]."]},
+        {"h": "A visual calculation", "p": ["Make a line chart of OTIF % by Date[Year] and Date[Month]. Select it, choose New calculation, and write OTIF 3m = MOVINGAVERAGE([OTIF %], 3)."]},
+        learn("Model data with Power BI", P_MODEL, "The modules on DAX time intelligence functions and on visual calculations."),
+        lab("06-use-dax-time-intelligence", "Use DAX time intelligence functions in Power BI", "Lab 07, on visual calculations, follows it."),
+        {"h": "Where it goes wrong", "l": ["A date table that isn’t marked, or has gaps: year-to-date comes out wrong or blank.",
+                                            "Comparing a full year with part of one: 2025 against 2024 is fair here because both are complete.",
+                                            "Reporting a moving average of percentages as the quarter’s OTIF: it averages three monthly rates and ignores that some months are busier. Good for the trend, not for the figure."]},
+        {"h": "Worked: freight up while the rate went down", "p": ["Freight to the end of June 2025 was %s, against %s a year earlier: up %s. Yet freight per kg fell from %s in 2024 to %s in 2025. Kade shipped more and paid less per kg: a cost rise that is really growth." % (eur(A["ytd_jun"]["2025"]), eur(A["ytd_jun"]["2024"]), pc(100 * (A["ytd_jun"]["2025"] / A["ytd_jun"]["2024"] - 1)), eur(Y["2024"]["eur_per_kg"], 3), eur(Y["2025"]["eur_per_kg"], 3))]},
+        {"h": "Your turn: Kade’s trend", "p": ["The three measures in a matrix by Year and Month, and the OTIF line with its moving average."]}],
+  need=[{"k": "Date table", "v": "from Q04, marked as a date table"}],
+  task="Build the three freight measures in a matrix by Year and Month, and read the June 2025 row. Then OTIF % for 2024 and 2025, and the line chart with OTIF 3m: write down the moving average for October, November and December 2025. Judge: is 2025 really worse than 2024 across the year, or is one part of the year pulling it down?",
+  key=[{"t": "Worked answer", "l": ["June 2025: Freight YTD %s, last year %s, up %s." % (eur(A["ytd_jun"]["2025"]), eur(A["ytd_jun"]["2024"]), pc(100 * (A["ytd_jun"]["2025"] / A["ytd_jun"]["2024"] - 1))),
+        "OTIF: 2024 %s, 2025 %s." % (pc(Y["2024"]["otif"]), pc(Y["2025"]["otif"])),
+        "OTIF 3m: October 2025 %s, November %s, December %s." % tuple(pc(A["mavg3_2025"][m]) for m in ["10", "11", "12"]),
+        "The year’s total hides the shape: monthly OTIF was %s, %s and %s in April–June 2025, then %s in July. Something changed mid-year; Q10 finds out what." % tuple(pc(A["monthly_otif_2025"][m]) for m in ["4", "5", "6", "7"])]}],
+  thread={"b": "Q06 · OTIF and the filter context", "n": "Q08 · putting the numbers on a page someone can read in a minute"},
+  co="Kade Distribution", rev="by warehouse",
+  rtask="OTIF % by warehouse, 2024 against 2025: which warehouse changed?",
+  rkey=[{"t": "Short answer", "l": [", ".join("%s %s → %s" % (w, pc(Y["2024"]["otif_by_wh"][w]), pc(Y["2025"]["otif_by_wh"][w])) for w in WH) + ". Only Venlo fell, by %.1f points; the other two improved." % (Y["2024"]["otif_by_wh"]["Venlo"] - Y["2025"]["otif_by_wh"]["Venlo"])]}]),
+
+ dict(id="Q08", rung="Show", stage_name="Design the page", concept="One page, one question, the answer top-left", estimateMin=60,
+  teach="A report page answers one question for one reader. The number that matters most goes top-left, in a card, where eyes start; the trend next to it; then the split that shows where to act. Pick the visual for the comparison: a line for change over time, bars to compare categories, a table only when someone needs exact values. A title should state the point, not name the field.",
+  walk=[{"h": "Kade’s Service page", "l": ["Top-left: cards for OTIF %, Fill rate, Freight per kg and Revenue.", "Next to them: the OTIF line by month, with OTIF 3m (Q07).",
+                                             "Below: OTIF % by warehouse, and by carrier, as bar charts.", "Slicers for Year and Warehouse along the top; View › Sync slicers keeps them the same on every page."]},
+        learn("Scope report design requirements", M_REQ, "Who the report is for, what they decide with it, and what that means for its pages."),
+        learn("Design Power BI reports", M_DESIGN, "Layout, choosing visuals, and formatting, in the same learning path."),
+        lab("08-design-power-bi-reports", "Design Power BI reports", "Its last part publishes to the Power BI service, which needs a work or school account."),
+        {"h": "Where it goes wrong", "l": ["A pie chart with ten slices, or anything in 3D.", "Colour that means nothing: keep it for meaning, such as red under target.",
+                                            "Titles that name the field (‘OTIF % by Warehouse’) instead of the point (‘Venlo is below target’)."]},
+        {"h": "Worked: a title that says something", "p": ["‘OTIF %% by warehouse’ makes the reader hunt for the point. ‘Venlo ships %s on time and in full in 2025; the others are above 92%%’ gives it, and the chart becomes the proof." % pc(Y["2025"]["otif_by_wh"]["Venlo"])]},
+        {"h": "Your turn: the Service page", "p": ["Build it with the Year slicer on 2025, and give every visual a title that states its point."]}],
+  need=[{"k": "Reader", "v": "Kade’s operations manager", "n": "ten minutes on Monday"}, {"k": "Measures", "v": "OTIF %, Fill rate, Freight per kg, Revenue, OTIF 3m"}],
+  task="Build the Service page and set the Year slicer to 2025. Write down the four card values and OTIF by warehouse, and give each visual a title that states its point. Judge: show the page to someone for ten seconds. What did they remember?",
+  key=[{"t": "Worked answer", "l": ["2025 cards: OTIF %s · Fill rate %s · Freight per kg %s · Revenue %s." % (pc(Y["2025"]["otif"]), pc(Y["2025"]["fill"]), eur(Y["2025"]["eur_per_kg"], 3), eur(Y["2025"]["revenue"])),
+        "OTIF by warehouse, 2025: " + ", ".join("%s %s" % (w, pc(Y["2025"]["otif_by_wh"][w])) for w in WH) + ".",
+        "Titles that state the finding: ‘OTIF fell from July’ over the line, ‘Venlo is the gap’ over the bars."]}],
+  thread={"b": "Q07 · the trend", "n": "Q09 · leading the reader from the page to the detail"},
+  co="Kade Distribution", rev="the carrier page",
+  rtask="A second page, for carriers: OTIF % and Freight per kg by carrier for 2025, with a title that states the trade-off.",
+  rkey=[{"t": "Short answer", "l": [", ".join("%s %s at %s/kg" % (c, pc(A["by_carrier_2025"][c]["otif"]), eur(A["by_carrier_2025"][c]["eur_kg"], 3)) for c in CARS) + ".",
+                                     "The title: ‘The cheapest carrier is the least reliable’."]}]),
+
+ dict(id="Q09", rung="Show", stage_name="Lead to the detail", concept="From ‘something is wrong’ to ‘here, with whom’", estimateMin=45,
+  teach="A good report takes the reader from ‘something is wrong’ to ‘here, with whom’ in two clicks. Conditional formatting colours a value by a rule, such as red under 85%, so the eye finds the problem. Drillthrough adds a detail page you reach by right-clicking any customer in any visual. Bookmarks save a view of a page, and buttons switch between saved views.",
+  walk=[{"h": "Build it", "l": ["A table of customers for 2025 with Delivered Lines and OTIF %; a visual-level filter keeps customers with at least 40 delivered lines.",
+                                 "Conditional formatting on OTIF %: background red when under 0.85.",
+                                 "A Customer page: drag Customers[Customer] into its Drill through well, then add OTIF % by month and Late Lines by carrier.",
+                                 "Two bookmarks on the Service page, ‘chart’ and ‘table’, and a button for each."]},
+        learn("Enhance Power BI report designs for the user experience", M_UX, "Drillthrough, conditional formatting, bookmarks, buttons and tooltips."),
+        lab("09-enhance-power-bi-reports", "Enhance Power BI report designs"),
+        {"h": "Where it goes wrong", "l": ["Colouring the count instead of the rate: big customers turn red for being big.",
+                                            "No minimum: a customer with three lines and one late lorry shows 67%.", "Hiding the back button on the drillthrough page: keep it."]},
+        {"h": "Worked: why a minimum", "p": ["With fewer than 40 delivered lines in a year, one late lorry moves a customer’s OTIF by several points. A minimum keeps the red for customers whose service is really poor, not unlucky."]},
+        {"h": "Your turn: Kade’s weakest customers", "p": ["The table, the red rule, the drillthrough page, and the worst customer’s detail."]}],
+  need=[{"k": "Red rule", "v": "OTIF % under 85%", "n": "customers with at least 40 delivered lines in 2025"}],
+  task="Build the customer table with the 40-line minimum and the red rule, and the drillthrough page. Which customers are under 85% in 2025, and what do the worst ones have in common? Drill through to the worst one: which carrier carried its late lines? Judge: is this a customer problem, or something upstream?",
+  key=[{"t": "Worked answer", "l": ["Under 85% in 2025: " + "; ".join("%s %s" % (c["name"], pc(c["otif"])) for c in LOW) + ".",
+        "%d of the %d are served from Venlo, and the three worst are German customers of Venlo." % (sum(1 for c in LOW if c["wh"] == "Venlo"), len(LOW)),
+        "%s: %d late lines in 2025, %s of them from July on, and Kanaal Freight carried the most (%d), against %d for Haven Transport. Upstream, not the customer." % (WORST["name"], sum(WLATE.values()), pc(A["worst_late_h2_share"]), WLATE["Kanaal Freight"], WLATE["Haven Transport"])]}],
+  thread={"b": "Q08 · the Service page", "n": "Q10 · finding out why"},
+  co="Kade Distribution", rev="warehouses",
+  rtask="The red rule by warehouse: OTIF % for 2025 by warehouse, red under 90%.",
+  rkey=[{"t": "Short answer", "l": ["Red: Venlo only, at %s. Rotterdam %s and Tilburg %s stay clear." % (pc(Y["2025"]["otif_by_wh"]["Venlo"]), pc(Y["2025"]["otif_by_wh"]["Rotterdam"]), pc(Y["2025"]["otif_by_wh"]["Tilburg"]))]}]),
+
+ dict(id="Q10", rung="Show", stage_name="Find the story", concept="From what happened to why, with a price on it", estimateMin=45,
+  teach="Analysis in Power BI is mostly asking the next question with the right visual: split a drop by each dimension until one explains it. A scatter chart puts two measures against each other, so a trade-off shows as a pattern. Right-clicking a point on a line chart offers Analyze › Explain the decrease. The consultant’s step comes last: put a number on both sides.",
+  walk=[{"h": "Follow the drop", "l": ["Venlo’s OTIF by month in 2025: when did it fall?", "Venlo’s lines by carrier and month: what changed that month?",
+                                         "A scatter of OTIF % against Freight per kg by carrier, Venlo, July–December.", "Compare like with like: every carrier over the same months, so the December dip hits them all."]},
+        learn("Design effective reports in Power BI", P_REPORT, "The learning path’s module on performing analytics: trends, forecasts, and explaining increases and decreases."),
+        lab("10-perform-analytics-power-bi", "Perform analytics in Power BI"),
+        {"h": "Where it goes wrong", "l": ["Stopping at ‘Venlo is bad’: that’s where the question starts.", "Comparing one carrier’s autumn with another’s spring: the season may explain part of it.",
+                                            "A saving without its cost, or a cost without its saving: the decision needs both."]},
+        {"h": "Worked: putting a price on it", "p": ["The saving is the kg shipped from Venlo in July–December times the fall in freight per kg. The cost is the extra lines that failed OTIF: delivered lines times the fall in OTIF. Saving ÷ extra failed lines gives the euros saved per failed line, which a manager can weigh against what a failed delivery costs: a re-delivery, a credit note, an annoyed buyer."]},
+        {"h": "Your turn: Venlo’s second half", "p": ["Find what changed at Venlo in July 2025, and price it."]}],
+  need=[{"k": "Saving", "v": "kg shipped Jul–Dec × (€/kg Jan–Jun − €/kg Jul–Dec)"}, {"k": "Cost", "v": "delivered lines Jul–Dec × (OTIF Jan–Jun − OTIF Jul–Dec)"}],
+  task="Find the cause of Venlo’s drop: when it started, what changed, and how the new carrier compares with Venlo’s other carriers over the same months. Then price the trade-off: the freight saved in July–December 2025 against the extra lines that failed. Judge: at that price, was the switch worth it?",
+  key=[{"t": "Worked answer", "l": ["From July 2025 Venlo sent %s of its lines with a new carrier, Kanaal Freight. Venlo’s OTIF went from %s in January–June to %s in July–December." % (pc(V["kanaal_share_h2"]), pc(V["otif_h1"]), pc(V["otif_h2"])),
+        "July–December at Venlo: Kanaal %s against %s for Venlo’s other carriers; Kanaal was %s in July–September and %s in the October–December peak." % (pc(V["otif_h2_kanaal"]), pc(V["otif_h2_other"]), pc(V["otif_q3_kanaal"]), pc(V["otif_q4_kanaal"])),
+        "Freight per kg at Venlo fell from %s to %s. Saving: %s kg × %s ≈ %s in six months." % (eur(V["eur_kg_h1"], 3), eur(V["eur_kg_h2"], 3), n(V["kg_h2"]), eur(V["eur_kg_h1"] - V["eur_kg_h2"], 3), eur(V["saving"], 0)),
+        "Cost: %s delivered lines × %.1f points ≈ %d extra failed lines, so about %s saved per failed line." % (n(V["delivered_h2"]), V["otif_h1"] - V["otif_h2"], V["extra_fail"], eur(V["per_fail"])),
+        "Worth it only if a failed line costs Kade less than about %s. Ask what one really costs: a re-delivery, a credit note, a buyer’s time. And three of Kade’s worst customers are Venlo’s German accounts (Q09)." % eur(round(V["per_fail"]), 0)]}],
+  thread={"b": "Q09 · where the worst customers are", "n": "Q11 · sharing the report so each warehouse sees its own numbers"},
+  co="Kade Distribution", rev="the short shipments",
+  rtask="Kade’s fill rate also dipped in late 2025. Find the supplier behind it, and size it.",
+  rkey=[{"t": "Short answer", "l": ["%s: fill rate %s in October–December 2025, against %s for all other suppliers, and %s for the same supplier in July–September. Short shipments, not lateness: it shows in In-full %%, not in On-time %%." % (SUP["name"], pc(SUP["fill"]), pc(SUP["others"]), pc(SUP["fill_q3"]))]}]),
+
+ dict(id="Q11", rung="Share", stage_name="Share safely", concept="Publish, and let each warehouse see only its own rows", estimateMin=30,
+  teach="Publishing sends the report from Desktop to a workspace in the Power BI service, where others open it in a browser; it needs a work or school account. Row-level security decides which rows each reader sees: a role is a DAX filter on a table, such as Warehouses[City] = \"Venlo\", and because filters flow from a lookup to Orders, a Venlo manager sees only Venlo’s lines.",
+  walk=[{"h": "A role", "l": ["Modeling › Manage roles › New, named Venlo.", "Table Warehouses, filter [City] = \"Venlo\".", "Modeling › View as › Venlo: every visual now shows Venlo only.",
+                               "A measure to check with: Customers Served = DISTINCTCOUNT(Orders[CustomerID])."]},
+        {"h": "Publishing", "p": ["Home › Publish asks you to sign in with a work or school account: try your THUAS account. If it isn’t allowed, File › Export › Export to PDF gives you the pages to show, and a two-minute screen recording shows the report working."]},
+        learn("PL-300 course page", COURSE, "The last learning path on the course page covers workspaces, sharing and security."),
+        lab("11-secure-data-access", "Secure data access in Power BI", "It makes the role dynamic, with USERPRINCIPALNAME(), so one role serves every salesperson."),
+        {"h": "Where it goes wrong", "l": ["Checking as yourself: in Desktop you see everything; only View as shows what a role sees.",
+                                            "Sending the .pbix file: whoever has it sees every row. Roles only hold in the Power BI service.",
+                                            "One role per warehouse forever: with many, a dynamic role is the next step."]},
+        {"h": "Worked: what Venlo sees", "p": ["Under the Venlo role, Lines counts Venlo’s order lines only, OTIF % is Venlo’s, and the warehouse slicer has one option left."]},
+        {"h": "Your turn: the Venlo role", "p": ["Make it, test it with View as, then publish or export."]}],
+  need=[{"k": "Role filter", "v": "Warehouses[City] = \"Venlo\""}, {"k": "Account", "v": "work or school, for publishing", "n": "otherwise export to PDF"}],
+  task="Make the Venlo role and test it with View as. Write down the Lines, OTIF % and Customers Served that Venlo sees. Then try Publish with your THUAS account, or export to PDF. Judge: is there a page a warehouse manager shouldn’t see at all, and can a role handle that?",
+  key=[{"t": "Worked answer", "l": ["Venlo role: %s lines, OTIF %s, %d customers served." % (n(A["rls_venlo"]["lines"]), pc(A["rls_venlo"]["otif"]), A["rls_venlo"]["customers"]),
+        "If Publish refuses your account, the PDF is enough for a portfolio.",
+        "A page comparing carriers’ prices might be for head office only. A role filters rows, not pages: hide the page, or keep it in a separate report."]}],
+  thread={"b": "Q10 · the story to share", "n": "Q12 · turning the report into a portfolio piece and an interview answer"},
+  co="Kade Distribution", rev="Tilburg",
+  rtask="A Tilburg role, from memory, tested with View as.",
+  rkey=[{"t": "Short answer", "l": ["Tilburg: %s lines, OTIF %s, %d customers served." % (n(A["rls_tilburg"]["lines"]), pc(A["rls_tilburg"]["otif"]), A["rls_tilburg"]["customers"])]}]),
+
+ dict(id="Q12", rung="Share", stage_name="Portfolio", concept="One page: what you found, and what to do", estimateMin=45,
+  teach="An employer won’t open your Power BI file; they read one page and ask you about it. Write it like a consultant’s memo: the client’s problem in a line, the data and method in two, three findings each with a number, one recommendation with its trade-off, and what you’d check next. Say that the company is made up and the data generated; the method is what counts.",
+  walk=[{"h": "The one page", "l": [["Problem.", "One line: what got worse, for whom."], ["Data and method.", "Two years of order lines, cleaned in Power Query, a star model, DAX measures for OTIF, fill rate and freight."],
+                                     ["Findings.", "Three, each with a number."], ["Recommendation.", "One, with what it costs and what it saves."], ["Next.", "What you’d check with more data."]]},
+        {"h": "Where to put it", "l": ["LinkedIn: a post with two screenshots and the three findings, and the project under Projects.", "CV: one line under projects, with the headline number.",
+                                        "GitHub: the .pbix file and the one page, so anyone can open them."]},
+        {"h": "Where it goes wrong", "l": ["Describing the tool instead of the finding: ‘I used DAX’ says less than ‘I found a carrier switch that saved €40 per failed delivery’.",
+                                            "No recommendation: an analysis that stops at charts gets asked ‘so what?’."]},
+        {"h": "Worked: the headline", "p": ["‘Kade’s on-time-in-full rate fell in the second half of 2025. I traced it to one warehouse’s switch to a cheaper carrier, which saved about %s per failed delivery line, and priced both sides of the decision.’ Two lines, and the reader knows what you found." % eur(round(V["per_fail"]), 0)]},
+        {"h": "Your turn: Kade’s one page", "p": ["The one page, then the 60-second spoken version."]}],
+  need=[{"k": "From Q07", "v": "OTIF by year and by warehouse"}, {"k": "From Q10", "v": "the carrier switch, priced, and the short-shipping supplier"}],
+  task="Write the one page for Kade: problem, data and method, three findings with numbers, a recommendation with its trade-off, and what you’d check next. Then say it out loud in 60 seconds. Judge: if a hiring manager read only your first two lines, would they know what you found?",
+  key=[{"t": "Worked answer", "l": ["Problem: Kade’s OTIF fell from %s in 2024 to %s in 2025, all of it at Venlo (%s → %s); the other two warehouses improved." % (pc(Y["2024"]["otif"]), pc(Y["2025"]["otif"]), pc(Y["2024"]["otif_by_wh"]["Venlo"]), pc(Y["2025"]["otif_by_wh"]["Venlo"])),
+        "Finding 1: from July 2025 Venlo moved %s of its lines to a cheaper carrier, which reached %s OTIF against %s for Venlo’s other carriers over the same months, and %s in the October–December peak." % (pc(V["kanaal_share_h2"]), pc(V["otif_h2_kanaal"]), pc(V["otif_h2_other"]), pc(V["otif_q4_kanaal"])),
+        "Finding 2: the switch saved about %s in freight in six months: about %s per extra failed line." % (eur(V["saving"], 0), eur(V["per_fail"])),
+        "Finding 3: separately, %s short-shipped in October–December (fill rate %s, against %s for the other suppliers)." % (SUP["name"], pc(SUP["fill"]), pc(SUP["others"])),
+        "Recommendation: move Venlo’s German peak-season volume back to a reliable carrier, or write an on-time clause into Kanaal’s contract with a penalty of at least what Kade saves per failed line; ask %s for a recovery plan." % SUP["name"],
+        "Next: what a failed line really costs Kade, and whether Venlo’s customers ordered less after the drop."]}],
+  thread={"b": "Q01–Q11 · the whole build", "n": "your Career goal’s ‘Close the gaps’ step: this is your proof of Power BI in applications"},
+  co="Kade Distribution", rev="an interview answer",
+  rtask="Tell the project as an interview answer, in the STAR order: situation, task, action, result. Out loud, in 60 seconds.",
+  rkey=[{"t": "Short answer", "l": ["Situation: a wholesaler’s service level dropped. Task: find out why and what to do. Action: cleaned two years of order data, built a star model and OTIF measures, and split the drop by warehouse, carrier and month. Result: a carrier switch saving about %s per failed delivery line, and a recommendation with both sides priced. Say it’s practice data; the method is the point." % eur(round(V["per_fail"]), 0)]}]),
+]
+
+GLOSSARY = [
+    (2, "Power Query", r"Power Query"), (2, "profiling", r"\bprofil(e|ing)\b"), (3, "locale", r"\blocale\b"),
+    (4, "star schema", r"star schema"), (4, "fact table", r"fact table"), (4, "dimension table", r"dimension tables?"), (4, "relationship", r"relationships?"),
+    (4, "date table", r"date table"), (5, "measure", r"\bmeasures?\b"), (5, "calculated column", r"calculated columns?"), (5, "SUMX", r"SUMX|RELATED\("),
+    (6, "CALCULATE", r"(?-i:\bCALCULATE\b)"), (6, "filter context", r"filter context"), (7, "time intelligence", r"time intelligence|TOTALYTD|SAMEPERIODLASTYEAR"),
+    (7, "visual calculation", r"visual calculations?"), (9, "drillthrough", r"drill-?through"), (9, "conditional formatting", r"conditional formatting"),
+    (9, "bookmark", r"bookmarks?"), (11, "row-level security", r"row-level security|\bRLS\b"),
+]
+
+
+def check():
+    for x in L:
+        assert len(x["teach"].split()) < 75, (x["id"], len(x["teach"].split()), "the idea must stay under 75 words")
+        for where, t in lesson_texts(x) + [("concept", x["concept"]), ("rtask", x.get("rtask", ""))]:
+            assert not re.search(r"\b(he|him|his|himself|she|her|hers)\b", t, re.I), (x["id"], where, "pronoun", t)
+            assert not re.search(r"%%|%[sd]\b|%\.\d|\{|\}", t), (x["id"], where, "format left over", t)
+    assert R["Orders.csv"] == A["clean_lines"] + R["orders_dup"] + R["orders_test"], "raw rows = clean + duplicates + tests"
+    assert T["lines"] == A["clean_lines"] and T["delivered"] + A["open_lines"] == T["lines"]
+    assert sum(A["units_by_cat"].values()) == T["units_ordered"]
+    assert abs(sum(A["lines_by_wh"].values()) - T["lines"]) == 0
+    assert A["rls_venlo"]["lines"] == A["lines_by_wh"]["Venlo"] and A["rls_tilburg"]["lines"] == A["lines_by_wh"]["Tilburg"]
+    assert all(c["otif"] < 85 and c["lines"] >= 40 for c in LOW) and LOW == sorted(LOW, key=lambda c: c["otif"])
+    assert abs(V["saving"] - V["kg_h2"] * (V["eur_kg_h1"] - V["eur_kg_h2"])) / V["saving"] < 0.02, "saving ≈ kg × fall in €/kg"
+    assert abs(V["extra_fail"] - V["delivered_h2"] * (V["otif_h1"] - V["otif_h2"]) / 100) < 1.5
+    for c in CARS:
+        assert c in S["late_share_by_carrier"]
+    assert abs(sum(S["late_share_by_carrier"].values()) - 100) < 0.3
+check()
+
+C = course({"goal_id": "goal_pbi", "key": "pbi", "title": "Power BI for supply chain", "azTitle": "Power BI for supply chain, A → Z",
+    "rungs": ["Get data", "Model", "Calculate", "Show", "Share"],
+    "rungDesc": ["install, load the files, and clean them so the numbers can be trusted", "one star model: orders in the middle, lookups around them",
+                 "measures, OTIF with CALCULATE, and this year against last", "pages that answer a question, lead to the detail, and find the why",
+                 "share it safely, and turn it into a portfolio piece"],
+    "blurb": "One step of one dashboard per sitting, for Kade Distribution, a made-up Dutch wholesaler whose data you download in the first sitting. The order follows Microsoft’s free PL-300 training on Microsoft Learn: each sitting links its module, and Microsoft’s own lab as an optional extra. Power BI Desktop runs on Windows, so do these at your PC.",
+    "allDone": "put the one page on LinkedIn and your CV. 📊",
+    "revWord": "another cut of the data",
+    "refNote": "The idea opens in step 2 of the sitting — guess first. The Microsoft Learn modules are free; the labs are optional, and some need SQL Server or a work account. Kade Distribution is made up and its data generated for practice."}, L)
+check_extras(C["lessons"])
+FLAGS = term_order(C["lessons"], GLOSSARY, "Q")
+if FLAGS:
+    sys.exit("A lesson uses a term before the lesson that teaches it, with no pointer:\n  " + "\n  ".join(FLAGS))
+write("PBI_CURRICULUM", ["Power BI for supply chain — 12 sittings on the Power BI goal (a branch of Career), in the order of Microsoft's free",
+                         "PL-300 training on Microsoft Learn, each one a step of one dashboard for Kade Distribution, a made-up wholesaler.",
+                         "The practice data and every number in the worked answers come from scripts/make-powerbi-data.py. Built by",
+                         "scripts/build-powerbi-course.py. Only done-flags and revisits are ever saved into app-state."], C)

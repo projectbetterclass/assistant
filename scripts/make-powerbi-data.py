@@ -114,7 +114,7 @@ def lines(prods, custs):
             for _ in range(k):
                 oid += 1
                 c = rng.choices(custs, weights=cw)[0]
-                wh, carr = c["WarehouseID"], None
+                wh = c["WarehouseID"]
                 carr = carrier_for(wh, d)
                 req = d + timedelta(days=2 if c["Country"] == "Netherlands" else 3)
                 ship = d + timedelta(days=1)
@@ -238,21 +238,27 @@ def answers(prods, custs, clean, dirty, counts, n_dup, n_test):
     h = lambda y, mm: [r for r in clean if r["OrderDate"].year == y and r["OrderDate"].month in mm]
     A["ytd_jun"] = {y: eur(freight(h(y, range(1, 7)))) for y in (2024, 2025)}
     A["monthly_otif_2025"] = {m: otif(ym(2025, m)) for m in range(1, 13)}
-    mo = A["monthly_otif_2025"]
+    def raw_otif(rows): rows = [r for r in rows if r["DeliveredDate"]]; return 100.0 * sum(1 for r in rows if ot(r) and inf(r)) / len(rows)
+    mo = {m: raw_otif(ym(2025, m)) for m in range(1, 13)}   # a visual calculation averages the unrounded monthly values
     A["mavg3_2025"] = {m: round((mo[m - 2] + mo[m - 1] + mo[m]) / 3, 1) for m in (10, 11, 12)}
     c25 = {}
     for c in custs:
         rows = [r for r in yr(2025) if r["CustomerID"] == c["CustomerID"] and r["DeliveredDate"]]
         if len(rows) >= 40:
             c25[c["CustomerID"]] = (otif(rows), len(rows))
-    low = sorted([(v[0], k) for k, v in c25.items() if v[0] < 90])
+    low = sorted([(v[0], k) for k, v in c25.items() if v[0] < 85])
     A["low_customers_2025"] = [dict(id=k, name=C[k]["Customer"], country=C[k]["Country"], wh=WN[C[k]["WarehouseID"]], otif=v, lines=c25[k][1]) for v, k in low]
+    if low:
+        w = low[0][1]
+        late = [r for r in yr(2025) if r["CustomerID"] == w and r["DeliveredDate"] and not ot(r)]
+        A["worst_late_by_carrier_2025"] = {KN[k]: sum(1 for r in late if r["CarrierID"] == k) for k, _, _ in CARRIERS}
+        A["worst_late_h2_share"] = pct(sum(1 for r in late if r["OrderDate"].month >= 7), len(late))
     vh = lambda mm, k=None: [r for r in h(2025, mm) if r["WarehouseID"] == "W2" and (k is None or r["CarrierID"] == k)]
     H1, H2 = range(1, 7), range(7, 13)
     v1, v2 = vh(H1), vh(H2)
     rate1, rate2 = freight(v1) / kg(v1), freight(v2) / kg(v2)
     saving = kg(v2) * (rate1 - rate2)
-    d1, d2 = len([r for r in v2 if r["DeliveredDate"]]), None
+    d1 = len([r for r in v2 if r["DeliveredDate"]])
     extra_fail = d1 * (otif(v1) - otif(v2)) / 100.0
     A["venlo"] = dict(otif_h1=otif(v1), otif_h2=otif(v2), eur_kg_h1=round(rate1, 3), eur_kg_h2=round(rate2, 3), kg_h2=round(kg(v2)),
                       saving=round(saving), delivered_h2=d1, extra_fail=round(extra_fail), per_fail=round(saving / extra_fail, 2),
@@ -265,9 +271,9 @@ def answers(prods, custs, clean, dirty, counts, n_dup, n_test):
                             others=fill([r for r in q4 if P[r["ProductID"]]["SupplierID"] != SHORT_SUPPLIER]),
                             fill_q3=fill([r for r in h(2025, range(7, 10)) if P[r["ProductID"]]["SupplierID"] == SHORT_SUPPLIER]))
     A["rls_venlo"] = dict(lines=sum(1 for r in clean if r["WarehouseID"] == "W2"), otif=otif([r for r in clean if r["WarehouseID"] == "W2"]),
-                          customers=sum(1 for c in custs if c["WarehouseID"] == "W2"))
+                          customers=len({r["CustomerID"] for r in clean if r["WarehouseID"] == "W2"}))
     A["rls_tilburg"] = dict(lines=sum(1 for r in clean if r["WarehouseID"] == "W3"), otif=otif([r for r in clean if r["WarehouseID"] == "W3"]),
-                            customers=sum(1 for c in custs if c["WarehouseID"] == "W3"))
+                            customers=len({r["CustomerID"] for r in clean if r["WarehouseID"] == "W3"}))
     A["otif_2024_rotterdam"] = otif([r for r in yr(2024) if r["WarehouseID"] == "W1"])
     A["units_by_cat_2025"] = {cat: sum(r["QtyOrdered"] for r in yr(2025) if P[r["ProductID"]]["Category"] == cat) for cat, _, _ in CATS}
     A["by_carrier_2025"] = {KN[k]: dict(otif=otif([r for r in yr(2025) if r["CarrierID"] == k]),
