@@ -344,11 +344,11 @@ EXTRA["H15"] = dict(
 PUT_MULT = KO_K * 100 / POT_USD
 EXTRA["H16"] = dict(
   teach="Henry sizes most trades at 2–5% of the portfolio, spreads at 1–3% and condors at 5–10% together, and stops adding to a stock at about 10%. Size a sold put by what you’d lose in a crash, not by the margin your broker asks. Your trading branch adds the rule that matters most: 1% of your trading money a trade.",
-  walk=[{"h": "Two sets of rules", "l": [["Henry’s.", "2–5% a trade, spreads 1–3% (5% at most), condors 5–10% together, about 10% in one stock."], ["Yours, from Forex X01–X02.", "A trading pot you could lose, and at most 1% of it a trade."]]},
+  walk=[{"h": "Two sets of rules", "l": [["Henry’s.", "2–5% a trade, spreads 1–3% (5% at most), condors 5–10% together, about 10% in one stock."], ["Yours, from your Forex pot.", "A trading pot you could lose, and at most 1% of it a trade."]]},
         {"h": "Where it goes wrong", "l": ["Sizing a sold put by the broker’s margin instead of the crash loss.", "Henry’s point that a tiny account can take bigger bets: fine for learning money, not for money you need."]},
         {"h": "Worked: €2,000 against US options", "l": ["€2,000 is about %s." % usd(POT_USD), "One KO cash-secured put at $%d ties up %s, about %.0f times the whole pot." % (KO_K, usd(KO_K * 100), PUT_MULT),
             "A $1-wide spread risks up to about $80, about %.1f%% of the pot; 1%% is about %s." % (80 / POT_USD * 100, usd(POT_USD * 0.01)),
-            "So €2,000 can’t trade US options under a 1% rule. Paper-trade at a notional size you’d really use, or set a separate, larger options pot in X01, knowingly."]},
+            "So €2,000 can’t trade US options under a 1% rule. Paper-trade at a notional size you’d really use, or set a separate, larger options pot, knowingly."]},
         {"h": "Your turn: your trading money", "p": ["The most on one trade, in one stock, and in spreads and condors together; then check each paper trade from this course against them."]}],
   need=[{"k": "Trading money (Forex X01)", "v": "€2,000 ≈ %s" % usd(POT_USD), "n": "At EUR/USD %.4f, %s." % (EURUSD_OPT, ASOF)}, pq("SPY"), pq("KO")],
   key=[{"t": "Check it, on €2,000", "l": ["1%% a trade: €20, about %s." % usd(POT_USD * 0.01), "One stock (Henry’s 10%%): about %s; spreads and condors together (5–10%%): about %s–%s." % (usd(POT_USD * 0.10), usd(POT_USD * 0.05), usd(POT_USD * 0.10)),
@@ -360,7 +360,7 @@ EXTRA["H16"] = dict(
 
 EXTRA["H17"] = dict(
   teach="Pull the course into one page: the strategies you’ll paper trade, Henry’s defaults, your size and exit rules, and a journal of why in, why out and what you learned. Fifty paper trades before real money, and two Dutch checks: what your broker allows, and how your trading is taxed.",
-  walk=[{"h": "The page", "l": ["Strategies: start with cash-secured puts and covered calls.", "Defaults: 30 delta, 30 days, rolls only for a credit, the 50% rule on bought options.", "Size and exits: from H16 and H08.", "The journal: the same columns as the Forex journal, so one journal serves both."]},
+  walk=[{"h": "The page", "l": ["Strategies: start with cash-secured puts and covered calls.", "Defaults: 30 delta, 30 days, rolls only for a credit, the 50% rule on bought options.", "Size and exits: your sizing rules and when you take profit or cut a loss.", "The journal: the same columns as the Forex journal, so one journal serves both."]},
         {"h": "The Dutch checks", "l": [["Your broker.", "Whether it offers US options at your level, and what happens on assignment; US ETFs like SPY usually can’t be bought by EU retail investors."], ["Tax.", "A private investor’s options normally fall in box 3 (in 2026, 36% on a fixed return of 6.00% for other assets); very active trading can count as box 1. Check with the Belastingdienst or an adviser."]]},
         {"h": "Where it goes wrong", "l": ["A plan longer than one page.", "Starting live because paper feels slow."]},
         {"h": "Worked: one page, short", "l": ["Strategies: KO and PEP cash-secured puts; covered calls if assigned.", "Rules: 30 delta, 30 days, close at 50% early, roll once for a credit.", "Size: notional $20,000 paper account; no stock above 10%.", "Stop rule: after 50 trades, if on-plan trades lose or I broke the rules more than five times."]},

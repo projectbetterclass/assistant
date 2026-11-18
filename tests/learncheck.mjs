@@ -15,7 +15,9 @@ for (const w of [402, 900]) {
     if (lid !== "L01") check(`${w} ${lid} thread names an earlier lesson only`, (/Builds on (L\d\d)/i.exec(th) || [])[1] < lid, th);
     const walk = await page.$$eval(".ses-walk .walk-s", s => s.length).catch(() => 0);
     const n = +lid.slice(1);
-    check(`${w} ${lid} walk-through`, n <= 14 ? walk >= 4 : walk === 0, walk);
+    const rd = await page.$$eval(".ses .ses-teach, .ses .ses-walk", es => es.map(e => e.innerText).join(" "));
+    check(`${w} ${lid} the reading keeps to its own lesson`, !((rd.match(/\b[A-Z]\d\d\b/g) || []).some(x => x !== lid)), (rd.match(/.{0,60}\b[A-Z]\d\d\b.{0,30}/) || [""])[0]);
+    check(`${w} ${lid} walk-through`, n <= 14 ? walk >= (lid === "L01" ? 3 : 4) : walk === 0, walk);   // L01 keeps to routing; the course map is in the overview
     if (n >= 2 && n <= 14) {
       const wt = await txt(page, ".ses-walk");
       check(`${w} ${lid} walk: his worked example, sourced, then your turn on KO`, /Worked: his/i.test(wt) && /Your turn: KO/i.test(wt) && await page.$$eval(".ses-walk .walk-src a[href^='https://']", a => a.length) >= 1, wt.slice(0, 160));
@@ -23,7 +25,7 @@ for (const w of [402, 900]) {
     }
     if (lid === "L01") {
       const wt = await txt(page, ".ses-walk");
-      check(`${w} L01 walk: the machine first`, /First, what a valuation is/i.test(wt) && /Worked: KO/i.test(wt) && /\$47\.9 billion/.test(wt) && /about 4% of revenue/.test(wt), wt.slice(0, 200));
+      check(`${w} L01 walk: the four parts in a line, no pointers`, /the cash the business makes today, what it must reinvest to grow, how fast that cash grows, and a discount rate/i.test(wt) && !/\bL\d\d\b/.test(wt) && /Worked: KO/i.test(wt) && /\$47\.9 billion/.test(wt) && /about 4% of revenue/.test(wt), wt.slice(0, 200));
       check(`${w} L01 order: thread, idea, walk, numbers`, await page.evaluate(() => { const q = s => document.querySelector(".ses " + s); const a = [q(".ses-thread"), q(".ses-teach"), q(".ses-walk"), q(".need")]; return a.every(Boolean) && a.every((e, i) => !i || (a[i - 1].compareDocumentPosition(e) & 4)); }));
     }
     check(`${w} ${lid} Learn box named What you need`, !(await page.$(".need")) || /What you need/i.test(await txt(page, ".need .need-h")));

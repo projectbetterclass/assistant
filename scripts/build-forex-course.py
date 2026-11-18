@@ -78,14 +78,14 @@ EXTRA = {}
 EXTRA["X01"] = dict(
   teach="Trading is a different game from investing: short bets against professionals, and most retail traders lose. So trading money is its own pot, an amount you could lose completely without touching your rent, your emergency fund or your FIRE investing. Decide its size before you open a platform, not after a good week.",
   walk=[{"h": "Why it gets its own pot", "p": ["Investing for FIRE means owning the world economy for decades and letting time do the work. Trading means betting on moves of days or hours, against banks and funds with better data and lower costs. When the EU limited what brokers may offer retail traders in 2018, ESMA found that 74–89% of retail accounts trading CFDs, the way most people trade forex, lost money. Since then every EU broker must print its own share on its website."]},
-        {"h": "How to set it", "l": [["One number, decided once.", "An amount you could lose in full and change nothing else in your life."], ["A separate account.", "So a loss can’t leak into your savings, and a win can’t tempt you to top it up from them."], ["A rule for adding to it.", "Only after your demo results pass the test you’ll write in X12, never after a single good week."]]},
+        {"h": "How to set it", "l": [["One number, decided once.", "An amount you could lose in full and change nothing else in your life."], ["A separate account.", "So a loss can’t leak into your savings, and a win can’t tempt you to top it up from them."], ["A rule for adding to it.", "Only after your demo results pass a test you’ve written down in advance, never after a single good week."]]},
         {"h": "Where it goes wrong", "l": ["Sizing the pot after a winning streak.", "Topping it up to win back a loss: that is exactly the money it was meant to protect.", "Counting it as part of your FIRE plan. It is the cost of learning a skill."]},
         {"h": "Worked: one way to size it", "p": ["Someone who invests €12,000 a year for FIRE might set trading money at €2,000: two months of investing, about 17% of a year. If it goes to zero, their FIRE date moves by about two months and nothing else changes. That is the test: what would losing all of it cost you, in time?"]},
         {"h": "Your turn: a €2,000 account", "p": ["Pick your own amount, write why, and what has to happen before you ever add to it. Then put it against your yearly FIRE investing."]}],
   need=[{"k": "Retail CFD accounts that lost money", "v": "74–89%", "n": "ESMA’s finding when it set the EU rules in 2018; every EU broker must now show its own share.", "s": ESMA_TXT},
         {"k": "This course’s example account", "v": "€2,000", "n": "Replace it with your own amount."}],
   key=[{"t": "A good answer looks like", "l": ["One amount, e.g. €2,000, in a separate account, with the reason: ‘I could lose all of it and only my FIRE date moves, by about two months.’",
-        "A rule for adding to it: ‘only after fifty demo trades pass my X12 test, and never from my emergency fund or monthly investing.’",
+        "A rule for adding to it: ‘only after fifty demo trades pass my written test, and never from my emergency fund or monthly investing.’",
         "The share of a year’s FIRE investing: €2,000 of €12,000 is 17%. If that feels heavy, the pot is too big."]}],
   thread={"n": "X02 · the two risk rules for this pot; the Options course sizes its trades from the same money"},
   rtask="Same question for a €500 account: what does it buy you, and what doesn’t it?",
@@ -94,7 +94,7 @@ EXTRA["X01"] = dict(
 EXTRA["X02"] = dict(
   teach="Losses come in streaks, so the size of each loss decides whether you survive one. Risk at most 1% of the account on a trade and stop for the month after a set loss: two rules, written before the first trade, keep you in the game long enough to learn whether you have an edge.",
   walk=[{"h": "Why size beats strategy", "p": ["Even a method that works loses several times in a row now and then. At 1% a trade, ten losses in a row cost about 10%; at 5%, about 40%. And losses compound against you: after −40% you need +67% just to get back, after −50% you need +100%."]},
-        {"h": "The two rules", "l": [["1% a trade.", "The most you may lose if the trade goes wrong: 1% of the account. X07 turns it into a position size."], ["A monthly limit.", "For example 6%: once you have lost that much in a month, you stop until the next one. It stops a bad week becoming a bad year."]]},
+        {"h": "The two rules", "l": [["1% a trade.", "The most you may lose if the trade goes wrong: 1% of the account. Later it becomes a position size."], ["A monthly limit.", "For example 6%: once you have lost that much in a month, you stop until the next one. It stops a bad week becoming a bad year."]]},
         {"h": "Where it goes wrong", "l": ["Raising the size after losses to ‘win it back’.", "Moving the limit when you hit it.", "Risking a round number of euros that is really 3–5% of a small account."]},
         {"h": "Worked: an €8,000 account at 2% a trade", "l": ["Risk a trade: €160. Ten losses in a row: €8,000 × 0.98¹⁰ = %s, down %s." % (eur(8000 * 0.98 ** 10), pc((1 - 0.98 ** 10) * 100)), "To get back: %s ÷ %s − 1 = +%s." % (eur(8000, 0), eur(8000 * 0.98 ** 10), pc((1 / 0.98 ** 10 - 1) * 100)), "At 1%% the same streak leaves %s, down %s." % (eur(8000 * 0.99 ** 10), pc((1 - 0.99 ** 10) * 100))]},
         {"h": "Your turn: a €2,000 account", "p": ["Write your two rules in euros, then work out what ten losses leave at 1% and at 5% a trade."]}],
@@ -197,7 +197,7 @@ EXTRA["X07"] = dict(
 C25 = 1 / 25
 EXTRA["X08"] = dict(
   teach="Whether a method makes money depends on two numbers together: how often it wins and how big the wins are against the losses, in R, the amount risked. Expectancy = win rate × average win − loss rate × average loss, after costs, and a high win rate means nothing if the losses are bigger than the wins.",
-  walk=[{"h": "R, and expectancy", "p": ["1R is what you risk on a trade, the €20 from X07. A win of 2R is €40; a loss is −1R. Expectancy is the average R a trade, across many trades."]},
+  walk=[{"h": "R, and expectancy", "p": ["1R is what you risk on a trade, the €20 that 1% of a €2,000 account allows. A win of 2R is €40; a loss is −1R. Expectancy is the average R a trade, across many trades."]},
         {"h": "Costs come off every trade", "p": ["The spread is paid on wins and losses alike. As a share of R it is the spread ÷ the stop: 1 pip on a 25-pip stop is 0.04R. Small stops make costs big."]},
         {"h": "The break-even win rate", "p": ["Win rate needed = (1 + cost) ÷ (average win + 1). At 2R and no costs, one win in three; the smaller the wins, the more often you must be right."]},
         {"h": "Where it goes wrong", "l": ["Judging a method by its win rate alone.", "Leaving costs out.", "Tight stops: they make costs a large share of R."]},

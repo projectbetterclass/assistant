@@ -646,18 +646,11 @@ L["L01"] = {
 }
 # the Learn step of the first lesson: what a valuation is, before what kind of company changes it
 L["L01"]["walk"] = [
-    {"h": "First, what a valuation is",
-     "p": ["A company is worth the cash it will make for its owners over its whole life, counted in today’s money. Damodaran builds that from four parts, and L03–L14 build each one for KO:"],
-     "l": [["Cash from the business today.", "Operating income: what it earns from its products after the costs of running it, before interest and tax. You clean it and tax it in L08–L09."],
-           ["Reinvestment.", "What it must spend on factories, equipment, research and acquisitions to keep growing (L10). Growth is never free."],
-           ["Growth.", "How fast that cash grows: for ten years, then forever at a modest rate (L11–L12)."],
-           ["The discount rate.", "The return investors want for the risk they take. It turns cash in year 10 into its value today: the riskier the cash, the less it is worth now (L03–L07)."]],
-     "p2": ["Added up year by year, that is a discounted cash flow valuation, a DCF. Some companies need a fifth part: the chance they fail before the cash arrives."]},
     {"h": "Four kinds of company, and what each changes",
-     "p": ["The parts stay. What changes is where the value comes from, and which numbers you can trust."],
+     "p": ["A company is worth the cash it will make for its owners over its whole life, counted in today’s money: the cash the business makes today, what it must reinvest to grow, how fast that cash grows, and a discount rate for the risk. Those four stay the same for every company. What changes with the kind of company is where the value comes from, and which numbers you can trust."],
      "l": [["Mature.", "The default. Today’s operating income is a fair starting point, growth is slow and reinvestment modest. This is the route you’ll build on KO."],
-           ["Financial: banks and insurers.", "Borrowing is what a bank sells, not how it pays for itself: it takes in deposits and lends them out at a higher rate. So its debt can’t be split off from the business. You value only the owners’ share: the profit left for them, net income, minus the capital the regulator makes the bank keep as a cushion, discounted at the return owners want, the cost of equity (L05–L07)."],
-           ["High growth.", "Last year’s operating income says little about year 5. Start from revenue instead: how big can it get, at what margin, and how much must it reinvest for each extra dollar of sales (sales-to-capital, L10 and L19)."],
+           ["Financial: banks and insurers.", "Borrowing is what a bank sells, not how it pays for itself: it takes in deposits and lends them out at a higher rate. So its debt can’t be split off from the business. You value only the owners’ share: the profit left for them, net income, minus the capital the regulator makes the bank keep as a cushion, discounted at the return owners want."],
+           ["High growth.", "Last year’s operating income says little about year 5. Start from revenue instead: how big can it get, at what margin, and how much must it reinvest for each extra dollar of sales."],
            ["Declining.", "The default run backward. Revenue can shrink, reinvestment can turn negative as assets are sold, the margin can improve as the worst parts close, and the chance of failure becomes its own input. Keep that chance separate rather than raising the discount rate: a discount rate measures how uncertain the cash is, not whether the company will be there to pay it."]]},
     {"h": "How to tell the kind from the numbers",
      "p": ["Don’t go by the industry’s name. Look at four signals:"],

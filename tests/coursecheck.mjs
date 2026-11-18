@@ -18,6 +18,8 @@ for (const w of [402, 900]) {
       const wt = await txt(page, ".ses-walk");
       check(`${w} ${lid} walk-through ends with your turn`, (await page.$$eval(".ses-walk .walk-s", s => s.length)) >= 4 && /Your turn/i.test(wt), wt.slice(0, 120));
     }
+    const rd = await page.$$eval(".ses .ses-teach, .ses .ses-walk", es => es.map(e => e.innerText).join(" "));
+    check(`${w} ${lid} the reading keeps to its own lesson`, !((rd.match(/\b[A-Z]\d\d\b/g) || []).some(x => x !== lid)), (rd.match(/.{0,60}\b[A-Z]\d\d\b.{0,30}/) || [""])[0]);
     const idea = await txt(page, ".ses-teach");
     check(`${w} ${lid} short idea`, idea.split(/\s+/).length < 75, idea.length);
     const learn = await txt(page, ".ses");
