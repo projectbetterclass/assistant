@@ -135,6 +135,14 @@ BOOK_L, BOOK_RUNGS, BOOK_DESC = [], [], []
 APPLY = json.load(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "reading-apply.json"), encoding="utf-8"))
 LISTEN = {"h": "How to listen", "l": ["At a speed you can follow, not double speed: digesting it is what makes it stick.", "Pause after each big idea and say it back in one sentence, out loud or in your head.",
                                        "Link it to something you already know, and say the link.", "Drifted off? Go back 30 seconds rather than pushing on."]}
+# $100M Offers is free as podcast episodes of Alex Hormozi's The Game, in seven parts (episodes 579 to 585), not chapters.
+# Each of its sittings names the part to play, using the episodes' own chapter marks for where a part holds two chapters.
+POD = {"O01": ("Part 1 (episode 579), then Part 2 up to 16:37", "1"),
+       "O02": ("Part 2 (episode 580), from 16:37 to 42:18", "2"),
+       "O03": ("Part 2 (episode 580), from 42:18 to the end", "2"),
+       "O04": ("Part 3 (episode 581)", "3"),
+       "O05": ("Part 4 (episode 582)", "4"),
+       "O06": ("Parts 5, 6 and 7 (episodes 583 to 585)", "5")}
 def bare(h): return re.sub(r"^(?:Chapters?|Ch\.)\s*[\d–-]+:\s*", "", h).strip()
 def cap(s): return s[:1].upper() + s[1:]
 for book, letter, desc in BOOKS_IN_ORDER:
@@ -151,14 +159,16 @@ for book, letter, desc in BOOKS_IN_ORDER:
                 pts.append((it[0] + ": " + first_sentence(it[1])) if isinstance(it, list) else first_sentence(it))
         heads = [w["h"] for w in walk if w["h"] != "In short"]
         ap = APPLY.get(lid)
+        pod = POD.get(lid)
+        src = ("$100M Offers Audiobook " + pod[0]) if pod else ("%s of the audiobook" % part)
         act = tryit or "Pick the one line of this chapter you’d act on, and do it tomorrow."
         # the brief: listen first, then the work; a chapter that carries a product lesson asks you to use it on your idea
         if ap:
             do, judge = (ap["task"].split(" Judge: ", 1) + [""])[:2]
-            task = ("Listen to %s of the audiobook, pausing to say each idea back. Then, from memory: %s End with one action for tomorrow, as ‘After I …, I will …’." % (part, do)
+            task = ("Listen to %s, pausing to say each idea back. Then, from memory: %s End with one action for tomorrow, as ‘After I …, I will …’." % (src, do)
                     + (" Judge: " + judge if judge else ""))
         else:
-            task = ("Before you press play, guess what this part says about ‘%s’. Listen to %s of the audiobook, pausing to say each idea back. Then, from memory, write the idea in your own words and one action for tomorrow, as ‘After I …, I will …’. Judge: which line of it would change what you do this week?" % (title, part))
+            task = ("Before you press play, guess what this part says about ‘%s’. Listen to %s, pausing to say each idea back. Then, from memory, write the idea in your own words and one action for tomorrow, as ‘After I …, I will …’. Judge: which line of it would change what you do this week?" % (title, src))
         terms = [it[0].rstrip(".") for w in walk for it in w.get("l", []) if isinstance(it, list)][:5]   # the note's key terms, in bold
         one = len(heads) <= 1
         lw = [{"h": "The map, before you press play", "p": ["%s of %s%s. Keep %s in mind while you listen: %s where each idea will land." % (cap(part), book, "" if one else ", in %d parts" % len(heads), "it" if one else "them", "it’s" if one else "they’re")],
@@ -170,7 +180,9 @@ for book, letter, desc in BOOKS_IN_ORDER:
               LISTEN,
               {"h": "Can’t listen now? The chapter note", "fold": walk + ([{"h": "The idea worth keeping", "p": [idea]}] if idea else [])}]
         if ap: lw += ap["walk"]
-        lw.append({"h": "Your turn: %s" % part, "p": ["Play %s, %s, in the audiobook, with the map above in mind. Then say the idea in one line." % (book, part),
+        lw.append({"h": "Your turn: %s" % part, "p": (["Play %s, with the map above in mind. Then say the idea in one line." % src,
+                                                      "It’s free in Alex Hormozi’s podcast, The Game, on Spotify or any podcast app: search “$100M Offers Audiobook Part %s”." % pod[1]] if pod else
+                                                     ["Play %s, %s, in the audiobook, with the map above in mind. Then say the idea in one line." % (book, part)]) + [
                                                      ("Next, use it on your idea: Intensity Applied, or whichever idea you’d most like to build." if ap else act + " Write it as ‘After I …, I will …’, small enough to do in two minutes.")]})
         key = (ap["key"] if ap else []) + [{"t": "The chapter in short", "l": pts[:6] or [teach]}] + ([{"t": "The idea worth keeping", "l": [idea]}] if idea else [])
         les = dict(id=lid, rung=book, stage_name=meta.get("part", "") or ("Note %d" % n), concept=title, estimateMin=30, teach=teach, task=task, co=book, rev=book,
@@ -178,7 +190,7 @@ for book, letter, desc in BOOKS_IN_ORDER:
                    thread={"n": ("%s%02d · %s" % (letter, ns[i + 1][0] % 100, plain(ns[i + 1][1]["title"]))) if i + 1 < len(ns) else "the next book on your shelf"},
                    rtask=(ap["rtask"][:1].upper() + ap["rtask"][1:]) if ap else "From memory: this chapter’s idea in two lines, and the action you chose. Did it stick?",
                    rkey=ap["rkey"] if ap else [{"t": "Short answer", "l": [idea or teach]}],
-                   read=["Listen: %s, %s, in the audiobook" % (book, part), "Or read: the chapter note, under ‘Can’t listen now?’ in step 2"])
+                   read=[("Listen: $100M Offers Audiobook %s, free in The Game podcast" % pod[0]) if pod else "Listen: %s, %s, in the audiobook" % (book, part), "Or read: the chapter note, under ‘Can’t listen now?’ in step 2"])
         if i: les["thread"]["b"] = "%s%02d · %s" % (letter, ns[i - 1][0] % 100, plain(ns[i - 1][1]["title"]))
         elif BOOK_L: les["thread"]["b"] = "the previous book, %s" % BOOK_L[-1]["co"]
         BOOK_L.append(les)

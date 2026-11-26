@@ -60,6 +60,34 @@ for (const w of [402, 900]) {
   check(`${w} no errors (listening)`, errors.length === 0, errors.join(" | "));
   await ctx.close();
 }
+// listened away from the app (a podcast on a walk): today's minutes count, a second entry replaces the first, and Done keeps them
+{
+  const { page, errors, ctx } = await openPage(browser, { width: 402, time: new Date(2026, 10, 18, 18, 30).getTime() });
+  const tile = name => page.$$eval(".day .rt", (els, name) => { const e = els.find(x => (x.querySelector(".rt-n") || {}).innerText === name); return e ? e.querySelector(".rt-m").innerText.replace(/\s+/g, " ") : ""; }, name);
+  const lastState = () => page.evaluate(() => { const h = window.__pub[window.__pub.length - 1] || ""; const m = h.match(/<script id="app-state"[^>]*>([\s\S]*?)<\/script>/); return m ? JSON.parse(m[1]) : null; });
+  await start(page, "A01"); await toStep(page, 1);
+  check("the Listen step has the minutes box", /Listened away from the app/.test(await txt(page, ".ses-away")), await txt(page, ".ses-away"));
+  await page.fill("#ses-away", "32"); await page.click('[data-action="ses-away"]'); await page.clock.runFor(1500);
+  check("32 minutes added", /32 min listened away ✓/.test(await txt(page, ".ses-away")) && /32 min listened away/.test(await txt(page, "#toast")), await txt(page, ".ses-away"));
+  await page.fill("#ses-away", "30"); await page.click('[data-action="ses-away"]'); await page.clock.runFor(1500);
+  const st = await lastState(), t = st && st.tasks.find(x => x.id === "lesson_goal_read_A01"), aw = ((t && t.sessions) || []).filter(s => s.away);
+  const first = ((t && t.sessions) || []).filter(s => !s.away).map(s => s.start).sort()[0];
+  check("saved: one entry of 30 minutes, just before the sitting", aw.length === 1 && aw[0].end - aw[0].start === 30 * 60000 && aw[0].end <= first && aw[0].away === "2026-11-18", JSON.stringify(aw));
+  await page.click('[data-action="ses-done1"]'); await page.clock.runFor(3000);
+  check("Done: the day plan counts the minutes", /✓\D*3\d\b/.test(await tile("Reading")), await tile("Reading"));
+  check("no errors (listened away)", errors.length === 0, errors.join(" | "));
+  await ctx.close();
+}
+// $100M Offers is free as podcast parts, not chapters: each sitting names the part to play and where to find it
+{
+  const { page, errors, ctx } = await openPage(browser, { width: 402, time: new Date(2026, 10, 18, 18, 30).getTime() });
+  await start(page, "O02");
+  check("O02 names the podcast part", /Listen to \$100M Offers Audiobook Part 2 \(episode 580\), from 16:37 to 42:18/.test(await txt(page, ".ses-brief")), (await txt(page, ".ses-brief")).slice(0, 300));
+  await toStep(page, 1);
+  check("O02 says where to find it", /search “\$100M Offers Audiobook Part 2”/.test(await txt(page, ".ses-walk")), (await txt(page, ".ses-walk")).slice(-300));
+  check("no errors (Offers)", errors.length === 0, errors.join(" | "));
+  await ctx.close();
+}
 // Building products has moved into Reading: no course on its goal, and not in the day plan
 {
   const { page, errors, ctx } = await openPage(browser, { width: 402, time: new Date(2026, 10, 18, 18, 30).getTime() });
