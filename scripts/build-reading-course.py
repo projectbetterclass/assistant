@@ -91,7 +91,12 @@ BOOKS_IN_ORDER = [  # book (as in the note's channel), id letter, what it's for
     ("Zero to One", "Z", "Peter Thiel: start small, own a market, build something new"),
     ("The Mom Test", "M", "Rob Fitzpatrick: ask about their life, not your idea"),
     ("$100M Offers", "O", "Alex Hormozi: an offer so good people feel stupid saying no"),
+    ("$100M Leads", "G", "Alex Hormozi: get strangers to want your stuff, through outreach, free content and ads"),
+    ("$100M Money Models", "W", "Alex Hormozi: a sequence of offers, so each customer pays for getting the next"),
 ]
+# a book on the list with no chapter notes yet shows under "Next on your shelf", with where to listen for free
+SOON_WHERE = {"$100M Leads": "Free in Alex Hormozi’s podcast, The Game: 11 parts, episodes 586 to 596. Search “$100M Leads Audiobook Part 1”.",
+              "$100M Money Models": "Free in Alex Hormozi’s podcast, The Game: 9 parts, episodes 938 to 946. Search “$100M Money Models Audiobook Part 1”."}
 norm = lambda t: re.sub(r"[^a-z0-9$]", "", t.lower())
 def plain(t):
     t = re.sub(r"\[([^\]]+)\]\([^)]+\)", r"\1", t)
@@ -135,14 +140,28 @@ BOOK_L, BOOK_RUNGS, BOOK_DESC = [], [], []
 APPLY = json.load(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "reading-apply.json"), encoding="utf-8"))
 LISTEN = {"h": "How to listen", "l": ["At a speed you can follow, not double speed: digesting it is what makes it stick.", "Pause after each big idea and say it back in one sentence, out loud or in your head.",
                                        "Link it to something you already know, and say the link.", "Drifted off? Go back 30 seconds rather than pushing on."]}
-# $100M Offers is free as podcast episodes of Alex Hormozi's The Game, in seven parts (episodes 579 to 585), not chapters.
-# Each of its sittings names the part to play, using the episodes' own chapter marks for where a part holds two chapters.
+# Hormozi's books are free as podcast episodes of The Game, in parts, not chapters. Each sitting names the part to play,
+# using the episodes' own chapter marks where a part holds two chapters. Per book letter: the series as its episodes are titled.
+SERIES = {"O": "$100M Offers Audiobook", "G": "$100M Leads Audiobook", "W": "$100M Money Models Audiobook"}
 POD = {"O01": ("Part 1 (episode 579), then Part 2 up to 16:37", "1"),
        "O02": ("Part 2 (episode 580), from 16:37 to 42:18", "2"),
        "O03": ("Part 2 (episode 580), from 42:18 to the end", "2"),
        "O04": ("Part 3 (episode 581)", "3"),
        "O05": ("Part 4 (episode 582)", "4"),
-       "O06": ("Parts 5, 6 and 7 (episodes 583 to 585)", "5")}
+       "O06": ("Parts 5, 6 and 7 (episodes 583 to 585)", "5"),
+       # $100M Leads, 11 parts: ready for its notes (n 401 to 410), from the episode titles
+       "G01": ("Part 1 (episode 586), Start here", "1"), "G02": ("Part 2 (episode 587), Engage your leads", "2"),
+       "G03": ("Part 3 (episode 588), Warm outreach", "3"), "G04": ("Part 4 (episode 589), Post free content", "4"),
+       "G05": ("Part 5 (episode 590), Cold outreach", "5"), "G06": ("Part 6 (episode 591), Run paid ads", "6"),
+       "G07": ("Part 7 (episode 592), Core four on steroids", "7"), "G08": ("Part 8 (episode 593)", "8"),
+       "G09": ("Parts 9 and 10 (episodes 594 and 595), Employees and agencies, then Affiliates and partners", "9"),
+       "G10": ("Part 11 (episode 596), Advertising in real life and the roadmap", "11"),
+       # $100M Money Models, 9 parts: ready for its notes (n 501 to 507)
+       "W01": ("Parts 1 and 2 (episodes 938 and 939), Welcome, then What is a money model", "1"),
+       "W02": ("Part 3 (episode 940), Attraction offers: win your money back, giveaways", "3"),
+       "W03": ("Part 4 (episode 941), Attraction offers continued", "4"), "W04": ("Part 5 (episode 942), Upsell offers", "5"),
+       "W05": ("Part 6 (episode 943), Downsell offers", "6"), "W06": ("Part 7 (episode 944), Continuity offers", "7"),
+       "W07": ("Parts 8 and 9 (episodes 945 and 946), Making your money model, then Ten years in ten minutes", "8")}
 def bare(h): return re.sub(r"^(?:Chapters?|Ch\.)\s*[\d–-]+:\s*", "", h).strip()
 def cap(s): return s[:1].upper() + s[1:]
 for book, letter, desc in BOOKS_IN_ORDER:
@@ -160,7 +179,7 @@ for book, letter, desc in BOOKS_IN_ORDER:
         heads = [w["h"] for w in walk if w["h"] != "In short"]
         ap = APPLY.get(lid)
         pod = POD.get(lid)
-        src = ("$100M Offers Audiobook " + pod[0]) if pod else ("%s of the audiobook" % part)
+        src = (SERIES[letter] + " " + pod[0]) if pod else ("%s of the audiobook" % part)
         act = tryit or "Pick the one line of this chapter you’d act on, and do it tomorrow."
         # the brief: listen first, then the work; a chapter that carries a product lesson asks you to use it on your idea
         if ap:
@@ -181,7 +200,7 @@ for book, letter, desc in BOOKS_IN_ORDER:
               {"h": "Can’t listen now? The chapter note", "fold": walk + ([{"h": "The idea worth keeping", "p": [idea]}] if idea else [])}]
         if ap: lw += ap["walk"]
         lw.append({"h": "Your turn: %s" % part, "p": (["Play %s, with the map above in mind. Then say the idea in one line." % src,
-                                                      "It’s free in Alex Hormozi’s podcast, The Game, on Spotify or any podcast app: search “$100M Offers Audiobook Part %s”." % pod[1]] if pod else
+                                                      "It’s free in Alex Hormozi’s podcast, The Game, on Spotify or any podcast app: search “%s Part %s”." % (SERIES[letter], pod[1])] if pod else
                                                      ["Play %s, %s, in the audiobook, with the map above in mind. Then say the idea in one line." % (book, part)]) + [
                                                      ("Next, use it on your idea: Intensity Applied, or whichever idea you’d most like to build." if ap else act + " Write it as ‘After I …, I will …’, small enough to do in two minutes.")]})
         key = (ap["key"] if ap else []) + [{"t": "The chapter in short", "l": pts[:6] or [teach]}] + ([{"t": "The idea worth keeping", "l": [idea]}] if idea else [])
@@ -190,7 +209,7 @@ for book, letter, desc in BOOKS_IN_ORDER:
                    thread={"n": ("%s%02d · %s" % (letter, ns[i + 1][0] % 100, plain(ns[i + 1][1]["title"]))) if i + 1 < len(ns) else "the next book on your shelf"},
                    rtask=(ap["rtask"][:1].upper() + ap["rtask"][1:]) if ap else "From memory: this chapter’s idea in two lines, and the action you chose. Did it stick?",
                    rkey=ap["rkey"] if ap else [{"t": "Short answer", "l": [idea or teach]}],
-                   read=[("Listen: $100M Offers Audiobook %s, free in The Game podcast" % pod[0]) if pod else "Listen: %s, %s, in the audiobook" % (book, part), "Or read: the chapter note, under ‘Can’t listen now?’ in step 2"])
+                   read=[("Listen: %s %s, free in The Game podcast" % (SERIES[letter], pod[0])) if pod else "Listen: %s, %s, in the audiobook" % (book, part), "Or read: the chapter note, under ‘Can’t listen now?’ in step 2"])
         if i: les["thread"]["b"] = "%s%02d · %s" % (letter, ns[i - 1][0] % 100, plain(ns[i - 1][1]["title"]))
         elif BOOK_L: les["thread"]["b"] = "the previous book, %s" % BOOK_L[-1]["co"]
         BOOK_L.append(les)
@@ -198,7 +217,7 @@ assert set(APPLY) <= {x["id"] for x in BOOK_L}, "a product lesson's chapter is m
 for x in BOOK_L:   # a chapter keeps to its own book: no pointers to other lessons in what it shows
     for sec in x["walk"] + [s for w in x["walk"] for s in w.get("fold", [])]:
         for t in [sec.get("h", "")] + sec.get("p", []) + [" ".join(q) if isinstance(q, list) else q for q in sec.get("l", [])]:
-            assert not re.search(r"\b(?:P|Z|M|O|A|E|Y|B)\d\d\b", t), (x["id"], "points at another lesson", t)
+            assert not re.search(r"\b(?:P|Z|M|O|A|E|Y|B|G|W)\d\d\b", t), (x["id"], "points at another lesson", t)
 L = BOOK_L + L
 
 C = course({"goal_id": "goal_read", "key": "read", "title": "Your books, one chapter a sitting", "azTitle": "Your books, A → Z",
@@ -206,6 +225,7 @@ C = course({"goal_id": "goal_read", "key": "read", "title": "Your books, one cha
      "rungDesc": BOOK_DESC + ["the reading techniques: a time and a place, priming, sprints, PACER, maps, retrieval, the next book"],
      "blurb": "One chapter per sitting, made for the audiobook, in Justin Sung’s four steps: guess what it says and look at its map, listen with the map in mind and pause to say each idea back, write it from memory, then check it. A chapter longer than today’s slot runs in two halves: listen one day, write and check the next. The Zero to One and Mom Test chapters ask you to use them on your own idea (they used to be the Building products course). The reading techniques come last, under Read better.",
      "allDone": "now add the next book to your shelf. 📖",
+     "soon": [{"t": b, "d": d, "w": SOON_WHERE.get(b, "")} for b, _, d in BOOKS_IN_ORDER if b not in BOOK_RUNGS],
      "revWord": "the same chapter, a week on",
      "refNote": "Guess first: the map opens in step 2. The chapter notes are in my words, from the books, folded away under ‘Can’t listen now?’; the audiobooks on your PC are the full text."}, L)
 check_videos(C)

@@ -88,6 +88,17 @@ for (const w of [402, 900]) {
   check("no errors (Offers)", errors.length === 0, errors.join(" | "));
   await ctx.close();
 }
+// the course map lists the books still to come, with where to listen for free
+{
+  const { page, errors, ctx } = await openPage(browser, { width: 402, time: new Date(2026, 10, 18, 18, 30).getTime() });
+  await page.evaluate(() => { const b = document.createElement("button"); b.setAttribute("data-action", "cv-open"); b.setAttribute("data-id", "goal_read"); document.getElementById("root").appendChild(b); b.click(); });
+  await page.clock.runFor(80);
+  const soon = await txt(page, ".cv-soon");
+  check("Next on your shelf: Leads and Money Models, free on the podcast", /Next on your shelf/i.test(soon) && /\$100M Leads/.test(soon) && /episodes 586 to 596/.test(soon) && /\$100M Money Models/.test(soon) && /episodes 938 to 946/.test(soon), soon.slice(0, 300));
+  check("no sideways scroll (course map)", await noHScroll(page));
+  check("no errors (course map)", errors.length === 0, errors.join(" | "));
+  await ctx.close();
+}
 // Building products has moved into Reading: no course on its goal, and not in the day plan
 {
   const { page, errors, ctx } = await openPage(browser, { width: 402, time: new Date(2026, 10, 18, 18, 30).getTime() });
