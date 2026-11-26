@@ -229,6 +229,7 @@ let fixPage;
 {
   const { page, ctx } = await openPage(browser, { width: W });
   await attach(page);
+  await page.click(".q-again > summary").catch(() => {});   // the recent clocks fold away under the one-line start
   const chip = await page.$(".rchip-go");
   check("an Again chip exists", !!chip);
   const cid = chip && await chip.getAttribute("data-id");

@@ -8,7 +8,7 @@ const D1 = new Date(2026, 10, 18, 17, 0).getTime(), D2 = new Date(2026, 10, 19, 
 const txt = (p, s) => p.$eval(s, e => e.innerText.replace(/\s+/g, " ").trim()).catch(() => "");
 const start = async (page, gid, lid) => { await page.evaluate(({ gid, lid }) => { const b = document.createElement("button"); b.setAttribute("data-action", "cur-start"); b.setAttribute("data-id", gid); b.setAttribute("data-lid", lid); document.getElementById("root").appendChild(b); b.click(); }, { gid, lid }); await page.clock.runFor(80); };
 const lastState = page => page.evaluate(() => { const h = window.__pub[window.__pub.length - 1] || ""; const m = h.match(/<script id="app-state"[^>]*>([\s\S]*?)<\/script>/); return m ? JSON.parse(m[1]) : null; });
-const tile = (page, name) => page.$$eval(".day .rt", (els, name) => { const e = els.find(x => (x.querySelector(".rt-n") || {}).innerText === name); return e ? e.querySelector(".rt-m").innerText.replace(/\s+/g, " ") : ""; }, name);
+const tile = (page, name) => page.$$eval(".nowc-card", (els, name) => { const e = els.find(x => x.dataset.name === name); return e ? e.querySelector(".nowc-m").innerText.replace(/\s+/g, " ") : ""; }, name);
 
 for (const w of [402, 900]) {
   // day 1: FIRE plan, part 1, done early

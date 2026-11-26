@@ -5,22 +5,22 @@ const T = new Date(2026, 10, 15, 18, 30).getTime();
 const txt = (p, s) => p.$eval(s, e => e.innerText.replace(/\s+/g, " ").trim()).catch(() => "");
 for (const w of [402, 900]) {
   const { page, errors, ctx } = await openPage(browser, { width: w, time: T });
-  const card = await txt(page, ".home-book");
+  const card = await txt(page, '.nowc-card[data-gid="goal_read"]');
   check(`${w} home card names the book and chapter`, /Atomic Habits · chapter note 1 of 7/.test(card) && /Tiny gains compound/.test(card), card.slice(0, 160));
-  check(`${w} home card says when`, /After I get home · \d+ min/i.test(card), card.slice(0, 60));
-  await page.click('.home-book [data-action="cur-start"]'); await page.clock.runFor(80);
+  check(`${w} home card says when`, /After I get home · (\d+ of )?\d+ min/i.test(card), card.slice(0, 60));
+  await page.click('.nowc-card[data-gid="goal_read"] [data-action="cur-start"]'); await page.clock.runFor(80);
   const ses = await txt(page, ".ses"), now = await txt(page, ".now-active");
   check(`${w} the sitting is the chapter`, /A01 · Tiny gains compound/.test(now) && /on Atomic Habits/.test(ses), now.slice(0, 160));
   check(`${w} no action to check yet`, !(await page.$(".act-box")));
-  check(`${w} home card hides while the sitting runs`, !(await page.$(".home-book")));
+  check(`${w} its card says it\u2019s running, with Stop`, /Running now/i.test(await txt(page, '.nowc-card[data-gid="goal_read"]')) && !!(await page.$('.nowc-card[data-gid="goal_read"] [data-action="stop"]')));
   for (const i of [1, 2, 3]) await toStep(page, i);
   const chk = await txt(page, ".ses");
   check(`${w} check step asks for tomorrow's action`, /Your one action for tomorrow/.test(chk) && /The chapter in short/.test(chk), chk.slice(-300));
   await page.fill("#ses-confuse", "After I get home, I will read two pages");
   await page.click('[data-action="cur-nailed"] >> nth=0'); await page.clock.runFor(200);
-  const card2 = await txt(page, ".home-book");
+  const card2 = await txt(page, '.nowc-card[data-gid="goal_read"]');
   check(`${w} next chapter, with last time's action`, /chapter note 2 of 7/.test(card2) && /Last time’s action: “After I get home, I will read two pages”/.test(card2), card2.slice(0, 220));
-  await page.click('.home-book [data-action="cur-start"]'); await page.clock.runFor(80);
+  await page.click('.nowc-card[data-gid="goal_read"] [data-action="cur-start"]'); await page.clock.runFor(80);
   check(`${w} the next sitting asks: did you do it?`, /Did you do it\?/.test(await txt(page, ".act-box")));
   await page.fill("#ses-guess", "a guess typed before answering");
   await page.click('[data-action="act-did"][data-v="1"]'); await page.clock.runFor(2000);
@@ -63,7 +63,7 @@ for (const w of [402, 900]) {
 // listened away from the app (a podcast on a walk): today's minutes count, a second entry replaces the first, and Done keeps them
 {
   const { page, errors, ctx } = await openPage(browser, { width: 402, time: new Date(2026, 10, 18, 18, 30).getTime() });
-  const tile = name => page.$$eval(".day .rt", (els, name) => { const e = els.find(x => (x.querySelector(".rt-n") || {}).innerText === name); return e ? e.querySelector(".rt-m").innerText.replace(/\s+/g, " ") : ""; }, name);
+  const tile = name => page.$$eval(".nowc-card", (els, name) => { const e = els.find(x => x.dataset.name === name); return e ? e.querySelector(".nowc-m").innerText.replace(/\s+/g, " ") : ""; }, name);
   const lastState = () => page.evaluate(() => { const h = window.__pub[window.__pub.length - 1] || ""; const m = h.match(/<script id="app-state"[^>]*>([\s\S]*?)<\/script>/); return m ? JSON.parse(m[1]) : null; });
   await start(page, "A01"); await toStep(page, 1);
   check("the Listen step has the minutes box", /Listened away from the app/.test(await txt(page, ".ses-away")), await txt(page, ".ses-away"));
@@ -102,7 +102,7 @@ for (const w of [402, 900]) {
 // Building products has moved into Reading: no course on its goal, and not in the day plan
 {
   const { page, errors, ctx } = await openPage(browser, { width: 402, time: new Date(2026, 10, 18, 18, 30).getTime() });
-  const names = await page.$$eval(".day .rt .rt-n", es => es.map(e => e.innerText));
+  const names = await page.$$eval(".nowc-card", es => es.map(e => e.dataset.name));
   check("Products is out of the day plan", !names.includes("Products") && names.includes("Reading"), names.join(", "));
   check("no errors (day plan)", errors.length === 0, errors.join(" | "));
   await ctx.close();

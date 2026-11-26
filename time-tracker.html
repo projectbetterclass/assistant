@@ -556,6 +556,55 @@ h1,h2,h3{margin:0;font-family:var(--font-display);font-weight:600;text-wrap:bala
 .day .rt-go.is-big{width:100%;height:44px;font-size:14.5px;font-weight:600;border-radius:10px;margin-top:4px}
 .round.day .round-sub{margin:12px 0 0}
 .day-plan-btn{margin-left:auto;border:1px solid var(--line-strong);background:transparent;color:var(--accent);font-family:inherit;font-size:12.5px;font-weight:600;padding:6px 12px;border-radius:99px;cursor:pointer}
+.nowc{display:flex;flex-direction:column;gap:10px;min-width:0}
+.nowc-head{display:flex;flex-direction:column;gap:6px;padding:0 2px}
+.nowc-top{display:flex;align-items:baseline;justify-content:space-between;gap:4px 10px;flex-wrap:wrap}
+.nowc-date{font-size:13px;color:var(--muted)}
+.nowc-prog{font-family:var(--font-mono);font-size:12.5px;color:var(--muted);font-variant-numeric:tabular-nums}
+.nowc-prog b{color:var(--ink);font-weight:600}
+.nowc-bar{height:6px;border-radius:99px;background:var(--surface-2);border:1px solid var(--line);overflow:hidden}
+.nowc-bar i{display:block;height:100%;background:var(--accent);border-radius:99px}
+.nowc-nav{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:0 2px}
+.nowc-hint{font-size:13px;color:var(--muted);min-width:0}
+.nowc-arrows{display:flex;gap:8px;flex:none}
+.nowc-arrow{width:40px;height:40px;border-radius:50%;border:1px solid var(--line-strong);background:var(--surface);color:var(--ink);font-size:20px;line-height:1;display:inline-grid;place-items:center;padding:0 0 2px}
+.nowc-arrow:hover{border-color:var(--accent);color:var(--accent)}
+.nowc-track{display:flex;gap:14px;overflow-x:auto;scroll-snap-type:x mandatory;padding:4px 2px 12px;scrollbar-width:thin;overscroll-behavior-x:contain}
+.nowc-track:focus-visible{outline-offset:4px}
+.nowc-card{flex:0 0 min(300px,86%);box-sizing:border-box;scroll-snap-align:start;min-width:0;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:16px 16px 14px;display:flex;flex-direction:column;gap:10px;box-shadow:var(--shadow)}
+.nowc-card.is-next{border:1.5px solid var(--accent)}
+.nowc-card.is-on{border:1.5px solid var(--accent);background:linear-gradient(180deg,var(--accent-soft),transparent 140px),var(--surface)}
+.nowc-card.is-done{background:var(--good-soft);border-color:var(--good-soft)}
+.nowc-eye{display:flex;align-items:baseline;justify-content:space-between;gap:8px;min-width:0}
+.nowc-k{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);min-width:0}
+.is-next .nowc-k,.is-on .nowc-k{color:var(--accent)}
+.is-done .nowc-k,.is-done .nowc-m{color:var(--good)}
+.nowc-m{flex:none;font-family:var(--font-mono);font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums;text-align:right}
+.nowc-t{margin:0;font-family:var(--font-display);font-weight:600;font-size:19px;line-height:1.25;text-wrap:balance}
+.nowc-chips{display:flex;flex-wrap:wrap;gap:6px}
+.nowc-chip{font-size:12px;font-weight:600;padding:3px 10px;border-radius:99px;background:var(--surface-2);border:1px solid var(--line);color:var(--muted)}
+.nowc-chip.is-id{background:var(--accent-soft);border-color:transparent;color:var(--accent)}
+.nowc-p{margin:0;font-size:14px;line-height:1.5;color:var(--ink)}
+.nowc-p.is-end{color:var(--muted)}
+.nowc-p b{font-weight:600;color:var(--ink)}
+.nowc-act{font-size:13px;line-height:1.45;color:var(--muted);padding:8px 10px;border-radius:10px;background:var(--surface-2)}
+.nowc-tag{font-size:12px;font-weight:600;color:var(--warn)}
+.nowc-go{margin-top:auto;display:flex;padding-top:4px}
+.nowc-go .btn{flex:1}
+.nowc-dots{display:flex;justify-content:center;gap:6px}
+.nowc-dot{display:block;width:8px;height:8px;border-radius:99px;border:1.5px solid var(--line-strong);background:var(--surface);box-sizing:border-box;transition:width .15s}
+.nowc-dot.is-done{background:var(--good);border-color:var(--good)}
+.nowc-dot.is-at{width:22px;background:var(--accent);border-color:var(--accent)}
+.nowc .round-sub{margin:2px 2px 0}
+.now-idle.is-compact{padding:12px}
+.quick-1{flex-wrap:nowrap}
+.quick-1 .field{flex:1 1 auto}
+.quick-1 .btn{flex:none}
+.quick-more{display:flex;flex-wrap:wrap;align-items:center;gap:8px 14px;margin-top:8px}
+.quick-more .shot-or{flex:1 1 100%}
+.q-again{flex:1 1 100%}
+.q-again>summary{cursor:pointer;font-size:12.5px;font-weight:600;color:var(--accent)}
+.q-again .recents{margin-top:8px}
 .day-plan{margin-top:12px;padding:12px;border:1px solid var(--line);border-radius:12px;background:var(--surface-2)}
 .dp-h{margin:6px 0 2px;font-size:11px;text-transform:uppercase;letter-spacing:.07em;color:var(--faint);font-weight:600}
 .dp-lead{margin:0 0 8px;font-size:12.5px;line-height:1.45;color:var(--muted)}
@@ -1462,7 +1511,8 @@ button.step-name:hover .step-nm{color:var(--accent)}
   /* the header: today's date where the name was */
   .top{margin:0 0 6px}
   .top .brand{display:none}
-  .top-date{display:block;font-family:var(--font-display);font-size:26px;font-weight:600;line-height:1.15;letter-spacing:-.01em}
+  @media (min-width:1000px){.nowc-date{display:none}}   /* the page heading carries the date there */
+.top-date{display:block;font-family:var(--font-display);font-size:26px;font-weight:600;line-height:1.15;letter-spacing:-.01em}
   .sec{margin-top:22px}
   /* Now: what to do now | the day and the inbox */
   .home{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);gap:20px;align-items:start;margin-top:22px}
@@ -2301,6 +2351,7 @@ button.step-name:hover .step-nm{color:var(--accent)}
       else{if(!(rg.timer&&findTask(rg.timer))){var rk={id:"act_"+uid(),name:"⏱ "+roundLabel(rg),category:"",estimateMin:null,planned:false,daily:false,goalId:rg.id,depth:null,cue:"",done:false,createdAt:Date.now(),sessions:[]};state.tasks.push(rk);rg.timer=rk.id;}
         startTask(rg.timer);}}}
     else if(a==="stop")stopTask();
+    else if(a==="cards-move"){var tr=document.querySelector(".nowc-track"),c0=tr&&tr.querySelector(".nowc-card");if(tr)tr.scrollBy({left:(parseInt(b.getAttribute("data-v"),10)||1)*(c0?c0.getBoundingClientRect().width+14:300),behavior:"smooth"});}
     else if(a==="day-plan"){ui.dayPlan=!ui.dayPlan;render();}
     else if(a==="day-starter"){ui.dayPlan=true;dayEdit(function(r){Object.keys(DAY_STARTER).forEach(function(k){if(r.things.indexOf(k)>=0&&!r.stack[k])r.stack[k]=DAY_STARTER[k];});});}
     else if(a==="dp-add")dayEdit(function(r){r.moments.push({id:"m"+uid(),label:"New moment",at:"20:00"});});
@@ -2534,7 +2585,7 @@ button.step-name:hover .step-nm{color:var(--accent)}
     var a;
     if(roundThings().length&&weekdayMin()){   // with a round: your day, moment by moment, then the rest
       var run=state.activeId&&findTask(state.activeId),pz=pausedTask();
-      a=(run||pz?renderNow(true):"")+homeBook()+homeRound()+homeRevisit()+homePrime()+(run?"":idleCard(!!pz,true));
+      a=(run||pz?renderNow(true):"")+homeCards()+homeRevisit()+homePrime()+(run?"":idleCard(!!pz,true));   // Reading's book is one of the cards
     }else a=renderNow()+homeBook()+homeRound()+homeNext()+homeRevisit()+homePrime();
     return '<div class="view home"><div class="home-a">'+a+'</div><div class="home-b">'+homeGlance()+renderCaptureHome()+'</div></div>';
   }
@@ -2551,6 +2602,7 @@ button.step-name:hover .step-nm{color:var(--accent)}
     html+=tabBar();
     root.innerHTML=html;
     if(ui.view==="curriculum"&&ui.cvMode==="tree")ltEdges();
+    var ctr=document.querySelector(".nowc-track");if(ctr&&ui.cardsX){ctr.scrollLeft=ui.cardsX;cardDots(ctr);}
   }
 
   /* ---------- home: the single "what now?" screen ---------- */
@@ -2615,6 +2667,73 @@ button.step-name:hover .step-nm{color:var(--accent)}
         (planned||ui.dayPlan?'<button class="day-plan-btn" data-action="day-plan" type="button" aria-expanded="'+(ui.dayPlan?'true':'false')+'">'+(ui.dayPlan?'Close the plan':'Plan your day')+'</button>':'')+'</div>'+
       (ui.dayPlan?dayPlanner():'')+'</section>';
   }
+  /* the Now page as cards: one per daily thing, saying what today's sitting is (the lesson, the part, what you do and end with)
+     without the lesson itself. The next one comes first, then the rest of the day in order, then what's done. Swipe on a phone,
+     the arrows or the scroll wheel on a PC. */
+  function cardGist(s){   // a task's first sentence, short enough for a card
+    s=String(s||"").replace(/\s+/g," ").trim();var m=/^(.*?[.?!])(\s|$)/.exec(s);if(m)s=m[1];
+    if(s.length>96)s=s.slice(0,92).replace(/[,;:]?\s+\S*$/,"")+"…";
+    return /^[A-Z][a-z]/.test(s)?s.charAt(0).toLowerCase()+s.slice(1):s;
+  }
+  function cardFor(x,blk,next){
+    var g=x.g,cg=roundCourseGoal(g),l=cg&&(currentLesson(cg)||{}).lesson,t=l&&findTask(lessonTid(cg.id,l.id)),p=l&&lessonPlan(cg,l,t),bk=!!(l&&isBook(l));
+    var when=(g.curr&&g.curr.when)||(blk&&blk.at!=null?blk.label:""),name=roundLabel(g),gist=l?cardGist(l.task):"",cap=function(s){return s.charAt(0).toUpperCase()+s.slice(1);};
+    var part=!p?"Just the timer":p.n<2?"One sitting":p.k<2?(bk?"Part 1 of 2 · listen":"Part 1 of 2 · learn it"):"Part 2 of 2 · do it";
+    var today=!l?"start the clock and spend the time your own way."
+      :bk?(p.n<2?"guess, look at the chapter’s map, listen, then write it from memory and check it.":p.k<2?"guess, look at the chapter’s map, then listen, pausing to say each idea back.":"recall the chapter, then write it from memory and check it.")
+      :(p.n>1&&p.k<2?"guess first, then read the idea and the walk-through"+(l.co?", on "+l.co:"")+".":gist);
+    var end=!l?"the minutes, counted for today."
+      :bk?(p.n>1&&p.k<2?"the idea in one line. Next time: write it from memory and pick tomorrow’s action.":"the chapter in your own words, and one action for tomorrow.")
+      :(p.n>1&&p.k<2?"the idea in one line. Next time: "+gist:"your answer, checked against a good one.");
+    var chips=(l?'<span class="nowc-chip is-id">'+esc(lessonN(l))+'</span>':'')+(cg&&cg!==g?'<span class="nowc-chip">'+esc(roundLabel(cg))+'</span>':'');
+    if(bk){var same=READ_CURRICULUM.lessons.filter(function(y){return y.rung===l.rung;});chips+='<span class="nowc-chip">'+esc(l.co)+' · chapter note '+(same.indexOf(l)+1)+' of '+same.length+'</span>';}
+    chips+='<span class="nowc-chip">'+esc(part)+'</span>';
+    var cy=bk&&bookAct(cg,l),act=cy&&cy.did==null?'<div class="nowc-act">Last time’s action: “'+esc(cy.q)+'”. You’ll say whether you did it when you start.</div>':'';
+    var meta=x.ok?'✓ done · '+x.m+' min':(when?esc(when)+' · ':'')+(x.on?'running · ':'')+(x.m>0?x.m+' of '+x.T:x.T)+' min';
+    var eye=x.on?'Running now · '+name:x.ok?name+' · done':next?'Up next · '+name:name;
+    var go=l?' data-action="cur-start" data-id="'+cg.id+'" data-lid="'+l.id+'"':' data-action="round-start" data-id="'+g.id+'"';
+    var btn=x.on?'<button class="btn btn-stop" data-action="stop" type="button">■ Stop</button>'
+      :x.ok?'<button class="btn btn-ghost"'+go+' type="button">Done for today · do more anyway</button>'
+      :'<button class="btn btn-primary"'+go+' type="button" aria-label="'+esc('Start '+name)+'">'+playSvg()+'Start</button>';
+    return '<article class="nowc-card'+(x.ok?' is-done':'')+(x.on?' is-on':'')+(next&&!x.on?' is-next':'')+'" data-gid="'+g.id+'" data-name="'+esc(name)+'">'+
+      '<div class="nowc-eye"><span class="nowc-k">'+esc(eye)+'</span><span class="nowc-m">'+meta+'</span></div>'+
+      '<h3 class="nowc-t">'+esc(l?l.concept:"Your own time, on the clock")+'</h3>'+
+      '<div class="nowc-chips">'+chips+'</div>'+
+      (x.ok?'<p class="nowc-p is-end"><b>Next time:</b> '+esc(l?l.concept+" · "+part.toLowerCase():"the clock again")+'</p>'
+        :'<p class="nowc-p"><b>Today:</b> '+esc(cap(today))+'</p><p class="nowc-p is-end"><b>You end with:</b> '+esc(end)+'</p>')+
+      act+(!x.ok&&!x.on&&x.m===0&&missedYesterday(g)?'<div class="nowc-tag">Missed yesterday · don’t miss twice</div>':'')+
+      '<div class="nowc-go">'+btn+'</div></article>';
+  }
+  function homeCards(){
+    var L=roundThings(),wd=weekdayMin();if(!L.length||!wd)return "";
+    var B=dayBlocks(),nx=dayNext(),flat=[],done=0,started=0,m=0,T=0;
+    B.forEach(function(b){b.items.forEach(function(x){flat.push({x:x,b:b});});});
+    flat.forEach(function(f){if(f.x.ok)done++;if(f.x.m>0||f.x.on)started++;m+=f.x.m;T+=f.x.T;});
+    var first=nx?nx.x.g.id:((flat.filter(function(f){return !f.x.ok&&!f.x.on;})[0]||{x:{g:{}}}).x.g.id);
+    var rank=function(f){return f.x.on?0:f.x.g.id===first?1:f.x.ok?3:2;};
+    var order=flat.map(function(f,i){return {f:f,i:i};}).sort(function(a,b){return rank(a.f)-rank(b.f)||a.i-b.i;}).map(function(o){return o.f;});
+    var left=L.length-done,d=new Date();
+    var say=!left?'All '+L.length+' done ✓':!started?'Nothing yet today: you’re not starting late, you’re starting now.':left+' to go today';
+    var opts=[10,14,15,20,25,30].map(function(v){return '<option value="'+v+'"'+(v===wd?' selected':'')+'>'+v+'</option>';}).join(""),
+      sel='<select class="round-sel" data-action="round-min" aria-label="Minutes on each thing, on weekdays">'+opts+'</select>';
+    return '<section class="nowc" aria-label="Today">'+
+      '<div class="nowc-head"><div class="nowc-top"><span class="nowc-date">'+esc(d.toLocaleDateString("en-GB",{weekday:"long",day:"numeric",month:"long"}))+'</span>'+
+        '<span class="nowc-prog"><b>'+done+' of '+L.length+'</b> done · '+m+' of '+T+' min</span></div>'+
+        '<div class="nowc-bar"><i style="width:'+(T?Math.min(100,Math.round(m/T*100)):0)+'%"></i></div></div>'+
+      '<div class="nowc-nav"><span class="nowc-hint">'+say+'</span><span class="nowc-arrows">'+
+        '<button class="nowc-arrow" data-action="cards-move" data-v="-1" type="button" aria-label="Previous card">‹</button>'+
+        '<button class="nowc-arrow" data-action="cards-move" data-v="1" type="button" aria-label="Next card">›</button></span></div>'+
+      '<div class="nowc-track" tabindex="0" aria-label="Today’s things, one card each">'+order.map(function(f){return cardFor(f.x,f.b,f.x.g.id===first);}).join("")+'</div>'+
+      '<div class="nowc-dots" aria-hidden="true">'+order.map(function(f,i){return '<i class="nowc-dot'+(f.x.ok?' is-done':'')+(i===0?' is-at':'')+'"></i>';}).join("")+'</div>'+
+      '<div class="round-sub">'+(isWeekday()?'Weekdays: '+sel+' min on each.':'Weekend: '+DAILY_MIN+' min for lessons, the usual for reading, '+sel+' for the rest.')+
+        '<button class="day-plan-btn" data-action="day-plan" type="button" aria-expanded="'+(ui.dayPlan?'true':'false')+'">'+(ui.dayPlan?'Close the plan':'Plan your day')+'</button></div>'+
+      (ui.dayPlan?dayPlanner():'')+'</section>';
+  }
+  function cardDots(tr){var i=cardsAt(tr);document.querySelectorAll(".nowc-dot").forEach(function(d,j){d.classList.toggle("is-at",j===i);});}
+  document.addEventListener("scroll",function(e){var tr=e.target;if(tr&&tr.classList&&tr.classList.contains("nowc-track")){ui.cardsX=tr.scrollLeft;cardDots(tr);}},true);
+  function cardsAt(tr){   // which card the row is scrolled to, for the dots
+    var c=tr.querySelector(".nowc-card"),w=c?c.getBoundingClientRect().width+14:300;return Math.round(tr.scrollLeft/w);
+  }
   function dayPlanner(){   // set once: your moments (a name and a time), and which moment each round thing stacks on
     var M=dayMoments(),st=(state.dayRound&&state.dayRound.stack)||{};
     var ms=M.map(function(m){return '<div class="dp-m"><input class="field dp-ml" data-mid="'+esc(m.id)+'" value="'+esc(m.label)+'" aria-label="Moment"><input class="field dp-mt" type="time" data-mid="'+esc(m.id)+'" value="'+esc(m.at)+'" aria-label="Around what time">'+
@@ -2626,7 +2745,7 @@ button.step-name:hover .step-nm{color:var(--accent)}
     return '<div class="day-plan">'+
       '<div class="dp-h">What stacks on which moment</div><p class="dp-lead">“After [something I already do], I do [this].” Things on the same moment run in this order; ↑ moves one earlier.</p>'+rows+
       '<div class="dp-h">Your moments</div><p class="dp-lead">Rename them to fit your day, and set roughly when they happen.</p>'+ms+
-      '<div class="dp-btns"><button class="btn btn-ghost btn-sm" data-action="dp-add" type="button">+ Add a moment</button><button class="btn btn-primary btn-sm" data-action="day-plan" type="button">Done</button></div></div>';
+      '<div class="dp-btns"><span><button class="btn btn-ghost btn-sm" data-action="dp-add" type="button">+ Add a moment</button>'+(dayBlocks().some(function(b){return b.at!=null;})?'':' <button class="btn btn-ghost btn-sm" data-action="day-starter" type="button">Use a starting plan</button>')+'</span><button class="btn btn-primary btn-sm" data-action="day-plan" type="button">Done</button></div></div>';
   }
   function dayEdit(fn){commit(function(){var r=state.dayRound;if(!r)return;if(!r.moments||!r.moments.length)r.moments=dayMoments();r.stack=r.stack||{};fn(r);});}
   function homeNext(){
@@ -2769,6 +2888,11 @@ button.step-name:hover .step-nm{color:var(--accent)}
         '<button class="rchip-pin" type="button" data-action="toggle-pin" data-id="'+t.id+'" aria-pressed="'+(pinned?'true':'false')+'" aria-label="'+(pinned?'Unpin ':'Pin ')+esc(t.name)+'" title="'+(pinned?'Pinned — tap to unpin':'Pin so it always shows here')+'">'+(pinned?'★':'☆')+'</button>'+
       '</span>';
     }).join("")+'</div>'):'';
+    if(below&&!paused)return '<div class="card now now-idle is-compact">'+shotPanel()+
+      '<form class="quick quick-1" data-action="quick-start" autocomplete="off">'+
+        '<input id="q-name" class="field" placeholder="Something else? Name it to start a clock" aria-label="Something else? Name it to start a clock">'+
+        '<button class="btn btn-ghost" type="submit">'+playSvg()+'Start</button></form>'+
+      '<div class="quick-more">'+shotRow()+(rec.length?'<details class="q-again"><summary>Again: your recent clocks</summary>'+recentsHtml+'</details>':'')+'</div></div>';
     return '<div class="card now now-idle">'+
       '<div class="now-idle-label">'+(paused?'Something else in between?':(below?'Something else? Start a clock for it':'What are you working on?'))+'</div>'+
       shotPanel()+
