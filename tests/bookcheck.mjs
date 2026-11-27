@@ -94,9 +94,21 @@ for (const w of [402, 900]) {
   await page.evaluate(() => { const b = document.createElement("button"); b.setAttribute("data-action", "cv-open"); b.setAttribute("data-id", "goal_read"); document.getElementById("root").appendChild(b); b.click(); });
   await page.clock.runFor(80);
   const soon = await txt(page, ".cv-soon");
-  check("Next on your shelf: Leads and Money Models, free on the podcast", /Next on your shelf/i.test(soon) && /\$100M Leads/.test(soon) && /episodes 586 to 596/.test(soon) && /\$100M Money Models/.test(soon) && /episodes 938 to 946/.test(soon), soon.slice(0, 300));
+  check("Next on your shelf: Money Models, free on the podcast; Leads is on the shelf now", /Next on your shelf/i.test(soon) && /\$100M Money Models/.test(soon) && /episodes 938 to 946/.test(soon) && !/\$100M Leads/.test(soon), soon.slice(0, 300));
+  check("$100M Leads is a book in the course, 11 chapter notes", (await page.$$eval(".cv-rung", rs => { const r = rs.find(x => /\$100M Leads/.test(x.innerText)); return r ? r.querySelectorAll("[data-lid^=G], .lesson-row, li").length : 0; })) >= 11 || /\$100M Leads[\s\S]*0\/11/.test(await txt(page, ".cv")), (await txt(page, ".cv")).slice(0, 200));
   check("no sideways scroll (course map)", await noHScroll(page));
   check("no errors (course map)", errors.length === 0, errors.join(" | "));
+  await ctx.close();
+}
+// $100M Leads: each sitting names its own podcast part
+{
+  const { page, errors, ctx } = await openPage(browser, { width: 402, time: new Date(2026, 10, 18, 18, 30).getTime() });
+  await start(page, "G03");
+  check("G03 names its podcast part", /Listen to \$100M Leads Audiobook Part 3 \(episode 588\)/.test(await txt(page, ".ses-brief")), (await txt(page, ".ses-brief")).slice(0, 300));
+  await toStep(page, 1);
+  const gw = await txt(page, ".ses-walk");
+  check("G03 map and where to find it", /Warm outreach in ten steps/.test(gw) && /search “\$100M Leads Audiobook Part 3”/.test(gw), gw.slice(0, 300));
+  check("no errors (Leads)", errors.length === 0, errors.join(" | "));
   await ctx.close();
 }
 // Building products has moved into Reading: no course on its goal, and not in the day plan

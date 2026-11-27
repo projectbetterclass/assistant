@@ -149,19 +149,15 @@ POD = {"O01": ("Part 1 (episode 579), then Part 2 up to 16:37", "1"),
        "O04": ("Part 3 (episode 581)", "3"),
        "O05": ("Part 4 (episode 582)", "4"),
        "O06": ("Parts 5, 6 and 7 (episodes 583 to 585)", "5"),
-       # $100M Leads, 11 parts: ready for its notes (n 401 to 410), from the episode titles
-       "G01": ("Part 1 (episode 586), Start here", "1"), "G02": ("Part 2 (episode 587), Engage your leads", "2"),
-       "G03": ("Part 3 (episode 588), Warm outreach", "3"), "G04": ("Part 4 (episode 589), Post free content", "4"),
-       "G05": ("Part 5 (episode 590), Cold outreach", "5"), "G06": ("Part 6 (episode 591), Run paid ads", "6"),
-       "G07": ("Part 7 (episode 592), Core four on steroids", "7"), "G08": ("Part 8 (episode 593)", "8"),
-       "G09": ("Parts 9 and 10 (episodes 594 and 595), Employees and agencies, then Affiliates and partners", "9"),
-       "G10": ("Part 11 (episode 596), Advertising in real life and the roadmap", "11"),
+       # $100M Leads, 11 parts, one sitting each (notes n 401 to 411, written from the episode transcripts)
+       "G01": ("Part 1 (episode 586)", "1"), "G02": ("Part 2 (episode 587)", "2"), "G03": ("Part 3 (episode 588)", "3"),
+       "G04": ("Part 4 (episode 589)", "4"), "G05": ("Part 5 (episode 590)", "5"), "G06": ("Part 6 (episode 591)", "6"),
+       "G07": ("Part 7 (episode 592)", "7"), "G08": ("Part 8 (episode 593)", "8"), "G09": ("Part 9 (episode 594)", "9"),
+       "G10": ("Part 10 (episode 595)", "10"), "G11": ("Part 11 (episode 596)", "11"),
        # $100M Money Models, 9 parts: ready for its notes (n 501 to 507)
-       "W01": ("Parts 1 and 2 (episodes 938 and 939), Welcome, then What is a money model", "1"),
-       "W02": ("Part 3 (episode 940), Attraction offers: win your money back, giveaways", "3"),
-       "W03": ("Part 4 (episode 941), Attraction offers continued", "4"), "W04": ("Part 5 (episode 942), Upsell offers", "5"),
-       "W05": ("Part 6 (episode 943), Downsell offers", "6"), "W06": ("Part 7 (episode 944), Continuity offers", "7"),
-       "W07": ("Parts 8 and 9 (episodes 945 and 946), Making your money model, then Ten years in ten minutes", "8")}
+       "W01": ("Parts 1 and 2 (episodes 938 and 939)", "1"), "W02": ("Part 3 (episode 940)", "3"), "W03": ("Part 4 (episode 941)", "4"),
+       "W04": ("Part 5 (episode 942)", "5"), "W05": ("Part 6 (episode 943)", "6"), "W06": ("Part 7 (episode 944)", "7"),
+       "W07": ("Parts 8 and 9 (episodes 945 and 946)", "8")}
 def bare(h): return re.sub(r"^(?:Chapters?|Ch\.)\s*[\d–-]+:\s*", "", h).strip()
 def cap(s): return s[:1].upper() + s[1:]
 for book, letter, desc in BOOKS_IN_ORDER:
