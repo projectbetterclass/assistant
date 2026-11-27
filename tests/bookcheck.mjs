@@ -93,8 +93,7 @@ for (const w of [402, 900]) {
   const { page, errors, ctx } = await openPage(browser, { width: 402, time: new Date(2026, 10, 18, 18, 30).getTime() });
   await page.evaluate(() => { const b = document.createElement("button"); b.setAttribute("data-action", "cv-open"); b.setAttribute("data-id", "goal_read"); document.getElementById("root").appendChild(b); b.click(); });
   await page.clock.runFor(80);
-  const soon = await txt(page, ".cv-soon");
-  check("Next on your shelf: Leads and Money Models are on the shelf now", /Next on your shelf/i.test(soon) && !/\$100M Money Models/.test(soon) && !/\$100M Leads/.test(soon), soon.slice(0, 300));
+  check("Next on your shelf is gone: every book on the list has its chapter notes", (await page.$$(".cv-soon")).length === 0 && /Eat That Frog!/.test(await txt(page, ".cv")) && /The Richest Man in Babylon/.test(await txt(page, ".cv")), (await txt(page, ".cv")).slice(0, 300));
   check("$100M Leads is a book in the course, 11 chapter notes", (await page.$$eval(".cv-rung", rs => { const r = rs.find(x => /\$100M Leads/.test(x.innerText)); return r ? r.querySelectorAll("[data-lid^=G], .lesson-row, li").length : 0; })) >= 11 || /\$100M Leads[\s\S]*0\/11/.test(await txt(page, ".cv")), (await txt(page, ".cv")).slice(0, 200));
   check("no sideways scroll (course map)", await noHScroll(page));
   check("no errors (course map)", errors.length === 0, errors.join(" | "));
@@ -121,6 +120,22 @@ for (const w of [402, 900]) {
   check("W04 map and where to find it", /Why upsells make the money/.test(ww) && /search “\$100M Money Models Audiobook Part 5”/.test(ww), ww.slice(0, 300));
   check("no errors (Money Models)", errors.length === 0, errors.join(" | "));
   await ctx.close();
+}
+// Eat That Frog! and The Richest Man in Babylon: the sitting names the chapters to play in the audiobook
+{
+  const { page, errors, ctx } = await openPage(browser, { width: 402, time: new Date(2026, 10, 18, 18, 30).getTime() });
+  await start(page, "E03");
+  check("E03 names its chapters", /Listen to ‘Consider the consequences’, ‘Practice creative procrastination’ and ‘Use the ABCDE method’ of the audiobook/.test(await txt(page, ".ses-brief")), (await txt(page, ".ses-brief")).slice(0, 300));
+  await toStep(page, 1);
+  check("E03 map", /The ABCDE method/.test(await txt(page, ".ses-walk")), (await txt(page, ".ses-walk")).slice(0, 300));
+  await ctx.close();
+  const b = await openPage(browser, { width: 402, time: new Date(2026, 10, 18, 18, 30).getTime() });
+  await start(b.page, "Y04");
+  check("Y04 names its chapter", /‘The Five Laws of Gold’ of the audiobook/.test(await txt(b.page, ".ses-brief")), (await txt(b.page, ".ses-brief")).slice(0, 300));
+  await toStep(b.page, 1);
+  check("Y04 map", /The five laws/.test(await txt(b.page, ".ses-walk")), (await txt(b.page, ".ses-walk")).slice(0, 300));
+  check("no errors (Frog and Babylon)", errors.length === 0 && b.errors.length === 0, errors.concat(b.errors).join(" | "));
+  await b.ctx.close();
 }
 // Building products has moved into Reading: no course on its goal, and not in the day plan
 {
