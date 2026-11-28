@@ -50,7 +50,7 @@ for (const w of [402, 900]) {
   // a Zero to One chapter that used to be a Building products lesson: use it on your idea
   await start(page, "Z01");
   const zb = await txt(page, ".ses-brief");
-  check(`${w} Z01 asks you to use it on your idea`, /Listen to Ch\. 1–2/.test(zb) && /0-to-1 or a 1-to-n idea/.test(zb), zb.slice(0, 300));
+  check(`${w} Z01 asks you to use it on your idea`, /Listen to Preface–Ch\. 2/.test(zb) && /0-to-1 or a 1-to-n idea/.test(zb), zb.slice(0, 300));
   await toStep(page, 1);
   const zw = await txt(page, ".ses-walk");
   check(`${w} Z01 carries the worked example`, /Worked: an app like Intensity Applied/.test(zw) && !/\bP\d\d\b/.test(zw), zw.slice(-300));
@@ -136,6 +136,12 @@ for (const w of [402, 900]) {
   check("Y04 map", /The five laws/.test(await txt(b.page, ".ses-walk")), (await txt(b.page, ".ses-walk")).slice(0, 300));
   check("no errors (Frog and Babylon)", errors.length === 0 && b.errors.length === 0, errors.concat(b.errors).join(" | "));
   await b.ctx.close();
+  // Zero to One's audiobook doesn't announce its chapters, so the sitting says roughly where they start
+  const z = await openPage(browser, { width: 402, time: new Date(2026, 10, 18, 18, 30).getTime() });
+  await start(z.page, "Z02");
+  check("Z02 says where in the audio its chapters start", /Listen to Ch\. 3–4 \(from about 0:28:00\) of the audiobook/.test(await txt(z.page, ".ses-brief")), (await txt(z.page, ".ses-brief")).slice(0, 300));
+  check("no errors (Zero to One)", z.errors.length === 0, z.errors.join(" | "));
+  await z.ctx.close();
 }
 // Building products has moved into Reading: no course on its goal, and not in the day plan
 {

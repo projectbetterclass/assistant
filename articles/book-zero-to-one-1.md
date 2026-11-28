@@ -4,7 +4,7 @@ channel: Zero to One
 by: Peter Thiel
 shelf: books
 n: 101
-part: Ch. 1–2
+part: Preface–Ch. 2
 title: Zero to one: new things versus copies, and the four lessons of 1999 turned around
 charts: false
 ---

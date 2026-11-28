@@ -4,14 +4,14 @@ channel: Zero to One
 by: Peter Thiel
 shelf: books
 n: 108
-part: Ch. 12–14
+part: Ch. 12–14 and the conclusion (from about 3:26:00)
 title: Seven questions every business must answer
 charts: false
 ---
 **The argument.** The last chapters pull the book together. Computers will work best alongside people rather than replacing them. The cleantech bubble shows what happens when businesses can't answer the basic questions. And founders tend to be unusual people, which is both their strength and their risk.
 
 ## Chapter 12: man and machine
-- People and computers are good at different things. The big opportunities are in tools that help people do more (PayPal's fraud system flagged suspicious payments and let humans decide), not in replacing them.
+- People and computers are good at different things. The big opportunities are in tools that help people do more (in 2000 PayPal was losing over $10 million a month to card fraud; its system flagged suspicious payments and let people decide, and the FBI later asked to use it), not in replacing them.
 
 ## Chapter 13: seeing green, the seven questions
 Most cleantech companies of the 2000s failed because they couldn't answer these:

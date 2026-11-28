@@ -4,14 +4,14 @@ channel: Zero to One
 by: Peter Thiel
 shelf: books
 n: 102
-part: Ch. 3–4
+part: Ch. 3–4 (from about 0:28:00)
 title: Monopoly, not competition: why the best businesses avoid fights
 charts: false
 ---
 **The argument.** A business can create a lot of value and still make no money. What matters is how much of the value it keeps. In perfect competition, prices fall until nobody profits. A monopoly, a company so good at its niche that nothing close substitutes for it, keeps the profit and can plan for the long run.
 
 ## Chapter 3: all happy companies are different
-- US airlines carry millions of people, yet in Thiel's example they made about 37 cents a passenger. Google kept roughly a fifth of its revenue as profit.
+- In 2012, with the average fare at $178 each way, US airlines made about 37 cents a passenger. Google took in $50 billion that year, against the airlines' $160 billion, but kept 21% of it as profit: over 100 times the airlines' margin.
 - **Everyone lies about it.** Monopolies play down their dominance ("we're one small player in a huge market"). Companies in brutal competition exaggerate how unique they are by defining their market as a tiny intersection: "the only British food restaurant in Palo Alto".
 - Profits let a monopoly care about its people and its products; a competitive business can only think about this month.
 

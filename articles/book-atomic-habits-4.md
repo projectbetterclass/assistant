@@ -11,7 +11,7 @@ charts: false
 **The argument.** The second law. We act because we expect a reward, so make the habits you need look like something you want, and surround yourself with people for whom they're normal.
 
 ## Chapter 8: how to make a habit irresistible
-- Gulls will peck at an exaggerated fake beak over a real one, and junk food works the same way: an exaggerated version of what we're wired to want.
+- Herring gull chicks peck at the red dot on a parent's beak, and Niko Tinbergen found they peck even harder at a stick with three red dots. Junk food works the same way: an exaggerated version of what we're wired to want.
 - Dopamine rises when we *expect* a reward, not only when we get it. Wanting drives action more than liking does.
 - **Temptation bundling:** pair something you need to do with something you want to do. One student rigged an exercise bike so Netflix only played while pedalling.
 - Stack it: "After [current habit], I'll do [habit I need]. After [habit I need], I'll do [habit I want]."

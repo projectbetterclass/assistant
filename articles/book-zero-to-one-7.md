@@ -4,7 +4,7 @@ channel: Zero to One
 by: Peter Thiel
 shelf: books
 n: 107
-part: Ch. 11
+part: Ch. 11 (from about 3:03:00)
 title: If you build it, will they come? Distribution is half the business
 charts: false
 ---
@@ -16,7 +16,7 @@ charts: false
 | Complex sales | Very large deals, few customers | The founder sells personally, over months |
 | Personal sales | Mid-sized deals | A small sales team builds a repeatable process |
 | Marketing and advertising | Cheap products for many people | Ads and brand, where you can't afford a salesperson per customer |
-| Viral | Products people share by using them | Each user brings more users (PayPal paid people to sign up friends) |
+| Viral | Products people share by using them | Each user brings more users (PayPal paid $10 for joining and $10 for every friend referred) |
 
 - **The gap in the middle:** products too expensive to sell with ads but too cheap for a salesperson to visit. Many businesses die there.
 - **One channel wins.** Like the power law, a single distribution channel usually beats all the others combined. Find it and focus.

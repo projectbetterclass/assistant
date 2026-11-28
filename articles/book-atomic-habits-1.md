@@ -11,7 +11,7 @@ charts: false
 **The argument.** Big results don't come from one big change. They come from small habits repeated until they compound. Clear rebuilt a life this way after a serious injury in high school: small, boring routines first, results years later.
 
 ## Chapter 1: the surprising power of atomic habits
-- British Cycling had been mediocre for a century. In 2003 its new coach, Dave Brailsford, went after "the aggregation of marginal gains": 1% better at everything, from saddle comfort to pillows. Within about a decade British riders were winning Olympic golds and the Tour de France.
+- British Cycling had been mediocre for nearly 100 years: one Olympic gold since 1908, and no British winner of the Tour de France in 110 years. In 2003 its new performance director, Dave Brailsford, went after "the aggregation of marginal gains": 1% better at everything, from saddle comfort to pillows. Five years later the team dominated the 2008 Olympics, and in 2012 Bradley Wiggins became the first British rider to win the Tour.
 - The maths of 1%: 1% better every day for a year is about 37 times better. 1% worse every day ends near zero. Habits are the compound interest of self-improvement.
 - Your current results matter less than your direction. Ask whether today's habits put you on a path you'd want in 10 years.
 - **The plateau of latent potential.** An ice cube in a cold room doesn't melt as it warms from 25°F to 31°F. At 32°F it does. Early effort looks wasted, but it's stored, not lost. Most people quit in this "valley of disappointment".

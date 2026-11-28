@@ -4,7 +4,7 @@ channel: Zero to One
 by: Peter Thiel
 shelf: books
 n: 104
-part: Ch. 6–7
+part: Ch. 6–7 (from about 1:23:00)
 title: You are not a lottery ticket: make a plan, and follow the power law
 charts: false
 ---

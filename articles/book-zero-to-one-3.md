@@ -4,7 +4,7 @@ channel: Zero to One
 by: Peter Thiel
 shelf: books
 n: 103
-part: Ch. 5
+part: Ch. 5 (from about 1:00:00)
 title: Last mover advantage: build what lasts, and start with a small market
 charts: false
 ---

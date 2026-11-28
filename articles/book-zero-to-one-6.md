@@ -4,7 +4,7 @@ channel: Zero to One
 by: Peter Thiel
 shelf: books
 n: 106
-part: Ch. 9–10
+part: Ch. 9–10 (from about 2:33:00)
 title: Foundations and the "mafia": get the start right and build a team that fits
 charts: false
 ---
@@ -13,8 +13,8 @@ charts: false
 ## Chapter 9: foundations
 - **Choose a co-founder like a marriage partner.** Skills matter, but how well you know each other and work together matters more.
 - **Ownership, possession and control** (who owns the equity, who runs it day to day, who formally governs it) cause trouble when they drift apart.
-- **Small boards work.** Three people is ideal; big boards can't hold anyone to account.
-- **Low cash, more ownership.** A CEO paid a modest salary stays focused on the company's long-term value. Everyone should be paid in a way that rewards building value later, not taking it now.
+- **Small boards work.** A board of three is ideal, and it should never be more than five; big boards can't hold anyone to account.
+- **Low cash, more ownership.** A CEO paid a modest salary stays focused on the company's long-term value: Thiel's rule is no more than $150,000 a year for an early-stage CEO. Everyone should be paid in a way that rewards building value later, not taking it now.
 
 ## Chapter 10: the mechanics of mafia
 - Hire people who'll enjoy working together and stay, not just people with the best CVs.
