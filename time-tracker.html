@@ -526,6 +526,17 @@ h1,h2,h3{margin:0;font-family:var(--font-display);font-weight:600;text-wrap:bala
 .ar-wb.is-now i{opacity:1}
 .ar-wk-l{font-size:11.5px;color:var(--muted)}
 .ar-next{margin:0;font-size:13.5px;line-height:1.45}
+.ar-books{display:flex;flex-direction:column;gap:6px}
+.ar-books-h{font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--muted)}
+.ar-books ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:5px}
+.ar-book{display:grid;grid-template-columns:minmax(0,1fr) 64px 32px;gap:8px;align-items:center;font-size:12.5px;color:var(--muted)}
+.ar-book.is-cur{color:var(--ink);font-weight:600}
+.ar-book.is-done{color:var(--good)}
+.ar-bn{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ar-bm{height:5px;border-radius:99px;background:var(--surface-2);border:1px solid var(--line);overflow:hidden}
+.ar-bm i{display:block;height:100%;background:var(--accent)}
+.ar-book.is-done .ar-bm i{background:var(--good)}
+.ar-bc{font-family:var(--font-mono);font-size:11.5px;text-align:right;font-variant-numeric:tabular-nums}
 .ar-h{font-family:var(--font-sans);font-size:12px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--muted)}
 
 .home-next{background:var(--surface);border:1px solid var(--line);border-left:3px solid var(--accent);border-radius:var(--radius);padding:15px 16px;box-shadow:var(--shadow)}
@@ -2651,12 +2662,22 @@ button.step-name:hover .step-nm{color:var(--accent)}
     var done=currDone(g);READ_CURRICULUM.lessons.forEach(function(l){if(!isBook(l))return;var b=by[l.rung]=by[l.rung]||{all:0,d:0};b.all++;if(done[l.id])b.d++;});
     var ks=Object.keys(by);return {n:ks.filter(function(k){return by[k].d===by[k].all;}).length,of:ks.length};
   }
+  function bookShelf(g){   // every book on the reading list, in order: its chapter notes and how many are done
+    var done=currDone(g),by={},order=[];if(typeof READ_CURRICULUM==="undefined")return [];
+    READ_CURRICULUM.lessons.forEach(function(l){if(!isBook(l))return;if(!by[l.rung]){by[l.rung]={name:l.rung,all:0,d:0};order.push(by[l.rung]);}by[l.rung].all++;if(done[l.id])by[l.rung].d++;});
+    return order;
+  }
+  function bookList(shelf,cur,bf){
+    return '<div class="ar-books"><div class="ar-books-h">Your books · '+bf.n+' of '+bf.of+' finished</div><ul>'+shelf.map(function(b){
+      var c=b.name===cur?" is-cur":(b.d===b.all?" is-done":"");
+      return '<li class="ar-book'+c+'"><span class="ar-bn">'+esc(b.name)+'</span><span class="ar-bm"><i style="width:'+(b.d/b.all*100).toFixed(1)+'%"></i></span><span class="ar-bc">'+(b.d===b.all?"✓":b.d+"/"+b.all)+'</span></li>';}).join("")+'</ul></div>';
+  }
   function openAreas(){
     var now=Date.now(),wk=weekKey(now),A=[],W=7*86400000;
     var weeks=[3,2,1,0].map(function(n){return keyMs(weekBack(wk,n));});
     var wkAim=weekdayMin()>0?weekdayMin()*5*60:null;   // seconds: the day plan's weekday minutes, five days a week
-    var timeLever=function(ids){var h=weeks.map(function(t){return areaSec(ids,t,t+W);});
-      return {lever:"Time on it this week",v:h[3],aim:wkAim,leverTxt:fmtDur(h[3])+(wkAim?" of "+fmtDur(wkAim):""),hist:h,histTxt:h.map(fmtDur),from:"from your clocks"};};
+    var timeLever=function(ids,aim){var h=weeks.map(function(t){return areaSec(ids,t,t+W);});aim=aim===undefined?wkAim:aim;
+      return {lever:"Time on it this week",v:h[3],aim:aim,leverTxt:fmtDur(h[3])+(aim?" of "+fmtDur(aim):""),hist:h,histTxt:h.map(fmtDur),from:"from your clocks"};};
     var fg=findGoal("goal_fire");
     if(fg&&fg.fire){
       var f=fg.fire,T=fireTarget(f),mo=dayKey(now).slice(0,7),fl=timeLever(areaIds(["goal_fire"])),oa=((f.have||0)<=0&&goalOpenAction("goal_fire",null,/transfer/i))||goalOpenAction("goal_fire");   // nothing invested yet: the transfer is the step
@@ -2678,13 +2699,14 @@ button.step-name:hover .step-nm{color:var(--accent)}
     }
     var rg=findGoal("goal_read");
     if(rg){
-      var bf=booksFinished(),hr=weeks.map(function(t){return actsYes(rg,t,t+W);}),va=hr[3],cl=currentLesson(rg);
-      A.push({id:"read",name:"Reading",resLabel:"Books finished, of "+bf.of,res:String(bf.n),pct:bf.of?bf.n/bf.of*100:0,
-        lever:"Book actions done this week",v:va,aim:3,leverTxt:va+" of 3",hist:hr,histTxt:hr.map(String),from:"counted from your sittings",
-        next:cl&&isBook(cl.lesson)?cl.lesson.rung+": “"+cl.lesson.concept+"”. End it with your action, “After I …, I will …”.":"your next reading sitting.",
-        started:hr.some(function(x){return x>0;})||bf.n>0||goalStats("goal_read").total>0,
-        head:va?va+" of 3 book actions done this week":"No book actions done this week",
-        sub:"Each book sitting ends with one action for tomorrow; the next sitting asks whether you did it. Those yeses count here.",btn:["Open Lessons","set-view","lessons"]});
+      var bf=booksFinished(),shelf=bookShelf(rg),cl=currentLesson(rg),cb=cl&&isBook(cl.lesson)?cl.lesson.rung:null;
+      var bk=shelf.filter(function(x){return x.name===cb;})[0]||shelf.filter(function(x){return x.d<x.all;})[0]||null;
+      var rl=timeLever(areaIds(["goal_read"]),rg.dailyMin>0?rg.dailyMin*7*60:wkAim);
+      var rnext=cl&&isBook(cl.lesson)?cl.lesson.rung+", "+(cl.lesson.stage_name||"the next chapter")+": “"+cl.lesson.concept+"”.":"your next book.";
+      A.push(Object.assign(rl,{id:"read",name:"Reading",resLabel:bk?bk.name:"Your books",res:bk?"chapter note "+Math.min(bk.d+1,bk.all)+" of "+bk.all:bf.n+" of "+bf.of+" finished",pct:bk?bk.d/bk.all*100:(bf.of?bf.n/bf.of*100:0),
+        extra:bookList(shelf,bk&&bk.name,bf),next:rnext,started:bf.n>0||goalStats(areaIds(["goal_read"])).total>0,
+        head:rl.v?fmtDur(rl.v)+" of reading this week":"No reading this week",
+        sub:(rg.dailyMin>0?"Your goal is "+rg.dailyMin+" minutes a day. ":"")+"Next: "+rnext,btn:["Open Lessons","set-view","lessons"]}));
     }
     var tg=findGoal("goal_trade");
     if(tg){
@@ -2705,7 +2727,7 @@ button.step-name:hover .step-nm{color:var(--accent)}
   function areaCard(a){
     var cls=a.status==="on track"?"is-good":(a.status==="behind"?"is-warn":"is-new");
     return '<article class="card ar-card"><div class="ar-ch"><button class="ar-name" data-action="'+a.btn[1]+'" data-id="'+esc(a.btn[2])+'" data-view="'+esc(a.btn[2])+'" type="button">'+esc(a.name)+'</button><span class="ar-st '+cls+'">'+a.status+'</span></div>'+
-      '<div class="ar-res"><span>'+esc(a.resLabel)+'</span><b>'+esc(a.res)+'</b></div><div class="ar-bar"><i style="width:'+a.pct.toFixed(1)+'%"></i></div>'+
+      '<div class="ar-res"><span>'+esc(a.resLabel)+'</span><b>'+esc(a.res)+'</b></div><div class="ar-bar"><i style="width:'+a.pct.toFixed(1)+'%"></i></div>'+(a.extra||'')+
       '<div class="ar-lev"><div class="ar-lev-h"><span>'+esc(a.lever)+'</span><b>'+esc(a.leverTxt)+'</b></div>'+areaBars(a)+'<div class="ar-wk-l">last 4 weeks · '+esc(a.from)+'</div></div>'+
       '<p class="ar-next"><b>Next step:</b> '+esc(a.next)+'</p></article>';
   }

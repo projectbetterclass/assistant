@@ -25,7 +25,9 @@ for (const w of [402, 1280]) {
   const bizBars = await page.$$eval(".ar-card:nth-child(2) .ar-wb i", es => es.map(e => e.style.height));
   check(`${w} business bars: the 5 minutes in the week of 16 November show`, bizBars[2] !== "0%" && bizBars[3] === "0%", bizBars.join(","));
   const rd = await card(page, "Reading");
-  check(`${w} reading: books finished, actions counted from sittings, behind (it has time on it)`, /Books finished, of 8 0/.test(rd) && /Book actions done this week 0 of 3/.test(rd) && /counted from your sittings/.test(rd) && /Atomic Habits: “Tiny gains compound/.test(rd) && /behind/.test(rd), rd);
+  check(`${w} reading: the book you're in, every book on the shelf, time against 20 minutes a day`, /Atomic Habits chapter note 1 of 7/.test(rd) && /Your books · 0 of 8 finished/i.test(rd) && /Time on it this week 0m of 2h 20m/.test(rd) && /Next step: Atomic Habits, Intro–Ch\. 1: “Tiny gains compound/.test(rd) && /behind/.test(rd) && !/After I/.test(rd), rd);
+  const shelf = await page.$$eval(".ar-book", es => es.map(e => e.querySelector(".ar-bn").innerText + " " + e.querySelector(".ar-bc").innerText + (e.classList.contains("is-cur") ? " *" : "")));
+  check(`${w} the shelf: eight books in reading order, Atomic Habits marked as current`, shelf.length === 8 && shelf[0] === "Atomic Habits 0/7 *" && shelf[1] === "Eat That Frog! 0/8" && shelf[7] === "$100M Money Models 0/7", shelf.join(" | "));
   const tr = await card(page, "Trading");
   check(`${w} trading: demo account and the first rule`, /Demo account not opened yet/.test(tr) && /Time on it this week 0m of 1h 10m/.test(tr) && /Next step: Rules before real money\./.test(tr) && /not started/.test(tr), tr);
   check(`${w} the lessons line`, /Today’s lessons: 0 of 7 done/.test(await txt(page, ".ar-les")), await txt(page, ".ar-les"));
