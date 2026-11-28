@@ -4,26 +4,29 @@ channel: Eat That Frog!
 by: Brian Tracy
 shelf: books
 n: 602
-part: ‘Plan every day in advance’ and ‘Apply the 80/20 rule to everything’
+part: Ch. 2–3
 title: Plan tomorrow tonight, and start with the 20% that's worth the most
 charts: false
 ---
-**The argument.** Planning is thinking before acting, and it pays back many times over: every minute spent planning saves as many as ten in doing. Once the day is on a list, most of what's on it barely matters: a few items are worth more than all the rest together, and those are the ones to do first.
+**The argument.** Planning is bringing the future into the present so you can do something about it now, and it pays back many times over. Once the day is on a list, most of what's on it barely matters: a few items are worth more than all the rest together, and those are the ones to do first.
 
 ## Plan every day in advance
-- **The return.** Tracy's rule of thumb: a minute of planning saves up to ten minutes of execution. Ten or twelve minutes a day of planning is the best-paid time you spend.
+- **The return.** Every minute spent planning saves as many as ten in doing. Ten to twelve minutes planning your day saves up to two hours of wasted time.
 - **The six Ps.** Proper prior planning prevents poor performance.
-- **Work from lists.** A master list of everything you want to do some day; a monthly list, made before the month starts; a weekly list; and a daily list, made the evening before. Tracy claims working from a list raises your output by about a quarter from the first day.
-- **Tick things off.** Crossing off a finished task feels good, and that feeling builds momentum for the next one.
-- **Plan projects the same way.** List every step, put them in order, and lay them out on paper so you can see the whole job.
+- **Work from a list.** Add anything new to the list before you do it. Working from a list raises your output by 25% or more, about two hours a day, from the first day.
+- **Make it the night before.** Carry over what's left and add tomorrow's tasks. Your subconscious works on it while you sleep.
+- **Four lists.** A master list of everything you want to do some day; a monthly list, made at the end of the month before; a weekly list, planned in advance; and a daily list, made from those.
+- **Tick things off.** Seeing yourself work through the list motivates you and builds momentum.
+- **Plan projects.** List every step, organize by priority and sequence, lay it out on paper, then work one task at a time.
+- **The 10/90 rule.** The first 10% of time spent planning saves up to 90% of the time doing the job.
 
 ## Apply the 80/20 rule to everything
-- **The rule.** About 20% of what you do brings about 80% of your results. On a list of ten things, two will be worth more than the other eight put together.
-- **Same time, different value.** Every task can take about as long as another, but one can be worth five or ten times as much.
-- **The trap.** People start with the small, easy tasks to "clear the decks", and spend the day busy on the 80% that barely counts.
-- **Before you start, ask.** Is this in the top 20% of what I could do right now? If not, don't start it.
-- **Motivation follows.** Starting on a high-value task motivates you; finishing one feels better than finishing ten small ones.
+- **The rule.** Pareto found that 20% of people held 80% of the wealth; the same split runs through everything. 20% of your activities bring 80% of your results. On a list of ten things, two will be worth more than the other eight put together.
+- **Same time, different value.** Each task may take as long as another, but one or two will be worth five or ten times the rest. That one is your frog.
+- **The trap.** Most people put off the top 10 or 20% and busy themselves with the trivial many.
+- **Before you start, ask.** Is this in the top 20% of my activities, or the bottom 80%? Resist clearing up small things first: whatever you do first every day becomes a habit.
+- **The same time, more satisfaction.** An important job often takes no longer than an unimportant one, but finishing it feels far better.
 
-**The idea worth keeping.** Plan tomorrow tonight, then start with the one or two items worth more than all the rest, and leave the easy ones for later.
+**The idea worth keeping.** Plan tomorrow tonight, then start with the one or two items worth more than all the rest, and leave the small things for later.
 
 **Try it on your work.** Tonight, write tomorrow's list for your AI service. Circle the two items worth more than the other eight together, and do the first one before you open anything else.

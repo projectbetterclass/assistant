@@ -125,13 +125,13 @@ for (const w of [402, 900]) {
 {
   const { page, errors, ctx } = await openPage(browser, { width: 402, time: new Date(2026, 10, 18, 18, 30).getTime() });
   await start(page, "E03");
-  check("E03 names its chapters", /Listen to ‘Consider the consequences’, ‘Practice creative procrastination’ and ‘Use the ABCDE method’ of the audiobook/.test(await txt(page, ".ses-brief")), (await txt(page, ".ses-brief")).slice(0, 300));
+  check("E03 names its chapters", /Listen to Ch. 4–6 of the audiobook/.test(await txt(page, ".ses-brief")), (await txt(page, ".ses-brief")).slice(0, 300));
   await toStep(page, 1);
   check("E03 map", /The ABCDE method/.test(await txt(page, ".ses-walk")), (await txt(page, ".ses-walk")).slice(0, 300));
   await ctx.close();
   const b = await openPage(browser, { width: 402, time: new Date(2026, 10, 18, 18, 30).getTime() });
   await start(b.page, "Y04");
-  check("Y04 names its chapter", /‘The Five Laws of Gold’ of the audiobook/.test(await txt(b.page, ".ses-brief")), (await txt(b.page, ".ses-brief")).slice(0, 300));
+  check("Y04 names its chapter", /Listen to Ch. 5 of the audiobook/.test(await txt(b.page, ".ses-brief")), (await txt(b.page, ".ses-brief")).slice(0, 300));
   await toStep(b.page, 1);
   check("Y04 map", /The five laws/.test(await txt(b.page, ".ses-walk")), (await txt(b.page, ".ses-walk")).slice(0, 300));
   check("no errors (Frog and Babylon)", errors.length === 0 && b.errors.length === 0, errors.concat(b.errors).join(" | "));

@@ -4,28 +4,29 @@ channel: Eat That Frog!
 by: Brian Tracy
 shelf: books
 n: 606
-part: ‘Identify your key constraints’, ‘Put the pressure on yourself’, ‘Develop a sense of urgency’ and ‘Single handle every task’
-title: Find what's holding you back, set your own deadline, and finish what you start
+part: Ch. 12–14
+title: Find what's holding you back, put the pressure on yourself, and be your own cheerleader
 charts: false
 ---
-**The argument.** Between you and any goal there's one main thing that sets how fast you get there. Find it, and you know what to work on. Then don't wait for anyone else to push you: set your own deadlines, move quickly, and once you start a task, stay on it until it's done.
+**The argument.** Between you and any goal there's one main constraint that sets how fast you get there, and it's usually inside you. Find it and work on it. Then don't wait for anyone to push or motivate you: set your own deadlines, and talk to yourself like an optimist.
 
 ## Identify your key constraints
-- **The limiting step.** In any process there's one bottleneck that decides how fast you reach the goal. Working on anything else barely changes the result.
-- **Look inside first.** Tracy applies the 80/20 rule here too: about 80% of what holds you back is inside you or your own organization (a skill, a habit, a process), and only about 20% is outside.
-- **Ask.** What is it in me that's holding me back? Then fix that one thing first.
+- **The limiting factor.** Every task and every goal has one choke point that sets the speed: a person, a resource, a weakness. Ask: why aren't I at my goal already?
+- **80/20 again.** About 80% of constraints are internal, in your own skills, habits or organization; only 20% are outside, like competitors or markets. Successful people start by asking: what is it in me that's holding me back?
+- **Name the right one.** A big company retrained its whole sales force over falling sales. The real cause: an accountant had priced the products too high.
+- **There's always another.** Once one constraint is gone, the next appears. Removing one is often the best frog to eat first.
 
 ## Put the pressure on yourself
-- **Don't wait to be told.** Most people wait for someone to push them. Tracy says only about 2% can work entirely without supervision, and those are the leaders.
-- **Your own deadlines.** Set a deadline for every task and hold yourself to it, with standards higher than anyone would set for you.
-- **The trip test.** Imagine you have to leave for a month tomorrow. What would you make sure was done before you go? Work on that as if you really were leaving.
+- **Nobody is coming.** Waiting to be motivated is like waiting for a bus on a street where no buses run. Only about 2% of people can work entirely without supervision: the leaders.
+- **Raise the bar.** Set standards higher than anyone would set for you. Self-esteem is the reputation you have with yourself, and it grows every time you push past where others stop.
+- **Imaginary deadlines.** Imagine you have to leave town for a month tomorrow, or have won a holiday that leaves in the morning. What would you finish first? Start on that now.
+- **Race your own clock.** Set deadlines and sub-deadlines on everything, estimate each step, and try to beat them.
 
-## Urgency and single handling
-- **Bias for action.** High performers think carefully, then move fast. Say "do it now!" to yourself and start.
-- **Momentum.** Starting takes a lot of energy; keeping going takes much less. Once you're moving, stay moving.
-- **Single handle every task.** Once you start, keep going until it's 100% done. Every stop and restart costs time: Tracy says finishing in one go can cut the time a task takes by as much as half.
-- **Self-discipline.** Making yourself do what you should, when you should, whether you feel like it or not.
+## Motivate yourself into action
+- **Self-talk.** Most of your emotions come from how you explain events to yourself. Say "I like myself", "I can do it", "I feel terrific."
+- **Choose your attitude.** Viktor Frankl: the last of the human freedoms is to choose your attitude. Don't complain about your problems to others.
+- **Four habits of optimists.** From Martin Seligman's 22-year study: optimists look for the good in every situation, seek the lesson in every setback, look for the solution to every problem, and think and talk about their goals.
 
-**The idea worth keeping.** Remove the one thing in your way, set the deadline yourself, and stay on the task until it's finished.
+**The idea worth keeping.** Remove the one thing in your way, which is usually in you, set the pressure yourself, and keep your self-talk positive.
 
-**Try it on your work.** Write the biggest goal for your AI service, the one constraint that sets its speed, and whether it's in you or outside you. Then give tomorrow's frog your own deadline, and don't stop until it's done.
+**Try it on your work.** Write the biggest goal for your AI service, the one constraint that sets its speed, and whether it's in you or outside. Then give tomorrow's frog a deadline of your own, and try to beat it.

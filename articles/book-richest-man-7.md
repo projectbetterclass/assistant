@@ -4,25 +4,23 @@ channel: The Richest Man in Babylon
 by: George S. Clason
 shelf: books
 n: 707
-part: ‘The Luckiest Man in Babylon’
+part: Ch. 10
 title: Work is the friend: how a slave became a merchant prince
 charts: false
 ---
 **The argument.** The luckiest person in Babylon isn't the one born rich, but the one who learned to love work. Sharru Nada, a wealthy merchant, tells the story of starting as a slave to Hadan Gula, the spoilt grandchild of Sharru Nada's old partner, and shows that work done gladly bought both freedom and wealth.
 
 ## The merchant and the grandchild
-- **The journey.** Sharru Nada leads a caravan back toward Babylon with Hadan Gula, grandchild of Arad Gula, the partner who once helped Sharru Nada. Hadan Gula wears jewels, looks down on work, and thinks the rich don't need to do any.
-- **Sharru Nada's worry.** Arad Gula was the hardest-working person Sharru Nada knew; Hadan Gula has inherited the money but not the habit.
+- **The journey.** Sharru Nada leads a caravan home from Damascus with Hadan Gula, grandchild of Arad Gula, the partner Sharru Nada owes a debt that can never be repaid. Hadan Gula wears rings and earrings, thinks work is for slaves, and asks why Sharru Nada never takes time to enjoy life.
+- **Passing the walls.** As they pass slaves at work outside Babylon, Sharru Nada begins: I was once chained in a line like that.
 
 ## Sharru Nada's story
-- **Chained as a slave.** Sold into slavery as a young person, Sharru Nada walked chained beside a farmer named Megiddo, who said work was their best friend: work done well made a slave valued, and a valued slave could hope for more.
-- **The baker's.** Bought by a baker, Sharru Nada worked harder than asked, learned the trade, and got permission to sell honey cakes in the streets in spare hours, keeping a share of each sale to save toward buying their freedom.
-- **Arad Gula.** One of the regular customers, Arad Gula, a rug trader who had been a slave too, encouraged Sharru Nada to keep saving, and later helped Sharru Nada become free. The two became partners and prospered.
-- **The lesson for Hadan Gula.** Arad Gula's wealth came from loving work, not from luck. Hadan Gula takes off the jewels and decides to earn a place in the business.
-
-## Work is the friend
-- **Work isn't a punishment.** Done well and gladly, it brings skill, respect, friends and money.
-- **Freedom is earned.** Sharru Nada and Arad Gula both bought their freedom with what they saved from extra work.
+- **The chain gang.** Sold into slavery as a young person, Sharru Nada was chained beside Megiddo, a farmer, who said work was the best friend a person could have: work done well would make them valued. Also in the line were Zabado, a sheep thief who shirked, and a sailor called Pirate, who wanted to fight.
+- **The baker.** At the slave market, Sharru Nada talked a baker, Nana-naid, into buying a willing worker rather than a skilled one. Sharru Nada learned to bake bread and honey cakes, then got permission to sell cakes in the streets, splitting the profit and saving toward buying freedom.
+- **Arad Gula.** A regular customer was Arad Gula, a rug seller who was also a slave. Sharru Nada passed on Megiddo's words, and Arad Gula threw themselves into the work, earned their freedom, and prospered.
+- **Disaster.** Nana-naid lost heavily at gambling, and the moneylender seized Sharru Nada as payment. Sold on, Sharru Nada was sent to dig the king's canal in the desert and fell ill with fever. Zabado, who shirked, was broken; Pirate, who fought, was killed.
+- **Freedom.** Then a messenger brought Sharru Nada back to Babylon. Arad Gula had searched everywhere, bought Sharru Nada at a high price, and smashed the clay tablet of ownership: "now thou art a free man." They went to Damascus as partners.
+- **Hadan Gula's choice.** Work was Arad Gula's only key to wealth. Hadan Gula takes the jewels from their ears and fingers and rides behind the leader with respect, ready to start humbly.
 
 **The idea worth keeping.** The luckiest people are those who make work their friend: done well and gladly, it buys freedom.
 

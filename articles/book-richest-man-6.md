@@ -4,22 +4,23 @@ channel: The Richest Man in Babylon
 by: George S. Clason
 shelf: books
 n: 706
-part: ‘The Camel Trader of Babylon’ and ‘The Clay Tablets from Babylon’
+part: Ch. 8–9
 title: Get out of debt: a tenth to keep, seven to live on, two to pay what you owe
 charts: false
 ---
-**The argument.** Debt is escaped with a plan and the will to face it. Dabasir the camel trader, once a runaway debtor and a slave, came home and paid back everyone. The plan was carved on clay tablets: keep a tenth, live on seven-tenths, and use two-tenths to pay creditors. Thousands of years later, a modern household tries it and it still works.
+**The argument.** Debt is escaped with a plan and the will to face it. Dabasir the camel trader, once a runaway debtor and a slave, came home and paid back everyone. The plan, carved on clay tablets, was: keep a tenth, live on seven-tenths, and use two-tenths to pay creditors. Five thousand years later, an English professor's household tries it, and it still works.
 
 ## The camel trader
-- **Tarkad.** A hungry young man, in debt and avoiding the people owed money, runs into Dabasir, who is owed money too. Dabasir buys a meal and tells their own story.
-- **Dabasir's fall.** As a young saddle maker, Dabasir spent more than they earned, borrowed to cover it, and fled Babylon when the debts couldn't be paid. After joining raiders, Dabasir was captured and sold as a slave in Syria.
-- **The soul of a free person.** The master's wife, Sira, asked: do you have the soul of a free person or a slave? A free person faces their debts and repays them; a slave says "what can I do, I'm only a slave."
-- **Coming home.** Escaping across the desert, close to death, Dabasir decided to go back to Babylon and pay every debt. "Where the determination is, the way can be found."
+- **Tarkad.** Tarkad has eaten nothing but two stolen figs in two days, and is dodging the people owed money. Dabasir, an old friend of Tarkad's father, is one of them: Tarkad owes two coppers and a piece of silver. Dabasir takes Tarkad to an eating house, orders a whole leg of goat, and tells a story while eating it.
+- **Dabasir's fall.** As a young saddle maker, Dabasir earned little, wanted more than that could buy, and borrowed to get it. Unable to pay, Dabasir left home and family, worked for caravans, joined a band of desert robbers, and was captured and sold as a slave to a Syrian desert chief.
+- **The soul of a free person.** Sira, one of the chief's wives, asked: how can you call yourself free when your weakness brought you here? If you have the soul of a slave, you'll become one whatever your birth; if you have the soul of a free person, you'll earn respect in your own city. Nobody can respect themselves who doesn't repay honest debts.
+- **The escape.** Sira gave Dabasir two camels and the master's clothes. After days in the desert, close to death, Dabasir decided to go home and face the debts. "Where the determination is, the way can be found."
+- **Coming home.** Dabasir visited every creditor to ask for time. Mathon the gold lender found Dabasir work with Nebatur, a camel trader buying herds for the king, and every copper was repaid. Then Dabasir orders a big plate of food for Tarkad.
 
 ## The clay tablets
-- **The plan.** One-tenth of everything earned is kept. Seven-tenths pays for the household: food, clothes, home, and a little enjoyment. Two-tenths is shared fairly among creditors until all debts are paid.
-- **Facing the creditors.** Dabasir went to each one, explained honestly that the debt would be paid from two-tenths of every earning, and stuck to it. Some were difficult; all were paid in time, and Dabasir ended up with savings and a good name.
-- **The modern letters.** An archaeology professor who translated the tablets writes that their own household, deep in debt, tried the plan. The debts went down, the creditors were patient once they saw a plan, and they had savings for the first time.
+- **The letters.** In 1934, Alfred Shrewsbury, a professor in Nottingham, translates five tablets from an excavation at Babylon: they're Dabasir's plan.
+- **The plan.** A tenth of everything earned is kept. Seven-tenths pays for a home, clothes, food and a little enjoyment, and never more. Two-tenths, every full moon, is divided fairly among the creditors, whose names and debts are carved on the tablets.
+- **The Shrewsburys try it.** Deep in debt and buying on credit at high prices, they listed every debt, showed the list to each creditor, and offered 20% of income, shared out, which would clear everything in a little over two years, while paying cash for everything new. The creditors agreed. They learned to live comfortably on 70%, and the 10% grew. A year later the debts were shrinking and the savings growing.
 
 **The idea worth keeping.** Debt is paid with a plan and the will to face it: keep a tenth, live on seven-tenths, pay two-tenths to your creditors, and tell them the plan.
 

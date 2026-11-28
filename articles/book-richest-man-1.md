@@ -4,27 +4,24 @@ channel: The Richest Man in Babylon
 by: George S. Clason
 shelf: books
 n: 701
-part: ‘The Man Who Desired Gold’ and ‘The Richest Man in Babylon’
+part: Ch. 1–2
 title: A part of all you earn is yours to keep
 charts: false
 ---
-**The argument.** Two friends in ancient Babylon have worked hard all their lives and still have nothing, while their old schoolmate Arkad has become the richest person in the city. Arkad's secret is simple, and was learned from a moneylender: keep at least a tenth of everything you earn, put it to work, and take advice only from people who know.
+**The argument.** Two friends in ancient Babylon have worked hard for half a lifetime and still have empty purses, while their old schoolmate Arkad has become the richest person in the city. Arkad's secret, learned from the moneylender Algamish, is simple: keep at least a tenth of everything you earn, put it to work, and take advice only from people who know.
 
 ## The man who desired gold
-- **Bansir and Kobbi.** Bansir, a skilled chariot builder, and Kobbi, a musician, add it up: years of good work, good pay, and empty purses. "We have earned much, but kept nothing."
-- **The question.** Why should Arkad, who started like them, be rich while they're poor? They go and ask.
+- **Bansir and Kobbi.** Bansir, a skilled chariot builder, wakes from a dream of wealth to an empty purse. Kobbi, a musician, comes to borrow two shekels, and Bansir has none to lend. After half a lifetime of hard work, all around them is wealth, and none of it is theirs.
+- **The question.** Why should Arkad, who started like them, be rich? They gather their friends and go to ask.
+- **Arkad's first answer.** They each had enough time to become wealthy; they just never kept any of what they earned.
 
 ## Arkad's story
-- **Algamish's lesson.** As a young scribe, Arkad carved a law onto clay tablets for Algamish the moneylender, and asked for the secret of wealth as payment. The answer: "A part of all I earned was mine to keep." Pay yourself first: keep no less than a tenth, whatever you earn.
-- **Mistake one: the brickmaker.** After a year of saving, Arkad gave the savings to Azmur the brickmaker, who was going to buy jewels from the Phoenicians to resell. They were worthless glass. Algamish: why trust a brickmaker's knowledge of jewels? Take advice from people who know what they're talking about.
-- **Mistake two: eating the earnings.** The next year's savings were lent out and earned well, but Arkad spent what they earned on fine living. Algamish: those earnings are your gold's children; set them to work too, so they bring in more.
-- **The tree.** Wealth grows like a tree from a tiny seed. The first coin you save is the seed; the sooner you plant it, the sooner it grows.
-- **The result.** Arkad kept saving a tenth, put it to work with people who understood their trade, and became Algamish's partner and then heir.
+- **Algamish's lesson.** As a young scribe carving clay tablets for a few coppers a day, Arkad worked through the night on a law for Algamish, and asked for the secret of wealth as payment. The answer: "I found the road to wealth when I decided that a part of all I earned was mine to keep." Not less than a tenth, however little you earn. Pay yourself first.
+- **The tree.** Wealth grows like a tree from a tiny seed. The first copper you save is the seed; the sooner you plant it, the sooner it grows.
+- **Mistake one: the brickmaker.** After a year of saving, Arkad gave the savings to Azmur the brickmaker, who was sailing to buy rare jewels from the Phoenicians. They sold Azmur worthless glass. Algamish: why trust a brickmaker's knowledge of jewels? Would you ask the breadmaker about the stars?
+- **Mistake two: eating the children.** The next year's savings were lent to Aggar the shield maker to buy bronze, and paid a rental every four months, which Arkad spent on feasts and a scarlet tunic. Algamish: every coin you save is a slave that works for you, and what it earns is its children. You're eating them.
+- **The result.** Arkad kept saving a tenth and put it to work with people who knew their trade. Algamish, old and with large estates, made Arkad a partner with a share of the estate.
 
-## Why the friends stayed poor
-- **Not for lack of skill or effort.** They never kept any of what they earned, so nothing ever grew.
-- **The habit is the secret.** Arkad's friends can start today, at any income.
-
-**The idea worth keeping.** Pay yourself first: keep a tenth of everything you earn before anything else, and never spend what it earns.
+**The idea worth keeping.** Pay yourself first: keep a tenth of everything you earn before anything else, and let what it earns keep working too.
 
 **Try it on your work.** Check your FIRE plan: does the automatic transfer take at least a tenth of your take-home pay on payday, before anything else is spent? If not, set the amount you'll move to.
