@@ -4,7 +4,7 @@ channel: Zero to One
 by: Peter Thiel
 shelf: books
 n: 102
-part: Ch. 3–4 (from about 0:28:00)
+part: Ch. 3–4 (from 0:29:11)
 title: Monopoly, not competition: why the best businesses avoid fights
 charts: false
 ---

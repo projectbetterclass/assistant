@@ -4,7 +4,7 @@ channel: Zero to One
 by: Peter Thiel
 shelf: books
 n: 106
-part: Ch. 9–10 (from about 2:33:00)
+part: Ch. 9–10 (from 2:36:08)
 title: Foundations and the "mafia": get the start right and build a team that fits
 charts: false
 ---

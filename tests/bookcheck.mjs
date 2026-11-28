@@ -139,7 +139,7 @@ for (const w of [402, 900]) {
   // Zero to One's audiobook doesn't announce its chapters, so the sitting says roughly where they start
   const z = await openPage(browser, { width: 402, time: new Date(2026, 10, 18, 18, 30).getTime() });
   await start(z.page, "Z02");
-  check("Z02 says where in the audio its chapters start", /Listen to Ch\. 3–4 \(from about 0:28:00\) of the audiobook/.test(await txt(z.page, ".ses-brief")), (await txt(z.page, ".ses-brief")).slice(0, 300));
+  check("Z02 says where in the audio its chapters start", /Listen to Ch\. 3–4 \(from 0:29:11\) of the audiobook/.test(await txt(z.page, ".ses-brief")), (await txt(z.page, ".ses-brief")).slice(0, 300));
   check("no errors (Zero to One)", z.errors.length === 0, z.errors.join(" | "));
   await z.ctx.close();
 }

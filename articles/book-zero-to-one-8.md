@@ -4,7 +4,7 @@ channel: Zero to One
 by: Peter Thiel
 shelf: books
 n: 108
-part: Ch. 12–14 and the conclusion (from about 3:26:00)
+part: Ch. 12–14 and the conclusion (from 3:27:03)
 title: Seven questions every business must answer
 charts: false
 ---

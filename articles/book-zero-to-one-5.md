@@ -4,7 +4,7 @@ channel: Zero to One
 by: Peter Thiel
 shelf: books
 n: 105
-part: Ch. 8 (from about 2:10:00)
+part: Ch. 8 (from 2:09:08)
 title: Secrets: every great business is built on something others don't see
 charts: false
 ---

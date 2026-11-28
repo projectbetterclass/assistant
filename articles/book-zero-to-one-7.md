@@ -4,7 +4,7 @@ channel: Zero to One
 by: Peter Thiel
 shelf: books
 n: 107
-part: Ch. 11 (from about 3:03:00)
+part: Ch. 11 (from 3:05:12)
 title: If you build it, will they come? Distribution is half the business
 charts: false
 ---
