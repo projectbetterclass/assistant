@@ -486,7 +486,7 @@ h1,h2,h3{margin:0;font-family:var(--font-display);font-weight:600;text-wrap:bala
 .view{animation:viewin .18s ease}
 @keyframes viewin{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
 .home{display:flex;flex-direction:column;gap:16px}
-/* Now: the four open areas — the one to improve, each area's result and weekly lever, and the weekly check-in */
+/* Now: the four open areas — the one to improve, and each area's result and weekly lever */
 .areas{display:flex;flex-direction:column;gap:16px}
 .ar-top{display:flex}
 .ar-les{flex:1;min-width:0;display:flex;align-items:center;justify-content:space-between;gap:12px;border:1px solid var(--line);background:var(--surface-2);border-radius:12px;padding:12px 15px;font-family:inherit;font-size:13.5px;color:var(--muted);text-align:left;cursor:pointer}
@@ -527,19 +527,6 @@ h1,h2,h3{margin:0;font-family:var(--font-display);font-weight:600;text-wrap:bala
 .ar-wk-l{font-size:11.5px;color:var(--muted)}
 .ar-next{margin:0;font-size:13.5px;line-height:1.45}
 .ar-h{font-family:var(--font-sans);font-size:12px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--muted)}
-.ck{padding:15px 16px;display:flex;flex-direction:column;gap:11px}
-.ck-h{display:flex;justify-content:space-between;align-items:baseline;gap:6px 12px;flex-wrap:wrap}
-.ck-when{font-size:12.5px;color:var(--muted)}
-.ck-said{font-size:13.5px;line-height:1.45;padding:9px 11px;border-radius:10px;background:var(--surface-2)}
-.ck-form{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px 12px}
-.ck-f{display:flex;flex-direction:column;gap:5px;font-size:12.5px;font-weight:600;min-width:0}
-.ck-wide,.ck-btns{grid-column:1/-1}
-.ck-btns{display:flex;gap:8px}
-@media (max-width:640px){.ck-form{grid-template-columns:1fr}}
-.ck-sum{display:flex;flex-wrap:wrap;gap:8px 18px;font-size:13.5px;color:var(--muted)}
-.ck-sum b{font-family:var(--font-mono);color:var(--ink)}
-.ck-note{margin:0;font-size:12px;color:var(--muted)}
-.ck .btn-sm{align-self:flex-start}
 
 .home-next{background:var(--surface);border:1px solid var(--line);border-left:3px solid var(--accent);border-radius:var(--radius);padding:15px 16px;box-shadow:var(--shadow)}
 .home-next-eye{font-size:11px;text-transform:uppercase;letter-spacing:.07em;color:var(--accent);font-weight:600;margin-bottom:9px}
@@ -2204,7 +2191,6 @@ button.step-name:hover .step-nm{color:var(--accent)}
     if(!("activeId" in s)) s.activeId=null;
     if(!Array.isArray(s.goals)) s.goals=[];
     if(!Array.isArray(s.projects)) s.projects=[];
-    if(!s.checkins||typeof s.checkins!=="object") s.checkins={};   // the weekly check-in, by the week's Monday
     return s;
   }
   function saveLocal(){try{localStorage.setItem(LS_KEY,JSON.stringify(state));}catch(e){}}
@@ -2368,7 +2354,6 @@ button.step-name:hover .step-nm{color:var(--accent)}
   function onSubmit(e){
     var f=e.target.closest("form[data-action]");if(!f)return;e.preventDefault();
     var a=f.getAttribute("data-action");
-    if(a==="ck-save"){saveCheckin();return;}
     if(a==="quick-start"){var qn=(val("q-name")||"").trim();if(qn)quickStart(qn,val("q-cat"),shotTyped());}   // after a screenshot that couldn't be read, typing it keeps that start time
     else if(a==="shot-save")shotSave(val("shot-name"),val("shot-goal"));
     else if(a==="add-planned"){var est=parseInt(val("p-est"),10);addPlanned(val("p-name"),val("p-cat"),isNaN(est)?0:est);}
@@ -2503,8 +2488,6 @@ button.step-name:hover .step-nm{color:var(--accent)}
     else if(a==="dec-all"){ui.decAll=!ui.decAll;render();}
     else if(a==="dec-del"){var ddid=b.getAttribute("data-did");if(armed("dec-del:"+ddid))deleteDecision(id,ddid);}
     else if(a==="retry"){syncMode="check";renderChip();persist();}
-    else if(a==="ck-edit"){ui.ckEdit=true;render();var ce=document.getElementById("ck-inv");if(ce)ce.focus();}
-    else if(a==="ck-cancel"){ui.ckEdit=false;render();}
     else if(a==="set-view"){var v=b.getAttribute("data-view");if(v&&v!==ui.view){ui.view=v;try{localStorage.setItem(VIEW_KEY,v);}catch(e){}render();window.scrollTo(0,0);}}
     else if(a==="tt-open"){openGoalPage(id);ui.view="tree";try{localStorage.setItem(VIEW_KEY,"tree");}catch(e){}render();window.scrollTo(0,0);}
     else if(a==="tt-step"){openGoalPage(b.getAttribute("data-gid"));ui.stepOpen[id]=true;render();var se=document.querySelector('[data-action="toggle-step-open"][data-id="'+id+'"]');if(se&&se.scrollIntoView)se.scrollIntoView({block:"start"});else window.scrollTo(0,0);}
@@ -2649,73 +2632,69 @@ button.step-name:hover .step-nm{color:var(--accent)}
     return '<div class="view home"><div class="home-a">'+a+'</div><div class="home-b">'+homeGlance()+renderCaptureHome()+'</div></div>';
   }
   /* ---------- Now: the four open areas (FIRE, business, reading, trading) ----------
-     The lessons have their own tab; this page is for the open-ended work. Each area shows a result, one weekly lever you
-     control with an aim, that lever over the last four weeks, and the next step from its own plan. The area furthest below
-     its aim is the one to improve this week. Most levers aren't visible to the app, so a weekly check-in records them;
-     book actions count themselves, from the sittings' "did you do it?". */
-  function areaAim(k){return {talks:3,acts:3,trades:3}[k];}   // a function, not a var: the first render runs before a var here is set
+     The lessons have their own tab; this page is for the open-ended work. Each area shows a result, one weekly lever with
+     an aim, that lever over the last four weeks, and the next step from its own plan. The area furthest below its aim is
+     the one to improve this week. Every lever is something the app records itself, so there is nothing to fill in: time on
+     the area from your clocks (aim: your day plan's weekday minutes × 5), and for reading the book actions you said you did. */
   function weekKey(ms){var d=new Date(ms);d.setHours(0,0,0,0);d.setDate(d.getDate()-(d.getDay()+6)%7);return dayKey(d.getTime());}
   function keyMs(k){var p=k.split("-");return new Date(+p[0],+p[1]-1,+p[2]).getTime();}
   function weekBack(k,n){var d=new Date(keyMs(k));d.setDate(d.getDate()-7*n);return dayKey(d.getTime());}
-  function checkin(k){return (state.checkins||{})[k]||null;}
   function goalOpenAction(gid,stepId,re){return state.tasks.filter(function(t){return t.goalId===gid&&!t.done&&t.name&&t.stepId&&!isLessonTask(t)&&(!stepId||t.stepId===stepId)&&(!re||re.test(t.name));})[0]||null;}   // a plan action (it sits on a step), not a timer
   function firstOpenStep(ids){for(var i=0;i<ids.length;i++){var g=findGoal(ids[i]),s=g&&(g.steps||[]).filter(function(x){return !x.done;})[0];if(s)return s;}return null;}
   function actsYes(g,from,to){return ((g&&g.curr&&g.curr.actLog)||[]).filter(function(x){return x.did&&x.at>=from&&x.at<to;}).length;}
+  function areaSec(ids,from,to){   // seconds on these goals between two moments, a running clock included
+    var now=Date.now(),s=0;state.tasks.forEach(function(t){if(ids.indexOf(t.goalId)<0)return;(t.sessions||[]).forEach(function(se){if(se.start>=from&&se.start<to)s+=((se.end==null?now:se.end)-se.start)/1000;});});return s;
+  }
+  function areaIds(list){var out=[];list.forEach(function(id){var g=findGoal(id);if(g)treeIds(g).forEach(function(x){if(out.indexOf(x)<0)out.push(x);});});return out;}
   function booksFinished(){
     var g=findGoal("goal_read"),by={};if(!g||typeof READ_CURRICULUM==="undefined")return {n:0,of:0};
     var done=currDone(g);READ_CURRICULUM.lessons.forEach(function(l){if(!isBook(l))return;var b=by[l.rung]=by[l.rung]||{all:0,d:0};b.all++;if(done[l.id])b.d++;});
     var ks=Object.keys(by);return {n:ks.filter(function(k){return by[k].d===by[k].all;}).length,of:ks.length};
   }
-  function monthInvested(mo){   // "invested this month", as of the latest check-in made in that month
-    var best=null;Object.keys(state.checkins||{}).forEach(function(k){var c=state.checkins[k];if(c&&c.at&&dayKey(c.at).slice(0,7)===mo&&c.inv!=null&&(!best||c.at>best.at))best=c;});
-    return best?best.inv:0;
-  }
   function openAreas(){
-    var now=Date.now(),wk=weekKey(now),wkMs=keyMs(wk),ck=checkin(wk)||{},A=[];
-    var weeks=[3,2,1,0].map(function(n){return weekBack(wk,n);});
-    var hist=function(fn){return weeks.map(function(k){return fn(k);});};
-    var tracked=function(ids){return goalStats(ids).total>0;};
+    var now=Date.now(),wk=weekKey(now),A=[],W=7*86400000;
+    var weeks=[3,2,1,0].map(function(n){return keyMs(weekBack(wk,n));});
+    var wkAim=weekdayMin()>0?weekdayMin()*5*60:null;   // seconds: the day plan's weekday minutes, five days a week
+    var timeLever=function(ids){var h=weeks.map(function(t){return areaSec(ids,t,t+W);});
+      return {lever:"Time on it this week",v:h[3],aim:wkAim,leverTxt:fmtDur(h[3])+(wkAim?" of "+fmtDur(wkAim):""),hist:h,histTxt:h.map(fmtDur),from:"from your clocks"};};
     var fg=findGoal("goal_fire");
     if(fg&&fg.fire){
-      var f=fg.fire,T=fireTarget(f),mo=dayKey(now).slice(0,7),inv=monthInvested(mo),aim=f.add>0?f.add:null,oa=((f.have||0)<=0&&!inv&&goalOpenAction("goal_fire",null,/transfer/i))||goalOpenAction("goal_fire");   // nothing invested yet: the transfer is the step
+      var f=fg.fire,T=fireTarget(f),mo=dayKey(now).slice(0,7),fl=timeLever(areaIds(["goal_fire"])),oa=((f.have||0)<=0&&goalOpenAction("goal_fire",null,/transfer/i))||goalOpenAction("goal_fire");   // nothing invested yet: the transfer is the step
       var spent=(f.costs||[]).filter(function(c){return (c.d||"").slice(0,7)===mo;}).reduce(function(s,c){return s+(+c.amt||0);},0);
-      var hf=hist(function(k){var c=checkin(k);return c&&c.inv?c.inv:0;});
-      A.push({id:"fire",gid:"goal_fire",name:"FIRE plan",resLabel:"Invested, of your "+moneyShort(T)+" number",res:money(f.have||0),pct:T?Math.min(100,(f.have||0)/T*100):0,
-        lever:"Invested this month",v:inv,aim:aim,leverTxt:money(inv)+(aim?" of "+money(aim):" · aim: a tenth of pay"),hist:hf,histTxt:hf.map(function(x){return money(x);}),
+      A.push(Object.assign(fl,{id:"fire",name:"FIRE plan",resLabel:"Invested, of your "+moneyShort(T)+" number",res:money(f.have||0),pct:T?Math.min(100,(f.have||0)/T*100):0,
         next:(oa?oa.name:"keep the monthly transfer going")+(spent?". "+money(spent)+" of this month’s spending is logged.":"."),
-        started:(f.have||0)>0||hf.some(function(x){return x>0;})||tracked("goal_fire"),
-        head:(f.have||0)<=0&&!inv?"Nothing is invested yet":(money(inv)+" invested this month"+(aim?", of "+money(aim):"")),
-        sub:(oa?"Next: "+oa.name.charAt(0).toLowerCase()+oa.name.slice(1)+". ":"")+"Babylon’s first cure: keep a tenth of every pay, before anything else.",btn:["Open the FIRE plan","goal-open","goal_fire"]});
+        started:(f.have||0)>0||fl.hist.some(function(x){return x>0;})||goalStats(areaIds(["goal_fire"])).total>0,
+        head:(f.have||0)<=0?"Nothing is invested yet":(fl.v?fmtDur(fl.v)+" on your FIRE plan this week":"No time on your FIRE plan this week"),
+        sub:(oa?"Next: "+oa.name.charAt(0).toLowerCase()+oa.name.slice(1)+". ":"")+"Babylon’s first cure: keep a tenth of every pay, before anything else.",btn:["Open the FIRE plan","goal-open","goal_fire"]}));
     }
     var bg=findGoal("goal_ai")||findGoal("goal_biz");
     if(bg){
-      var st=bg.steps||[],sd=st.filter(function(x){return x.done;}).length,cur=st.filter(function(x){return !x.done;})[0],ba=cur&&goalOpenAction(bg.id,cur.id),ht=hist(function(k){var c=checkin(k);return c&&c.talks?c.talks:0;}),vt=ck.talks||0;
-      A.push({id:"biz",gid:bg.id,name:"Business: "+(bg.id==="goal_ai"?"AI service":bg.name),resLabel:"Your plan",res:st.length?"step "+Math.min(sd+1,st.length)+" of "+st.length:"no steps yet",pct:st.length?sd/st.length*100:0,
-        lever:"Talks with small firms this week",v:vt,aim:areaAim("talks"),leverTxt:vt+" of "+areaAim("talks"),hist:ht,histTxt:ht.map(String),
-        next:ba?ba.name+(cur?" ("+cur.name.replace(/:.*$/,"")+")":""):(cur?cur.name+".":"add the next step to the plan."),started:ht.some(function(x){return x>0;})||sd>0||tracked(treeIds(bg)),
-        head:vt?vt+" of "+areaAim("talks")+" talks with small firms this week":"No talks with small firms this week",
-        sub:(ba||cur?"Next in your plan: "+(ba?ba.name:cur.name)+". ":"")+"Aim for "+areaAim("talks")+" a week: each one is a chance to find the task a firm would pay you to take off its hands.",btn:["Open the plan","goal-open",bg.id]});
+      var st=bg.steps||[],sd=st.filter(function(x){return x.done;}).length,cur=st.filter(function(x){return !x.done;})[0],ba=cur&&goalOpenAction(bg.id,cur.id),bl=timeLever(areaIds(["goal_ai","goal_biz"]));
+      A.push(Object.assign(bl,{id:"biz",name:"Business: "+(bg.id==="goal_ai"?"AI service":bg.name),resLabel:"Your plan",res:st.length?"step "+Math.min(sd+1,st.length)+" of "+st.length:"no steps yet",pct:st.length?sd/st.length*100:0,
+        next:ba?ba.name+(cur?" ("+cur.name.replace(/:.*$/,"")+")":""):(cur?cur.name+".":"add the next step to the plan."),
+        started:sd>0||goalStats(areaIds(["goal_ai","goal_biz"])).total>0,
+        head:bl.v?fmtDur(bl.v)+" on the business this week":"No time on the business this week",
+        sub:ba||cur?"Next in your plan: "+(ba?ba.name:cur.name)+".":"Add the next step to your plan.",btn:["Open the plan","goal-open",bg.id]}));
     }
     var rg=findGoal("goal_read");
     if(rg){
-      var bf=booksFinished(),hr=weeks.map(function(k){return actsYes(rg,keyMs(k),keyMs(k)+7*86400000);}),va=hr[3],cl=currentLesson(rg);
-      A.push({id:"read",gid:"goal_read",name:"Reading",resLabel:"Books finished, of "+bf.of,res:String(bf.n),pct:bf.of?bf.n/bf.of*100:0,
-        lever:"Book actions done this week",v:va,aim:areaAim("acts"),leverTxt:va+" of "+areaAim("acts"),hist:hr,histTxt:hr.map(String),
+      var bf=booksFinished(),hr=weeks.map(function(t){return actsYes(rg,t,t+W);}),va=hr[3],cl=currentLesson(rg);
+      A.push({id:"read",name:"Reading",resLabel:"Books finished, of "+bf.of,res:String(bf.n),pct:bf.of?bf.n/bf.of*100:0,
+        lever:"Book actions done this week",v:va,aim:3,leverTxt:va+" of 3",hist:hr,histTxt:hr.map(String),from:"counted from your sittings",
         next:cl&&isBook(cl.lesson)?cl.lesson.rung+": “"+cl.lesson.concept+"”. End it with your action, “After I …, I will …”.":"your next reading sitting.",
-        started:hr.some(function(x){return x>0;})||bf.n>0||tracked("goal_read"),
-        head:va?va+" of "+areaAim("acts")+" book actions done this week":"No book actions done this week",
+        started:hr.some(function(x){return x>0;})||bf.n>0||goalStats("goal_read").total>0,
+        head:va?va+" of 3 book actions done this week":"No book actions done this week",
         sub:"Each book sitting ends with one action for tomorrow; the next sitting asks whether you did it. Those yeses count here.",btn:["Open Lessons","set-view","lessons"]});
     }
     var tg=findGoal("goal_trade");
     if(tg){
-      var fx=findGoal("goal_fx"),paper=fx&&(fx.steps||[]).filter(function(x){return /paper|demo/i.test(x.name);})[0],ns=firstOpenStep(["goal_trade","goal_fx","goal_opt"]),hd=hist(function(k){var c=checkin(k);return c&&c.trades?c.trades:0;}),vd=ck.trades||0;
-      A.push({id:"trade",gid:"goal_trade",name:"Trading",resLabel:"Demo account",res:paper&&paper.done?"open":"not opened yet",pct:paper&&paper.done?100:0,
-        lever:"Demo trades written up this week",v:vd,aim:areaAim("trades"),leverTxt:vd+" of "+areaAim("trades"),hist:hd,histTxt:hd.map(String),
-        next:ns?ns.name+".":"keep journaling every demo trade.",started:hd.some(function(x){return x>0;})||tracked(treeIds(tg)),
-        head:vd?vd+" of "+areaAim("trades")+" demo trades written up this week":"No demo trades written up this week",
-        sub:(ns?"Next in your plan: "+ns.name+". ":"")+"Write up every demo trade: why you took it, the most you risked, and what happened.",btn:["Open Trading","goal-open","goal_trade"]});
+      var fx=findGoal("goal_fx"),paper=fx&&(fx.steps||[]).filter(function(x){return /paper|demo/i.test(x.name);})[0],ns=firstOpenStep(["goal_trade","goal_fx","goal_opt"]),tl=timeLever(areaIds(["goal_trade"]));
+      A.push(Object.assign(tl,{id:"trade",name:"Trading",resLabel:"Demo account",res:paper&&paper.done?"open":"not opened yet",pct:paper&&paper.done?100:0,
+        next:ns?ns.name+".":"keep a journal of every demo trade.",started:goalStats(areaIds(["goal_trade"])).total>0,
+        head:tl.v?fmtDur(tl.v)+" on trading this week":"No time on trading this week",
+        sub:ns?"Next in your plan: "+ns.name+".":"Keep a journal of every demo trade.",btn:["Open Trading","goal-open","goal_trade"]}));
     }
-    A.forEach(function(a){a.ratio=a.aim?a.v/a.aim:(a.v>0?1:0);a.status=(a.aim?a.v>=a.aim:a.v>0)?"on track":(a.started?"behind":"not started");});   // no aim set (FIRE without a monthly amount): any investing counts
+    A.forEach(function(a){a.ratio=a.aim?a.v/a.aim:(a.v>0?1:0);a.status=(a.aim?a.v>=a.aim:a.v>0)?"on track":(a.started?"behind":"not started");});   // no aim (no day plan yet): any time counts
     return A;
   }
   function areaBars(a){
@@ -2727,31 +2706,8 @@ button.step-name:hover .step-nm{color:var(--accent)}
     var cls=a.status==="on track"?"is-good":(a.status==="behind"?"is-warn":"is-new");
     return '<article class="card ar-card"><div class="ar-ch"><button class="ar-name" data-action="'+a.btn[1]+'" data-id="'+esc(a.btn[2])+'" data-view="'+esc(a.btn[2])+'" type="button">'+esc(a.name)+'</button><span class="ar-st '+cls+'">'+a.status+'</span></div>'+
       '<div class="ar-res"><span>'+esc(a.resLabel)+'</span><b>'+esc(a.res)+'</b></div><div class="ar-bar"><i style="width:'+a.pct.toFixed(1)+'%"></i></div>'+
-      '<div class="ar-lev"><div class="ar-lev-h"><span>'+esc(a.lever)+'</span><b>'+esc(a.leverTxt)+'</b></div>'+areaBars(a)+'<div class="ar-wk-l">last 4 weeks'+(a.id==="read"?" · counted from your sittings":" · from your weekly check-ins")+'</div></div>'+
+      '<div class="ar-lev"><div class="ar-lev-h"><span>'+esc(a.lever)+'</span><b>'+esc(a.leverTxt)+'</b></div>'+areaBars(a)+'<div class="ar-wk-l">last 4 weeks · '+esc(a.from)+'</div></div>'+
       '<p class="ar-next"><b>Next step:</b> '+esc(a.next)+'</p></article>';
-  }
-  function checkinCard(){
-    var wk=weekKey(Date.now()),c=checkin(wk),prev=checkin(weekBack(wk,1)),sun=new Date().getDay()===0;
-    var said=prev&&prev.change?'<div class="ck-said">Last week you said: “'+esc(prev.change)+'”</div>':'';
-    var head='<div class="ck-h"><h2 class="ar-h">Weekly check-in · 2 minutes</h2><span class="ck-when">'+(c?"saved for this week":(sun?"today’s the day":"best on Sunday, any day works"))+'</span></div>';
-    if(c&&!ui.ckEdit)return '<section class="card ck">'+head+said+
-      '<div class="ck-sum"><span><b>'+money(c.inv||0)+'</b> invested this month</span><span><b>'+(c.talks||0)+'</b> talks with small firms</span><span><b>'+(c.trades||0)+'</b> demo trades written up</span></div>'+
-      (c.change?'<div class="ck-said">Next week: “'+esc(c.change)+'”</div>':'')+
-      '<button class="btn btn-ghost btn-sm" data-action="ck-edit" type="button">Edit this week</button></section>';
-    var v=function(x){return x==null||x===0?"":String(x);};
-    return '<section class="card ck">'+head+said+
-      '<form class="ck-form" data-action="ck-save" autocomplete="off">'+
-        '<label class="ck-f">Invested this month (€)<input id="ck-inv" class="field" inputmode="decimal" placeholder="0" value="'+esc(v(c&&c.inv))+'"></label>'+
-        '<label class="ck-f">Talks with small firms<input id="ck-talks" class="field" inputmode="numeric" placeholder="0" value="'+esc(v(c&&c.talks))+'"></label>'+
-        '<label class="ck-f">Demo trades written up<input id="ck-trades" class="field" inputmode="numeric" placeholder="0" value="'+esc(v(c&&c.trades))+'"></label>'+
-        '<label class="ck-f ck-wide">One thing to do differently next week<input id="ck-change" class="field" maxlength="240" placeholder="e.g. send the first three messages on Monday evening" value="'+esc((c&&c.change)||"")+'"></label>'+
-        '<div class="ck-btns"><button class="btn btn-primary" type="submit">Save the week</button>'+(c?'<button class="btn btn-ghost" data-action="ck-cancel" type="button">Cancel</button>':'')+'</div>'+
-      '</form><p class="ck-note">Book actions count themselves, from your sittings.</p></section>';
-  }
-  function saveCheckin(){
-    var n=function(id){var x=parseInt(String(val(id)).replace(/[^\d]/g,""),10);return isNaN(x)?0:Math.min(x,9999);};
-    var rec={inv:fireNum(val("ck-inv")),talks:n("ck-talks"),trades:n("ck-trades"),change:(val("ck-change")||"").trim().slice(0,240),at:Date.now()};
-    ui.ckEdit=false;commit(function(){state.checkins=state.checkins||{};state.checkins[weekKey(rec.at)]=rec;});toast("Week saved");
   }
   function renderAreas(){
     var A=openAreas(),pick=null,run=state.activeId&&findTask(state.activeId),pz=pausedTask();
@@ -2760,9 +2716,9 @@ button.step-name:hover .step-nm{color:var(--accent)}
     var les=run?'A clock is running: '+esc(run.name):(pz?'Paused: '+esc(pz.name):(R.length?'Today’s lessons: <b>'+dn+' of '+R.length+'</b> done'+(nx&&nx.x?' · next: '+esc(goalName(nx.x.g.id)):''):'Your lessons'));
     var imp=pick?'<section class="card ar-imp"><div class="ar-imp-t"><div class="ar-imp-k">Improve this week · '+esc(pick.name)+'</div><h2 class="ar-imp-h">'+esc(pick.head)+'</h2><p class="ar-imp-p">'+esc(pick.sub)+'</p></div>'+
         '<button class="btn btn-primary" data-action="'+pick.btn[1]+'" data-id="'+esc(pick.btn[2])+'" data-view="'+esc(pick.btn[2])+'" type="button">'+esc(pick.btn[0])+'</button></section>'
-      :'<section class="card ar-imp is-good"><div class="ar-imp-t"><div class="ar-imp-k">This week</div><h2 class="ar-imp-h">Every area is on its aim</h2><p class="ar-imp-p">Keep it going, and save the check-in on Sunday.</p></div></section>';
+      :'<section class="card ar-imp is-good"><div class="ar-imp-t"><div class="ar-imp-k">This week</div><h2 class="ar-imp-h">Every area is on its aim</h2><p class="ar-imp-p">Keep it going.</p></div></section>';
     return '<div class="view areas"><div class="ar-top"><button class="ar-les'+(run?" is-run":"")+'" data-action="set-view" data-view="lessons" type="button"><span>'+les+'</span><span class="ar-go">Open →</span></button></div>'+
-      imp+'<div class="ar-grid">'+A.map(areaCard).join("")+'</div>'+checkinCard()+renderCaptureHome()+'</div>';
+      imp+'<div class="ar-grid">'+A.map(areaCard).join("")+'</div>'+renderCaptureHome()+'</div>';
   }
   function render(){
     var html=topBar();
