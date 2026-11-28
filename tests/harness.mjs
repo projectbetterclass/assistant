@@ -49,7 +49,7 @@ export async function openPage(browser, opts = {}) {
     sample.limits = () => Promise.resolve(lim);
     const art = { publish(h) { window.__pub.push(h); return Promise.resolve(); } };
     window.claude = { use(n) { return Promise.resolve(n === "sample" ? (cfg.sample === false ? null : sample) : n === "artifact" ? art : null); } };
-  }, { images: opts.images, sample: opts.sample, view: opts.view });
+  }, { images: opts.images, sample: opts.sample, view: opts.view === undefined ? "lessons" : opts.view });   // the lesson cards, unless a test asks for another view ("now" is the open areas)
   await page.goto("https://app.test/");
   await page.waitForSelector(".top");
   await page.clock.runFor(50);

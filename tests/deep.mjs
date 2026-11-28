@@ -89,11 +89,11 @@ for (const gid of GOALS) {
     await page.click('.ses-pills [data-action=ses-stage][data-i="1"]'); await page.clock.runFor(40);
     const res = await clickCall(page, ".now-active .ses", "Learn", L, out.calls);
     if (res) {   // the call button took you to the goal page: can you get back to your sitting?
-      const back = await page.$('[data-action=set-view][data-view="now"]');
+      const back = await page.$('[data-action=set-view][data-view="lessons"]');
       if (back) { await back.click(); await page.clock.runFor(40); }
       const okBack = await page.$(".now-active .ses .ses-pill.on");
       const stage = okBack ? await okBack.innerText() : "";
-      L.clicked.push("back to the sitting via Now → " + (okBack ? "sitting still there, on " + T(stage) : "SITTING GONE"));
+      L.clicked.push("back to the sitting via Lessons → " + (okBack ? "sitting still there, on " + T(stage) : "SITTING GONE"));
       if (!okBack) L.flags.push("after the call button, the sitting is gone");
     }
     if (errors.length) L.flags.push("errors (sitting): " + errors.join(" | "));
